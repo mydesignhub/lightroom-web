@@ -295,7 +295,7 @@ const generateXMP = (recipe, title) => {
 // --- COMPONENTS ---
 
 const Header = ({ activeTab, setActiveTab }) => {
-  const [logoSrc, setLogoSrc] = useState('/logo.png');
+  const [logoSrc, setLogoSrc] = useState('/logo.svg');
   return (
     <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800">
       <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
