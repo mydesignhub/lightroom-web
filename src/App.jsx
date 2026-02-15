@@ -9,14 +9,22 @@ import {
 } from 'lucide-react';
 
 // ==========================================
-// 1. GEMINI API CONFIGURATION
+// 1. GEMINI API CONFIGURATION (SMART SETUP)
 // ==========================================
-// ⚠️ ចំណាំសំខាន់៖ សម្រាប់ដាក់ដំណើរការលើ Vercel សូមប្រើកូដខាងក្រោម៖
-// const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
-const apiKey = ""; 
+
+let apiKey = ""; 
+try {
+  // ព្យាយាមយក Key ពី Vercel (Production Environment)
+  // @ts-ignore
+  apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+} catch (e) {
+  // បើក្នុង Preview (ដែលមិនស្គាល់ import.meta) វានឹងមិនគាំងទេ គ្រាន់តែអត់មាន Key
+  console.log("Running in Preview Mode (No API Key)");
+  apiKey = ""; 
+}
 
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
-  if (!apiKey) return null; // បើគ្មាន Key គឺមិនហៅ API ទេ
+  if (!apiKey) return null;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
   
@@ -49,7 +57,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATA & ICONS
+// 2. DATA (FULL CONTENT RESTORED)
 // ==========================================
 
 const FacebookIcon = (props) => (
@@ -65,42 +73,12 @@ const lessonsData = [
     icon: <Sun className="w-5 h-5 text-amber-400" />,
     description: 'រៀនអំពីការកែសម្រួលពន្លឺនៅក្នុងរូបភាពរបស់អ្នក។',
     content: [
-      { 
-        tool: 'Exposure', 
-        khmer: 'ការប៉ះពន្លឺ', 
-        desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ បង្កើន (+) ដើម្បីឱ្យភ្លឺ និងបន្ថយ (-) ដើម្បីឱ្យងងឹត។ វាជាមូលដ្ឋានគ្រឹះដំបូងគេដែលត្រូវកែ។', 
-        tip: 'កែវាមុនគេបង្អស់ ដើម្បីឱ្យឃើញរូបភាពច្បាស់សិន ចាំទៅកែផ្នែកផ្សេង។' 
-      },
-      { 
-        tool: 'Contrast', 
-        khmer: 'ភាពផ្ទុយ', 
-        desc: 'កំណត់កម្រិតភាពខុសគ្នារវាងផ្នែកភ្លឺ និងផ្នែកងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិតច្បាស់ និងមានជម្រៅ (Pop)។ Contrast ទាបធ្វើឱ្យរូបមើលទៅស្រាល ស្រទន់ ឬស្រអាប់ (Flat/Fade)។', 
-        tip: 'កុំដាក់ខ្លាំងពេក (កុំឱ្យលើស +40) ព្រោះវានឹងធ្វើឱ្យរូបបាត់បង់ព័ត៌មានលម្អិត ហើយមើលទៅរឹង។' 
-      },
-      { 
-        tool: 'Highlights', 
-        khmer: 'ផ្នែកភ្លឺ', 
-        desc: 'គ្រប់គ្រងតែតំបន់ដែលមានពន្លឺខ្លាំងបំផុត (ដូចជាមេឃ ពពក ឬពន្លឺថ្ងៃចាំង)។ ការបន្ថយវាជួយសង្គ្រោះព័ត៌មានដែលបាត់ដោយសារពន្លឺចាំង។', 
-        tip: 'បន្ថយ (-50 ទៅ -80) ដើម្បីសង្គ្រោះពន្លឺមេឃឱ្យឃើញពពកវិញ។' 
-      },
-      { 
-        tool: 'Shadows', 
-        khmer: 'ផ្នែកងងឹត', 
-        desc: 'គ្រប់គ្រងតែតំបន់ដែលមានស្រមោល ឬងងឹត។ ការតម្លើងវាជួយឱ្យយើងមើលឃើញព័ត៌មានលម្អិតនៅក្នុងកន្លែងងងឹត ឬមុខមនុស្សដែលឈរបញ្ច្រាសថ្ងៃ។', 
-        tip: 'តម្លើង (+40 ទៅ +70) សម្រាប់រូបថតដែលមានពន្លឺថ្ងៃខ្លាំង (Backlit)។' 
-      },
-      { 
-        tool: 'Whites', 
-        khmer: 'ពណ៌ស', 
-        desc: 'កំណត់ចំណុចពណ៌សដាច់ខាត (True White)។ បង្កើនវាដើម្បីឱ្យផ្នែកភ្លឺបំផុត ក្លាយជាពណ៌សសុទ្ធ មិនមែនប្រផេះ។', 
-        tip: 'តម្លើងបន្តិច (+10 ទៅ +20) ដើម្បីឱ្យរូបមើលទៅភ្លឺថ្លា (Clean Look)។' 
-      },
-      { 
-        tool: 'Blacks', 
-        khmer: 'ពណ៌ខ្មៅ', 
-        desc: 'កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត (True Black)។ បន្ថយវាដើម្បីឱ្យផ្នែកងងឹតបំផុត ក្លាយជាពណ៌ខ្មៅសុទ្ធ។', 
-        tip: 'បន្ថយបន្តិច (-10 ទៅ -20) ដើម្បីឱ្យរូបមានជម្រៅ និងពណ៌ដិតល្អ។' 
-      },
+      { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ បង្កើន (+) ដើម្បីឱ្យភ្លឺ និងបន្ថយ (-) ដើម្បីឱ្យងងឹត។', tip: 'កែវាមុនគេបង្អស់។' },
+      { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់ភាពខុសគ្នារវាងផ្នែកភ្លឺ និងផ្នែកងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត (Pop)។', tip: 'កុំដាក់ខ្លាំងពេកលើស +40។' },
+      { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានពន្លឺខ្លាំង។ បន្ថយវាជួយសង្គ្រោះព័ត៌មានដែលបាត់។', tip: 'បន្ថយ (-50) ដើម្បីសង្គ្រោះពន្លឺមេឃ។' },
+      { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានស្រមោល។ ការតម្លើងវាជួយឱ្យឃើញព័ត៌មានក្នុងកន្លែងងងឹត។', tip: 'តម្លើង (+40) សម្រាប់រូបថតបញ្ច្រាសថ្ងៃ។' },
+      { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចពណ៌សដាច់ខាត។', tip: 'តម្លើងបន្តិច (+15) ដើម្បីឱ្យរូបភ្លឺថ្លា។' },
+      { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។', tip: 'បន្ថយបន្តិច (-15) ដើម្បីឱ្យរូបមានជម្រៅ។' },
     ]
   },
   {
@@ -109,12 +87,12 @@ const lessonsData = [
     icon: <Droplet className="w-5 h-5 text-cyan-400" />,
     description: 'ធ្វើឱ្យពណ៌មានភាពរស់រវើកនិងកែសម្រួលសីតុណ្ហភាព។',
     content: [
-      { tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កំណត់សីតុណ្ហភាពពណ៌៖ ពណ៌លឿង (កក់ក្តៅ/Warm) ឬពណ៌ខៀវ (ត្រជាក់/Cool)។', tip: 'ថតពេលថ្ងៃលិច តម្លើងទៅលឿង។ ថតពេលព្រឹកព្រលឹម បន្ថយទៅខៀវ។' },
-      { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែតម្រូវពណ៌លាំរវាង ពណ៌បៃតង និង ពណ៌ស្វាយ (Magenta)។', tip: 'ប្រើសម្រាប់កែពណ៌ស្បែកដែលជាប់បៃតង (ដោយសារពន្លឺភ្លើង Fluorescent)។' },
-      { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក ដោយមិនធ្វើឱ្យពណ៌ដែលដិតស្រាប់ (ដូចជាពណ៌ស្បែក) ខូចឡើយ។', tip: 'តែងតែប្រើ Vibrance ជំនួស Saturation សម្រាប់រូបថតមនុស្ស (Portrait)។' },
-      { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។ ការប្រើខ្លាំងពេកធ្វើឱ្យរូបមើលទៅមិនធម្មជាតិ។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ សម្រាប់ការថតទេសភាព (Landscape) អាចប្រើបាន។' },
-      { tool: 'Color Mix', khmer: 'ការលាយពណ៌', desc: 'ឧបករណ៍ខ្លាំងបំផុត! គ្រប់គ្រង Hue (ពណ៌), Saturation (ភាពដិត), Luminance (ពន្លឺ) នៃពណ៌នីមួយៗ។', tip: 'Orange: តម្លើង Luminance ដើម្បីឱ្យស្បែកស។ Blue: បន្ថយ Luminance ដើម្បីឱ្យមេឃដិត។' },
-      { tool: 'Color Grading', khmer: 'ការដាក់ពណ៌', desc: 'ដាក់ពណ៌ចូលទៅក្នុង Shadows (ផ្នែកងងឹត), Midtones (កណ្តាល), និង Highlights (ផ្នែកភ្លឺ) ដើម្បីបង្កើត Mood។', tip: 'សាកល្បងដាក់ Teal ក្នុង Shadows និង Orange ក្នុង Highlights (Cinematic Look)។' },
+      { tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កំណត់សីតុណ្ហភាពពណ៌៖ លឿង (Warm) ឬខៀវ (Cool)។', tip: 'ថតពេលថ្ងៃលិច តម្លើងទៅលឿង។' },
+      { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែតម្រូវពណ៌លាំរវាង បៃតង និង ស្វាយ (Magenta)។', tip: 'ប្រើសម្រាប់កែពណ៌ស្បែកដែលជាប់បៃតង។' },
+      { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក ដោយមិនធ្វើឱ្យពណ៌ស្បែកខូចឡើយ។', tip: 'ប្រើជំនួស Saturation សម្រាប់រូបមនុស្ស។' },
+      { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។' },
+      { tool: 'Color Mix', khmer: 'ការលាយពណ៌', desc: 'គ្រប់គ្រង Hue, Saturation, Luminance នៃពណ៌នីមួយៗ។', tip: 'Orange: តម្លើង Luminance ដើម្បីឱ្យស្បែកស។' },
+      { tool: 'Color Grading', khmer: 'ការដាក់ពណ៌', desc: 'ដាក់ពណ៌ចូលទៅក្នុង Shadows, Midtones, និង Highlights។', tip: 'Teal Shadows, Orange Highlights (Cinematic)។' },
     ]
   },
   {
@@ -123,10 +101,10 @@ const lessonsData = [
     icon: <Aperture className="w-5 h-5 text-purple-400" />,
     description: 'បន្ថែមភាពច្បាស់ និងវាយនភាពទៅកាន់រូបភាព។',
     content: [
-      { tool: 'Texture', khmer: 'វាយនភាព', desc: 'ធ្វើឱ្យផ្ទៃរបស់វត្ថុ (ដូចជាស្បែក, ថ្ម, ឈើ) កាន់តែលេចធ្លោ។', tip: 'បន្ថយ (-20) ដើម្បីធ្វើឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។' },
-      { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'បន្ថែម Contrast នៅតំបន់កណ្តាល (Midtone) ធ្វើឱ្យរូបមើលទៅមានជម្រៅ និងមុត។', tip: 'កុំប្រើលើមុខមនុស្សស្ត្រី ឬកុមារ ព្រោះវាធ្វើឱ្យឃើញស្នាម។' },
-      { tool: 'Dehaze', khmer: 'កាត់បន្ថយអ័ព្ទ', desc: 'លុបអ័ព្ទ ឬផ្សែងដើម្បីឱ្យរូបច្បាស់។ ក៏អាចប្រើបន្ថែមអ័ព្ទដើម្បីបង្កើតអារម្មណ៍ស្រទន់។', tip: 'តម្លើងបន្តិច (+15) សម្រាប់រូបថតមេឃ ដើម្បីឱ្យពណ៌មេឃដិតល្អ។' },
-      { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើឱ្យគែមរូបភាពងងឹត ឬភ្លឺ ដើម្បីរុញចំណាប់អារម្មណ៍ទៅកាន់ចំណុចកណ្តាលនៃរូប។', tip: 'ដាក់កម្រិត -15 ទៅ -20 គឺល្មមស្អាតសម្រាប់រូបទូទៅ។' },
+      { tool: 'Texture', khmer: 'វាយនភាព', desc: 'ធ្វើឱ្យផ្ទៃរបស់វត្ថុ (ស្បែក, ថ្ម) កាន់តែលេចធ្លោ។', tip: 'បន្ថយ (-20) ដើម្បីធ្វើឱ្យស្បែកមុខម៉ត់។' },
+      { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'បន្ថែម Contrast នៅតំបន់កណ្តាល ធ្វើឱ្យរូបមើលទៅមានជម្រៅ។', tip: 'កុំប្រើលើមុខមនុស្សស្ត្រី ឬកុមារ។' },
+      { tool: 'Dehaze', khmer: 'កាត់បន្ថយអ័ព្ទ', desc: 'លុបអ័ព្ទ ឬផ្សែង។', tip: 'តម្លើងបន្តិច (+15) សម្រាប់រូបថតមេឃ។' },
+      { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើឱ្យគែមរូបភាពងងឹត ដើម្បីរុញចំណាប់អារម្មណ៍ទៅកណ្តាល។', tip: 'ដាក់កម្រិត -15 ទៅ -20។' },
     ]
   },
   {
@@ -135,9 +113,9 @@ const lessonsData = [
     icon: <Triangle className="w-5 h-5 text-pink-400" />,
     description: 'គ្រប់គ្រងភាពច្បាស់ និងកាត់បន្ថយគ្រាប់ (Noise)។',
     content: [
-      { tool: 'Sharpening', khmer: 'ការធ្វើឱ្យច្បាស់', desc: 'ធ្វើឱ្យគែមនៃវត្ថុក្នុងរូបភាពកាន់តែមុត។', tip: 'ចុចពីរម្រាមដៃ (Alt/Option) ពេលអូស Masking ឱ្យដល់ 80% ដើម្បី Sharpen តែគែម។' },
-      { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ (Noise) ដែលកើតឡើងដោយសារការថតនៅទីងងឹត (ISO ខ្ពស់)។', tip: 'កុំដាក់លើសពី 40 ព្រោះវាធ្វើឱ្យរូបបាត់បង់ភាពលម្អិត ហើយមើលទៅដូចប្លាស្ទិក។' },
-      { tool: 'Color Noise', khmer: 'គ្រាប់ពណ៌', desc: 'លុបគ្រាប់ពណ៌ខុសប្រក្រតី (ស្ុចៗពណ៌ស្វាយ/បៃតង) នៅក្នុងផ្នែកងងឹត។', tip: 'ទុកនៅតម្លៃ 25 (Default) គឺល្អគ្រប់គ្រាន់ហើយ។' },
+      { tool: 'Sharpening', khmer: 'ការធ្វើឱ្យច្បាស់', desc: 'ធ្វើឱ្យគែមនៃវត្ថុក្នុងរូបភាពកាន់តែមុត។', tip: 'ប្រើ Masking (2 fingers) ដើម្បីកុំឱ្យប៉ះពាល់ស្បែក។' },
+      { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ (Noise) ដែលកើតឡើងដោយសារ ISO ខ្ពស់។', tip: 'កុំដាក់ខ្លាំងពេក ប្រយ័ត្នរូបបាត់ Detail។' },
+      { tool: 'Color Noise', khmer: 'គ្រាប់ពណ៌', desc: 'លុបគ្រាប់ពណ៌ខុសប្រក្រតី (ស្ុចៗពណ៌ស្វាយ/បៃតង)។', tip: 'ទុកនៅតម្លៃ 25 (Default)។' },
     ]
   },
   {
@@ -146,10 +124,10 @@ const lessonsData = [
     icon: <ScanFace className="w-5 h-5 text-green-400" />,
     description: 'កែតម្រូវតែផ្នែកខ្លះនៃរូបភាព (មេឃ, មនុស្ស)។',
     content: [
-      { tool: 'Select Subject', khmer: 'ជ្រើសរើសវត្ថុ', desc: 'AI នឹងជ្រើសរើសមនុស្ស ឬវត្ថុសំខាន់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើដើម្បីធ្វើឱ្យមនុស្សភ្លឺជាង Background (Exposure +) ឬបន្ថែម Texture លើសម្លៀកបំពាក់។' },
-      { tool: 'Select Sky', khmer: 'ជ្រើសរើសមេឃ', desc: 'AI ជ្រើសរើសផ្ទៃមេឃទាំងអស់។ ល្អបំផុតសម្រាប់ការកែពន្លឺមេឃ។', tip: 'បន្ថយ Highlights និងតម្លើង Saturation ដើម្បីបានមេឃពណ៌ខៀវដិតស្អាត។' },
-      { tool: 'Linear Gradient', khmer: 'ដេញពណ៌', desc: 'កែតំបន់ជាលក្ខណៈបន្ទាត់រលាយ (Gradient)។', tip: 'ប្រើសម្រាប់ធ្វើឱ្យដីភ្លឺ (ទាញពីក្រោមឡើងលើ) ឬធ្វើឱ្យមេឃងងឹត (ទាញពីលើចុះក្រោម)។' },
-      { tool: 'Radial Gradient', khmer: 'រង្វង់', desc: 'កែតំបន់ជារង្វង់។ អាចកែខាងក្នុងរង្វង់ ឬខាងក្រៅរង្វង់ (Invert)។', tip: 'ប្រើបង្កើតពន្លឺសិប្បនិម្មិត (Sun Flare) ឬពន្លឺផ្តោត (Spotlight) លើមុខ។' },
+      { tool: 'Select Subject', khmer: 'ជ្រើសរើសវត្ថុ', desc: 'AI ជ្រើសរើសមនុស្ស ឬវត្ថុសំខាន់។', tip: 'ធ្វើឱ្យមនុស្សភ្លឺជាង Background។' },
+      { tool: 'Select Sky', khmer: 'ជ្រើសរើសមេឃ', desc: 'AI ជ្រើសរើសផ្ទៃមេឃទាំងអស់។', tip: 'បន្ថយ Highlights ដើម្បីបានមេឃពណ៌ខៀវដិត។' },
+      { tool: 'Linear Gradient', khmer: 'ដេញពណ៌', desc: 'កែតំបន់ជាលក្ខណៈបន្ទាត់។', tip: 'ធ្វើឱ្យដីភ្លឺ ឬមេឃងងឹត។' },
+      { tool: 'Radial Gradient', khmer: 'រង្វង់', desc: 'កែតំបន់ជារង្វង់។', tip: 'ប្រើបង្កើតពន្លឺសិប្បនិម្មិត ឬ Spotlight។' },
     ]
   },
   {
@@ -158,9 +136,9 @@ const lessonsData = [
     icon: <Crop className="w-5 h-5 text-cyan-400" />,
     description: 'កែទម្រង់រូបភាព និងកែវថត។',
     content: [
-      { tool: 'Lens Corrections', khmer: 'កែកែវថត', desc: 'កែការពន្លយ (Distortion) និង Vignette ដែលជាប់មកជាមួយកែវថតកាមេរ៉ា។', tip: 'បើកវាជានិច្ច (Enable Lens Corrections) សម្រាប់គ្រប់រូបថត។' },
-      { tool: 'Chromatic Aberration', khmer: 'ពណ៌តាមគែម', desc: 'លុបស្នាមពណ៌ស្វាយ ឬបៃតង នៅតាមគែមវត្ថុដែលមាន Contrast ខ្ពស់ (ដូចជាស្លឹកឈើនិងមេឃ)។', tip: 'ចាំបាច់សម្រាប់រូបថតដែលមានពន្លឺថ្ងៃខ្លាំង។' },
-      { tool: 'Upright', khmer: 'តម្រង់រូប', desc: 'ធ្វើឱ្យអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលរហ័ស។ ប្រើ "Vertical" សម្រាប់រូបថតស្ថាបត្យកម្ម។' },
+      { tool: 'Lens Corrections', khmer: 'កែកែវថត', desc: 'កែការពន្លយ (Distortion) និង Vignette របស់កែវថត។', tip: 'បើកវាជានិច្ច។' },
+      { tool: 'Chromatic Aberration', khmer: 'ពណ៌តាមគែម', desc: 'លុបស្នាមពណ៌ស្វាយ/បៃតង នៅតាមគែមវត្ថុ។', tip: 'ចាំបាច់សម្រាប់រូបថតដែលមាន Contrast ខ្ពស់។' },
+      { tool: 'Upright', khmer: 'តម្រង់រូប', desc: 'ធ្វើឱ្យអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលរហ័ស។' },
     ]
   },
   {
@@ -169,49 +147,24 @@ const lessonsData = [
     icon: <Save className="w-5 h-5 text-indigo-500" />,
     description: 'របៀបរក្សាទុករូបភាពឱ្យមានគុណភាពខ្ពស់។',
     content: [
-      { tool: 'JPG', khmer: 'រូបភាពធម្មតា', desc: 'ឯកសាររូបភាពដែលត្រូវបានបង្រួម។ ទំហំតូច ងាយស្រួលប្រើ។', tip: 'កំណត់ Quality 100% សម្រាប់បង្ហោះលើ Facebook/Instagram។' },
-      { tool: 'DNG', khmer: 'ឯកសារ RAW', desc: 'ឯកសារដើមដែលអាចកែពណ៌បន្តបានល្អបំផុត។ វាផ្ទុកការកំណត់ (Settings) ទាំងអស់។', tip: 'ប្រើសម្រាប់រក្សាទុក Preset ដើម្បីចែករំលែកទៅឱ្យអ្នកដទៃ។' },
-      { tool: 'Watermark', khmer: 'ឈ្មោះលើរូប', desc: 'ដាក់ឈ្មោះ ឬ Logo របស់អ្នកលើរូបភាព ដើម្បីការពារកម្មសិទ្ធិបញ្ញា។', tip: 'Customize ក្នុង Export Settings ដើម្បីប្តូរ Font និងទីតាំង។' },
+      { tool: 'JPG', khmer: 'រូបភាពធម្មតា', desc: 'ឯកសាររូបភាពដែលត្រូវបានបង្រួម។', tip: 'ល្អសម្រាប់បង្ហោះលើបណ្តាញសង្គម។' },
+      { tool: 'DNG', khmer: 'ឯកសារ RAW', desc: 'ឯកសារដើមដែលអាចកែពណ៌បន្តបានល្អ។', tip: 'ប្រើសម្រាប់រក្សាទុក Preset ដើម្បីចែករំលែក។' },
+      { tool: 'Watermark', khmer: 'ឈ្មោះលើរូប', desc: 'ដាក់ឈ្មោះ ឬ Logo របស់អ្នកលើរូបភាព។', tip: 'ការពារកម្មសិទ្ធិបញ្ញា។' },
     ]
   }
 ];
 
 const initialQuestionBank = [
-  {
-    id: 1,
-    question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?",
-    options: ["Contrast", "Exposure", "Highlights", "Shadows"],
-    correct: 1,
-    level: "beginner"
-  },
-  {
-    id: 2,
-    question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?",
-    options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"],
-    correct: 1,
-    level: "beginner"
-  },
-  {
-    id: 3,
-    question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?",
-    options: ["Green", "Orange", "Blue", "Red"],
-    correct: 2,
-    level: "beginner"
-  },
-  {
-    id: 4,
-    question: "តើ Dehaze ប្រើសម្រាប់អ្វី?",
-    options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"],
-    correct: 1,
-    level: "beginner"
-  },
-  {
-    id: 5,
-    question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?",
-    options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "តម្លើង Sharpening"],
-    correct: 1,
-    level: "advanced"
-  }
+  { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
+  { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
+  { id: 3, question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?", options: ["Green", "Orange", "Blue", "Red"], correct: 2, level: "beginner" },
+  { id: 4, question: "តើ Dehaze ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 1, level: "beginner" },
+  { id: 5, question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?", options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "តម្លើង Sharpening"], correct: 1, level: "advanced" },
+  { id: 6, question: "តើ Tone Curve មួយណាដែលធ្វើឱ្យរូបមាន Contrast ស្អាត (Pop)?", options: ["Linear", "S-Curve", "Flat", "Inverted"], correct: 1, level: "advanced" },
+  { id: 7, question: "តើ Temp ប្រើសម្រាប់កែអ្វី?", options: ["ភាពច្បាស់", "សីតុណ្ហភាពពណ៌ (លឿង/ខៀវ)", "ពន្លឺ", "គ្រាប់ Noise"], correct: 1, level: "beginner" },
+  { id: 8, question: "តើការប្រើ Sharpening ខ្លាំងពេកនឹងធ្វើឱ្យរូបទៅជាយ៉ាងណា?", options: ["ច្បាស់ស្អាត", "មានគ្រាប់ Noise និងខូចគុណភាព", "មើលទៅទន់", "មានពណ៌ស្រស់"], correct: 1, level: "advanced" },
+  { id: 9, question: "តើ DNG ជាប្រភេទ file អ្វី?", options: ["Video", "RAW Image", "Audio", "Text"], correct: 1, level: "advanced" },
+  { id: 10, question: "តើឧបករណ៍មួយណាជួយកែរូបដែលថតមកវារេ ឬមិនត្រង់?", options: ["Optics", "Geometry/Upright", "Detail", "Effects"], correct: 1, level: "advanced" }
 ];
 
 const PRESET_DB = {
@@ -507,10 +460,8 @@ const Quiz = ({ isOnline }) => {
 
   const startQuiz = () => {
     let filtered = questions.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level);
-    // If not enough questions, just use all
     if (filtered.length < 1) filtered = questions;
     
-    // Shuffle
     const shuffled = [...filtered].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, quizConfig.amount);
     
@@ -531,7 +482,7 @@ const Quiz = ({ isOnline }) => {
       const newQuestions = await callGemini(prompt, "You are a quiz generator.", true);
       
       if (newQuestions && Array.isArray(newQuestions)) {
-          setQuestions(newQuestions); // Replace with new AI questions
+          setQuestions(newQuestions); 
           setCurrentQuestion(0);
           setScore(0);
           setIsAnswered(false);
@@ -577,7 +528,6 @@ const Quiz = ({ isOnline }) => {
   );
 };
 
-// Helper for grading icon
 const CircleIcon = ({color}) => <div className={`w-3 h-3 rounded-full bg-${color}-500 inline-block`}></div>;
 
 const PresetGenerator = ({ isOnline }) => {
@@ -591,7 +541,6 @@ const PresetGenerator = ({ isOnline }) => {
         if (!style.trim()) return;
         setLoading(true);
         
-        // Use Gemini to generate the recipe
         const prompt = `Create a Lightroom preset recipe for the style: "${style}". 
         Return strictly valid JSON with this structure: 
         { 
@@ -609,7 +558,6 @@ const PresetGenerator = ({ isOnline }) => {
         if (data) {
             setRecipe(data);
         } else {
-            // Fallback to local logic if API fails
              if (style.toLowerCase().includes('teal')) setRecipe(PRESET_DB["teal & orange"]);
              else setRecipe(PRESET_DB["teal & orange"]); // Default fallback
         }
@@ -620,7 +568,6 @@ const PresetGenerator = ({ isOnline }) => {
 
     const handleExport = () => { if (recipe) generateXMP(recipe, styleInput || "Preset"); };
     
-    // --- Slider UI Helper ---
     const Slider = ({ label, value, min = -100, max = 100 }) => (
         <div className="mb-3">
             <div className="flex justify-between text-[11px] text-gray-400 font-mono mb-1.5 uppercase tracking-wider">
@@ -647,8 +594,6 @@ const PresetGenerator = ({ isOnline }) => {
                 <div className="flex flex-wrap gap-2">{popularStyles.map(s => <button key={s} onClick={() => generateRecipe(s)} className="px-4 py-2 bg-[#0f172a] border border-gray-700 hover:border-purple-500 hover:bg-[#334155] rounded-full text-xs text-gray-300 transition-all font-medium">{s}</button>)}</div>
                 {recipe && <div className="bg-[#0f172a] rounded-2xl p-6 border border-gray-800 animate-fade-in-down shadow-inner">
                     <button onClick={handleExport} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-lg font-khmer tracking-wide"><Download size={18} /> ទាញយក XMP (Export)</button>
-                    
-                    {/* NEW LAYOUT: Light & Curve on Top Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                          <div className="bg-[#1e293b]/50 p-4 rounded-xl border border-gray-800">
                             <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2 pb-2 border-b border-gray-700"><Sun size={14} className="text-orange-400"/> Light & Color</h5>
@@ -658,7 +603,6 @@ const PresetGenerator = ({ isOnline }) => {
                             <Slider label="Shadows" value={recipe.basic.Shadows} />
                             <Slider label="Whites" value={recipe.basic.Whites} />
                             <Slider label="Blacks" value={recipe.basic.Blacks} />
-                            
                              <div className="mt-6 pt-4 border-t border-gray-700">
                                 <div className="grid grid-cols-2 gap-x-6">
                                     <Slider label="Temp" value={recipe.basic.Temp} />
@@ -673,8 +617,6 @@ const PresetGenerator = ({ isOnline }) => {
                              <div className="flex-1 flex items-center justify-center"><CurveVisualizer type={recipe.curve.RGB} /></div>
                         </div>
                     </div>
-
-                    {/* Color Mix Grid */}
                     <div className="mt-6 pt-6 border-t border-gray-800">
                         <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2"><Palette size={14} className="text-pink-400"/> Color Mix</h5>
                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] font-mono">
@@ -686,8 +628,6 @@ const PresetGenerator = ({ isOnline }) => {
                             ))}
                          </div>
                     </div>
-
-                     {/* Grading */}
                      <div className="mt-6 pt-6 border-t border-gray-800">
                         <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2"><CircleIcon color="purple"/> Color Grading</h5>
                         <div className="grid grid-cols-3 gap-6">
@@ -703,100 +643,99 @@ const PresetGenerator = ({ isOnline }) => {
 };
 
 const ChatBot = ({ isOnline }) => {
-  const [messages, setMessages] = useState([{ role: 'model', text: 'សួស្ដី! ខ្ញុំជាគ្រូជំនួយ AI។ អ្នកអាចសួរខ្ញុំអំពីរបៀបកែរូប ឬអោយខ្ញុំណែនាំ Setting។' }]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-  
-  const suggestedQuestionsPool = ["តើ Dehaze ប្រើសម្រាប់អ្វី?", "ចង់កែរូបបែប Vintage", "រូបងងឹតពេក ធ្វើម៉េច?", "សុំរូបមន្តកែរូបបែប Cinematic", "របៀបធ្វើអោយស្បែកស?", "កែរូបថតពេលយប់អោយស្អាត", "របៀបដាក់ពណ៌ Teal & Orange", "ពន្យល់ពី Curves", "តើ Grain ជួយអ្វីខ្លះ?", "របៀបកែរូប Portrait អោយស្អាត"];
-  const [suggestions, setSuggestions] = useState([]);
+  const [messages, setMessages] = useState([{ role: 'model', text: 'សួស្ដី! ខ្ញុំជាគ្រូជំនួយ AI។ អ្នកអាចសួរខ្ញុំអំពីរបៀបកែរូប ឬអោយខ្ញុំណែនាំ Setting។' }]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  
+  const suggestedQuestionsPool = ["តើ Dehaze ប្រើសម្រាប់អ្វី?", "ចង់កែរូបបែប Vintage", "រូបងងឹតពេក ធ្វើម៉េច?", "សុំរូបមន្តកែរូបបែប Cinematic", "របៀបធ្វើអោយស្បែកស?", "កែរូបថតពេលយប់អោយស្អាត", "របៀបដាក់ពណ៌ Teal & Orange", "ពន្យល់ពី Curves", "តើ Grain ជួយអ្វីខ្លះ?", "របៀបកែរូប Portrait អោយស្អាត"];
+  const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => {
-    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
-    setSuggestions(shuffled.slice(0, 3));
-  }, []);
+  useEffect(() => {
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+    setSuggestions(shuffled.slice(0, 3));
+  }, []);
 
-  const randomizeSuggestions = () => {
-    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
-    setSuggestions(shuffled.slice(0, 3));
-  };
+  const randomizeSuggestions = () => {
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+    setSuggestions(shuffled.slice(0, 3));
+  };
 
-  const handleSend = async (text = null) => {
-    const msg = text || input;
-    if (!msg.trim()) return;
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: msg }]);
-    setLoading(true);
+  const handleSend = async (text = null) => {
+    const msg = text || input;
+    if (!msg.trim()) return;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: msg }]);
+    setLoading(true);
 
-    const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
-    let reply = await callGemini(msg, systemPrompt);
-    
-    // ចម្លើយ Fallback ប្រសិនបើមិនទាន់ដាក់ API Key
-    if (!reply) {
-        if (!apiKey) {
-            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។ (សូមចូលទៅកាន់ Settings -> Environment Variables -> បន្ថែម VITE_GEMINI_API_KEY)";
-        } else {
-            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។";
-        }
-    }
+    const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
+    let reply = await callGemini(msg, systemPrompt);
+    
+    if (!reply) {
+        if (!apiKey) {
+            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។ (សូមចូលទៅកាន់ Settings -> Environment Variables -> បន្ថែម VITE_GEMINI_API_KEY)";
+        } else {
+            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។";
+        }
+    }
 
-    setMessages(prev => [...prev, { role: 'model', text: reply }]);
-    setLoading(false);
-  };
-  
-  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
+    setMessages(prev => [...prev, { role: 'model', text: reply }]);
+    setLoading(false);
+  };
+  
+  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
-  return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-full max-w-4xl mx-auto">
-      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini ✨</p></div></div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
-        {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
-          <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
-      </div>
-    </div>
-  );
+  return (
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-full max-w-4xl mx-auto">
+      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini ✨</p></div></div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
+        {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
+          <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+      </div>
+    </div>
+  );
 };
 
 const AIAssistant = ({ isOnline }) => {
-    const [mode, setMode] = useState('chat');
-    return (
-        <div className="h-[75vh] min-h-[600px] flex flex-col">
-            <div className="flex justify-center mb-6 bg-[#0f172a] p-1.5 rounded-xl self-center border border-gray-800 shadow-md"><button onClick={() => setMode('chat')} className={`px-6 py-2 rounded-lg text-sm font-khmer transition-all ${mode === 'chat' ? 'bg-[#1e293b] text-white shadow-md border border-gray-700' : 'text-gray-400 hover:text-white'}`}>គ្រូជំនួយ AI</button><button onClick={() => setMode('preset')} className={`px-6 py-2 rounded-lg text-sm font-khmer transition-all ${mode === 'preset' ? 'bg-[#1e293b] text-white shadow-md border border-gray-700' : 'text-gray-400 hover:text-white'}`}>បង្កើតរូបមន្ត AI</button></div>
-            <div className="flex-1 overflow-hidden">{mode === 'chat' ? <ChatBot isOnline={isOnline} /> : <PresetGenerator isOnline={isOnline} />}</div>
-        </div>
-    );
+    const [mode, setMode] = useState('chat');
+    return (
+        <div className="h-[75vh] min-h-[600px] flex flex-col">
+            <div className="flex justify-center mb-6 bg-[#0f172a] p-1.5 rounded-xl self-center border border-gray-800 shadow-md"><button onClick={() => setMode('chat')} className={`px-6 py-2 rounded-lg text-sm font-khmer transition-all ${mode === 'chat' ? 'bg-[#1e293b] text-white shadow-md border border-gray-700' : 'text-gray-400 hover:text-white'}`}>គ្រូជំនួយ AI</button><button onClick={() => setMode('preset')} className={`px-6 py-2 rounded-lg text-sm font-khmer transition-all ${mode === 'preset' ? 'bg-[#1e293b] text-white shadow-md border border-gray-700' : 'text-gray-400 hover:text-white'}`}>បង្កើតរូបមន្ត AI</button></div>
+            <div className="flex-1 overflow-hidden">{mode === 'chat' ? <ChatBot isOnline={isOnline} /> : <PresetGenerator isOnline={isOnline} />}</div>
+        </div>
+    );
 };
 
 // --- APP COMPONENT (LAST) ---
 export default function App() {
-  const [activeTab, setActiveTab] = useState('learn');
-  const [expandedLesson, setExpandedLesson] = useState(null);
-  const [expandedSection, setExpandedSection] = useState(null);
-  const [isOnline, setIsOnline] = useState(true);
+  const [activeTab, setActiveTab] = useState('learn');
+  const [expandedLesson, setExpandedLesson] = useState(null);
+  const [expandedSection, setExpandedSection] = useState(null);
+  const [isOnline, setIsOnline] = useState(true);
 
-  const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
+  const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
 
-  return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30">
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
-      {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
-      <main className="max-w-6xl mx-auto p-4 pt-8 md:p-8">
-        <div className="animate-fade-in-down">
-          {activeTab === 'learn' && (<div className="space-y-8"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} isOnline={isOnline} /><ContactSection /></div>)}
-          {activeTab === 'quiz' && <Quiz isOnline={isOnline} />}
-          {activeTab === 'ai' && <AIAssistant isOnline={isOnline} />}
-        </div>
-      </main>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
-         <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
-         <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
-         <button onClick={() => setActiveTab('ai')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'ai' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sparkles size={20}/><span className="text-[10px] font-khmer mt-1">គ្រូ AI</span></button>
-      </div>
-    </div>
-  );
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30">
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
+      <main className="max-w-6xl mx-auto p-4 pt-8 md:p-8">
+        <div className="animate-fade-in-down">
+          {activeTab === 'learn' && (<div className="space-y-8"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} isOnline={isOnline} /><ContactSection /></div>)}
+          {activeTab === 'quiz' && <Quiz isOnline={isOnline} />}
+          {activeTab === 'ai' && <AIAssistant isOnline={isOnline} />}
+        </div>
+      </main>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
+         <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
+         <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
+         <button onClick={() => setActiveTab('ai')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'ai' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sparkles size={20}/><span className="text-[10px] font-khmer mt-1">គ្រូ AI</span></button>
+      </div>
+    </div>
+  );
 }
