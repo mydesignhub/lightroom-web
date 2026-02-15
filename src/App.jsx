@@ -5,26 +5,32 @@ import {
   Bot, Settings, HelpCircle, BarChart, Zap, Triangle, Touchpad, 
   AlertTriangle, RotateCcw, Globe, RefreshCw, Layout, Image as ImageIcon, 
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
-  Layers, Crop, Save, ScanFace 
+  Layers, Crop, Save, ScanFace, Shuffle, Lock, Key
 } from 'lucide-react';
 
 // ==========================================
-// 1. GEMINI API CONFIGURATION (SMART SETUP)
+// 1. GEMINI API CONFIGURATION
 // ==========================================
 
 let apiKey = ""; 
 try {
-  // ព្យាយាមយក Key ពី Vercel (Production Environment)
   // @ts-ignore
   apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 } catch (e) {
-  // បើក្នុង Preview (ដែលមិនស្គាល់ import.meta) វានឹងមិនគាំងទេ គ្រាន់តែអត់មាន Key
   console.log("Running in Preview Mode (No API Key)");
   apiKey = ""; 
 }
 
+// CACHE SYSTEM FOR CHAT
+const responseCache = new Map();
+
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   if (!apiKey) return null;
+
+  const cacheKey = JSON.stringify({ prompt, jsonMode });
+  if (responseCache.has(cacheKey)) {
+    return responseCache.get(cacheKey);
+  }
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
   
@@ -34,30 +40,45 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
     generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
   };
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+  const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    if (!response.ok) throw new Error(`API Error: ${response.status}`);
-    const data = await response.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (jsonMode && text) {
-        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        return JSON.parse(text);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.status === 429 || response.status === 503) {
+         console.warn(`AI is busy... Retrying attempt ${attempt + 1}`);
+         await wait(2000 * (attempt + 1)); 
+         continue; 
+      }
+
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+      
+      const data = await response.json();
+      let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (jsonMode && text) {
+          text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+          text = JSON.parse(text);
+      }
+
+      responseCache.set(cacheKey, text);
+      return text; 
+      
+    } catch (error) {
+      console.error("Gemini API Error:", error);
+      if (attempt === 2) return null;
     }
-    return text;
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return null;
   }
+  return null;
 };
 
 // ==========================================
-// 2. DATA (FULL CONTENT RESTORED)
+// 2. ICONS & ASSETS
 // ==========================================
 
 const FacebookIcon = (props) => (
@@ -65,6 +86,101 @@ const FacebookIcon = (props) => (
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 );
+
+// ==========================================
+// 3. DATABASES (LOCAL & CACHED AI)
+// ==========================================
+
+const AI_CACHE_DB = {
+  "តើ Dehaze ប្រើសម្រាប់អ្វី?": "Dehaze គឺជាឧបករណ៍ដ៏អស្ចារ្យសម្រាប់៖\n\n• **កាត់បន្ថយអ័ព្ទ/ផ្សែង៖** ធ្វើឱ្យរូបភាពដែលស្រអាប់មើលទៅច្បាស់និងដិតឡើងវិញ។\n• **បន្ថែមពណ៌មេឃ៖** ធ្វើឱ្យមេឃពណ៌ខៀវកាន់តែដិត និងឃើញពពកច្បាស់។\n• **បង្កើត Effect ស្រទន់៖** បើទាញទៅខាងឆ្វេង (Negative) វានឹងបង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅ Dreamy។",
+  "ចង់កែរូបបែប Vintage": "ដើម្បីទទួលបានរូបបែប Vintage (បុរាណ) សូមសាកល្បង៖\n\n• **Curve:** លើកចំណុចខ្មៅខាងឆ្វេងក្រោមឡើងលើបន្តិច (Lifted Blacks) ដើម្បីឱ្យពណ៌ខ្មៅប្រែជាប្រផេះ។\n• **Color:** បន្ថយ Saturation (-20) និងបន្ថែមពណ៌លឿង (Temp +) បន្តិច។\n• **Effects:** បន្ថែម Grain (+20 ទៅ +40) ដើម្បីឱ្យដូចរូបថតហ្វីល។\n• **Vignette:** ដាក់បន្តិច (-15) ដើម្បីឱ្យគែមងងឹត។",
+  "រូបងងឹតពេក ធ្វើម៉េច?": "បើរូបងងឹតពេក សូមកែតាមលំដាប់នេះ៖\n\n1. **Exposure (+):** តម្លើងពន្លឺរួមជាមុនសិន។\n2. **Shadows (+):** តម្លើងដើម្បីបំភ្លឺតែផ្នែកងងឹត (កុំឱ្យប៉ះពាល់ផ្នែកភ្លឺ)។\n3. **Whites (+):** តម្លើងបន្តិចដើម្បីឱ្យរូបមើលទៅភ្លឺថ្លា។\n\n⚠️ ប្រយ័ត្ន៖ ការតម្លើងពន្លឺខ្លាំងអាចធ្វើឱ្យរូបមានគ្រាប់ (Noise) ដូច្នេះកុំភ្លេចប្រើ Noise Reduction បើចាំបាច់។",
+  "សុំរូបមន្តកែរូបបែប Cinematic": "រូបមន្ត Cinematic ដ៏ពេញនិយម (Teal & Orange)៖\n\n• **Calibration:** Blue Primary (Hue -50, Sat +50), Red Primary (Hue +20, Sat -20)។\n• **Color Grading:** Shadows (Teal/Blue), Highlights (Orange/Yellow)។\n• **Light:** Contrast ខ្ពស់បន្តិច, Blacks បន្ថយចុះ។\n• **Crop:** កាត់រូបជាសមាមាត្រ 16:9 ឬ 2.35:1 ដើម្បីឱ្យដូចកុន។",
+  "របៀបធ្វើអោយស្បែកស?": "នៅក្នុង Lightroom អ្នកអាចធ្វើឱ្យស្បែកសដោយ៖\n\n1. ចូលទៅកាន់ **Color Mix** (ឬ Color Mixer)។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance (+):** តម្លើងដើម្បីឱ្យស្បែកភ្លឺ/ស។\n4. **Saturation (-):** បន្ថយបន្តិចបើស្បែកក្រហមពេក។\n\nកុំប្រើ Exposure រួម ព្រោះវានឹងធ្វើឱ្យភ្លឺទាំង Background។",
+  "កែរូបថតពេលយប់អោយស្អាត": "គន្លឹះកែរូបថតពេលយប់៖\n\n• **Highlights (-):** បន្ថយដើម្បីកុំឱ្យភ្លើងអំពូលចាំងខ្លាំងពេក។\n• **Shadows (+):** តម្លើងដើម្បីឱ្យឃើញព័ត៌មានលម្អិតក្នុងទីងងឹត។\n• **Temp:** កែសីតុណ្ហភាពពណ៌ កុំឱ្យជាប់លឿងពេក (ភ្លើងផ្លូវ)។\n• **Noise Reduction:** ចាំបាច់ណាស់! ដាក់ប្រហែល 20-30 ដើម្បីលុបគ្រាប់។",
+  "របៀបដាក់ពណ៌ Teal & Orange": "របៀបងាយៗ៖\n\n1. **Profiles:** ប្រើ Profile 'Modern 08' ឬ 'Artistic 04' ជាមូលដ្ឋាន។\n2. **Color Mix:**\n   - Blue: Hue ទៅឆ្វេង (Aqua), Saturation (+)\n   - Orange: Saturation (+), Luminance (+)\n   - Green: Hue ទៅឆ្វេង (Yellow), Saturation (-)\n3. **Grading:** Shadows ដាក់ពណ៌ Teal, Highlights ដាក់ពណ៌ Orange។",
+  "ពន្យល់ពី Curves": "Tone Curve គឺជាឧបករណ៍កែពន្លឺកម្រិតខ្ពស់៖\n\n• **ខ្សែបន្ទាត់ (Line):** តំណាងឱ្យពន្លឺពី ខ្មៅ (ឆ្វេង) ទៅ ស (ស្តាំ)។\n• **S-Curve:** ដាក់ចំណុច ៣ (Highlights ឡើង, Midtones នៅស្ងៀម, Shadows ចុះ) ដើម្បីបង្កើត Contrast ស្អាត។\n• **Lifted Blacks:** ទាញចំណុចខ្មៅបំផុត (ឆ្វេងក្រោម) ឡើងលើបន្តិច ដើម្បីបានពណ៌ Faded/Matte។",
+  "តើ Grain ជួយអ្វីខ្លះ?": "Grain (គ្រាប់) មិនមែនអាក្រក់ទាំងអស់ទេ៖\n\n1. **Aesthetic:** ធ្វើឱ្យរូបមើលទៅមានសិល្បៈដូចថតដោយហ្វីលកាមេរ៉ា។\n2. **Masking Noise:** បើកែរូបយប់ហើយ Noise Reduction ធ្វើឱ្យរូបរលោងពេក (Plastic look) ការបន្ថែម Grain បន្តិចអាចជួយឱ្យរូបមើលទៅមាន Texture ធម្មជាតិវិញ។",
+  "របៀបកែរូប Portrait អោយស្អាត": "សម្រាប់រូបមនុស្ស (Portrait)៖\n\n• **Face:** ប្រើ 'Vibrance' ជំនួស 'Saturation'។\n• **Skin:** កែពណ៌ Orange Luminance ឱ្យស្បែកភ្លឺ។\n• **Details:** បន្ថយ Texture/Clarity បន្តិច (-10) ដើម្បីឱ្យស្បែកម៉ត់ (ឬប្រើ Masking លើតែមុខ)។\n• **Eyes:** ប្រើ Brush តម្លើង Exposure និង Clarity លើគ្រាប់ភ្នែកឱ្យភ្លឺ។",
+  "តើ Clarity ខុសពី Texture យ៉ាងណា?": "ទាំងពីរនេះធ្វើឱ្យរូបច្បាស់ដូចគ្នា ប៉ុន្តែ៖\n\n• **Texture:** ប៉ះពាល់តែព័ត៌មានលម្អិតតូចៗ (ស្បែក, ផ្ទៃវត្ថុ)។ ល្អសម្រាប់ធ្វើឱ្យស្បែកម៉ត់ (ពេលបន្ថយ)។\n• **Clarity:** ប៉ះពាល់ Contrast នៅកណ្តាល (Midtones)។ វាខ្លាំងជាង Texture។ ការប្រើ Clarity ខ្លាំងពេកធ្វើឱ្យរូបមើលទៅកខ្វក់ ឬខ្មៅ។",
+  "របៀបកែពណ៌មេឃអោយដិត?": "វិធីធ្វើឱ្យមេឃខៀវដិត៖\n\n1. **HSL:** ចូលពណ៌ Blue -> បន្ថយ Luminance (-) និងតម្លើង Saturation (+)។\n2. **Masking:** ប្រើ 'Select Sky' -> បន្ថយ Exposure បន្តិច, បន្ថយ Highlights, និងតម្លើង Dehaze។",
+  "តើ RAW និង JPG ខុសគ្នាយ៉ាងណា?": "• **RAW (DNG):** ផ្ទុកព័ត៌មានទាំងអស់ពីកាមេរ៉ា។ អាចកែពន្លឺនិងពណ៌បានច្រើនដោយមិនបែករូប។ (ណែនាំឱ្យប្រើ)\n• **JPG:** រូបភាពត្រូវបានកែនិងបង្រួមរួច។ ស្រាល ប៉ុន្តែពេលកែខ្លាំងងាយនឹងបែក ឬខូចពណ៌។",
+  "របៀបលុបមុនក្នុង Lightroom?": "ប្រើឧបករណ៍ **Healing Brush** (រូបបិទដំបៅ)៖\n\n1. ជ្រើសរើសប្រភេទ 'Heal' (មិនមែន Clone)។\n2. ចុចលើគ្រាប់មុន ឬស្នាម។\n3. Lightroom នឹងយកស្បែកស្អាតពីកន្លែងផ្សេងមកជំនួសដោយស្វ័យប្រវត្តិ។",
+  "តើ Vignette ប្រើពេលណា?": "Vignette (ធ្វើឱ្យគែមងងឹត) គួរប្រើនៅជំហានចុងក្រោយ។ វាជួយបិទបាំងអ្វីដែលរញ៉េរញ៉ៃនៅគែមរូប និងរុញការចាប់អារម្មណ៍របស់អ្នកមើលទៅកាន់កណ្តាលរូបភាព (Subject)។",
+  "របៀបធ្វើអោយរូបច្បាស់ (Sharp)?": "• **Sharpening:** តម្លើងកម្រិត 40-50។\n• **Masking (សំខាន់):** ចុចពីរម្រាមដៃ (ឬ Alt) ពេលអូស Slider 'Masking'។ អូសរហូតដល់ឃើញពណ៌សតែនៅតាមគែមវត្ថុ។ នេះជួយឱ្យច្បាស់តែគែម មិនធ្វើឱ្យផ្ទៃរលោង (ដូចស្បែក/មេឃ) មានគ្រាប់។",
+  "តើ HSL ប្រើសម្រាប់អ្វី?": "HSL គឺជាបេះដូងនៃការកែពណ៌៖\n\n• **H (Hue):** ប្តូរពណ៌ (ឧ. ប្តូរស្លឹកឈើពីបៃតងទៅលឿង)។\n• **S (Saturation):** កំណត់ភាពដិតនៃពណ៌នោះ។\n• **L (Luminance):** កំណត់ពន្លឺនៃពណ៌នោះ (ធ្វើឱ្យពណ៌នោះភ្លឺឬងងឹត)។",
+  "របៀប Copy Settings ទៅរូបផ្សេង?": "ដើម្បីចំណេញពេល៖\n\n1. កែរូបទី ១ ឱ្យស្អាត។\n2. ចុចសញ្ញា ... (More) -> Copy Settings។\n3. បើករូបទី ២ -> ចុច ... -> Paste Settings។\n\nវានឹងអនុវត្តការកែទាំងអស់ទៅរូបថ្មី។",
+  "តើ Color Grading ប្រើដើម្បីអ្វី?": "Color Grading (Split Toning) ប្រើសម្រាប់បន្ថែមពណ៌អារម្មណ៍ (Mood) ទៅក្នុងរូប។\n\n• ខុសពី HSL ដែលកែពណ៌ដែលមានស្រាប់, Grading អាចដាក់ពណ៌ថ្មីចូលទៅក្នុង Shadows (ម្លប់) និង Highlights (កន្លែងភ្លឺ)។",
+  "គន្លឹះថតរូបពេលថ្ងៃលិច?": "• **Golden Hour:** ថតមុនថ្ងៃលិច ១ ម៉ោង ពន្លឺនឹងទន់និងមានពណ៌មាស។\n• **Underexpose:** ថតឱ្យងងឹតបន្តិច ដើម្បីកុំឱ្យបាត់ពណ៌មេឃ។ ក្នុង Lightroom អាចតម្លើង Shadows មកវិញបាន តែបើមេឃស (Overexposed) គឺកែមិនបានទេ។"
+};
+
+const TIP_DATABASE = [
+  "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម រួចកែតម្រូវតាមក្រោយ ដើម្បីចំណេញពេល។",
+  "ចុចសង្កត់លើរូបដើម្បីមើល Before/After ប្រៀបធៀបលទ្ធផល។",
+  "ចុចពីរដងលើ Slider ដើម្បី Reset វាទៅតម្លៃ 0 វិញ។",
+  "ប្រើម្រាមដៃពីរលើ Slider (Whites/Blacks) ដើម្បីមើលកន្លែងដែលបាត់ព័ត៌មាន (Clipping)។",
+  "បន្ថយ Highlights (-50 ដល់ -100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតក្នុងមេឃ។",
+  "តម្លើង Shadows (+30 ដល់ +60) ដើម្បីមើលឃើញរបស់ក្នុងម្លប់ច្បាស់ជាងមុន។",
+  "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត ដោយមិនប៉ះពាល់ដី។",
+  "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បានចេញពីរូបភាព។",
+  "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស (Portrait) ព្រោះវាធ្វើឱ្យឃើញស្នាមកាន់តែច្បាស់។",
+  "ប្រើ Vibrance ជំនួស Saturation ដើម្បីទទួលបានពណ៌ស្បែកធម្មជាតិជាង។",
+  "Export ជា DNG ដើម្បីចែករំលែក Preset ទៅឱ្យមិត្តភក្តិ។",
+  "ប្រើ Grid (Rule of Thirds) ពេលថត ដើម្បីឱ្យរូបមានសមាសភាពល្អ។",
+  "បើក 'Lens Profile Corrections' ជានិច្ច ដើម្បីកែភាពកោងនៃកែវថត។",
+  "ប្រើ 'Upright' -> 'Auto' សម្រាប់រូបថតអគារ ដើម្បីឱ្យសរសរត្រង់។",
+  "ដាក់ផ្កាយ (Rate) រូបដែលចូលចិត្ត ដើម្បីងាយស្រួលរកពេលក្រោយ។",
+  "ប្រើ Color Noise Reduction (25-30) សម្រាប់រូបថតយប់ ដើម្បីកាត់បន្ថយគ្រាប់ពណ៌។",
+  "កុំ Sharpen ខ្លាំងពេក ប្រយ័ត្នរូបខូចគុណភាព។",
+  "ធ្វើឱ្យធ្មេញស៖ ប្រើ Brush -> Saturation (-50) -> Exposure (+20)។",
+  "ប្រើ S-Curve បន្តិច ដើម្បីឱ្យរូបមានជម្រៅ (Pop) និង Contrast ស្អាត។",
+  "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើឱ្យប្លែក។",
+  "ធ្វើឱ្យស្មៅបៃតងខ្ចី៖ HSL -> Green -> Hue ទៅឆ្វេង (Yellowish)។",
+  "បន្ថយ Dehaze ទៅឆ្វេងបន្តិច ដើម្បីបង្កើត Effect ដូចសុបិន (Dreamy)។",
+  "ប្រើ Grain បន្តិច (10-15) ដើម្បីបិទបាំង Noise និងឱ្យរូបមើលទៅដូច Film។",
+  "ប្រើ Vignette ដើម្បីឱ្យគេផ្តោតលើកណ្តាលរូប (Subject)។",
+  "កាត់រូប 4:5 សម្រាប់ Instagram Post ដើម្បីបានពេញអេក្រង់។",
+  "កាត់រូប 9:16 សម្រាប់ Story ឬ TikTok។",
+  "ប្រើ Copy Settings ដើម្បីកែរូបជាច្រើនក្នុងពេលតែមួយ។",
+  "ប្រើ Version ដើម្បីសាកល្បងស្តាយផ្សេងៗលើរូបតែមួយ។",
+  "មើល Histogram ដើម្បីដឹងថារូបងងឹតឬភ្លឺពេក។",
+  "ប្រើ Range Mask ដើម្បីកែតែពណ៌ជាក់លាក់ណាមួយ។",
+  "កុំភ្លេចកែ White Balance មុនគេ ដើម្បីឱ្យពណ៌ត្រឹមត្រូវ។",
+  "ប្រើ Temp ដើម្បីបង្កើតអារម្មណ៍ (Mood) កក់ក្តៅ ឬត្រជាក់។",
+  "ប្រើ Tint ដើម្បីកែពណ៌ស្បែកដែលជាប់បៃតង។",
+  "ប្រើ B&W (សខ្មៅ) ប្រសិនបើពន្លឺល្អ ប៉ុន្តែពណ៌មិនស្អាត។",
+  "ប្រើ Split Toning (Color Grading) សម្រាប់ដាក់ពណ៌ក្នុង Shadows និង Highlights។",
+  "Lifted Blacks (Curve) ធ្វើឱ្យរូបមើលទៅដូច Film (Vintage)។",
+  "Invert Mask គឺមានប្រយោជន៍ខ្លាំងណាស់សម្រាប់កែ Background។",
+  "ប្រើ Brush ជាមួយ Flow ទាប ដើម្បីគូរពណ៌តិចៗ លម្អិត។",
+  "កែពណ៌មាត់៖ Mask -> Brush -> Saturation (+) -> Tint (Pink)។",
+  "ធ្វើឱ្យរ៉ូបកូនក្រមុំស៖ HSL -> White -> Saturation (-)។",
+  "ធ្វើឱ្យទឹកសមុទ្រខៀវស្អាត៖ HSL -> Aqua -> Hue ទៅស្តាំ។",
+  "កែពណ៌ថ្ងៃលិច៖ HSL -> Orange/Red -> Saturation (+)។"
+];
+
+const QUESTION_DATABASE = [
+  { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1 },
+  { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1 },
+  { id: 3, question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?", options: ["Green", "Orange", "Blue", "Red"], correct: 2 },
+  { id: 4, question: "តើ Dehaze ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 1 },
+  { id: 5, question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?", options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "បន្ថយ Exposure"], correct: 1 },
+  { id: 6, question: "តើ Tone Curve មួយណាដែលធ្វើឱ្យរូបមាន Contrast ស្អាត (Pop)?", options: ["Linear", "S-Curve", "Flat", "Inverted"], correct: 1 },
+  { id: 7, question: "តើ Temp ប្រើសម្រាប់កែអ្វី?", options: ["ភាពច្បាស់", "សីតុណ្ហភាពពណ៌ (លឿង/ខៀវ)", "ពន្លឺ", "គ្រាប់ Noise"], correct: 1 },
+  { id: 8, question: "តើការប្រើ Sharpening ខ្លាំងពេកនឹងធ្វើឱ្យរូបទៅជាយ៉ាងណា?", options: ["ច្បាស់ស្អាត", "មានគ្រាប់ Noise និងខូចគុណភាព", "មើលទៅទន់", "មានពណ៌ស្រស់"], correct: 1 },
+  { id: 9, question: "តើ DNG ជាប្រភេទ file អ្វី?", options: ["Video", "RAW Image", "Audio", "Text"], correct: 1 },
+  { id: 10, question: "តើឧបករណ៍មួយណាជួយកែរូបដែលថតមកវារេ ឬមិនត្រង់?", options: ["Optics", "Geometry/Upright", "Detail", "Effects"], correct: 1 },
+  { id: 11, question: "តើ HSL តំណាងឱ្យអ្វី?", options: ["Hue, Saturation, Lightness", "High, Standard, Low", "Hue, Shadow, Light", "Highlight, Shadow, Luminance"], correct: 0 },
+  { id: 12, question: "តើធ្វើដូចម្តេចដើម្បីឱ្យស្បែកស?", options: ["បន្ថយ Orange Saturation, តម្លើង Orange Luminance", "តម្លើង Orange Saturation", "បន្ថយ Red Luminance", "តម្លើង Yellow Saturation"], correct: 0 },
+  { id: 13, question: "តើ Grain ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "បន្ថែមគ្រាប់តូចៗបែប Film Look", "លុប Noise", "កែពណ៌"], correct: 1 },
+  { id: 14, question: "តើ Vignette ធ្វើអ្វី?", options: ["ធ្វើឱ្យគែមរូបងងឹត ឬភ្លឺ", "ធ្វើឱ្យរូបកណ្តាលងងឹត", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 0 },
+  { id: 15, question: "តើ Masking ប្រើសម្រាប់អ្វី?", options: ["កែរូបភាពទាំងមូល", "កែតំបន់ជាក់លាក់នៃរូបភាព", "ដាក់ស៊ុមរូប", "Export រូប"], correct: 1 },
+  { id: 16, question: "តើ Color Grading ខុសពី HSL យ៉ាងណា?", options: ["វាមិនខុសគ្នាទេ", "HSL កែពណ៌នីមួយៗ, Grading ដាក់ពណ៌លើ Shadows/Highlights", "Grading សម្រាប់តែរូបសខ្មៅ", "HSL សម្រាប់តែកែពន្លឺ"], correct: 1 },
+  { id: 17, question: "តើ Histogram បង្ហាញអ្វី?", options: ["ទំហំរូបភាព", "ក្រាហ្វិកនៃពន្លឺនិងពណ៌ក្នុងរូប", "ឈ្មោះកាមេរ៉ា", "ទីតាំងថតរូប"], correct: 1 },
+  { id: 18, question: "តើ Clarity ធ្វើអ្វី?", options: ["បន្ថែម Contrast នៅតំបន់ Midtones", "ធ្វើឱ្យរូបព្រាល", "ប្តូរពណ៌", "កែពន្លឺមេឃ"], correct: 0 },
+  { id: 19, question: "តើគួរប្រើអ្វីដើម្បីកាត់បន្ថយ Noise?", options: ["Sharpening", "Noise Reduction", "Grain", "Clarity"], correct: 1 },
+  { id: 20, question: "តើអ្វីទៅជា Chromatic Aberration?", options: ["ពណ៌ស្អាត", "ស្នាមពណ៌ស្វាយ/បៃតងនៅតាមគែមវត្ថុ", "ពន្លឺចាំង", "ប្រភេទ Lens"], correct: 1 }
+];
 
 const lessonsData = [
   {
@@ -74,11 +190,11 @@ const lessonsData = [
     description: 'រៀនអំពីការកែសម្រួលពន្លឺនៅក្នុងរូបភាពរបស់អ្នក។',
     content: [
       { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ បង្កើន (+) ដើម្បីឱ្យភ្លឺ និងបន្ថយ (-) ដើម្បីឱ្យងងឹត។', tip: 'កែវាមុនគេបង្អស់។' },
-      { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់ភាពខុសគ្នារវាងផ្នែកភ្លឺ និងផ្នែកងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត (Pop)។', tip: 'កុំដាក់ខ្លាំងពេកលើស +40។' },
-      { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានពន្លឺខ្លាំង។ បន្ថយវាជួយសង្គ្រោះព័ត៌មានដែលបាត់។', tip: 'បន្ថយ (-50) ដើម្បីសង្គ្រោះពន្លឺមេឃ។' },
+      { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់ភាពខុសគ្នារវាងផ្នែកភ្លឺ និងផ្នែកងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិតច្បាស់ និងមានជម្រៅ។', tip: 'កុំដាក់ខ្លាំងពេកលើស +40។' },
+      { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានពន្លឺខ្លាំងបំផុត។ បន្ថយវាជួយសង្គ្រោះព័ត៌មានដែលបាត់ដោយសារពន្លឺចាំង។', tip: 'បន្ថយ (-50) ដើម្បីសង្គ្រោះពន្លឺមេឃ។' },
       { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានស្រមោល។ ការតម្លើងវាជួយឱ្យឃើញព័ត៌មានក្នុងកន្លែងងងឹត។', tip: 'តម្លើង (+40) សម្រាប់រូបថតបញ្ច្រាសថ្ងៃ។' },
-      { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចពណ៌សដាច់ខាត។', tip: 'តម្លើងបន្តិច (+15) ដើម្បីឱ្យរូបភ្លឺថ្លា។' },
-      { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។', tip: 'បន្ថយបន្តិច (-15) ដើម្បីឱ្យរូបមានជម្រៅ។' },
+      { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចពណ៌សដាច់ខាត។ បង្កើនវាដើម្បីឱ្យផ្នែកភ្លឺបំផុត ក្លាយជាពណ៌សសុទ្ធ។', tip: 'តម្លើងបន្តិច (+15) ដើម្បីឱ្យរូបភ្លឺថ្លា។' },
+      { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។ បន្ថយវាដើម្បីឱ្យផ្នែកងងឹតបំផុត ក្លាយជាពណ៌ខ្មៅសុទ្ធ។', tip: 'បន្ថយបន្តិច (-15) ដើម្បីឱ្យរូបមានជម្រៅ។' },
     ]
   },
   {
@@ -124,7 +240,7 @@ const lessonsData = [
     icon: <ScanFace className="w-5 h-5 text-green-400" />,
     description: 'កែតម្រូវតែផ្នែកខ្លះនៃរូបភាព (មេឃ, មនុស្ស)។',
     content: [
-      { tool: 'Select Subject', khmer: 'ជ្រើសរើសវត្ថុ', desc: 'AI ជ្រើសរើសមនុស្ស ឬវត្ថុសំខាន់។', tip: 'ធ្វើឱ្យមនុស្សភ្លឺជាង Background។' },
+      { tool: 'Select Subject', khmer: 'ជ្រើសរើសវត្ថុ', desc: 'AI នឹងជ្រើសរើសមនុស្ស ឬវត្ថុសំខាន់។', tip: 'ធ្វើឱ្យមនុស្សភ្លឺជាង Background។' },
       { tool: 'Select Sky', khmer: 'ជ្រើសរើសមេឃ', desc: 'AI ជ្រើសរើសផ្ទៃមេឃទាំងអស់។', tip: 'បន្ថយ Highlights ដើម្បីបានមេឃពណ៌ខៀវដិត។' },
       { tool: 'Linear Gradient', khmer: 'ដេញពណ៌', desc: 'កែតំបន់ជាលក្ខណៈបន្ទាត់។', tip: 'ធ្វើឱ្យដីភ្លឺ ឬមេឃងងឹត។' },
       { tool: 'Radial Gradient', khmer: 'រង្វង់', desc: 'កែតំបន់ជារង្វង់។', tip: 'ប្រើបង្កើតពន្លឺសិប្បនិម្មិត ឬ Spotlight។' },
@@ -154,19 +270,7 @@ const lessonsData = [
   }
 ];
 
-const initialQuestionBank = [
-  { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
-  { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
-  { id: 3, question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?", options: ["Green", "Orange", "Blue", "Red"], correct: 2, level: "beginner" },
-  { id: 4, question: "តើ Dehaze ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 1, level: "beginner" },
-  { id: 5, question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?", options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "តម្លើង Sharpening"], correct: 1, level: "advanced" },
-  { id: 6, question: "តើ Tone Curve មួយណាដែលធ្វើឱ្យរូបមាន Contrast ស្អាត (Pop)?", options: ["Linear", "S-Curve", "Flat", "Inverted"], correct: 1, level: "advanced" },
-  { id: 7, question: "តើ Temp ប្រើសម្រាប់កែអ្វី?", options: ["ភាពច្បាស់", "សីតុណ្ហភាពពណ៌ (លឿង/ខៀវ)", "ពន្លឺ", "គ្រាប់ Noise"], correct: 1, level: "beginner" },
-  { id: 8, question: "តើការប្រើ Sharpening ខ្លាំងពេកនឹងធ្វើឱ្យរូបទៅជាយ៉ាងណា?", options: ["ច្បាស់ស្អាត", "មានគ្រាប់ Noise និងខូចគុណភាព", "មើលទៅទន់", "មានពណ៌ស្រស់"], correct: 1, level: "advanced" },
-  { id: 9, question: "តើ DNG ជាប្រភេទ file អ្វី?", options: ["Video", "RAW Image", "Audio", "Text"], correct: 1, level: "advanced" },
-  { id: 10, question: "តើឧបករណ៍មួយណាជួយកែរូបដែលថតមកវារេ ឬមិនត្រង់?", options: ["Optics", "Geometry/Upright", "Detail", "Effects"], correct: 1, level: "advanced" }
-];
-
+// 🔥 NEW: 15+ Preset Database (No API required)
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -178,118 +282,161 @@ const PRESET_DB = {
             { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 }
         ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "dark moody": {
+        basic: { Exposure: -0.15, Contrast: 30, Highlights: -60, Shadows: -10, Whites: -30, Blacks: -10, Temp: -5, Tint: 0, Vibrance: -10, Saturation: -25, Clarity: 15, Dehaze: 10, Vignette: -30 },
+        detail: { Sharpening: 35, Noise: 0, ColorNoise: 25 },
+        effects: { Grain: 10 },
+        curve: { RGB: "Matte" },
+        colorMix: [
+            { color: "Red", h: 0, s: -20, l: -10 }, { color: "Orange", h: 0, s: -10, l: 0 }, { color: "Yellow", h: -100, s: -50, l: 0 },
+            { color: "Green", h: -100, s: -60, l: -30 }, { color: "Aqua", h: 0, s: -50, l: 0 }, { color: "Blue", h: 0, s: -50, l: -20 }, { color: "Purple", h: 0, s: -50, l: 0 }, { color: "Magenta", h: 0, s: -50, l: 0 }
+        ],
+        grading: { Shadows: { h: 220, s: 15, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 5, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "bright & airy": {
+        basic: { Exposure: 0.50, Contrast: 10, Highlights: -30, Shadows: 60, Whites: 40, Blacks: 20, Temp: 5, Tint: 5, Vibrance: 30, Saturation: 5, Clarity: -10, Dehaze: 0, Vignette: 0 },
+        detail: { Sharpening: 25, Noise: 20, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "Linear" },
+        colorMix: [
+            { color: "Red", h: 10, s: 10, l: 5 }, { color: "Orange", h: 5, s: 10, l: 15 }, { color: "Yellow", h: 10, s: 15, l: 10 },
+            { color: "Green", h: 30, s: 20, l: 20 }, { color: "Aqua", h: 0, s: 15, l: 10 }, { color: "Blue", h: 0, s: 15, l: 10 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
+        ],
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 10, l: 5 }, Blending: 50, Balance: 0 }
+    },
+    "vintage film": {
+        basic: { Exposure: 0.10, Contrast: 10, Highlights: -20, Shadows: 20, Whites: -20, Blacks: 30, Temp: 10, Tint: 0, Vibrance: -10, Saturation: -15, Clarity: 0, Dehaze: -5, Vignette: -20 },
+        detail: { Sharpening: 20, Noise: 0, ColorNoise: 25 },
+        effects: { Grain: 40 },
+        curve: { RGB: "Faded" },
+        colorMix: [
+             { color: "Red", h: 0, s: -10, l: 0 }, { color: "Orange", h: 0, s: -5, l: 0 }, { color: "Yellow", h: -20, s: -30, l: 0 },
+             { color: "Green", h: -40, s: -40, l: 0 }, { color: "Aqua", h: 0, s: -30, l: 0 }, { color: "Blue", h: -10, s: -30, l: 0 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 }
+        ],
+        grading: { Shadows: { h: 40, s: 15, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 200, s: 10, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "cyberpunk": {
+        basic: { Exposure: 0.20, Contrast: 20, Highlights: 10, Shadows: 10, Whites: 20, Blacks: -10, Temp: -20, Tint: 30, Vibrance: 50, Saturation: 10, Clarity: 20, Dehaze: 15, Vignette: -10 },
+        detail: { Sharpening: 50, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "High Contrast" },
+        colorMix: [
+             { color: "Red", h: 20, s: 30, l: 0 }, { color: "Orange", h: 0, s: 10, l: 5 }, { color: "Yellow", h: -100, s: 0, l: 0 },
+             { color: "Green", h: 100, s: -50, l: 0 }, { color: "Aqua", h: -30, s: 50, l: 0 }, { color: "Blue", h: -30, s: 50, l: 0 }, { color: "Purple", h: 50, s: 40, l: 0 }, { color: "Magenta", h: 50, s: 40, l: 0 }
+        ],
+        grading: { Shadows: { h: 260, s: 40, l: -5 }, Midtones: { h: 300, s: 20, l: 0 }, Highlights: { h: 320, s: 30, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "golden hour": {
+        basic: { Exposure: 0.15, Contrast: 15, Highlights: -30, Shadows: 30, Whites: 10, Blacks: -10, Temp: 20, Tint: 10, Vibrance: 30, Saturation: 10, Clarity: 10, Dehaze: 0, Vignette: -10 },
+        detail: { Sharpening: 35, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "S-Curve" },
+        colorMix: [
+            { color: "Red", h: 10, s: 10, l: 0 }, { color: "Orange", h: -5, s: 20, l: 10 }, { color: "Yellow", h: -15, s: 25, l: 5 },
+            { color: "Green", h: -20, s: 10, l: 0 }, { color: "Aqua", h: 0, s: 0, l: 0 }, { color: "Blue", h: 0, s: 10, l: 0 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
+        ],
+        grading: { Shadows: { h: 40, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 30, l: 5 }, Blending: 50, Balance: 0 }
+    },
+    "soft pastel": {
+        basic: { Exposure: 0.30, Contrast: -15, Highlights: -40, Shadows: 50, Whites: 20, Blacks: 30, Temp: 0, Tint: 10, Vibrance: 35, Saturation: -10, Clarity: -15, Dehaze: -5, Vignette: 0 },
+        detail: { Sharpening: 20, Noise: 20, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "Matte" },
+        colorMix: [
+             { color: "Red", h: 15, s: 10, l: 10 }, { color: "Orange", h: 10, s: 10, l: 15 }, { color: "Yellow", h: -5, s: 15, l: 10 },
+             { color: "Green", h: 40, s: 10, l: 10 }, { color: "Aqua", h: -10, s: 20, l: 15 }, { color: "Blue", h: -10, s: 20, l: 15 }, { color: "Purple", h: 20, s: 10, l: 5 }, { color: "Magenta", h: 20, s: 10, l: 5 }
+        ],
+        grading: { Shadows: { h: 220, s: 10, l: 5 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 5 }, Blending: 50, Balance: 0 }
+    },
+    "urban grey": {
+        basic: { Exposure: 0.05, Contrast: 30, Highlights: -40, Shadows: 25, Whites: 25, Blacks: -30, Temp: -5, Tint: 0, Vibrance: -25, Saturation: -40, Clarity: 30, Dehaze: 10, Vignette: -20 },
+        detail: { Sharpening: 50, Noise: 0, ColorNoise: 25 },
+        effects: { Grain: 25 },
+        curve: { RGB: "High Contrast" },
+        colorMix: [
+             { color: "Red", h: 0, s: -30, l: -10 }, { color: "Orange", h: 0, s: 10, l: 0 }, { color: "Yellow", h: -100, s: -100, l: 0 },
+             { color: "Green", h: -100, s: -100, l: 0 }, { color: "Aqua", h: -100, s: -100, l: -10 }, { color: "Blue", h: -100, s: -100, l: -10 }, { color: "Purple", h: -100, s: -100, l: 0 }, { color: "Magenta", h: -100, s: -100, l: 0 }
+        ],
+        grading: { Shadows: { h: 210, s: 15, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "black & white": {
+        basic: { Exposure: 0.0, Contrast: 40, Highlights: -20, Shadows: 20, Whites: 30, Blacks: -30, Temp: 0, Tint: 0, Vibrance: 0, Saturation: -100, Clarity: 25, Dehaze: 10, Vignette: -15 },
+        detail: { Sharpening: 45, Noise: 15, ColorNoise: 0 },
+        effects: { Grain: 30 },
+        curve: { RGB: "S-Curve" },
+        colorMix: [
+            { color: "Red", h: 0, s: 0, l: -15 }, { color: "Orange", h: 0, s: 0, l: -5 }, { color: "Yellow", h: 0, s: 0, l: 15 },
+            { color: "Green", h: 0, s: 0, l: -10 }, { color: "Aqua", h: 0, s: 0, l: -25 }, { color: "Blue", h: 0, s: 0, l: -30 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
+        ],
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "hdr landscape": {
+        basic: { Exposure: 0.0, Contrast: 15, Highlights: -90, Shadows: 90, Whites: 30, Blacks: -30, Temp: 5, Tint: 5, Vibrance: 45, Saturation: 15, Clarity: 35, Dehaze: 25, Vignette: -10 },
+        detail: { Sharpening: 65, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "Linear" },
+        colorMix: [
+            { color: "Red", h: 0, s: 15, l: 0 }, { color: "Orange", h: 0, s: 15, l: 0 }, { color: "Yellow", h: 0, s: 20, l: 0 },
+            { color: "Green", h: 15, s: 25, l: -10 }, { color: "Aqua", h: -10, s: 35, l: -15 }, { color: "Blue", h: -10, s: 35, l: -15 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
+        ],
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 15, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "matte black": {
+        basic: { Exposure: 0.05, Contrast: 10, Highlights: -30, Shadows: 40, Whites: -10, Blacks: 20, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -20, Clarity: 10, Dehaze: 0, Vignette: -15 },
+        detail: { Sharpening: 25, Noise: 0, ColorNoise: 25 },
+        effects: { Grain: 15 },
+        curve: { RGB: "Matte" }, // Important: Lifted blacks
+        colorMix: [
+            { color: "Red", h: 0, s: -10, l: 0 }, { color: "Orange", h: 0, s: -5, l: 0 }, { color: "Yellow", h: 0, s: -20, l: 0 },
+            { color: "Green", h: 0, s: -30, l: -10 }, { color: "Aqua", h: 0, s: -30, l: 0 }, { color: "Blue", h: 0, s: -30, l: -10 }, { color: "Purple", h: 0, s: -30, l: 0 }, { color: "Magenta", h: 0, s: -30, l: 0 }
+        ],
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "warm coffee": {
+        basic: { Exposure: 0.10, Contrast: 15, Highlights: -40, Shadows: 25, Whites: 10, Blacks: -10, Temp: 15, Tint: 5, Vibrance: 10, Saturation: -15, Clarity: 10, Dehaze: 5, Vignette: -15 },
+        detail: { Sharpening: 30, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 20 },
+        curve: { RGB: "S-Curve" },
+        colorMix: [
+            { color: "Red", h: 10, s: 0, l: -5 }, { color: "Orange", h: 5, s: 10, l: 0 }, { color: "Yellow", h: -10, s: -10, l: 5 },
+            { color: "Green", h: -20, s: -40, l: 0 }, { color: "Aqua", h: 0, s: -50, l: 0 }, { color: "Blue", h: -10, s: -50, l: -10 }, { color: "Purple", h: 0, s: -50, l: 0 }, { color: "Magenta", h: 0, s: -50, l: 0 }
+        ],
+        grading: { Shadows: { h: 30, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 40, s: 15, l: 5 }, Blending: 50, Balance: 0 }
+    },
+    "cool blue": {
+        basic: { Exposure: 0.10, Contrast: 20, Highlights: -30, Shadows: 20, Whites: 20, Blacks: -10, Temp: -15, Tint: 0, Vibrance: 20, Saturation: 0, Clarity: 15, Dehaze: 10, Vignette: -10 },
+        detail: { Sharpening: 40, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "S-Curve" },
+        colorMix: [
+            { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: 0, s: 10, l: 5 }, { color: "Yellow", h: 0, s: 0, l: 0 },
+            { color: "Green", h: 20, s: 10, l: 0 }, { color: "Aqua", h: 10, s: 20, l: 0 }, { color: "Blue", h: 0, s: 30, l: 5 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
+        ],
+        grading: { Shadows: { h: 210, s: 25, l: -5 }, Midtones: { h: 220, s: 10, l: 0 }, Highlights: { h: 200, s: 15, l: 0 }, Blending: 50, Balance: 0 }
+    },
+    "desaturated brown": {
+        basic: { Exposure: 0.0, Contrast: 10, Highlights: -50, Shadows: 40, Whites: 10, Blacks: 10, Temp: 10, Tint: 0, Vibrance: -20, Saturation: -30, Clarity: 10, Dehaze: 0, Vignette: -10 },
+        detail: { Sharpening: 30, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 15 },
+        curve: { RGB: "Faded" },
+        colorMix: [
+            { color: "Red", h: 10, s: -20, l: -10 }, { color: "Orange", h: 5, s: -10, l: 0 }, { color: "Yellow", h: -15, s: -40, l: 5 },
+            { color: "Green", h: -30, s: -60, l: -10 }, { color: "Aqua", h: 0, s: -70, l: 0 }, { color: "Blue", h: 0, s: -70, l: -10 }, { color: "Purple", h: 0, s: -50, l: 0 }, { color: "Magenta", h: 0, s: -50, l: 0 }
+        ],
+        grading: { Shadows: { h: 30, s: 15, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 5 }, Blending: 50, Balance: 0 }
+    },
+    "vibrant pop": {
+        basic: { Exposure: 0.15, Contrast: 30, Highlights: -40, Shadows: 30, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 60, Saturation: 10, Clarity: 20, Dehaze: 10, Vignette: -10 },
+        detail: { Sharpening: 50, Noise: 10, ColorNoise: 25 },
+        effects: { Grain: 0 },
+        curve: { RGB: "High Contrast" },
+        colorMix: [
+            { color: "Red", h: 0, s: 20, l: 5 }, { color: "Orange", h: 0, s: 15, l: 5 }, { color: "Yellow", h: 0, s: 20, l: 5 },
+            { color: "Green", h: 10, s: 30, l: 5 }, { color: "Aqua", h: 0, s: 30, l: 5 }, { color: "Blue", h: 0, s: 30, l: 5 }, { color: "Purple", h: 10, s: 20, l: 0 }, { color: "Magenta", h: 10, s: 20, l: 0 }
+        ],
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
     }
-};
-
-const QA_DB = {
-    // Basic Fallback Database
-    "exposure": "Exposure (ការប៉ះពន្លឺ) កំណត់ពន្លឺរួមនៃរូបភាព។ + ធ្វើឱ្យភ្លឺ, - ធ្វើឱ្យងងឹត។",
-    "contrast": "Contrast (ភាពផ្ទុយ) កំណត់គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។ ខ្ពស់=ដិត, ទាប=ស្រាល (Flat)។",
-    "highlight": "Highlights គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុតក្នុងរូប។ បន្ថយ (-100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតក្នុងមេឃ។",
-};
-
-const TIPS_LIST = [
-    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម រួចកែតម្រូវតាមក្រោយ។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset វាទៅ 0។", 
-    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping ពេលអូស Whites/Blacks។", "បន្ថយ Highlights និងតម្លើង Shadows ដើម្បីបានរូបបែប HDR។", 
-    "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត។", "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បាន។", "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស។"
-];
-
-// --- 3. HELPER FUNCTIONS ---
-
-const generateXMP = (recipe, title) => {
-    const basic = recipe.basic || {};
-    const colorMix = recipe.colorMix || [];
-    const grading = recipe.grading || {};
-    const detail = recipe.detail || { Sharpening: 0, Noise: 0, ColorNoise: 0 };
-    const effects = recipe.effects || { Grain: 0 };
-    const curveType = recipe.curve?.RGB || "Linear";
-
-    const getHSL = (name) => {
-        const c = colorMix.find(item => item.color.toLowerCase() === name.toLowerCase()) || {};
-        return { h: c.h || 0, s: c.s || 0, l: c.l || 0 };
-    };
-
-    const getCurvePoints = (type) => {
-        const t = (type || "").toLowerCase();
-        if (t.includes("s-curve")) return ["0, 0", "64, 50", "190, 200", "255, 255"];
-        if (t.includes("matte")) return ["0, 25", "64, 60", "190, 200", "255, 255"];
-        return ["0, 0", "255, 255"];
-    };
-    
-    const curvePoints = getCurvePoints(curveType);
-    const curveRDF = curvePoints.map(p => `<rdf:li>${p}</rdf:li>`).join('\n        ');
-    const exposureVal = basic.Exposure;
-
-    const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
-<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
- <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <rdf:Description rdf:about=""
-    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
-    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    crs:Version="14.0"
-    crs:ProcessVersion="11.0"
-    crs:HasSettings="True"
-    crs:AlreadyApplied="False"
-    crs:Name="${title}"
-    crs:Group="Lightroom Khmer Presets"
-    crs:CameraProfile="Adobe Standard"
-    photoshop:DateCreated="${new Date().toISOString()}"
-
-    crs:Exposure2012="${exposureVal}"
-    crs:Contrast2012="${basic.Contrast || 0}"
-    crs:Highlights2012="${basic.Highlights || 0}"
-    crs:Shadows2012="${basic.Shadows || 0}"
-    crs:Whites2012="${basic.Whites || 0}"
-    crs:Blacks2012="${basic.Blacks || 0}"
-    crs:Clarity2012="${basic.Clarity || 0}"
-    crs:Dehaze="${basic.Dehaze || 0}"
-    crs:Vibrance="${basic.Vibrance || 0}"
-    crs:Saturation="${basic.Saturation || 0}"
-    
-    crs:Sharpness="${detail.Sharpening}"
-    crs:LuminanceSmoothing="${detail.Noise}"
-    crs:ColorNoiseReduction="${detail.ColorNoise}"
-    crs:GrainAmount="${effects.Grain}"
-    crs:LensProfileEnable="1"
-    crs:PostCropVignetteAmount="${basic.Vignette || 0}"
-    
-    crs:HueAdjustmentRed="${getHSL('Red').h}" crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:LuminanceAdjustmentRed="${getHSL('Red').l}"
-    crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}"
-    crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}"
-    crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}"
-    crs:HueAdjustmentAqua="${getHSL('Aqua').h || getHSL('Blue').h}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s || getHSL('Blue').s}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l || getHSL('Blue').l}"
-    crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}"
-    crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}"
-    crs:HueAdjustmentMagenta="${getHSL('Magenta').h || getHSL('Purple').h}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s || getHSL('Purple').s}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l || getHSL('Purple').l}"
-
-    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}"
-    crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}"
-    crs:SplitToningBalance="${grading.Balance || 0}"
-    
-    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}"
-    crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}"
-    crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}"
-    crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}"
-    crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}"
-    crs:ColorGradeBlending="${grading.Blending || 50}"
-    >
-    <dc:creator><rdf:Seq><rdf:li>My Design App</rdf:li></rdf:Seq></dc:creator>
-    <dc:rights><rdf:Alt><rdf:li xml:lang="x-default">© 2026 My Design</rdf:li></rdf:Alt></dc:rights>
-    <crs:ToneCurvePV2012><rdf:Seq>${curveRDF}</rdf:Seq></crs:ToneCurvePV2012>
-  </rdf:Description>
- </rdf:RDF>
-</x:xmpmeta>
-<?xpacket end="w"?>`;
-    
-    const blob = new Blob([xmpContent.trim()], { type: 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${title.replace(/\s+/g, '_')}.xmp`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 };
 
 // --- COMPONENTS ---
@@ -392,15 +539,18 @@ const LessonCard = ({ lesson, onClick }) => (
 );
 
 const TipsSection = ({ isExpanded, onToggle, isOnline }) => {
-  const [aiTip, setAiTip] = useState(null);
-  const [loadingTip, setLoadingTip] = useState(false);
-  const getAiTip = async () => {
-      setLoadingTip(true);
-      const prompt = "Give me one short, useful photography or Lightroom tip in Khmer language. Keep it under 20 words.";
-      const tip = await callGemini(prompt, "You are a photography expert.");
-      setAiTip(tip || TIPS_LIST[Math.floor(Math.random() * TIPS_LIST.length)]);
-      setLoadingTip(false);
+  const [randomTip, setRandomTip] = useState(null);
+  
+  const getRandomTip = () => {
+    // ប្រើ TIP_DATABASE ជំនួស AI
+    const random = TIP_DATABASE[Math.floor(Math.random() * TIP_DATABASE.length)];
+    setRandomTip(random);
   };
+
+  useEffect(() => {
+     if(isExpanded && !randomTip) getRandomTip();
+  }, [isExpanded]);
+
   return (
     <div className="mt-8">
       <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#1e293b] p-4 rounded-xl border border-gray-800 shadow-sm hover:border-gray-500 transition-all group active:scale-95">
@@ -410,8 +560,8 @@ const TipsSection = ({ isExpanded, onToggle, isOnline }) => {
       {isExpanded && (
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-down">
           <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-xl p-4 md:col-span-2 relative overflow-hidden backdrop-blur-sm">
-             <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-white font-khmer flex items-center gap-2 z-10"><Sparkles className="w-4 h-4 text-yellow-400" /> គន្លឹះពិសេសពី AI (Magic Tip)</h4><button onClick={getAiTip} disabled={loadingTip} className="z-10 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-full font-khmer transition-all shadow-lg hover:shadow-indigo-500/50">{loadingTip ? '...' : 'យកគន្លឹះថ្មី'}</button></div>
-             <p className="text-gray-200 text-sm font-khmer leading-relaxed border-l-2 border-indigo-500 pl-3 mt-2">{aiTip || "ចុចប៊ូតុងខាងលើដើម្បីទទួលបានគន្លឹះកែរូបពី AI។"}</p>
+             <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-white font-khmer flex items-center gap-2 z-10"><Sparkles className="w-4 h-4 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4><button onClick={getRandomTip} className="z-10 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-full font-khmer transition-all shadow-lg hover:shadow-indigo-500/50"><Shuffle size={14} className="inline mr-1"/> ប្តូរថ្មី</button></div>
+             <p className="text-gray-200 text-sm font-khmer leading-relaxed border-l-2 border-indigo-500 pl-3 mt-2">{randomTip || "ចុចប៊ូតុងដើម្បីទទួលបានគន្លឹះ..."}</p>
           </div>
           <div className="bg-[#1e293b]/80 border border-gray-800 rounded-xl p-4 md:col-span-2">
             <h4 className="font-bold text-white font-khmer mb-3 flex items-center"><Zap className="w-4 h-4 mr-2 text-yellow-400" /> គន្លឹះប្រើកម្មវិធី (Shortcut Tricks)</h4>
@@ -428,14 +578,6 @@ const TipsSection = ({ isExpanded, onToggle, isOnline }) => {
                 <span className="font-bold text-blue-400">3.</span>
                 <span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> (Whites/Blacks) ដើម្បីមើលកន្លែងដែលបាត់ព័ត៌មាន (Clipping)។</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="font-bold text-blue-400">4.</span>
-                <span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន រួចកែសម្រួលបន្ថែម ដើម្បីចំណេញពេល។</span>
-              </li>
-               <li className="flex items-start gap-2">
-                <span className="font-bold text-blue-400">5.</span>
-                <span><span className="font-bold text-white">ចុចពីរដងលើរូប៖</span> Zoom 100% ដើម្បីពិនិត្យមើលភាពច្បាស់ (Sharpness)។</span>
-              </li>
             </ul>
           </div>
         </div>
@@ -451,17 +593,17 @@ const ContactSection = () => (
 const Quiz = ({ isOnline }) => {
   const [gameState, setGameState] = useState('menu');
   const [quizConfig, setQuizConfig] = useState({ level: 'beginner', amount: 10 });
-  const [questions, setQuestions] = useState(initialQuestionBank);
+  const [questions, setQuestions] = useState(QUESTION_DATABASE);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [loadingAI, setLoadingAI] = useState(false);
 
   const startQuiz = () => {
-    let filtered = questions.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level);
-    if (filtered.length < 1) filtered = questions;
+    // ប្រើ QUESTION_DATABASE ជំនួស AI
+    let filtered = QUESTION_DATABASE; // ប្រើ DB ថ្មី
     
+    // Shuffle and slice
     const shuffled = [...filtered].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, quizConfig.amount);
     
@@ -471,25 +613,6 @@ const Quiz = ({ isOnline }) => {
     setIsAnswered(false);
     setSelectedOption(null);
     setGameState('playing');
-  };
-
-  const generateAIQuestions = async () => {
-      setLoadingAI(true);
-      const prompt = `Generate 5 multiple choice questions about Adobe Lightroom and Photography in Khmer language. 
-      Return a JSON array of objects with this structure: 
-      [{ "id": number, "question": "string", "options": ["string", "string", "string", "string"], "correct": number (0-3), "level": "advanced" or "beginner" }]`;
-      
-      const newQuestions = await callGemini(prompt, "You are a quiz generator.", true);
-      
-      if (newQuestions && Array.isArray(newQuestions)) {
-          setQuestions(newQuestions); 
-          setCurrentQuestion(0);
-          setScore(0);
-          setIsAnswered(false);
-          setSelectedOption(null);
-          setGameState('playing');
-      }
-      setLoadingAI(false);
   };
 
   const handleAnswerOptionClick = (index) => {
@@ -504,14 +627,11 @@ const Quiz = ({ isOnline }) => {
     if (nextQuestion < questions.length) { setCurrentQuestion(nextQuestion); setIsAnswered(false); setSelectedOption(null); } else { setGameState('result'); }
   };
 
-  const resetQuiz = () => { setGameState('menu'); setScore(0); setIsAnswered(false); setSelectedOption(null); setQuestions(initialQuestionBank); };
+  const resetQuiz = () => { setGameState('menu'); setScore(0); setIsAnswered(false); setSelectedOption(null); setQuestions(QUESTION_DATABASE); };
 
-  if (gameState === 'menu') return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" /><h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2><p className="text-gray-400 font-khmer mb-8">សាកល្បងចំណេះដឹងរបស់អ្នកអំពី Lightroom</p><div className="space-y-6"><div className="flex justify-center gap-2 bg-[#0f172a] p-1 rounded-xl w-fit mx-auto"><button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='beginner'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>មូលដ្ឋាន</button><button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='advanced'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>កម្រិតខ្ពស់</button></div><div className="flex justify-center gap-2 items-center"><span className="text-gray-400 text-sm font-khmer mr-2">ចំនួន:</span>{[5, 10, 15].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-lg font-bold transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>))}</div>
+  if (gameState === 'menu') return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" /><h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2><p className="text-gray-400 font-khmer mb-8">សាកល្បងចំណេះដឹងរបស់អ្នកអំពី Lightroom</p><div className="space-y-6"><div className="flex justify-center gap-2 items-center"><span className="text-gray-400 text-sm font-khmer mr-2">ចំនួនសំណួរ:</span>{[5, 10, 15].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-lg font-bold transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>))}</div>
   <div className="flex gap-2 flex-col">
       <button onClick={startQuiz} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold font-khmer shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-1">ចាប់ផ្ដើមសំណួរ</button>
-      <button onClick={generateAIQuestions} disabled={loadingAI} className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl font-bold font-khmer shadow-lg hover:shadow-purple-500/30 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-          {loadingAI ? <Loader2 className="animate-spin"/> : <Sparkles size={18} />} បង្កើតសំណួរថ្មីជាមួយ AI
-      </button>
   </div>
   </div></div>;
   
@@ -534,13 +654,29 @@ const PresetGenerator = ({ isOnline }) => {
     const [styleInput, setStyleInput] = useState('');
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(false);
-    const popularStyles = ["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage Film", "Cyberpunk", "Golden Hour", "Soft Pastel", "Urban Grey", "Black & White", "HDR Landscape"];
+    
+    // 🔥 NEW: 15 Suggested Styles (Based on your request)
+    const popularStyles = Object.keys(PRESET_DB).map(key => 
+        key.charAt(0).toUpperCase() + key.slice(1) // Capitalize
+    );
 
     const generateRecipe = async (styleOverride = null) => {
         const style = styleOverride || styleInput;
-        if (!style.trim()) return;
+        // Normalize input
+        const normalizedStyle = style.toLowerCase().trim();
+        
+        if (!style) return;
         setLoading(true);
         
+        // 1. ពិនិត្យក្នុង Database មុន (Instant Load)
+        if (PRESET_DB[normalizedStyle]) {
+             await new Promise(r => setTimeout(r, 800)); // Fake AI delay for realism
+             setRecipe(PRESET_DB[normalizedStyle]);
+             setLoading(false);
+             return;
+        }
+
+        // 2. បើគ្មានក្នុង DB ទើបហៅ AI (Fallback)
         const prompt = `Create a Lightroom preset recipe for the style: "${style}". 
         Return strictly valid JSON with this structure: 
         { 
@@ -558,8 +694,8 @@ const PresetGenerator = ({ isOnline }) => {
         if (data) {
             setRecipe(data);
         } else {
-             if (style.toLowerCase().includes('teal')) setRecipe(PRESET_DB["teal & orange"]);
-             else setRecipe(PRESET_DB["teal & orange"]); // Default fallback
+             // Fallback default
+             setRecipe(PRESET_DB["teal & orange"]);
         }
         
         if (styleOverride) setStyleInput(styleOverride);
@@ -591,7 +727,14 @@ const PresetGenerator = ({ isOnline }) => {
             <div className="bg-[#0f172a] p-5 border-b border-gray-800"><h3 className="font-bold font-khmer text-white flex items-center gap-2 text-lg"><Sliders className="text-purple-400 w-6 h-6" /> អ្នកបង្កើតរូបមន្ត AI ✨</h3></div>
             <div className="p-6 space-y-6 overflow-y-auto flex-1">
                 <div className="flex gap-3"><input value={styleInput} onChange={(e) => setStyleInput(e.target.value)} placeholder="បញ្ចូលរចនាប័ទ្ម (ឧ. Cyberpunk, Soft Wedding)..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors font-khmer text-sm" /><button onClick={() => generateRecipe()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-6 py-3 rounded-xl font-bold font-khmer disabled:opacity-50 shadow-lg">{loading ? <Loader2 className="animate-spin" /> : 'បង្កើត ✨'}</button></div>
-                <div className="flex flex-wrap gap-2">{popularStyles.map(s => <button key={s} onClick={() => generateRecipe(s)} className="px-4 py-2 bg-[#0f172a] border border-gray-700 hover:border-purple-500 hover:bg-[#334155] rounded-full text-xs text-gray-300 transition-all font-medium">{s}</button>)}</div>
+                <div className="flex flex-wrap gap-2">
+                    {/* Auto-generate buttons from DB */}
+                    {popularStyles.map(s => (
+                        <button key={s} onClick={() => generateRecipe(s)} className="px-4 py-2 bg-[#0f172a] border border-gray-700 hover:border-purple-500 hover:bg-[#334155] rounded-full text-xs text-gray-300 transition-all font-medium whitespace-nowrap">
+                            {s}
+                        </button>
+                    ))}
+                </div>
                 {recipe && <div className="bg-[#0f172a] rounded-2xl p-6 border border-gray-800 animate-fade-in-down shadow-inner">
                     <button onClick={handleExport} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-lg font-khmer tracking-wide"><Download size={18} /> ទាញយក XMP (Export)</button>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -668,7 +811,15 @@ const ChatBot = ({ isOnline }) => {
     setMessages(prev => [...prev, { role: 'user', text: msg }]);
     setLoading(true);
 
-    const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
+    // 🔥 NEW: Check Cache First
+    if (AI_CACHE_DB[msg]) {
+        await new Promise(r => setTimeout(r, 500)); // Fake delay for realism
+        setMessages(prev => [...prev, { role: 'model', text: AI_CACHE_DB[msg] }]);
+        setLoading(false);
+        return;
+    }
+
+    const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. You STRICTLY only answer questions related to Adobe Lightroom, photo editing, color grading, photography techniques, and camera settings. If a user asks about anything else (e.g., general knowledge, math, politics, sports), politely apologize in Khmer and state that you can only help with photography and Lightroom matters. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
     let reply = await callGemini(msg, systemPrompt);
     
     if (!reply) {
