@@ -13,7 +13,7 @@ import {
 // ==========================================
 // ⚠️ ចំណាំសំខាន់៖ សម្រាប់ដាក់ដំណើរការលើ Vercel សូមប្រើកូដខាងក្រោម៖
 // const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
-const apiKey = ""; // ទុកទទេសម្រាប់ការបង្ហាញនៅទីនេះ (Preview)
+const apiKey = ""; 
 
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   if (!apiKey) return null; // បើគ្មាន Key គឺមិនហៅ API ទេ
