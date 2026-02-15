@@ -11,9 +11,13 @@ import {
 // ==========================================
 // 1. GEMINI API CONFIGURATION
 // ==========================================
-const apiKey = ""; // API Key will be provided by the environment
+// ⚠️ ចំណាំសំខាន់៖ សម្រាប់ដាក់ដំណើរការលើ Vercel សូមប្រើកូដខាងក្រោម៖
+// const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ""; 
+const apiKey = ""; // ទុកទទេសម្រាប់ការបង្ហាញនៅទីនេះ (Preview)
 
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
+  if (!apiKey) return null; // បើគ្មាន Key គឺមិនហៅ API ទេ
+
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
   
   const payload = {
@@ -33,12 +37,10 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
     const data = await response.json();
     let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
-    // Clean up markdown if AI adds it (fixes JSON parsing errors)
     if (jsonMode && text) {
         text = text.replace(/```json/g, '').replace(/```/g, '').trim();
         return JSON.parse(text);
     }
-    
     return text;
   } catch (error) {
     console.error("Gemini API Error:", error);
@@ -729,10 +731,13 @@ const ChatBot = ({ isOnline }) => {
     const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
     let reply = await callGemini(msg, systemPrompt);
     
+    // ចម្លើយ Fallback ប្រសិនបើមិនទាន់ដាក់ API Key
     if (!reply) {
-        // Simple fallback check
-        if (msg.includes('preset')) reply = "សុំទោស ខ្ញុំមិនអាចភ្ជាប់ទៅកាន់ AI បានទេ។ សូមសាកល្បងមុខងារ 'បង្កើតរូបមន្ត' ជំនួសវិញ។";
-        else reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។";
+        if (!apiKey) {
+            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។ (សូមចូលទៅកាន់ Settings -> Environment Variables -> បន្ថែម VITE_GEMINI_API_KEY)";
+        } else {
+            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។";
+        }
     }
 
     setMessages(prev => [...prev, { role: 'model', text: reply }]);
