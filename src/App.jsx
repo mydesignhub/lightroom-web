@@ -406,58 +406,110 @@ const generateXMP = (recipe, title) => {
     
     // Updated: Always set WhiteBalance to "As Shot" for relative temp adjustments to work in Lightroom
     // And use IncrementalTemperature instead of Temperature for relative slider values (-100 to 100)
+    // ADDED: crs:HasSettings="True" and tone curve defaults to make it a valid preset file
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
-    crs:Version="14.0"
+    crs:Version="14.5"
     crs:ProcessVersion="11.0"
     crs:Name="${title}"
     crs:HasSettings="True"
+    crs:CropConstrainToWarp="0"
     crs:WhiteBalance="As Shot"
+    crs:IncrementalTemperature="${basic.Temp || 0}"
+    crs:IncrementalTint="${basic.Tint || 0}"
     crs:Exposure2012="${basic.Exposure || 0}"
     crs:Contrast2012="${basic.Contrast || 0}"
     crs:Highlights2012="${basic.Highlights || 0}"
     crs:Shadows2012="${basic.Shadows || 0}"
     crs:Whites2012="${basic.Whites || 0}"
     crs:Blacks2012="${basic.Blacks || 0}"
+    crs:Texture="${basic.Texture || 0}"
     crs:Clarity2012="${basic.Clarity || 0}"
     crs:Dehaze="${basic.Dehaze || 0}"
     crs:Vibrance="${basic.Vibrance || 0}"
     crs:Saturation="${basic.Saturation || 0}"
-    crs:IncrementalTemperature="${basic.Temp || 0}"
-    crs:IncrementalTint="${basic.Tint || 0}"
-    crs:Texture="${basic.Texture || 0}"
-    crs:PostCropVignetteAmount="${basic.Vignette || 0}"
-    
+    crs:ParametricShadows="0"
+    crs:ParametricDarks="0"
+    crs:ParametricLights="0"
+    crs:ParametricHighlights="0"
+    crs:ParametricShadowSplit="25"
+    crs:ParametricMidtoneSplit="50"
+    crs:ParametricHighlightSplit="75"
     crs:Sharpness="${detail.Sharpening || 40}"
+    crs:SharpenRadius="+1.0"
+    crs:SharpenDetail="25"
+    crs:SharpenEdgeMasking="0"
     crs:LuminanceSmoothing="${detail.Noise || 0}"
     crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
-    crs:GrainAmount="${effects.Grain || 0}"
-
-    crs:HueAdjustmentRed="${getHSL('Red').h}" crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:LuminanceAdjustmentRed="${getHSL('Red').l}"
-    crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}"
-    crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}"
-    crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}"
-    crs:HueAdjustmentAqua="${getHSL('Aqua').h}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}"
-    crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}"
-    crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}"
-    crs:HueAdjustmentMagenta="${getHSL('Magenta').h}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
-
-    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}"
-    crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}"
+    crs:HueAdjustmentRed="${getHSL('Red').h}"
+    crs:HueAdjustmentOrange="${getHSL('Orange').h}"
+    crs:HueAdjustmentYellow="${getHSL('Yellow').h}"
+    crs:HueAdjustmentGreen="${getHSL('Green').h}"
+    crs:HueAdjustmentAqua="${getHSL('Aqua').h}"
+    crs:HueAdjustmentBlue="${getHSL('Blue').h}"
+    crs:HueAdjustmentPurple="${getHSL('Purple').h}"
+    crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
+    crs:SaturationAdjustmentRed="${getHSL('Red').s}"
+    crs:SaturationAdjustmentOrange="${getHSL('Orange').s}"
+    crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}"
+    crs:SaturationAdjustmentGreen="${getHSL('Green').s}"
+    crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}"
+    crs:SaturationAdjustmentBlue="${getHSL('Blue').s}"
+    crs:SaturationAdjustmentPurple="${getHSL('Purple').s}"
+    crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
+    crs:LuminanceAdjustmentRed="${getHSL('Red').l}"
+    crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}"
+    crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}"
+    crs:LuminanceAdjustmentGreen="${getHSL('Green').l}"
+    crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}"
+    crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}"
+    crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}"
+    crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
+    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}"
+    crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}"
+    crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}"
+    crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}"
     crs:SplitToningBalance="${grading.Balance || 0}"
-
     crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}"
     crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}"
     crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}"
     crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}"
     crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}"
     crs:ColorGradeBlending="${grading.Blending || 50}"
-    crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
+    crs:ColorGradeGlobalHue="0"
+    crs:ColorGradeGlobalSat="0"
+    crs:ColorGradeGlobalLum="0"
+    crs:GrainAmount="${effects.Grain || 0}"
+    crs:PostCropVignetteAmount="${basic.Vignette || 0}"
     crs:LensProfileEnable="1"
    >
+   <crs:ToneCurvePV2012>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012>
+   <crs:ToneCurvePV2012Red>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012Red>
+   <crs:ToneCurvePV2012Green>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012Green>
+   <crs:ToneCurvePV2012Blue>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012Blue>
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>
@@ -487,6 +539,7 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
+          {/* Always Visible Text */}
           <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
@@ -1123,15 +1176,15 @@ const ChatBot = ({ isOnline }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-150px)] max-h-[600px] w-full max-w-4xl mx-auto">
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
       <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800 pb-20 md:pb-4">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" style={{ touchAction: 'manipulation' }} /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
     </div>
   );
@@ -1179,7 +1232,6 @@ export default function App() {
       // If at root level, handle double press to exit
       if (backPressCount === 0) {
         setBackPressCount(1);
-        // Show toast or visual cue here (simplified with console for now, or add a Toast component)
         const toast = document.createElement('div');
         toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ";
         toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;";
@@ -1219,7 +1271,6 @@ export default function App() {
   }, []);
 
   return (
-    // Added touch-action-none to prevent browser zoom gestures
     <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
