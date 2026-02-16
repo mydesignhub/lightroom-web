@@ -158,6 +158,7 @@ const lessonsData = [
   }
 ];
 
+// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -167,28 +168,146 @@ const PRESET_DB = {
         colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
+    "dark moody": {
+        basic: { Exposure: -0.20, Contrast: 30, Highlights: -50, Shadows: -10, Whites: -30, Blacks: -10, Temp: -5, Tint: 0, Vibrance: -10, Saturation: -20, Clarity: 15, Dehaze: 10, Vignette: -30 },
+        detail: { Sharpening: 30, Noise: 0, ColorNoise: 25 },
+        effects: { Grain: 10 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 220, s: 10, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 5, l: 0 } }
+    },
+    "bright & airy": {
+        basic: { Exposure: 0.40, Contrast: 10, Highlights: -30, Shadows: 50, Whites: 30, Blacks: 20, Temp: 5, Tint: 5, Vibrance: 30, Saturation: 0, Clarity: -10, Dehaze: 0, Vignette: 0 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 5, l: 0 } }
+    },
+    "vintage": {
+        basic: { Exposure: 0.05, Contrast: 10, Highlights: -20, Shadows: 20, Whites: -10, Blacks: 20, Temp: 10, Tint: 0, Vibrance: -10, Saturation: -15, Clarity: 0, Dehaze: -5, Vignette: -20 },
+        effects: { Grain: 40 },
+        curve: { RGB: "Faded" },
+        grading: { Shadows: { h: 40, s: 10, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 200, s: 5, l: 0 } }
+    },
+    "cyberpunk": {
+        basic: { Exposure: 0.10, Contrast: 20, Highlights: 10, Shadows: 10, Whites: 10, Blacks: -10, Temp: -15, Tint: 20, Vibrance: 40, Saturation: 10, Clarity: 20, Dehaze: 15, Vignette: -10 },
+        curve: { RGB: "High Contrast" },
+        grading: { Shadows: { h: 260, s: 30, l: -5 }, Midtones: { h: 300, s: 10, l: 0 }, Highlights: { h: 320, s: 20, l: 0 } }
+    },
+    "golden hour": {
+        basic: { Exposure: 0.10, Contrast: 15, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -10, Temp: 15, Tint: 5, Vibrance: 20, Saturation: 5, Clarity: 10, Dehaze: 0, Vignette: -10 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 40, s: 15, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 20, l: 0 } }
+    },
+    "soft pastel": {
+        basic: { Exposure: 0.20, Contrast: -10, Highlights: -30, Shadows: 40, Whites: 10, Blacks: 20, Temp: 0, Tint: 5, Vibrance: 30, Saturation: -5, Clarity: -15, Dehaze: -5, Vignette: 0 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 220, s: 10, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 0 } }
+    },
+    "urban grey": {
+        basic: { Exposure: 0.0, Contrast: 25, Highlights: -30, Shadows: 20, Whites: 20, Blacks: -30, Temp: -5, Tint: 0, Vibrance: -20, Saturation: -30, Clarity: 25, Dehaze: 10, Vignette: -20 },
+        curve: { RGB: "High Contrast" },
+        grading: { Shadows: { h: 210, s: 10, l: -5 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "black & white": {
+        basic: { Exposure: 0.0, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Temp: 0, Tint: 0, Vibrance: 0, Saturation: -100, Clarity: 20, Dehaze: 10, Vignette: -15 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "hdr landscape": {
+        basic: { Exposure: 0.0, Contrast: 10, Highlights: -80, Shadows: 80, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 40, Saturation: 10, Clarity: 30, Dehaze: 20, Vignette: -10 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 10, l: 0 } }
+    },
+    "matte black": {
+        basic: { Exposure: 0.0, Contrast: 20, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 30, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -10, Clarity: 10, Dehaze: 0, Vignette: -20 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 210, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "cinematic warm": {
+        basic: { Exposure: 0.05, Contrast: 10, Highlights: -30, Shadows: 20, Whites: 10, Blacks: -10, Temp: 10, Tint: 0, Vibrance: 15, Saturation: 0, Clarity: 5, Dehaze: 0, Vignette: -10 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 190, s: 15, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 40, s: 20, l: 0 } }
+    },
+    "cool blue": {
+        basic: { Exposure: 0.0, Contrast: 15, Highlights: 10, Shadows: 10, Whites: 10, Blacks: -10, Temp: -20, Tint: 0, Vibrance: 20, Saturation: -5, Clarity: 15, Dehaze: 10, Vignette: 0 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 220, s: 20, l: -5 }, Midtones: { h: 210, s: 10, l: 0 }, Highlights: { h: 200, s: 10, l: 0 } }
+    },
+    "forest green": {
+        basic: { Exposure: -0.1, Contrast: 20, Highlights: -40, Shadows: 20, Whites: 10, Blacks: -20, Temp: 5, Tint: -15, Vibrance: 30, Saturation: -10, Clarity: 10, Dehaze: 10, Vignette: -20 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 120, s: 15, l: -5 }, Midtones: { h: 100, s: 10, l: 0 }, Highlights: { h: 50, s: 10, l: 0 } }
+    },
+    "sunset lover": {
+        basic: { Exposure: 0.1, Contrast: 25, Highlights: -30, Shadows: 30, Whites: 20, Blacks: -10, Temp: 20, Tint: 10, Vibrance: 40, Saturation: 10, Clarity: 10, Dehaze: 5, Vignette: -10 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 280, s: 20, l: 0 }, Midtones: { h: 30, s: 20, l: 0 }, Highlights: { h: 45, s: 30, l: 0 } }
+    },
+    "portrait clean": {
+        basic: { Exposure: 0.1, Contrast: 10, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -5, Temp: 0, Tint: 0, Vibrance: 10, Saturation: -5, Clarity: -5, Dehaze: 0, Vignette: 0 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 30, s: 5, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "desaturated": {
+        basic: { Exposure: 0.0, Contrast: 20, Highlights: -10, Shadows: 10, Whites: 10, Blacks: -10, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -40, Clarity: 10, Dehaze: 0, Vignette: -10 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 220, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "vivid pop": {
+        basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 40, Saturation: 10, Clarity: 15, Dehaze: 5, Vignette: 0 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "sepia tone": {
+        basic: { Exposure: 0.0, Contrast: 15, Highlights: -10, Shadows: 10, Whites: 0, Blacks: 0, Temp: 30, Tint: 10, Vibrance: -10, Saturation: -20, Clarity: 10, Dehaze: 0, Vignette: -20 },
+        curve: { RGB: "Faded" },
+        grading: { Shadows: { h: 40, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 10, l: 0 } }
+    },
+    "high contrast": {
+        basic: { Exposure: 0.0, Contrast: 60, Highlights: -30, Shadows: 30, Whites: 30, Blacks: -30, Temp: 0, Tint: 0, Vibrance: 10, Saturation: 0, Clarity: 20, Dehaze: 10, Vignette: 0 },
+        curve: { RGB: "High Contrast" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    }
 };
 
 const QA_DB = {
+    // 20 Common Questions with Professional AI-style Responses
     "exposure": "សួស្ដី! 👋\n\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាប្រៀបដូចជាការបើកបង្អួចទទួលពន្លឺចូលក្នុងកាមេរ៉ាអញ្ចឹង។\n\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់ មុននឹងចូលទៅកែផ្នែកផ្សេងៗ!",
+
     "contrast": "សួស្ដី! 👋\n\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបភាពមានពណ៌ដិត និងមានជម្រៅ (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបភាពមើលទៅស្រាលៗ ឬស្រទន់ (Soft Look)។\n\n👉 **Tip:** កុំតម្លើងខ្លាំងពេក (កុំឱ្យលើស +50) ព្រោះវាអាចធ្វើឱ្យរូបភាពមើលទៅរឹង និងបាត់ព័ត៌មានលម្អិត។",
+
     "highlight": "សួស្ដី! 👋\n\n**Highlights** គ្រប់គ្រងតែតំបន់ដែល **ភ្លឺខ្លាំងបំផុត** នៅក្នុងរូបភាព ដូចជាមេឃ ពពក ឬពន្លឺថ្ងៃចាំងលើមុខ។\n\n💡 **គន្លឹះពិសេស:**\n• ប្រសិនបើថតមេឃហើយសស្គុះ សូមបន្ថយ Highlights (-50 ទៅ -100)។ អ្នកនឹងឃើញពពកត្រឡប់មកវិញយ៉ាងអស្ចារ្យ!",
+
     "shadow": "សួស្ដី! 👋\n\n**Shadows** គ្រប់គ្រងតំបន់ដែល **ងងឹត** ឬនៅក្នុងម្លប់។\n\n💡 **ការណែនាំ:**\n• ប្រសិនបើអ្នកថតរូបបញ្ច្រាសពន្លឺ (Backlit) ហើយមុខងងឹត សូមតម្លើង Shadows (+40 ទៅ +70)។\n• ការតម្លើង Shadows ជួយឱ្យយើងមើលឃើញព័ត៌មាននៅក្នុងកន្លែងងងឹតបានច្បាស់។",
+
     "white": "សួស្ដី! 👋\n\n**Whites** កំណត់ចំណុច **ពណ៌សដាច់ខាត (True White)**។ វាខុសពី Highlights ត្រង់ថាវាធ្វើឱ្យផ្នែកភ្លឺ ក្លាយជាពណ៌សសុទ្ធ។\n\n👉 **Tip:** តម្លើងបន្តិច (+10 ទៅ +20) ដើម្បីឱ្យរូបភាពមើលទៅភ្លឺថ្លា (Clean Look)។",
+
     "black": "សួស្ដី! 👋\n\n**Blacks** កំណត់ចំណុច **ពណ៌ខ្មៅដាច់ខាត (True Black)**។\n\n👉 **Tip:** បន្ថយបន្តិច (-10 ទៅ -20) ដើម្បីឱ្យរូបភាពមានជម្រៅ (Depth) និងពណ៌ដិតល្អ។",
+
     "ស្បែកស": "សួស្ដី! ចង់បានរូបមន្តកែ **ស្បែកស (Bright Skin Tone)** មែនទេ? សាកល្បងវិធីនេះ៖\n\n1. ចូលទៅកាន់ **Color > Mix**។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance:** តម្លើង (+15 ទៅ +25)។\n4. **Saturation:** បន្ថយបន្តិច (-5 ទៅ -15)។\n\n💡 **ចំណាំ:** កុំតម្លើង Luminance ខ្លាំងពេក ប្រយ័ត្នស្បែកស្លេកគ្មានឈាម!",
-    "portrait": "សួស្ដី! សម្រាប់ការកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
+
+    "portrait": "សួស្ដី! ដើម្បីកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
+
     "teal": "សួស្ដី! នេះជារូបមន្ត **Teal & Orange (Cinematic Look)** ដ៏ពេញនិយម៖\n\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:**\n  - Shadows: ដាក់ពណ៌ Teal (Hue 210)។\n  - Highlights: ដាក់ពណ៌ Orange (Hue 35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
+
     "dehaze": "សួស្ដី! **Dehaze** គឺជាឧបករណ៍វេទមន្តសម្រាប់រូបទេសភាព៖\n\n• **កាត់បន្ថយ (+):** ជួយលុបអ័ព្ទ ឬផ្សែង ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ដូចក្នុងសុបិន (Dreamy/Foggy Look)។",
+
     "យប់": "សួស្ដី! នេះជាគន្លឹះសម្រាប់កែ **រូបថតពេលយប់ (Night Photography)**៖\n\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងអំពូលចាំងពេក។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** សំខាន់បំផុត! បង្កើន Noise Reduction (20-30) ដើម្បីលុបគ្រាប់។",
+
     "vintage": "សួស្ដី! ចង់បានរូបបែប **Vintage (បុរាណ)** មែនទេ? សាកល្បងរូបមន្តនេះ៖\n\n• **Tone Curve:** លើកចំណុចខ្មៅខាងឆ្វេងបំផុតឡើងលើបន្តិច (Lifted Blacks)។\n• **Grain:** បន្ថែម (+30) ដើម្បីឱ្យគ្រើមដូចហ្វីល។\n• **Saturation:** បន្ថយ (-20) ឱ្យពណ៌ស្រាល។\n• **Temp:** តម្លើងឱ្យលឿងបន្តិច។",
+
     "curves": "សួស្ដី! **Tone Curve** គឺជាក្រាហ្វកម្រិតខ្ពស់សម្រាប់គ្រប់គ្រងពន្លឺ។\n\n• **S-Curve:** ទាញក្រាហ្វជារាងអក្សរ S (ដាក់ចំណុច ៣: ស្រមោលចុះក្រោម, ពន្លឺឡើងលើ) ដើម្បីបង្កើន Contrast ឱ្យស្អាតជាងការប្រើ Slider ធម្មតា។\n• **Matte Look:** ទាញចំណុចខាងឆ្វេងក្រោមឡើងលើ ដើម្បីឱ្យពណ៌ខ្មៅប្រែជាប្រផេះ។",
+
     "grain": "សួស្ដី! **Grain** គឺជាគ្រាប់តូចៗដែលបន្ថែមលើរូបភាព។\n\n🤔 **ហេតុអ្វីគួរប្រើ?**\n• **Aesthetic:** បង្កើតអារម្មណ៍ដូចរូបថតកាមេរ៉ាជ័រ (Film Look)។\n• **Fix:** ជួយបិទបាំង Noise ដែលមិនស្អាត (Digital Noise) ឱ្យមើលទៅធម្មជាតិជាង។",
+
     "ងងឹត": "សួស្ដី! បើរូបថតរបស់អ្នក **ងងឹតពេក (Underexposed)** សូមកុំបារម្ភ៖\n\n1. **Exposure:** បង្កើន (+1.0 ឬតាមការគួរ)។\n2. **Shadows:** បង្កើន (+40)។\n3. **Contrast:** អាចបន្ថយបន្តិចបើខ្លាំងពេក។\n\n⚠️ **ប្រយ័ត្ន:** ការតម្លើងពន្លឺខ្លាំងអាចធ្វើឱ្យរូបមាន Noise (គ្រាប់) ដូច្នេះកុំភ្លេចថែម Noise Reduction។",
+
     "មេឃ": "សួស្ដី! ដើម្បីធ្វើឱ្យ **មេឃដិតស្អាត**៖\n\n• **Light:** បន្ថយ Highlights (-100) ជាមុនសិន។\n• **Color Mix (Blue):** បន្ថយ Luminance (-20) និងតម្លើង Saturation (+20)។\n• **Masking:** ល្អបំផុតគឺប្រើ 'Select Sky' រួចបន្ថយ Exposure និងបង្កើន Dehaze បន្តិច។",
+
     "ទេសភាព": "សួស្ដី! សម្រាប់ការកែរូប **Landscape (ទេសភាព)**៖\n\n• **Dehaze:** ដាក់ (+20) ដើម្បីឱ្យរូបថ្លា កាត់អ័ព្ទ។\n• **Clarity:** បង្កើន (+15) ឱ្យឃើញ Detail ដើមឈើ/ថ្ម។\n• **Vibrance:** បង្កើន (+30) ឱ្យពណ៌ធម្មជាតិស្រស់។\n• **Sharpening:** បន្ថែម (+40) ឱ្យរូបច្បាស់។",
+
     "vibrance": "សួស្ដី! **Vibrance និង Saturation** ខុសគ្នាត្រង់ណា?\n\n• **Vibrance (ឆ្លាតវៃ):** បង្កើនតែពណ៌ដែលស្លេក និងការពារពណ៌ស្បែកមិនឱ្យខូច (ល្អសម្រាប់រូបមនុស្ស)។\n• **Saturation (ទូទៅ):** បង្កើនគ្រប់ពណ៌ទាំងអស់ស្មើគ្នា (អាចធ្វើឱ្យស្បែកក្រហមខ្លាំង)។",
+
     "អាហារ": "សួស្ដី! គន្លឹះថតរូប **អាហារ (Food Photography)**៖\n\n• **White Balance:** កុំឱ្យជាប់លឿងឬខៀវពេក ត្រូវឱ្យពណ៌ចានស។\n• **Texture/Clarity:** បង្កើនបន្តិច (+20) ដើម្បីឱ្យអាហារមើលទៅមានរសជាតិ។\n• **Exposure:** ធ្វើឱ្យភ្លឺស្អាត (Bright & Airy) ដើម្បីឱ្យគួរឱ្យចង់ញ៉ាំ។",
+
     "street": "សួស្ដី! គន្លឹះ **Street Photography**៖\n\n• **Style:** និយមប្រើ Contrast ខ្ពស់ (High Contrast) និង Clarity ខ្លាំង។\n• **Color:** អាចប្រើជាសខ្មៅ (B&W) ឬ Urban Grey (ដកពណ៌ផ្សេងចេញ ទុកតែពណ៌ក្រហម/លឿង/ទឹកក្រូច)។"
 };
 
@@ -363,13 +482,12 @@ const CircleIcon = ({ color }) => (
 
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800">
+    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800`}>
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          {/* Always Visible Text */}
           <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
@@ -525,7 +643,6 @@ const PhotoLab = () => {
   };
 
   const handlePresetExport = () => {
-    // Construct Color Mix array
     const colors = ['Red', 'Orange', 'Yellow', 'Green', 'Aqua', 'Blue', 'Purple', 'Magenta'];
     const colorMix = colors.map(c => ({
         color: c,
@@ -667,30 +784,30 @@ const PhotoLab = () => {
   ];
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
         {/* Header Bar - Updated styling for compact buttons */}
-        <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
+        <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
+            <div className="hidden md:block">
                 <h2 className="text-xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
                 <p className="text-gray-400 font-khmer text-xs">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-2 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <Upload size={12} /> Upload
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <Upload size={14} /> Upload
                 </button>
-                <button onClick={handleDownload} className="px-2 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <ImageDown size={12} /> Download
+                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <ImageDown size={14} /> Download
                 </button>
-                <button onClick={handlePresetExport} className="px-2 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <FileJson size={12} /> Export XMP
+                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <FileJson size={14} /> Export XMP
                 </button>
             </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
-            {/* Image Viewer (Sticky - Optimized for Mobile 45% height) */}
-            <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-4 shrink-0">
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
+            {/* Image Viewer (Sticky - Optimized for Mobile 55% height) */}
+            <div className="h-[55%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
                     <div className="relative w-full h-full">
                         <img 
@@ -704,9 +821,9 @@ const PhotoLab = () => {
                 </div>
                 
                 {/* Image Selector */}
-                <div className="flex justify-center gap-3 bg-[#0f172a] p-3 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
+                <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
                     {sampleImages.map((item, idx) => (
-                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-12 h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
+                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
                             <img src={item.src} className="w-full h-full object-cover" />
                         </button>
                     ))}
@@ -714,26 +831,26 @@ const PhotoLab = () => {
             </div>
 
             {/* Controls Panel (Scrollable) */}
-            <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg">
+            <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-2xl lg:rounded-xl border-t lg:border border-gray-700 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-lg">
                  {/* Tabs - Reset Moved Here */}
-                 <div className="flex border-b border-gray-700 shrink-0">
-                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
-                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+                 <div className="flex border-b border-gray-700 shrink-0 bg-[#1e293b] lg:bg-transparent">
+                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 border-b-2 border-blue-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
+                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 border-b-2 border-purple-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
                     <button onClick={resetSettings} className="px-4 text-xs text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={14}/> Reset</button>
                  </div>
                  
                  {/* Controls Content */}
-                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-[#0f172a]">
                     {mode === 'manual' ? (
-                        <div className="space-y-8 pb-10">
+                        <div className="space-y-6 pb-20 lg:pb-10">
                              {/* Basic Tools */}
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-4">
+                                <div key={gIdx} className="space-y-3">
                                     <div className="flex items-center justify-between border-b border-gray-700 pb-2">
                                         <h4 className="text-sm font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
                                         <button onClick={() => resetGroup(group.items)} className="text-[10px] text-gray-500 hover:text-white">Reset</button>
                                     </div>
-                                    <div className="space-y-5 px-1">
+                                    <div className="space-y-4 px-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
                                                 <div className="flex justify-between mb-2 items-center">
@@ -772,16 +889,16 @@ const PhotoLab = () => {
                                 <div className="flex items-center justify-between border-b border-gray-700 pb-2">
                                     <h4 className="text-sm font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={18}/> Color Mix</h4>
                                 </div>
-                                <div className="flex justify-between gap-1 mb-4">
+                                <div className="flex justify-between gap-1 mb-2">
                                     {colors.map(c => (
                                         <button 
                                             key={c.id} 
                                             onClick={() => setActiveColor(c.name)}
-                                            className={`w-6 h-6 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
+                                            className={`w-8 h-8 md:w-6 md:h-6 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
                                         />
                                     ))}
                                 </div>
-                                <div className="space-y-5 px-1 bg-[#151f32] p-3 rounded-xl border border-gray-700/50">
+                                <div className="space-y-4 px-1 bg-[#151f32] p-3 rounded-xl border border-gray-700/50">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
@@ -825,7 +942,7 @@ const PhotoLab = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="space-y-6">
+                        <div className="space-y-6 pb-20">
                             <div className="bg-purple-900/20 p-4 rounded-xl border border-purple-500/30">
                                 <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2"><Sparkles size={16} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
                                 <p className="text-gray-400 text-xs font-khmer mb-4">បញ្ចូលឈ្មោះស្តាយដែលអ្នកចង់បាន (ឧ. Vintage, Cyberpunk, Soft Skin) AI នឹងកែ Slider ជូនអ្នក។</p>
@@ -975,7 +1092,7 @@ const ChatBot = ({ isOnline }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-150px)] max-h-[600px] w-full max-w-4xl mx-auto">
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-130px)] max-h-[600px] w-full max-w-4xl mx-auto">
       <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
@@ -1014,18 +1131,14 @@ export default function App() {
 
       if (expandedLesson) {
         setExpandedLesson(null);
-        try {
-            window.history.pushState(null, "", window.location.pathname);
-        } catch (e) {}
-        return;
+                    window.history.pushState(null, "", window.location.pathname);
+               return;
       }
 
       if (activeTab !== 'learn') {
         setActiveTab('learn');
-        try {
-            window.history.pushState(null, "", window.location.pathname);
-        } catch (e) {}
-        return;
+                    window.history.pushState(null, "", window.location.pathname);
+                return;
       }
 
       // If at root level, handle double press to exit
@@ -1039,18 +1152,14 @@ export default function App() {
             document.body.removeChild(toast);
             setBackPressCount(0); 
         }, 2000);
-        try {
-            window.history.pushState(null, "", window.location.pathname);
-        } catch (e) {}
-      } else {
+                   window.history.pushState(null, "", window.location.pathname);
+              } else {
         window.history.back(); 
       }
     };
 
-    try {
-        window.history.pushState(null, "", window.location.pathname);
-    } catch (e) {}
-    window.addEventListener('popstate', handlePopState);
+          window.history.pushState(null, "", window.location.pathname);
+        window.addEventListener('popstate', handlePopState);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
@@ -1073,7 +1182,9 @@ export default function App() {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
       {/* 2. AUTO HIDE HEADER FOR LAB & AI */}
-      {(activeTab !== 'lab' && activeTab !== 'ai') && <Header activeTab={activeTab} setActiveTab={setActiveTab} />}
+      <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : 'block'}`}>
+        <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
       
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
       
