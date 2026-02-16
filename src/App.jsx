@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT)
+// 2. DATASETS (FULL CONTENT PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -158,7 +158,6 @@ const lessonsData = [
   }
 ];
 
-// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -482,7 +481,7 @@ const CircleIcon = ({ color }) => (
 
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800`}>
+    <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
@@ -506,8 +505,6 @@ const Header = ({ activeTab, setActiveTab }) => {
     </header>
   );
 };
-
-// ... (LessonModal, LessonCard, TipsSection, ContactSection preserved as is) ...
 
 const LessonModal = ({ lesson, onClose }) => {
   useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = 'auto'; }; }, []);
@@ -706,22 +703,50 @@ const PhotoLab = () => {
 
   const applyPresetToSettings = (presetData) => {
       setActiveRecipe(presetData); 
+      // Force Reset to clean default values before applying new ones
       const b = presetData.basic;
       const newSettings = { ...defaultSettings };
       
-      if (b.Exposure) newSettings.exposure = b.Exposure * 10;
-      if (b.Contrast) newSettings.contrast = b.Contrast;
-      if (b.Highlights) newSettings.highlights = b.Highlights;
-      if (b.Shadows) newSettings.shadows = b.Shadows;
-      if (b.Whites) newSettings.whites = b.Whites;
-      if (b.Blacks) newSettings.blacks = b.Blacks;
-      if (b.Temp) newSettings.temp = b.Temp;
-      if (b.Tint) newSettings.tint = b.Tint;
-      if (b.Vibrance) newSettings.vibrance = b.Vibrance;
-      if (b.Saturation) newSettings.saturation = b.Saturation;
-      if (b.Clarity) newSettings.clarity = b.Clarity;
-      if (b.Dehaze) newSettings.dehaze = b.Dehaze;
-      if (b.Vignette) newSettings.vignette = b.Vignette;
+      if (b) {
+          // Map basic adjustments
+          if (b.Exposure) newSettings.exposure = b.Exposure * 10;
+          if (b.Contrast) newSettings.contrast = b.Contrast;
+          if (b.Highlights) newSettings.highlights = b.Highlights;
+          if (b.Shadows) newSettings.shadows = b.Shadows;
+          if (b.Whites) newSettings.whites = b.Whites;
+          if (b.Blacks) newSettings.blacks = b.Blacks;
+          if (b.Temp) newSettings.temp = b.Temp;
+          if (b.Tint) newSettings.tint = b.Tint;
+          if (b.Vibrance) newSettings.vibrance = b.Vibrance;
+          if (b.Saturation) newSettings.saturation = b.Saturation;
+          if (b.Clarity) newSettings.clarity = b.Clarity;
+          if (b.Dehaze) newSettings.dehaze = b.Dehaze;
+          if (b.Vignette) newSettings.vignette = b.Vignette;
+      }
+
+      // Map color mix if available
+      if (presetData.colorMix) {
+          presetData.colorMix.forEach(c => {
+              const name = c.color.toLowerCase();
+              newSettings[`${name}Hue`] = c.h;
+              newSettings[`${name}Sat`] = c.s;
+              newSettings[`${name}Lum`] = c.l;
+          });
+      }
+      
+      // Map grading if available
+      if (presetData.grading) {
+          newSettings.shadowHue = presetData.grading.Shadows?.h || 0;
+          newSettings.shadowSat = presetData.grading.Shadows?.s || 0;
+          newSettings.shadowLum = presetData.grading.Shadows?.l || 0;
+          newSettings.highlightHue = presetData.grading.Highlights?.h || 0;
+          newSettings.highlightSat = presetData.grading.Highlights?.s || 0;
+          newSettings.highlightLum = presetData.grading.Highlights?.l || 0;
+          newSettings.midHue = presetData.grading.Midtones?.h || 0;
+          newSettings.midSat = presetData.grading.Midtones?.s || 0;
+          newSettings.midLum = presetData.grading.Midtones?.l || 0;
+      }
+
       setSettings(newSettings);
   };
 
@@ -801,12 +826,9 @@ const PhotoLab = () => {
 
   return (
     <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
-        {/* Header Bar - Removed title for full screen feel on mobile */}
-        <div className="p-2 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-row justify-end items-center gap-4 z-10 relative shadow-md md:shadow-none">
-             <div className="hidden md:block mr-auto">
-                <h2 className="text-xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
-                <p className="text-gray-400 font-khmer text-xs">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
-            </div>
+        {/* Header Bar - Updated styling for compact buttons */}
+        <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
+            {/* Title removed here for Lab panel to be cleaner/fuller screen as requested */}
             <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end ml-auto">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
                 <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
@@ -1110,7 +1132,7 @@ const ChatBot = ({ isOnline }) => {
       </div>
       <div className="p-4 bg-[#1e293b] border-t border-gray-800 pb-20 md:pb-4">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" style={{ touchAction: 'manipulation' }} /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
     </div>
   );
