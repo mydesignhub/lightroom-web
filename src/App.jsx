@@ -158,6 +158,7 @@ const lessonsData = [
   }
 ];
 
+// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -481,13 +482,12 @@ const CircleIcon = ({ color }) => (
 
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800">
+    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800`}>
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          {/* Always Visible Text */}
           <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
@@ -557,7 +557,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">1.</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">2.</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> មើល Clipping (Whites/Blacks) ថាបាត់ព័ត៌មានត្រង់ណា។</span></li>
-              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយដើម្បីចំណេញពេល។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយ។</span></li>
             </ul>
           </div>
         </div>
