@@ -167,7 +167,7 @@ const PRESET_DB = {
         colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
-    "dark moody": { basic: { Exposure: -0.2, Contrast: 30, Highlights: -50 }, grading: { Shadows: {h:0,s:0,l:0}, Midtones: {h:0,s:0,l:0}, Highlights: {h:0,s:0,l:0} } } 
+    // ... Additional presets handled by fallback or AI
 };
 
 const QA_DB = {
@@ -202,6 +202,7 @@ const TIPS_LIST = [
     "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
 ];
 
+// --- 50+ QUESTIONS DATABASE ---
 const initialQuestionBank = [
   { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
   { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
@@ -217,10 +218,48 @@ const initialQuestionBank = [
   { id: 12, question: "តើ Color Grading ប្រើសម្រាប់អ្វី?", options: ["ដាក់ពណ៌ចូល Shadows/Highlights", "កែពន្លឺ", "កាត់រូប", "លុបមុន"], correct: 0, level: "advanced" },
   { id: 13, question: "តើ Highlights គ្រប់គ្រងតំបន់ណា?", options: ["តំបន់ងងឹត", "តំបន់កណ្តាល", "តំបន់ភ្លឺខ្លាំង", "ពណ៌ទាំងអស់"], correct: 2, level: "beginner" },
   { id: 14, question: "តើ Masking ប្រើសម្រាប់អ្វី?", options: ["កែរូបទាំងមូល", "កែតំបន់ជាក់លាក់", "Export រូប", "Share រូប"], correct: 1, level: "advanced" },
-  { id: 15, question: "តើ Healing Brush ប្រើសម្រាប់អ្វី?", options: ["គូររូប", "លុបមុនឬវត្ថុមិនចង់បាន", "ប្តូរពណ៌", "ដាក់អក្សរ"], correct: 1, level: "beginner" }
+  { id: 15, question: "តើ Healing Brush ប្រើសម្រាប់អ្វី?", options: ["គូររូប", "លុបមុនឬវត្ថុមិនចង់បាន", "ប្តូរពណ៌", "ដាក់អក្សរ"], correct: 1, level: "beginner" },
+  { id: 16, question: "តើ Noise Reduction ប្រើនៅពេលណា?", options: ["ថតពេលថ្ងៃ", "ថតពេលយប់ (ISO ខ្ពស់)", "ថត Portrait", "ថត Landscape"], correct: 1, level: "advanced" },
+  { id: 17, question: "តើ Aspect Ratio មួយណាសម្រាប់ Instagram Story?", options: ["1:1", "4:5", "16:9", "9:16"], correct: 3, level: "beginner" },
+  { id: 18, question: "តើ Profile មួយណាដែលធ្វើឱ្យរូបសខ្មៅ?", options: ["Adobe Color", "Adobe Landscape", "Adobe Monochrome", "Adobe Vivid"], correct: 2, level: "beginner" },
+  { id: 19, question: "តើ Calibration ស្ថិតនៅត្រង់ណា?", options: ["លើគេ", "ក្រោមគេ", "កណ្តាល", "គ្មានទេ"], correct: 1, level: "advanced" },
+  { id: 20, question: "តើ Shortcut ដើម្បីមើល Before/After គឺអ្វី?", options: ["ចុចសង្កត់លើរូប", "ចុចពីរដង", "អូសទៅឆ្វេង", "អូសទៅស្តាំ"], correct: 0, level: "beginner" },
+  { id: 21, question: "តើ Histogram ផ្នែកខាងឆ្វេងបង្ហាញពីអ្វី?", options: ["Shadows/Blacks", "Highlights/Whites", "Midtones", "Colors"], correct: 0, level: "advanced" },
+  { id: 22, question: "តើ Histogram ផ្នែកខាងស្តាំបង្ហាញពីអ្វី?", options: ["Shadows/Blacks", "Highlights/Whites", "Midtones", "Colors"], correct: 1, level: "advanced" },
+  { id: 23, question: "តើ Rule of Thirds ជួយអ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "ជួយរៀបចំសមាសភាពរូប (Composition)", "កែពណ៌", "លុបមុន"], correct: 1, level: "beginner" },
+  { id: 24, question: "តើ ISO ខ្ពស់ (ឧ. 3200) នឹងធ្វើឱ្យរូបយ៉ាងម៉េច?", options: ["ច្បាស់ល្អ", "ងងឹត", "មានគ្រាប់ Noise", "មានពណ៌ស្រស់"], correct: 2, level: "advanced" },
+  { id: 25, question: "ដើម្បីបង្កកចលនា (Freeze Motion) តើត្រូវប្រើ Shutter Speed បែបណា?", options: ["លឿន (ឧ. 1/1000)", "យឺត (ឧ. 1/30)", "ធម្មតា", "មិនសំខាន់"], correct: 0, level: "advanced" },
+  { id: 26, question: "តើ Aperture f/1.8 ផ្តល់លទ្ធផលបែបណា?", options: ["ផ្ទៃក្រោយច្បាស់", "ផ្ទៃក្រោយព្រាល (Bokeh)", "រូបងងឹត", "រូបច្បាស់ទាំងអស់"], correct: 1, level: "advanced" },
+  { id: 27, question: "តើ White Balance គិតជាខ្នាតអ្វី?", options: ["Pixels", "Kelvin (K)", "Percent", "Degrees"], correct: 1, level: "advanced" },
+  { id: 28, question: "បើចង់បន្ថែមអ័ព្ទក្នុងរូប តើត្រូវកែ Dehaze ទៅខាងណា?", options: ["ខាងស្តាំ (+)", "ខាងឆ្វេង (-)", "កុំកែ", "កែ Contrast"], correct: 1, level: "beginner" },
+  { id: 29, question: "តើ Midpoint ក្នុង Vignette កំណត់អ្វី?", options: ["ភាពងងឹត", "ទំហំនៃរង្វង់កណ្តាល", "ភាពព្រាល", "ពណ៌"], correct: 1, level: "advanced" },
+  { id: 30, question: "តើ Feather ក្នុង Vignette កំណត់អ្វី?", options: ["ភាពរលោងនៃគែម", "ទំហំ", "ពណ៌", "ភាពច្បាស់"], correct: 0, level: "advanced" },
+  { id: 31, question: "តើ Chromatic Aberration ជាធម្មតាមានពណ៌អ្វី?", options: ["ស/ខ្មៅ", "ស្វាយ/បៃតង", "ក្រហម/ខៀវ", "លឿង/ទឹកក្រូច"], correct: 1, level: "advanced" },
+  { id: 32, question: "តើ Upright 'Guided' ប្រើរបៀបណា?", options: ["ស្វ័យប្រវត្តិ", "គូសបន្ទាត់ដោយដៃ", "មិនបាច់ធ្វើអ្វីទេ", "គ្រាន់តែចុច"], correct: 1, level: "advanced" },
+  { id: 33, question: "តើ 1:1 Aspect Ratio សមស្របសម្រាប់អ្វី?", options: ["Instagram Post/Square", "Story", "Youtube", "Cover Photo"], correct: 0, level: "beginner" },
+  { id: 34, question: "តើ Invert ក្នុង Masking មានន័យថាដូចម្តេច?", options: ["លុប Mask", "ជ្រើសរើសតំបន់ផ្ទុយ (កន្លែងដែលមិនបានរើស)", "បង្កើន Mask", "បិទ Mask"], correct: 1, level: "advanced" },
+  { id: 35, question: "តើ Linear Gradient ប្រើល្អបំផុតសម្រាប់អ្វី?", options: ["កែមុខ", "កែមេឃ ឬដី", "កែភ្នែក", "កែមុន"], correct: 1, level: "beginner" },
+  { id: 36, question: "តើ Shortcut សម្រាប់ Copy Settings គឺអ្វី?", options: ["Ctrl/Cmd + C", "Ctrl/Cmd + V", "Ctrl/Cmd + Z", "Ctrl/Cmd + S"], correct: 0, level: "beginner" },
+  { id: 37, question: "តើ Shortcut សម្រាប់ Paste Settings គឺអ្វី?", options: ["Ctrl/Cmd + C", "Ctrl/Cmd + V", "Ctrl/Cmd + Z", "Ctrl/Cmd + S"], correct: 1, level: "beginner" },
+  { id: 38, question: "តើ Shortcut សម្រាប់ Undo គឺអ្វី?", options: ["Ctrl/Cmd + C", "Ctrl/Cmd + V", "Ctrl/Cmd + Z", "Ctrl/Cmd + S"], correct: 2, level: "beginner" },
+  { id: 39, question: "តើឧបករណ៍ Red Eye Correction ប្រើសម្រាប់អ្វី?", options: ["កែភ្នែកក្រហម", "កែភ្នែកឱ្យធំ", "ប្តូរពណ៌ភ្នែក", "ធ្វើឱ្យភ្នែកភ្លឺ"], correct: 0, level: "beginner" },
+  { id: 40, question: "តើ Spot Removal 'Clone' ធ្វើអ្វី?", options: ["បិទបាំង", "ចម្លងតំបន់មួយទៅដាក់តំបន់មួយទៀត", "លុបចោល", "ធ្វើឱ្យព្រាល"], correct: 1, level: "advanced" },
+  { id: 41, question: "តើ Reference View ប្រើសម្រាប់អ្វី?", options: ["មើលរូបតែមួយ", "ប្រៀបធៀបរូបភាពពីរ", "មើល Histogram", "មើល Metadata"], correct: 1, level: "advanced" },
+  { id: 42, question: "តើ Snapshots ប្រើសម្រាប់អ្វី?", options: ["ថតរូប", "រក្សាទុកស្ថានភាពនៃការកែ (Saved States)", "Share រូប", "Export រូប"], correct: 1, level: "advanced" },
+  { id: 43, question: "តើពណ៌អ្វីដែលផ្តល់អារម្មណ៍ 'កក់ក្តៅ' (Warm)?", options: ["ខៀវ", "លឿង/ទឹកក្រូច", "បៃតង", "ស្វាយ"], correct: 1, level: "beginner" },
+  { id: 44, question: "តើពណ៌អ្វីដែលផ្តល់អារម្មណ៍ 'ត្រជាក់' (Cool)?", options: ["ខៀវ", "លឿង", "ក្រហម", "ទឹកក្រូច"], correct: 0, level: "beginner" },
+  { id: 45, question: "ដើម្បីកែស្មៅឱ្យមានពណ៌បៃតងខ្ចី តើត្រូវកែ Hue ទៅខាងណា?", options: ["ខាងឆ្វេង (ទៅរកលឿង)", "ខាងស្តាំ (ទៅរកខៀវ)", "មិនបាច់កែ", "កែ Saturation"], correct: 0, level: "advanced" },
+  { id: 46, question: "តើ Luminance ក្នុង Color Mix ធ្វើអ្វី?", options: ["ប្តូរពណ៌", "កែភាពដិត", "កែពន្លឺនៃពណ៌", "កែភាពច្បាស់"], correct: 2, level: "beginner" },
+  { id: 47, question: "តើ Split Toning (Color Grading) អាចដាក់ពណ៌បានប៉ុន្មានតំបន់?", options: ["1", "2 (Shadows/Highlights)", "3 (Shadows/Midtones/Highlights)", "4"], correct: 2, level: "advanced" },
+  { id: 48, question: "តើការប្រើ Presets មានប្រយោជន៍អ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "ចំណេញពេល និងមានស្តាយដូចគ្នា", "លុប Noise", "កែ Lens"], correct: 1, level: "beginner" },
+  { id: 49, question: "តើ RAW file មានទំហំធំជាង JPG ដែរឬទេ?", options: ["តូចជាង", "ស្មើគ្នា", "ធំជាងច្រើន", "មិនប្រាកដ"], correct: 2, level: "beginner" },
+  { id: 50, question: "តើ Clarity ខុសពី Texture យ៉ាងដូចម្តេច?", options: ["Clarity ខ្លាំងជាង Texture", "Texture ល្អសម្រាប់ស្បែក Clarity ល្អសម្រាប់សំណង់", "មិនខុសគ្នាទេ", "Texture ធ្វើឱ្យរូបព្រាល"], correct: 1, level: "advanced" },
+  { id: 51, question: "តើពេលណាគួរប្រើ Black & White?", options: ["ពេលពណ៌មិនស្អាត ឬចង់បានអារម្មណ៍", "គ្រប់ពេល", "តែពេលយប់", "តែពេលថ្ងៃ"], correct: 0, level: "beginner" }
 ];
 
-// --- 3. HELPER FUNCTIONS ---
+// ==========================================
+// 3. HELPER FUNCTIONS
+// ==========================================
 
 const getLocalResponse = (prompt) => {
     const lower = prompt.toLowerCase();
@@ -234,11 +273,20 @@ const getLocalPreset = (style) => {
     return null;
 };
 
+// --- FIX: UPDATED XMP GENERATOR WITH COLOR MIX & GRADING ---
 const generateXMP = (recipe, title) => {
     const basic = recipe.basic || {};
-    // Lightroom scale logic for exposure can be different, often 1.0 is +1 stop. Slider here is -5 to 5.
-    const exposureVal = basic.Exposure || 0;
+    const colorMix = recipe.colorMix || [];
+    const grading = recipe.grading || {};
+    const detail = recipe.detail || {};
+    const effects = recipe.effects || {};
     
+    // Helper to get HSL values safely
+    const getHSL = (color) => {
+        const c = colorMix.find(item => item.color === color) || {};
+        return { h: c.h || 0, s: c.s || 0, l: c.l || 0 };
+    };
+
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -247,7 +295,7 @@ const generateXMP = (recipe, title) => {
     crs:Version="14.0"
     crs:ProcessVersion="11.0"
     crs:Name="${title}"
-    crs:Exposure2012="${exposureVal}"
+    crs:Exposure2012="${basic.Exposure || 0}"
     crs:Contrast2012="${basic.Contrast || 0}"
     crs:Highlights2012="${basic.Highlights || 0}"
     crs:Shadows2012="${basic.Shadows || 0}"
@@ -259,7 +307,34 @@ const generateXMP = (recipe, title) => {
     crs:Saturation="${basic.Saturation || 0}"
     crs:Temperature="${basic.Temp || 0}"
     crs:Tint="${basic.Tint || 0}"
-    crs:LensProfileEnable="1"
+    crs:Texture="${basic.Texture || 0}"
+    crs:PostCropVignetteAmount="${basic.Vignette || 0}"
+    
+    crs:Sharpness="${detail.Sharpening || 40}"
+    crs:LuminanceSmoothing="${detail.Noise || 0}"
+    crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
+    crs:GrainAmount="${effects.Grain || 0}"
+
+    crs:HueAdjustmentRed="${getHSL('Red').h}" crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:LuminanceAdjustmentRed="${getHSL('Red').l}"
+    crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}"
+    crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}"
+    crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}"
+    crs:HueAdjustmentAqua="${getHSL('Aqua').h}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}"
+    crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}"
+    crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}"
+    crs:HueAdjustmentMagenta="${getHSL('Magenta').h}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
+
+    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}"
+    crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}"
+    crs:SplitToningBalance="${grading.Balance || 0}"
+
+    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}"
+    crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}"
+    crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}"
+    crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}"
+    crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}"
+    crs:ColorGradeBlending="${grading.Blending || 50}"
+    crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
    >
   </rdf:Description>
  </rdf:RDF>
@@ -373,22 +448,36 @@ const ContactSection = () => (
   <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Facebook className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 Lightroom My Design. All Right Reserved.</p></div>
 );
 
-// --- 4. PHOTO LAB (MODERN UI & PRESERVED LOGIC) ---
+// --- 4. PHOTO LAB (UPDATED WITH COLOR MIX & GRADING) ---
 const PhotoLab = () => {
   const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
   const [mode, setMode] = useState('manual');
   const fileInputRef = useRef(null);
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const [activeRecipe, setActiveRecipe] = useState(null); 
 
+  // Expanded Settings including Color Mix & Grading
   const defaultSettings = {
     exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0,
     temp: 0, tint: 0, vibrance: 0, saturation: 0,
-    texture: 0, clarity: 0, dehaze: 0, vignette: 0
+    texture: 0, clarity: 0, dehaze: 0, vignette: 0,
+    // Color Mix (HSL for 8 colors)
+    redHue: 0, redSat: 0, redLum: 0,
+    orangeHue: 0, orangeSat: 0, orangeLum: 0,
+    yellowHue: 0, yellowSat: 0, yellowLum: 0,
+    greenHue: 0, greenSat: 0, greenLum: 0,
+    aquaHue: 0, aquaSat: 0, aquaLum: 0,
+    blueHue: 0, blueSat: 0, blueLum: 0,
+    purpleHue: 0, purpleSat: 0, purpleLum: 0,
+    magentaHue: 0, magentaSat: 0, magentaLum: 0,
+    // Grading
+    shadowHue: 0, shadowSat: 0, shadowLum: 0,
+    midHue: 0, midSat: 0, midLum: 0,
+    highlightHue: 0, highlightSat: 0, highlightLum: 0
   };
   
   const [settings, setSettings] = useState(defaultSettings);
+  const [activeColor, setActiveColor] = useState('Orange'); // For Color Mix UI
 
   const updateSetting = (key, value) => {
       setSettings(prev => ({...prev, [key]: value}));
@@ -396,7 +485,6 @@ const PhotoLab = () => {
 
   const resetSettings = () => {
       setSettings(defaultSettings);
-      setActiveRecipe(null);
   }
 
   const resetGroup = (groupItems) => {
@@ -432,6 +520,15 @@ const PhotoLab = () => {
   };
 
   const handlePresetExport = () => {
+    // Construct Color Mix array
+    const colors = ['Red', 'Orange', 'Yellow', 'Green', 'Aqua', 'Blue', 'Purple', 'Magenta'];
+    const colorMix = colors.map(c => ({
+        color: c,
+        h: settings[`${c.toLowerCase()}Hue`],
+        s: settings[`${c.toLowerCase()}Sat`],
+        l: settings[`${c.toLowerCase()}Lum`]
+    }));
+
     const recipe = {
       basic: {
         Exposure: settings.exposure / 10,
@@ -448,11 +545,15 @@ const PhotoLab = () => {
         Dehaze: settings.dehaze,
         Vignette: settings.vignette
       },
-      detail: activeRecipe?.detail || { Sharpening: 40, Noise: 0, ColorNoise: 0 },
-      effects: activeRecipe?.effects || { Grain: 0 },
-      curve: activeRecipe?.curve || { RGB: "Linear" },
-      colorMix: activeRecipe?.colorMix || [], 
-      grading: activeRecipe?.grading || { Shadows: {h:0,s:0,l:0}, Midtones: {h:0,s:0,l:0}, Highlights: {h:0,s:0,l:0} }
+      detail: { Sharpening: 40, Noise: 0, ColorNoise: 0 },
+      effects: { Grain: 0 },
+      curve: { RGB: "Linear" },
+      colorMix: colorMix, 
+      grading: { 
+          Shadows: {h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum}, 
+          Midtones: {h: settings.midHue, s: settings.midSat, l: settings.midLum}, 
+          Highlights: {h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum} 
+      }
     };
     generateXMP(recipe, aiPrompt || "My_Custom_Preset");
   };
@@ -478,7 +579,6 @@ const PhotoLab = () => {
   };
 
   const applyPresetToSettings = (presetData) => {
-      setActiveRecipe(presetData); 
       const b = presetData.basic;
       const newSettings = { ...defaultSettings };
       
@@ -495,6 +595,30 @@ const PhotoLab = () => {
       if (b.Clarity) newSettings.clarity = b.Clarity;
       if (b.Dehaze) newSettings.dehaze = b.Dehaze;
       if (b.Vignette) newSettings.vignette = b.Vignette;
+
+      // Map color mix if available
+      if (presetData.colorMix) {
+          presetData.colorMix.forEach(c => {
+              const name = c.color.toLowerCase();
+              newSettings[`${name}Hue`] = c.h;
+              newSettings[`${name}Sat`] = c.s;
+              newSettings[`${name}Lum`] = c.l;
+          });
+      }
+      
+      // Map grading if available
+      if (presetData.grading) {
+          newSettings.shadowHue = presetData.grading.Shadows?.h || 0;
+          newSettings.shadowSat = presetData.grading.Shadows?.s || 0;
+          newSettings.shadowLum = presetData.grading.Shadows?.l || 0;
+          newSettings.highlightHue = presetData.grading.Highlights?.h || 0;
+          newSettings.highlightSat = presetData.grading.Highlights?.s || 0;
+          newSettings.highlightLum = presetData.grading.Highlights?.l || 0;
+          newSettings.midHue = presetData.grading.Midtones?.h || 0;
+          newSettings.midSat = presetData.grading.Midtones?.s || 0;
+          newSettings.midLum = presetData.grading.Midtones?.l || 0;
+      }
+
       setSettings(newSettings);
   };
 
@@ -505,6 +629,13 @@ const PhotoLab = () => {
     let sepia = settings.temp > 0 ? settings.temp * 0.4 : 0; 
     let hue = settings.tint + (settings.temp < 0 ? settings.temp * 0.3 : 0);
     let blur = settings.texture < 0 ? Math.abs(settings.texture) * 0.02 : 0;
+    
+    // Approximation for Color Mix (Global Tint)
+    // Real individual color mix requires WebGL/Canvas pixel manipulation which is complex for this scope
+    // We approximate by global hue shifts if specific channels are pushed hard
+    if (Math.abs(settings.orangeSat) > 20) s += settings.orangeSat * 0.2; 
+    if (Math.abs(settings.blueSat) > 20) s += settings.blueSat * 0.2;
+
     return `brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${sepia}%) hue-rotate(${hue}deg) blur(${blur}px)`;
   };
 
@@ -535,6 +666,17 @@ const PhotoLab = () => {
       { id: 'dehaze', label: 'Dehaze', min: -100, max: 100, desc: 'កាត់អ័ព្ទ' },
       { id: 'vignette', label: 'Vignette', min: -100, max: 100, desc: 'គែម' },
     ]}
+  ];
+
+  const colors = [
+      { name: 'Red', id: 'red', color: 'bg-red-500' },
+      { name: 'Orange', id: 'orange', color: 'bg-orange-500' },
+      { name: 'Yellow', id: 'yellow', color: 'bg-yellow-500' },
+      { name: 'Green', id: 'green', color: 'bg-green-500' },
+      { name: 'Aqua', id: 'aqua', color: 'bg-cyan-400' },
+      { name: 'Blue', id: 'blue', color: 'bg-blue-600' },
+      { name: 'Purple', id: 'purple', color: 'bg-purple-600' },
+      { name: 'Magenta', id: 'magenta', color: 'bg-pink-500' },
   ];
   
   const sampleImages = [
@@ -607,6 +749,7 @@ const PhotoLab = () => {
                  <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                     {mode === 'manual' ? (
                         <div className="space-y-8">
+                             {/* Basic Tools */}
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-4">
                                     <div className="flex items-center justify-between border-b border-gray-700 pb-2">
@@ -641,12 +784,68 @@ const PhotoLab = () => {
                                                     onDoubleClick={() => updateSetting(t.id, 0)}
                                                     className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
                                                 />
-                                                <p className="text-[10px] text-gray-500 mt-1.5 font-khmer opacity-0 group-hover/item:opacity-100 transition-opacity">{t.desc}</p>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             ))}
+
+                            {/* Color Mix */}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-2">
+                                    <h4 className="text-sm font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={18}/> Color Mix</h4>
+                                </div>
+                                <div className="flex justify-between gap-1 mb-4">
+                                    {colors.map(c => (
+                                        <button 
+                                            key={c.id} 
+                                            onClick={() => setActiveColor(c.name)}
+                                            className={`w-6 h-6 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
+                                        />
+                                    ))}
+                                </div>
+                                <div className="space-y-5 px-1 bg-[#151f32] p-3 rounded-xl border border-gray-700/50">
+                                    {['Hue', 'Sat', 'Lum'].map((type) => {
+                                        const key = `${activeColor.toLowerCase()}${type}`;
+                                        return (
+                                            <div key={key}>
+                                                <div className="flex justify-between mb-2">
+                                                    <label className="text-xs font-bold text-gray-300 font-khmer">{type}</label>
+                                                    <span className="text-xs text-blue-400 font-mono">{settings[key]}</span>
+                                                </div>
+                                                <input 
+                                                    type="range" min="-100" max="100" 
+                                                    value={settings[key]} 
+                                                    onChange={(e) => updateSetting(key, Number(e.target.value))}
+                                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                                />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Grading */}
+                            <div className="space-y-4 pb-4">
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-2">
+                                    <h4 className="text-sm font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={18}/> Grading</h4>
+                                </div>
+                                {['Shadow', 'Mid', 'Highlight'].map(tone => (
+                                    <div key={tone} className="bg-[#151f32] p-3 rounded-xl border border-gray-700/50 space-y-3">
+                                        <h5 className="text-xs font-bold text-gray-400 font-khmer">{tone}s</h5>
+                                        <div className="flex gap-2">
+                                            <div className="flex-1">
+                                                <label className="text-[10px] text-gray-500 block mb-1">Hue</label>
+                                                <input type="range" min="0" max="360" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500"/>
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className="text-[10px] text-gray-500 block mb-1">Sat</label>
+                                                <input type="range" min="0" max="100" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -675,19 +874,20 @@ const PhotoLab = () => {
   );
 };
 
-const Quiz = () => {
+const Quiz = ({ isOnline }) => {
   const [gameState, setGameState] = useState('menu');
   const [questions, setQuestions] = useState(initialQuestionBank);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [quizConfig, setQuizConfig] = useState({ level: 'beginner', amount: 10 });
 
-  const startQuiz = (level) => {
-    let filtered = questions.filter(q => level === 'all' || q.level === level);
-    if (filtered.length < 1) filtered = questions;
+  const startQuiz = () => {
+    let filtered = questions.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level);
+    if (filtered.length < quizConfig.amount) filtered = questions; // Fallback
     const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 10);
+    const selected = shuffled.slice(0, quizConfig.amount);
     setQuestions(selected);
     setCurrentQuestion(0);
     setScore(0);
@@ -708,7 +908,25 @@ const Quiz = () => {
     if (nextQuestion < questions.length) { setCurrentQuestion(nextQuestion); setIsAnswered(false); setSelectedOption(null); } else { setGameState('result'); }
   };
 
-  if (gameState === 'menu') return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" /><h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2><p className="text-gray-400 font-khmer mb-8">សាកល្បងចំណេះដឹងរបស់អ្នកអំពី Lightroom (សំណួរជាង ២០+ នៅក្នុង Database)</p><div className="flex gap-4 justify-center"><button onClick={() => startQuiz('beginner')} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all">កម្រិតដំបូង</button><button onClick={() => startQuiz('advanced')} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all">កម្រិតខ្ពស់</button></div></div>;
+  if (gameState === 'menu') return (
+    <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto">
+        <Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" />
+        <h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2>
+        <div className="space-y-6 mt-6">
+            <div className="flex justify-center gap-2 bg-[#0f172a] p-1 rounded-xl w-fit mx-auto">
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='beginner'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>មូលដ្ឋាន</button>
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='advanced'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>កម្រិតខ្ពស់</button>
+            </div>
+            <div className="flex justify-center gap-2 items-center">
+                <span className="text-gray-400 text-sm font-khmer mr-2">ចំនួន:</span>
+                {[5, 10, 15, 20].map(num => (
+                    <button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-lg font-bold transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>
+                ))}
+            </div>
+            <button onClick={startQuiz} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all transform hover:-translate-y-1">ចាប់ផ្ដើមសំណួរ</button>
+        </div>
+    </div>
+  );
   
   if (gameState === 'result') {
       const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
@@ -780,7 +998,7 @@ const ChatBot = ({ isOnline }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-full max-w-4xl mx-auto">
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-150px)] max-h-[600px] w-full max-w-4xl mx-auto">
       <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
@@ -788,7 +1006,7 @@ const ChatBot = ({ isOnline }) => {
       </div>
       <div className="p-4 bg-[#1e293b] border-t border-gray-800">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
     </div>
   );
@@ -796,7 +1014,7 @@ const ChatBot = ({ isOnline }) => {
 
 const AIAssistant = ({ isOnline }) => {
     return (
-        <div className="h-[75vh] min-h-[600px] flex flex-col">
+        <div className="h-full flex flex-col justify-center">
             <ChatBot isOnline={isOnline} />
         </div>
     );
