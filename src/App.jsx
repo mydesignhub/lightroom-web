@@ -26,6 +26,7 @@ try {
 const responseCache = {};
 
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
+  // Check Cache
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) {
       return responseCache[cacheKey];
@@ -58,6 +59,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
         result = JSON.parse(text);
     }
 
+    // Save to Cache
     responseCache[cacheKey] = result;
     return result;
   } catch (error) {
@@ -67,7 +69,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT RESTORED)
+// 2. DATASETS (FULL CONTENT PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -167,41 +169,29 @@ const PRESET_DB = {
         colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
-    // ... Additional presets will be handled by AI or this fallback
 };
 
 const QA_DB = {
-    "exposure": "• **Exposure (ការប៉ះពន្លឺ):** កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។\n• **វិធីប្រើ:** អូសទៅស្តាំ (+) ដើម្បីឱ្យភ្លឺ និងទៅឆ្វេង (-) ដើម្បីឱ្យងងឹត។",
-    "contrast": "• **Contrast (ភាពផ្ទុយ):** កំណត់គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។\n• **Contrast ខ្ពស់:** រូបភាពដិតច្បាស់ (Pop)។\n• **Contrast ទាប:** រូបភាពមើលទៅស្រាល (Flat/Fade)។",
-    "highlight": "• **Highlights:** គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ពពក)។\n• **គន្លឹះ:** បន្ថយ (-100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតក្នុងមេឃ។",
-    "shadow": "• **Shadows:** គ្រប់គ្រងតំបន់ងងឹត ឬស្រមោល។\n• **គន្លឹះ:** តម្លើង (+) ដើម្បីមើលឃើញព័ត៌មាននៅក្នុងម្លប់។",
-    "white": "• **Whites:** កំណត់ចំណុចពណ៌សដាច់ខាត។\n• **គន្លឹះ:** តម្លើងបន្តិច (+10) ដើម្បីឱ្យរូបភ្លឺថ្លា។",
-    "black": "• **Blacks:** កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។\n• **គន្លឹះ:** បន្ថយបន្តិច (-10) ដើម្បីឱ្យរូបមានជម្រៅ។",
-    "ស្បែកស": "រូបមន្តកែស្បែកស (Skin Tone)៖\n• ចូលទៅកាន់ **Color Mix** (ឧបករណ៍លាយពណ៌)។\n• ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n• **Luminance:** តម្លើង (+15 ទៅ +25) ដើម្បីឱ្យស្បែកភ្លឺ។\n• **Saturation:** បន្ថយ (-5 ទៅ -15) ដើម្បីកាត់បន្ថយភាពក្រហម។",
-    "portrait": "ការកែរូប Portrait (មនុស្ស)៖\n• **Face:** បន្ថយ Texture (-15) ឱ្យស្បែកម៉ត់។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារពណ៌ស្បែក។\n• **Eyes:** បង្កើន Clarity តិចៗលើភ្នែក (ប្រើ Masking)។",
-    "teal": "រូបមន្ត Teal & Orange (Cinematic)៖\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:** Shadows (Teal/210), Highlights (Orange/35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
-    "dehaze": "មុខងារ Dehaze៖\n• **កាត់បន្ថយ (+):** លុបអ័ព្ទ ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ (Dreamy)។",
-    "យប់": "គន្លឹះកែរូបថតពេលយប់ (Night Mode)៖\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងចាំង។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** បង្កើន Noise Reduction (20-30)។",
-    "vintage": "រូបមន្ត Vintage (បុរាណ)៖\n• **Tone Curve:** លើកចំណុចខ្មៅឡើងលើ (Lifted Blacks)។\n• **Grain:** បន្ថែម (+30) ដើម្បីឱ្យគ្រើមដូចហ្វីល។\n• **Saturation:** បន្ថយ (-20) ឱ្យពណ៌ស្រាល។\n• **Vignette:** ដាក់ (-20) ឱ្យគែមងងឹត។",
-    "curves": "ការពន្យល់អំពី Tone Curve៖\n• **S-Curve:** ទាញរាងអក្សរ S ដើម្បីបង្កើន Contrast ឱ្យស្អាត។\n• **Blacks:** ចំណុចខាងឆ្វេងក្រោម (គ្រប់គ្រងផ្នែកងងឹត)។\n• **Whites:** ចំណុចខាងស្តាំលើ (គ្រប់គ្រងផ្នែកភ្លឺ)។",
-    "grain": "អត្ថប្រយោជន៍នៃ Grain៖\n• **Aesthetic:** បង្កើតអារម្មណ៍ដូចរូបថតកាមេរ៉ាជ័រ (Film Look)។\n• **Fix:** ជួយបិទបាំង Noise ដែលមិនស្អាត (Digital Noise)។\n• **Texture:** បន្ថែមវាយនភាពឱ្យរូបមើលទៅមិនរលោងពេក។",
-    "ងងឹត": "ដំណោះស្រាយរូបងងឹតពេក៖\n• **Exposure:** បង្កើន (+1.0 ឬតាមការគួរ)។\n• **Shadows:** បង្កើន (+40)។\n• **Contrast:** អាចបន្ថយបន្តិចបើខ្លាំងពេក។\n• **Note:** ប្រយ័ត្ន Noise កើនឡើងពេលតម្លើងពន្លឺ។",
-    "មេឃ": "គន្លឹះធ្វើឱ្យមេឃដិតស្អាត៖\n• **Light:** បន្ថយ Highlights (-100)។\n• **Color Mix (Blue):** បន្ថយ Luminance (-20), តម្លើង Saturation (+20)។\n• **Masking:** ប្រើ 'Select Sky' រួចបន្ថយ Exposure បន្តិច។",
-    "ទេសភាព": "ការកែរូប Landscape៖\n• **Dehaze:** ដាក់ (+20) ដើម្បីឱ្យរូបថ្លា កាត់អ័ព្ទ។\n• **Clarity:** បង្កើន (+15) ឱ្យឃើញ Detail ដើមឈើ/ថ្ម។\n• **Vibrance:** បង្កើន (+30) ឱ្យពណ៌ធម្មជាតិស្រស់។",
-    "vibrance": "ភាពខុសគ្នារវាង Vibrance និង Saturation៖\n• **Vibrance:** ឆ្លាតវៃជាង! បង្កើនតែពណ៌ស្លេក និងការពារពណ៌ស្បែក (ល្អសម្រាប់មនុស្ស)។\n• **Saturation:** បង្កើនគ្រប់ពណ៌ទាំងអស់ស្មើគ្នា (អាចធ្វើឱ្យស្បែកក្រហមខ្លាំង)។",
-    "អាហារ": "គន្លឹះថតរូបអាហារ (Food Photography)៖\n• **White Balance:** កុំឱ្យជាប់លឿងឬខៀវពេក។\n• **Texture/Clarity:** បង្កើនបន្តិចឱ្យអាហារមើលទៅមានរសជាតិ។\n• **Exposure:** ធ្វើឱ្យភ្លឺស្អាត (Bright & Airy)។",
-    "street": "គន្លឹះ Street Photography៖\n• **Style:** និយមប្រើ Contrast ខ្ពស់ (High Contrast)។\n• **Color:** អាចប្រើជាសខ្មៅ (B&W) ឬ Urban Grey (ដកពណ៌ផ្សេងទុកតែពណ៌ក្រហម/លឿង)។\n• **Clarity:** ដាក់ខ្លាំង (+30) ឱ្យរូបមុត។"
+    "exposure": "• **Exposure:** កំណត់ពន្លឺរួម (+/-)។",
+    "contrast": "• **Contrast:** កំណត់គម្លាតពន្លឺ។ ខ្ពស់=ដិត, ទាប=ស្រាល។",
+    "highlight": "• **Highlights:** តំបន់ភ្លឺខ្លាំង (មេឃ)។ បន្ថយដើម្បីសង្គ្រោះ។",
+    "shadow": "• **Shadows:** តំបន់ងងឹត។ តម្លើងដើម្បីឃើញក្នុងម្លប់។",
+    "white": "• **Whites:** ចំណុចពណ៌ស។",
+    "black": "• **Blacks:** ចំណុចពណ៌ខ្មៅ។",
+    "ស្បែកស": "• **Color Mix (Orange):** Luminance (+), Saturation (-)។",
+    "portrait": "• **Vibrance:** ជំនួស Saturation។\n• **Texture:** បន្ថយបន្តិចឱ្យស្បែកម៉ត់។",
+    "teal": "Teal & Orange:\n• **Calibration:** Blue Primary (Hue -100)។\n• **Grading:** Shadows (Teal), Highlights (Orange)។",
+    "dehaze": "Dehaze:\n• **(+)** កាត់អ័ព្ទ, មេឃដិត។\n• **(-)** បន្ថែមអ័ព្ទ (Dreamy)។",
+    "យប់": "Night:\n• **Highlights:** បន្ថយ (-50)។\n• **Shadows:** តម្លើង (+30)។\n• **Noise:** បន្ថែម (+25)។",
+    "vintage": "Vintage:\n• **Curve:** Lifted Blacks (កន្ទុយឆ្វេងឡើងលើ)។\n• **Grain:** បន្ថែម (+30)។\n• **Sat:** បន្ថយ (-20)។",
 };
 
 const TIPS_LIST = [
-    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម រួចកែតម្រូវតាមក្រោយ។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset វាទៅ 0។", 
-    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping ពេលអូស Whites/Blacks។", "បន្ថយ Highlights និងតម្លើង Shadows ដើម្បីបានរូបបែប HDR។", 
-    "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត។", "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បាន។", "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស។",
-    "ប្រើ Vibrance ជំនួស Saturation។", "Export ជា DNG ដើម្បីចែករំលែក Preset។", "ប្រើ Grid ពេលថត ដើម្បីឱ្យរូបត្រង់។",
-    "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
+    "ប្រើ 'Auto' ជាមូលដ្ឋានសិន។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset។", 
+    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping។", "Export ជា DNG ដើម្បីចែករំលែក Preset។"
 ];
 
-// --- 50+ QUESTIONS DATABASE (RESTORED) ---
+// --- 50+ QUESTIONS DATABASE (FULL RESTORED) ---
 const initialQuestionBank = [
   { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
   { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
@@ -272,7 +262,7 @@ const getLocalPreset = (style) => {
     return null;
 };
 
-// --- FIX: UPDATED XMP GENERATOR (FIXED TEMP/TINT) ---
+// --- FIX: UPDATED XMP GENERATOR (FIXED TEMP/TINT & ALL CHANNELS) ---
 const generateXMP = (recipe, title) => {
     const basic = recipe.basic || {};
     const colorMix = recipe.colorMix || [];
@@ -286,8 +276,8 @@ const generateXMP = (recipe, title) => {
         return { h: c.h || 0, s: c.s || 0, l: c.l || 0 };
     };
     
-    // Determine if White Balance is custom
-    const hasTempTint = basic.Temp !== 0 || basic.Tint !== 0;
+    // Check if Temp/Tint used, set Custom White Balance
+    const hasTempTint = (basic.Temp !== 0 || basic.Tint !== 0);
     const wbSetting = hasTempTint ? 'crs:WhiteBalance="Custom"' : '';
 
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
@@ -358,7 +348,6 @@ const generateXMP = (recipe, title) => {
 
 // --- COMPONENTS ---
 
-// CircleIcon Component
 const CircleIcon = ({ color }) => (
     <div className={`w-3 h-3 rounded-full bg-${color}-500 inline-block border border-gray-600`}></div>
 );
@@ -369,11 +358,11 @@ const Header = ({ activeTab, setActiveTab }) => {
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
-    <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
-    </div>
-          <h1 className="text-xl font-bold font-khmer hidden sm:block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">  ម៉ាយឌីហ្សាញ </h1>
+             <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
+          </div>
+          <h1 className="text-xl font-bold font-khmer hidden sm:block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"> ម៉ាយឌីហ្សាញ </h1>
         </div>
-        <nav className="flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
+        <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
           {['learn', 'quiz', 'lab', 'ai'].map(t => (
             <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === t ? 'bg-[#334155] text-white shadow-md' : 'text-gray-400 hover:text-white hover:bg-[#334155]/50'}`}>
                {t === 'learn' && <BookOpen size={16}/>}
@@ -672,22 +661,19 @@ const PhotoLab = () => {
         {/* Header Bar */}
         <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h2 className="text-2xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
-                <p className="text-gray-400 font-khmer text-sm">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
+                <h2 className="text-xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
+                <p className="text-gray-400 font-khmer text-xs">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-1">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2">
-                    <Upload size={14} /> Upload
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <Upload size={12} /> Upload
                 </button>
-                <button onClick={handleDownload} className="px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2">
-                    <ImageDown size={14} /> Download
+                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <ImageDown size={12} /> Download
                 </button>
-                <button onClick={handlePresetExport} className="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2">
-                    <FileJson size={14} /> Export XMP
-                </button>
-                <button onClick={resetSettings} className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-red-500/30">
-                    <RotateCcw size={14} /> Reset
+                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <FileJson size={12} /> Export XMP
                 </button>
             </div>
         </div>
@@ -723,6 +709,7 @@ const PhotoLab = () => {
                  <div className="flex border-b border-gray-700 shrink-0">
                     <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
                     <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+                    <button onClick={resetSettings} className="px-4 text-xs text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={14}/> Reset</button>
                  </div>
                  
                  {/* Controls Content */}
