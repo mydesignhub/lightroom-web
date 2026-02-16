@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS
+// 2. DATASETS (FULL CONTENT RESTORED)
 // ==========================================
 
 const lessonsData = [
@@ -167,11 +167,10 @@ const PRESET_DB = {
         colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
-    // ... Additional presets handled by fallback or AI
+    // ... Additional presets will be handled by AI or this fallback
 };
 
 const QA_DB = {
-    // 20 Common Questions
     "exposure": "• **Exposure (ការប៉ះពន្លឺ):** កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។\n• **វិធីប្រើ:** អូសទៅស្តាំ (+) ដើម្បីឱ្យភ្លឺ និងទៅឆ្វេង (-) ដើម្បីឱ្យងងឹត។",
     "contrast": "• **Contrast (ភាពផ្ទុយ):** កំណត់គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។\n• **Contrast ខ្ពស់:** រូបភាពដិតច្បាស់ (Pop)។\n• **Contrast ទាប:** រូបភាពមើលទៅស្រាល (Flat/Fade)។",
     "highlight": "• **Highlights:** គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ពពក)។\n• **គន្លឹះ:** បន្ថយ (-100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតក្នុងមេឃ។",
@@ -202,7 +201,7 @@ const TIPS_LIST = [
     "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
 ];
 
-// --- 50+ QUESTIONS DATABASE ---
+// --- 50+ QUESTIONS DATABASE (RESTORED) ---
 const initialQuestionBank = [
   { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
   { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
@@ -273,7 +272,7 @@ const getLocalPreset = (style) => {
     return null;
 };
 
-// --- FIX: UPDATED XMP GENERATOR WITH COLOR MIX & GRADING ---
+// --- FIX: UPDATED XMP GENERATOR (FIXED TEMP/TINT) ---
 const generateXMP = (recipe, title) => {
     const basic = recipe.basic || {};
     const colorMix = recipe.colorMix || [];
@@ -286,6 +285,10 @@ const generateXMP = (recipe, title) => {
         const c = colorMix.find(item => item.color === color) || {};
         return { h: c.h || 0, s: c.s || 0, l: c.l || 0 };
     };
+    
+    // Determine if White Balance is custom
+    const hasTempTint = basic.Temp !== 0 || basic.Tint !== 0;
+    const wbSetting = hasTempTint ? 'crs:WhiteBalance="Custom"' : '';
 
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
@@ -295,6 +298,7 @@ const generateXMP = (recipe, title) => {
     crs:Version="14.0"
     crs:ProcessVersion="11.0"
     crs:Name="${title}"
+    ${wbSetting}
     crs:Exposure2012="${basic.Exposure || 0}"
     crs:Contrast2012="${basic.Contrast || 0}"
     crs:Highlights2012="${basic.Highlights || 0}"
@@ -335,6 +339,7 @@ const generateXMP = (recipe, title) => {
     crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}"
     crs:ColorGradeBlending="${grading.Blending || 50}"
     crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
+    crs:LensProfileEnable="1"
    >
   </rdf:Description>
  </rdf:RDF>
@@ -366,7 +371,9 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm bg-white/10 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600">
              <ImageIcon className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-lg font-bold font-khmer hidden sm:block">Lightroom <span className="text-blue-400">ម៉ាយឌីហ្សាញ</span></h1>
+          <h1 className="text-xl font-bold font-khmer hidden sm:block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+  ម៉ាយឌីហ្សាញ
+</h1>
         </div>
         <nav className="flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
           {['learn', 'quiz', 'lab', 'ai'].map(t => (
@@ -445,18 +452,18 @@ const TipsSection = ({ isExpanded, onToggle }) => {
 };
 
 const ContactSection = () => (
-  <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Facebook className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 Lightroom My Design. All Right Reserved.</p></div>
+  <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Facebook className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 My Design. All Right Reserved.</p>
 );
 
-// --- 4. PHOTO LAB (UPDATED WITH COLOR MIX & GRADING) ---
+// --- 4. PHOTO LAB (STICKY IMAGE & SCROLLABLE CONTROLS) ---
 const PhotoLab = () => {
   const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
   const [mode, setMode] = useState('manual');
   const fileInputRef = useRef(null);
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [activeRecipe, setActiveRecipe] = useState(null); 
 
-  // Expanded Settings including Color Mix & Grading
   const defaultSettings = {
     exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0,
     temp: 0, tint: 0, vibrance: 0, saturation: 0,
@@ -477,7 +484,7 @@ const PhotoLab = () => {
   };
   
   const [settings, setSettings] = useState(defaultSettings);
-  const [activeColor, setActiveColor] = useState('Orange'); // For Color Mix UI
+  const [activeColor, setActiveColor] = useState('Orange'); 
 
   const updateSetting = (key, value) => {
       setSettings(prev => ({...prev, [key]: value}));
@@ -485,6 +492,7 @@ const PhotoLab = () => {
 
   const resetSettings = () => {
       setSettings(defaultSettings);
+      setActiveRecipe(null);
   }
 
   const resetGroup = (groupItems) => {
@@ -545,9 +553,9 @@ const PhotoLab = () => {
         Dehaze: settings.dehaze,
         Vignette: settings.vignette
       },
-      detail: { Sharpening: 40, Noise: 0, ColorNoise: 0 },
-      effects: { Grain: 0 },
-      curve: { RGB: "Linear" },
+      detail: activeRecipe?.detail || { Sharpening: 40, Noise: 0, ColorNoise: 0 },
+      effects: activeRecipe?.effects || { Grain: 0 },
+      curve: activeRecipe?.curve || { RGB: "Linear" },
       colorMix: colorMix, 
       grading: { 
           Shadows: {h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum}, 
@@ -579,6 +587,7 @@ const PhotoLab = () => {
   };
 
   const applyPresetToSettings = (presetData) => {
+      setActiveRecipe(presetData); 
       const b = presetData.basic;
       const newSettings = { ...defaultSettings };
       
@@ -595,30 +604,6 @@ const PhotoLab = () => {
       if (b.Clarity) newSettings.clarity = b.Clarity;
       if (b.Dehaze) newSettings.dehaze = b.Dehaze;
       if (b.Vignette) newSettings.vignette = b.Vignette;
-
-      // Map color mix if available
-      if (presetData.colorMix) {
-          presetData.colorMix.forEach(c => {
-              const name = c.color.toLowerCase();
-              newSettings[`${name}Hue`] = c.h;
-              newSettings[`${name}Sat`] = c.s;
-              newSettings[`${name}Lum`] = c.l;
-          });
-      }
-      
-      // Map grading if available
-      if (presetData.grading) {
-          newSettings.shadowHue = presetData.grading.Shadows?.h || 0;
-          newSettings.shadowSat = presetData.grading.Shadows?.s || 0;
-          newSettings.shadowLum = presetData.grading.Shadows?.l || 0;
-          newSettings.highlightHue = presetData.grading.Highlights?.h || 0;
-          newSettings.highlightSat = presetData.grading.Highlights?.s || 0;
-          newSettings.highlightLum = presetData.grading.Highlights?.l || 0;
-          newSettings.midHue = presetData.grading.Midtones?.h || 0;
-          newSettings.midSat = presetData.grading.Midtones?.s || 0;
-          newSettings.midLum = presetData.grading.Midtones?.l || 0;
-      }
-
       setSettings(newSettings);
   };
 
@@ -630,9 +615,6 @@ const PhotoLab = () => {
     let hue = settings.tint + (settings.temp < 0 ? settings.temp * 0.3 : 0);
     let blur = settings.texture < 0 ? Math.abs(settings.texture) * 0.02 : 0;
     
-    // Approximation for Color Mix (Global Tint)
-    // Real individual color mix requires WebGL/Canvas pixel manipulation which is complex for this scope
-    // We approximate by global hue shifts if specific channels are pushed hard
     if (Math.abs(settings.orangeSat) > 20) s += settings.orangeSat * 0.2; 
     if (Math.abs(settings.blueSat) > 20) s += settings.blueSat * 0.2;
 
@@ -688,7 +670,7 @@ const PhotoLab = () => {
   ];
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-full max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-150px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
         {/* Header Bar */}
         <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
@@ -714,13 +696,13 @@ const PhotoLab = () => {
 
         <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
             {/* Image Viewer (Sticky) */}
-            <div className="flex-1 flex flex-col gap-4 min-h-[400px]">
+            <div className="flex-1 flex flex-col gap-4 h-full">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
-                    <div className="relative max-h-full max-w-full">
+                    <div className="relative w-full h-full">
                         <img 
                             src={image} 
                             alt="Edit Target" 
-                            className="max-h-[60vh] lg:max-h-full max-w-full object-contain transition-all duration-75 ease-linear"
+                            className="w-full h-full object-contain transition-all duration-75 ease-linear"
                             style={{ filter: getFilterString() }}
                         />
                         <div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div>
@@ -728,7 +710,7 @@ const PhotoLab = () => {
                 </div>
                 
                 {/* Image Selector */}
-                <div className="flex justify-center gap-3 bg-[#0f172a] p-3 rounded-xl border border-gray-700 overflow-x-auto">
+                <div className="flex justify-center gap-3 bg-[#0f172a] p-3 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
                     {sampleImages.map((item, idx) => (
                         <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-12 h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
                             <img src={item.src} className="w-full h-full object-cover" />
@@ -738,9 +720,9 @@ const PhotoLab = () => {
             </div>
 
             {/* Controls Panel (Scrollable) */}
-            <div className="w-full lg:w-96 flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg">
+            <div className="w-full lg:w-96 flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg shrink-0">
                  {/* Tabs */}
-                 <div className="flex border-b border-gray-700">
+                 <div className="flex border-b border-gray-700 shrink-0">
                     <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
                     <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
                  </div>
@@ -748,7 +730,7 @@ const PhotoLab = () => {
                  {/* Controls Content */}
                  <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                     {mode === 'manual' ? (
-                        <div className="space-y-8">
+                        <div className="space-y-8 pb-10">
                              {/* Basic Tools */}
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-4">
