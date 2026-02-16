@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT PRESERVED)
+// 2. DATASETS (FULL CONTENT)
 // ==========================================
 
 const lessonsData = [
@@ -284,7 +284,7 @@ const QA_DB = {
 
     "ស្បែកស": "សួស្ដី! ចង់បានរូបមន្តកែ **ស្បែកស (Bright Skin Tone)** មែនទេ? សាកល្បងវិធីនេះ៖\n\n1. ចូលទៅកាន់ **Color > Mix**។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance:** តម្លើង (+15 ទៅ +25)។\n4. **Saturation:** បន្ថយបន្តិច (-5 ទៅ -15)។\n\n💡 **ចំណាំ:** កុំតម្លើង Luminance ខ្លាំងពេក ប្រយ័ត្នស្បែកស្លេកគ្មានឈាម!",
 
-    "portrait": "សួស្ដី! សម្រាប់ការកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
+    "portrait": "សួស្ដី! ដើម្បីកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
 
     "teal": "សួស្ដី! នេះជារូបមន្ត **Teal & Orange (Cinematic Look)** ដ៏ពេញនិយម៖\n\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:**\n  - Shadows: ដាក់ពណ៌ Teal (Hue 210)។\n  - Highlights: ដាក់ពណ៌ Orange (Hue 35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
 
@@ -390,6 +390,7 @@ const getLocalPreset = (style) => {
     return null;
 };
 
+// --- FIX: UPDATED XMP GENERATOR (FIXED TEMP/TINT & ALL CHANNELS) ---
 const generateXMP = (recipe, title) => {
     const basic = recipe.basic || {};
     const colorMix = recipe.colorMix || [];
@@ -487,7 +488,6 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          {/* Always Visible Text */}
           <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
@@ -506,7 +506,6 @@ const Header = ({ activeTab, setActiveTab }) => {
   );
 };
 
-// ... (LessonModal, LessonCard, TipsSection, ContactSection preserved as is) ...
 const LessonModal = ({ lesson, onClose }) => {
   useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = 'auto'; }; }, []);
   return (
@@ -571,7 +570,7 @@ const ContactSection = () => (
   <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Facebook className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 My Design. All Right Reserved.</p></div>
 );
 
-// --- 4. PHOTO LAB (STICKY IMAGE & SCROLLABLE CONTROLS - FULL SCREEN FIX) ---
+// --- 4. PHOTO LAB (STICKY IMAGE & SCROLLABLE CONTROLS) ---
 const PhotoLab = () => {
   const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
   const [mode, setMode] = useState('manual');
@@ -744,7 +743,7 @@ const PhotoLab = () => {
   };
 
   const toolsGroups = [
-    { group: 'Light (ពន្លឺ)', icon: <Sun size={16}/>, items: [
+    { group: 'Light (ពន្លឺ)', icon: <Sun size={18}/>, items: [
       { id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1, desc: 'ពន្លឺរួម' },
       { id: 'contrast', label: 'Contrast', min: -100, max: 100, desc: 'ភាពផ្ទុយ' },
       { id: 'highlights', label: 'Highlights', min: -100, max: 100, desc: 'តំបន់ភ្លឺ' },
@@ -752,13 +751,13 @@ const PhotoLab = () => {
       { id: 'whites', label: 'Whites', min: -100, max: 100, desc: 'ពណ៌ស' },
       { id: 'blacks', label: 'Blacks', min: -100, max: 100, desc: 'ពណ៌ខ្មៅ' },
     ]},
-    { group: 'Color (ពណ៌)', icon: <Palette size={16}/>, items: [
+    { group: 'Color (ពណ៌)', icon: <Palette size={18}/>, items: [
       { id: 'temp', label: 'Temp', min: -100, max: 100, desc: 'សីតុណ្ហភាព' },
       { id: 'tint', label: 'Tint', min: -100, max: 100, desc: 'ពណ៌លាំ' },
       { id: 'vibrance', label: 'Vibrance', min: -100, max: 100, desc: 'ភាពរស់រវើក' },
       { id: 'saturation', label: 'Saturation', min: -100, max: 100, desc: 'ភាពឆ្អែតពណ៌' },
     ]},
-    { group: 'Effects (បែបផែន)', icon: <Aperture size={16}/>, items: [
+    { group: 'Effects (បែបផែន)', icon: <Aperture size={18}/>, items: [
       { id: 'texture', label: 'Texture', min: -100, max: 100, desc: 'វាយនភាព' },
       { id: 'clarity', label: 'Clarity', min: -100, max: 100, desc: 'ភាពច្បាស់' },
       { id: 'dehaze', label: 'Dehaze', min: -100, max: 100, desc: 'កាត់អ័ព្ទ' },
@@ -786,30 +785,33 @@ const PhotoLab = () => {
   ];
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
         {/* Header Bar */}
-        <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
-            <div className="hidden md:block">
-                <h2 className="text-xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
+        <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 className="text-2xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
                 <p className="text-gray-400 font-khmer text-xs">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end">
+            <div className="flex gap-2 overflow-x-auto pb-1">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <Upload size={14} /> Upload
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <Upload size={12} /> Upload
                 </button>
-                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <ImageDown size={14} /> Download
+                <button onClick={handleDownload} className="px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <ImageDown size={12} /> Download
                 </button>
-                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <FileJson size={14} /> Export XMP
+                <button onClick={handlePresetExport} className="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <FileJson size={12} /> Export XMP
+                </button>
+                <button onClick={resetSettings} className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 border border-red-500/30">
+                    <RotateCcw size={12} /> Reset
                 </button>
             </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
-            {/* Image Viewer (55% Height on Mobile) */}
-            <div className="h-[55%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
+        <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
+            {/* Image Viewer (Sticky) */}
+            <div className="flex-1 flex flex-col gap-4 h-full">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
                     <div className="relative w-full h-full">
                         <img 
@@ -823,47 +825,51 @@ const PhotoLab = () => {
                 </div>
                 
                 {/* Image Selector */}
-                <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
+                <div className="flex justify-center gap-3 bg-[#0f172a] p-3 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
                     {sampleImages.map((item, idx) => (
-                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
+                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-12 h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
                             <img src={item.src} className="w-full h-full object-cover" />
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* Controls Panel */}
-            <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-2xl lg:rounded-xl border-t lg:border border-gray-700 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-lg">
+            {/* Controls Panel (Scrollable) */}
+            <div className="w-full lg:w-96 flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg shrink-0">
                  {/* Tabs */}
-                 <div className="flex border-b border-gray-700 shrink-0 bg-[#1e293b] lg:bg-transparent">
-                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 border-b-2 border-blue-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
-                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 border-b-2 border-purple-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
-                    <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
+                 <div className="flex border-b border-gray-700 shrink-0">
+                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
+                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
                  </div>
                  
-                 {/* Controls Content - Reduced Gaps */}
-                 <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-[#0f172a]">
+                 {/* Controls Content */}
+                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                     {mode === 'manual' ? (
-                        <div className="space-y-5 pb-20 lg:pb-10">
+                        <div className="space-y-8 pb-10">
                              {/* Basic Tools */}
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-2">
-                                    <div className="flex items-center justify-between border-b border-gray-700 pb-1">
-                                        <h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
-                                        <button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white">Reset</button>
+                                <div key={gIdx} className="space-y-4">
+                                    <div className="flex items-center justify-between border-b border-gray-700 pb-2">
+                                        <h4 className="text-sm font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
+                                        <button onClick={() => resetGroup(group.items)} className="text-[10px] text-gray-500 hover:text-white">Reset</button>
                                     </div>
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-5 px-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
-                                                <div className="flex justify-between mb-1 items-center">
+                                                <div className="flex justify-between mb-2 items-center">
                                                     <label 
-                                                        className="text-[10px] font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" 
+                                                        className="text-xs font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" 
                                                         onDoubleClick={() => updateSetting(t.id, 0)} 
-                                                        title="Double click to reset"
+                                                        title="Double click label to reset"
                                                     >
                                                         {t.label}
                                                     </label>
-                                                    <span className="text-[10px] text-blue-400 font-mono bg-gray-800 px-1.5 rounded">{settings[t.id]}</span>
+                                                    <input 
+                                                        type="number" 
+                                                        value={settings[t.id]}
+                                                        onChange={(e) => updateSetting(t.id, Number(e.target.value))}
+                                                        className="w-12 bg-gray-800 text-right text-xs text-blue-400 font-mono border border-gray-700 rounded px-1 py-0.5 focus:border-blue-500 outline-none"
+                                                    />
                                                 </div>
                                                 <input 
                                                     type="range" 
@@ -873,7 +879,7 @@ const PhotoLab = () => {
                                                     value={settings[t.id]} 
                                                     onChange={(e) => updateSetting(t.id, Number(e.target.value))}
                                                     onDoubleClick={() => updateSetting(t.id, 0)}
-                                                    className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
+                                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
                                                 />
                                             </div>
                                         ))}
@@ -882,33 +888,33 @@ const PhotoLab = () => {
                             ))}
 
                             {/* Color Mix */}
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-1">
-                                    <h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-2">
+                                    <h4 className="text-sm font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={18}/> Color Mix</h4>
                                 </div>
-                                <div className="flex justify-between gap-1 mb-2">
+                                <div className="flex justify-between gap-1 mb-4">
                                     {colors.map(c => (
                                         <button 
                                             key={c.id} 
                                             onClick={() => setActiveColor(c.name)}
-                                            className={`w-7 h-7 md:w-5 md:h-5 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
+                                            className={`w-6 h-6 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
                                         />
                                     ))}
                                 </div>
-                                <div className="space-y-3 px-2 bg-[#151f32] p-2 rounded-lg border border-gray-700/50">
+                                <div className="space-y-5 px-1 bg-[#151f32] p-3 rounded-xl border border-gray-700/50">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
                                             <div key={key}>
-                                                <div className="flex justify-between mb-1">
-                                                    <label className="text-[10px] font-bold text-gray-400 font-khmer">{type}</label>
-                                                    <span className="text-[10px] text-blue-400 font-mono">{settings[key]}</span>
+                                                <div className="flex justify-between mb-2">
+                                                    <label className="text-xs font-bold text-gray-300 font-khmer">{type}</label>
+                                                    <span className="text-xs text-blue-400 font-mono">{settings[key]}</span>
                                                 </div>
                                                 <input 
                                                     type="range" min="-100" max="100" 
                                                     value={settings[key]} 
                                                     onChange={(e) => updateSetting(key, Number(e.target.value))}
-                                                    className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
                                                 />
                                             </div>
                                         )
@@ -917,20 +923,20 @@ const PhotoLab = () => {
                             </div>
 
                             {/* Grading */}
-                            <div className="space-y-3 pb-4">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-1">
-                                    <h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4>
+                            <div className="space-y-4 pb-4">
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-2">
+                                    <h4 className="text-sm font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={18}/> Grading</h4>
                                 </div>
                                 {['Shadow', 'Mid', 'Highlight'].map(tone => (
-                                    <div key={tone} className="bg-[#151f32] p-2 rounded-lg border border-gray-700/50 space-y-2">
-                                        <h5 className="text-[10px] font-bold text-gray-400 font-khmer">{tone}s</h5>
+                                    <div key={tone} className="bg-[#151f32] p-3 rounded-xl border border-gray-700/50 space-y-3">
+                                        <h5 className="text-xs font-bold text-gray-400 font-khmer">{tone}s</h5>
                                         <div className="flex gap-2">
                                             <div className="flex-1">
-                                                <label className="text-[9px] text-gray-500 block mb-0.5">Hue</label>
+                                                <label className="text-[10px] text-gray-500 block mb-1">Hue</label>
                                                 <input type="range" min="0" max="360" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500"/>
                                             </div>
                                             <div className="flex-1">
-                                                <label className="text-[9px] text-gray-500 block mb-0.5">Sat</label>
+                                                <label className="text-[10px] text-gray-500 block mb-1">Sat</label>
                                                 <input type="range" min="0" max="100" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500"/>
                                             </div>
                                         </div>
@@ -939,19 +945,20 @@ const PhotoLab = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="space-y-4 pb-20">
-                            <div className="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
-                                <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2 text-xs"><Sparkles size={14} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
+                        <div className="space-y-6">
+                            <div className="bg-purple-900/20 p-4 rounded-xl border border-purple-500/30">
+                                <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2"><Sparkles size={16} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
+                                <p className="text-gray-400 text-xs font-khmer mb-4">បញ្ចូលឈ្មោះស្តាយដែលអ្នកចង់បាន (ឧ. Vintage, Cyberpunk, Soft Skin) AI នឹងកែ Slider ជូនអ្នក។</p>
                                 <div className="flex gap-2">
-                                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="ឈ្មោះស្តាយ..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-purple-500 font-khmer" />
-                                    <button onClick={generateAIPreset} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg font-bold font-khmer text-xs disabled:opacity-50">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
+                                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="ឈ្មោះស្តាយ..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 font-khmer" />
+                                    <button onClick={generateAIPreset} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold font-khmer disabled:opacity-50">{aiLoading ? <Loader2 className="animate-spin" size={18}/> : 'បង្កើត'}</button>
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
-                                <div className="flex flex-wrap gap-1.5">
+                                <h5 className="text-gray-400 text-xs font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
+                                <div className="flex flex-wrap gap-2">
                                     {["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage", "Cyberpunk", "Golden Hour", "Soft Pastel", "Urban Grey", "Black & White", "HDR Landscape", "Matte Black", "Cinematic Warm", "Cool Blue", "Forest Green", "Sunset Lover", "Portrait Clean", "Desaturated", "Vivid Pop", "Sepia Tone", "High Contrast"].map(s => (
-                                        <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-2.5 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-[10px] text-gray-300 font-medium transition-all">{s}</button>
+                                        <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-xs text-gray-300 font-medium transition-all">{s}</button>
                                     ))}
                                 </div>
                             </div>
@@ -1088,13 +1095,13 @@ const ChatBot = ({ isOnline }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-150px)] max-h-[600px] w-full max-w-4xl mx-auto">
       <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-[#1e293b] border-t border-gray-800 pb-20 md:pb-4">
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
           <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
