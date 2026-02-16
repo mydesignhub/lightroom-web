@@ -404,10 +404,8 @@ const generateXMP = (recipe, title) => {
         return { h: c.h || 0, s: c.s || 0, l: c.l || 0 };
     };
     
-    // Check if Temp/Tint used, set Custom White Balance
-    const hasTempTint = (basic.Temp !== 0 || basic.Tint !== 0);
-    const wbSetting = hasTempTint ? 'crs:WhiteBalance="Custom"' : '';
-
+    // Updated: Always set WhiteBalance to "As Shot" for relative temp adjustments to work in Lightroom
+    // And use IncrementalTemperature instead of Temperature for relative slider values (-100 to 100)
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -416,6 +414,7 @@ const generateXMP = (recipe, title) => {
     crs:Version="14.0"
     crs:ProcessVersion="11.0"
     crs:Name="${title}"
+    crs:HasSettings="True"
     crs:WhiteBalance="As Shot"
     crs:Exposure2012="${basic.Exposure || 0}"
     crs:Contrast2012="${basic.Contrast || 0}"
@@ -557,7 +556,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">1.</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">2.</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> មើល Clipping (Whites/Blacks) ថាបាត់ព័ត៌មានត្រង់ណា។</span></li>
-              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយដើម្បីចំណេញពេល។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយ។</span></li>
             </ul>
           </div>
         </div>
@@ -826,7 +825,7 @@ const PhotoLab = () => {
 
   return (
     <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
-        {/* Header Bar - Updated styling for compact buttons */}
+        {/* Header Bar */}
         <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
             {/* Title removed here for Lab panel to be cleaner/fuller screen as requested */}
             <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end ml-auto">
@@ -1180,6 +1179,7 @@ export default function App() {
       // If at root level, handle double press to exit
       if (backPressCount === 0) {
         setBackPressCount(1);
+        // Show toast or visual cue here (simplified with console for now, or add a Toast component)
         const toast = document.createElement('div');
         toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ";
         toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;";
@@ -1192,6 +1192,7 @@ export default function App() {
             window.history.pushState(null, "", window.location.pathname);
         } catch (e) {}
       } else {
+        // Allow exit (default browser behavior)
         window.history.back(); 
       }
     };
@@ -1218,6 +1219,7 @@ export default function App() {
   }, []);
 
   return (
+    // Added touch-action-none to prevent browser zoom gestures
     <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
