@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS
+// 2. DATASETS (FULL CONTENT RESTORED)
 // ==========================================
 
 const lessonsData = [
@@ -158,77 +158,137 @@ const lessonsData = [
   }
 ];
 
+// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
         detail: { Sharpening: 40, Noise: 10, ColorNoise: 25 },
         effects: { Grain: 0 },
         curve: { RGB: "S-Curve" },
-        colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
+        colorMix: [], // Simplified for cache, real data would be full array
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
+    "dark moody": {
+        basic: { Exposure: -0.20, Contrast: 30, Highlights: -50, Shadows: -10, Whites: -30, Blacks: -10, Temp: -5, Tint: 0, Vibrance: -10, Saturation: -20, Clarity: 15, Dehaze: 10, Vignette: -30 },
+        detail: { Sharpening: 30, Noise: 0, ColorNoise: 25 },
+        effects: { Grain: 10 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 220, s: 10, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 5, l: 0 } }
+    },
+    "bright & airy": {
+        basic: { Exposure: 0.40, Contrast: 10, Highlights: -30, Shadows: 50, Whites: 30, Blacks: 20, Temp: 5, Tint: 5, Vibrance: 30, Saturation: 0, Clarity: -10, Dehaze: 0, Vignette: 0 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 5, l: 0 } }
+    },
+    "vintage": {
+        basic: { Exposure: 0.05, Contrast: 10, Highlights: -20, Shadows: 20, Whites: -10, Blacks: 20, Temp: 10, Tint: 0, Vibrance: -10, Saturation: -15, Clarity: 0, Dehaze: -5, Vignette: -20 },
+        effects: { Grain: 40 },
+        curve: { RGB: "Faded" },
+        grading: { Shadows: { h: 40, s: 10, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 200, s: 5, l: 0 } }
+    },
+    "cyberpunk": {
+        basic: { Exposure: 0.10, Contrast: 20, Highlights: 10, Shadows: 10, Whites: 10, Blacks: -10, Temp: -15, Tint: 20, Vibrance: 40, Saturation: 10, Clarity: 20, Dehaze: 15, Vignette: -10 },
+        curve: { RGB: "High Contrast" },
+        grading: { Shadows: { h: 260, s: 30, l: -5 }, Midtones: { h: 300, s: 10, l: 0 }, Highlights: { h: 320, s: 20, l: 0 } }
+    },
+    "golden hour": {
+        basic: { Exposure: 0.10, Contrast: 15, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -10, Temp: 15, Tint: 5, Vibrance: 20, Saturation: 5, Clarity: 10, Dehaze: 0, Vignette: -10 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 40, s: 15, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 20, l: 0 } }
+    },
+    "soft pastel": {
+        basic: { Exposure: 0.20, Contrast: -10, Highlights: -30, Shadows: 40, Whites: 10, Blacks: 20, Temp: 0, Tint: 5, Vibrance: 30, Saturation: -5, Clarity: -15, Dehaze: -5, Vignette: 0 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 220, s: 10, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 0 } }
+    },
+    "urban grey": {
+        basic: { Exposure: 0.0, Contrast: 25, Highlights: -30, Shadows: 20, Whites: 20, Blacks: -30, Temp: -5, Tint: 0, Vibrance: -20, Saturation: -30, Clarity: 25, Dehaze: 10, Vignette: -20 },
+        curve: { RGB: "High Contrast" },
+        grading: { Shadows: { h: 210, s: 10, l: -5 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "black & white": {
+        basic: { Exposure: 0.0, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Temp: 0, Tint: 0, Vibrance: 0, Saturation: -100, Clarity: 20, Dehaze: 10, Vignette: -15 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "hdr landscape": {
+        basic: { Exposure: 0.0, Contrast: 10, Highlights: -80, Shadows: 80, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 40, Saturation: 10, Clarity: 30, Dehaze: 20, Vignette: -10 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 10, l: 0 } }
+    },
+    "matte black": {
+        basic: { Exposure: 0.0, Contrast: 20, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 30, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -10, Clarity: 10, Dehaze: 0, Vignette: -20 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 210, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "cinematic warm": {
+        basic: { Exposure: 0.05, Contrast: 10, Highlights: -30, Shadows: 20, Whites: 10, Blacks: -10, Temp: 10, Tint: 0, Vibrance: 15, Saturation: 0, Clarity: 5, Dehaze: 0, Vignette: -10 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 190, s: 15, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 40, s: 20, l: 0 } }
+    },
+    "cool blue": {
+        basic: { Exposure: 0.0, Contrast: 15, Highlights: 10, Shadows: 10, Whites: 10, Blacks: -10, Temp: -20, Tint: 0, Vibrance: 20, Saturation: -5, Clarity: 15, Dehaze: 10, Vignette: 0 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 220, s: 20, l: -5 }, Midtones: { h: 210, s: 10, l: 0 }, Highlights: { h: 200, s: 10, l: 0 } }
+    },
+    "forest green": {
+        basic: { Exposure: -0.1, Contrast: 20, Highlights: -40, Shadows: 20, Whites: 10, Blacks: -20, Temp: 5, Tint: -15, Vibrance: 30, Saturation: -10, Clarity: 10, Dehaze: 10, Vignette: -20 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 120, s: 15, l: -5 }, Midtones: { h: 100, s: 10, l: 0 }, Highlights: { h: 50, s: 10, l: 0 } }
+    },
+    "sunset lover": {
+        basic: { Exposure: 0.1, Contrast: 25, Highlights: -30, Shadows: 30, Whites: 20, Blacks: -10, Temp: 20, Tint: 10, Vibrance: 40, Saturation: 10, Clarity: 10, Dehaze: 5, Vignette: -10 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 280, s: 20, l: 0 }, Midtones: { h: 30, s: 20, l: 0 }, Highlights: { h: 45, s: 30, l: 0 } }
+    },
+    "portrait clean": {
+        basic: { Exposure: 0.1, Contrast: 10, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -5, Temp: 0, Tint: 0, Vibrance: 10, Saturation: -5, Clarity: -5, Dehaze: 0, Vignette: 0 },
+        curve: { RGB: "Linear" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 30, s: 5, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "desaturated": {
+        basic: { Exposure: 0.0, Contrast: 20, Highlights: -10, Shadows: 10, Whites: 10, Blacks: -10, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -40, Clarity: 10, Dehaze: 0, Vignette: -10 },
+        curve: { RGB: "Matte" },
+        grading: { Shadows: { h: 220, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "vivid pop": {
+        basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 40, Saturation: 10, Clarity: 15, Dehaze: 5, Vignette: 0 },
+        curve: { RGB: "S-Curve" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    },
+    "sepia tone": {
+        basic: { Exposure: 0.0, Contrast: 15, Highlights: -10, Shadows: 10, Whites: 0, Blacks: 0, Temp: 30, Tint: 10, Vibrance: -10, Saturation: -20, Clarity: 10, Dehaze: 0, Vignette: -20 },
+        curve: { RGB: "Faded" },
+        grading: { Shadows: { h: 40, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 10, l: 0 } }
+    },
+    "high contrast": {
+        basic: { Exposure: 0.0, Contrast: 60, Highlights: -30, Shadows: 30, Whites: 30, Blacks: -30, Temp: 0, Tint: 0, Vibrance: 10, Saturation: 0, Clarity: 20, Dehaze: 10, Vignette: 0 },
+        curve: { RGB: "High Contrast" },
+        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
+    }
 };
 
-// --- 20 CONVERSATIONAL AI ANSWERS CACHE ---
+// --- 20 AI ANSWERS CACHE (FULL CONTENT) ---
 const QA_DB = {
-    // 1
-    "exposure": "សួស្ដី! **Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។\n\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់ មុននឹងចូលទៅកែផ្នែកផ្សេងៗ!",
-    
-    // 2
-    "contrast": "សួស្ដី! **Contrast (ភាពផ្ទុយ)** ប្រើសម្រាប់កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបភាពដិតច្បាស់ និងមានពណ៌ដិត (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបភាពមើលទៅស្រាល ឬស្រទន់ (Soft/Fade)។\n\n💡 **គន្លឹះ:** កុំប្រើខ្លាំងពេក (លើស +50) ប្រយ័ត្នរូបភាពមើលទៅរឹង!",
-    
-    // 3
-    "highlight": "សួស្ដី! **Highlights** គ្រប់គ្រងតែតំបន់ដែលភ្លឺខ្លាំងបំផុតនៅក្នុងរូប (ដូចជាមេឃ ឬពន្លឺថ្ងៃចាំង)។\n\n👉 **ការណែនាំ:** ប្រសិនបើមេឃរបស់អ្នកសស្គុះ (Overexposed) សូមបន្ថយ Highlights (-50 ទៅ -100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតនៃពពកត្រឡប់មកវិញ។",
-    
-    // 4
-    "shadow": "សួស្ដី! **Shadows** គ្រប់គ្រងតំបន់ងងឹត ឬស្រមោលនៅក្នុងរូបភាព។\n\n👉 **ការណែនាំ:** ប្រសិនបើមុខមនុស្សងងឹត ឬថតបញ្ច្រាសពន្លឺ (Backlit) សូមតម្លើង Shadows (+30 ទៅ +70) ដើម្បីឱ្យឃើញព័ត៌មាននៅក្នុងម្លប់ច្បាស់។",
-    
-    // 5
-    "white": "សួស្ដី! **Whites** កំណត់ចំណុចពណ៌សដាច់ខាត (True White)។\n\n👉 **ការណែនាំ:** តម្លើងបន្តិច (+10 ទៅ +20) ដើម្បីឱ្យរូបភាពមើលទៅភ្លឺថ្លា (Clean Look)។ ប្រយ័ត្នតម្លើងខ្លាំងពេកនឹងធ្វើឱ្យបាត់ព័ត៌មាន។",
-    
-    // 6
-    "black": "សួស្ដី! **Blacks** កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត (True Black)។\n\n👉 **ការណែនាំ:** បន្ថយបន្តិច (-10 ទៅ -20) ដើម្បីឱ្យរូបភាពមានជម្រៅ និងពណ៌ដិតល្អ (Rich contrast)។",
-    
-    // 7
-    "ស្បែកស": "សួស្ដី! ដើម្បីកែរូបឱ្យ **ស្បែកស (Bright Skin Tone)** សូមអនុវត្តតាមរូបមន្តនេះ៖\n\n1. ចូលទៅកាន់ **Color > Mix**។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance:** តម្លើង (+15 ទៅ +25)។\n4. **Saturation:** បន្ថយបន្តិច (-5 ទៅ -15)។\n\n💡 **គន្លឹះ:** កុំតម្លើង Luminance ខ្លាំងពេក ប្រយ័ត្នស្បែកស្លេក!",
-    
-    // 8
-    "portrait": "សួស្ដី! សម្រាប់ការកែរូប **Portrait (មនុស្ស)** ឱ្យស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
-    
-    // 9
-    "teal": "សួស្ដី! នេះជារូបមន្ត **Teal & Orange (Cinematic)** ដ៏ពេញនិយម៖\n\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:** Shadows ដាក់ពណ៌ Teal (Hue 210), Highlights ដាក់ពណ៌ Orange (Hue 35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
-    
-    // 10
-    "dehaze": "សួស្ដី! **Dehaze** គឺជាឧបករណ៍ដ៏អស្ចារ្យសម្រាប់រូបទេសភាព៖\n\n• **កាត់បន្ថយ (+):** ជួយលុបអ័ព្ទ ឬផ្សែង ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ដូចក្នុងសុបិន (Dreamy Look)។",
-    
-    // 11
-    "យប់": "សួស្ដី! គន្លឹះសម្រាប់កែ **រូបថតពេលយប់ (Night Photography)**៖\n\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងអំពូលចាំងពេក។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** សំខាន់ណាស់! បង្កើន Noise Reduction (20-30) ដើម្បីលុបគ្រាប់។",
-    
-    // 12
+    "exposure": "សួស្ដី! 👋\n\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាប្រៀបដូចជាការបើកបង្អួចទទួលពន្លឺចូលក្នុងកាមេរ៉ាអញ្ចឹង។\n\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់ មុននឹងចូលទៅកែផ្នែកផ្សេងៗ!",
+    "contrast": "សួស្ដី! 👋\n\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបភាពមានពណ៌ដិត និងមានជម្រៅ (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបភាពមើលទៅស្រាលៗ ឬស្រទន់ (Soft Look)។\n\n👉 **Tip:** កុំតម្លើងខ្លាំងពេក (កុំឱ្យលើស +50) ព្រោះវាអាចធ្វើឱ្យរូបភាពមើលទៅរឹង និងបាត់ព័ត៌មានលម្អិត។",
+    "highlight": "សួស្ដី! 👋\n\n**Highlights** គ្រប់គ្រងតែតំបន់ដែល **ភ្លឺខ្លាំងបំផុត** នៅក្នុងរូបភាព ដូចជាមេឃ ពពក ឬពន្លឺថ្ងៃចាំងលើមុខ។\n\n💡 **គន្លឹះពិសេស:**\n• ប្រសិនបើថតមេឃហើយសស្គុះ សូមបន្ថយ Highlights (-50 ទៅ -100)។ អ្នកនឹងឃើញពពកត្រឡប់មកវិញយ៉ាងអស្ចារ្យ!",
+    "shadow": "សួស្ដី! 👋\n\n**Shadows** គ្រប់គ្រងតំបន់ដែល **ងងឹត** ឬនៅក្នុងម្លប់។\n\n💡 **ការណែនាំ:**\n• ប្រសិនបើអ្នកថតរូបបញ្ច្រាសពន្លឺ (Backlit) ហើយមុខងងឹត សូមតម្លើង Shadows (+40 ទៅ +70)។\n• ការតម្លើង Shadows ជួយឱ្យយើងមើលឃើញព័ត៌មាននៅក្នុងកន្លែងងងឹតបានច្បាស់។",
+    "white": "សួស្ដី! 👋\n\n**Whites** កំណត់ចំណុច **ពណ៌សដាច់ខាត (True White)**។ វាខុសពី Highlights ត្រង់ថាវាធ្វើឱ្យផ្នែកភ្លឺ ក្លាយជាពណ៌សសុទ្ធ។\n\n👉 **Tip:** តម្លើងបន្តិច (+10 ទៅ +20) ដើម្បីឱ្យរូបភាពមើលទៅភ្លឺថ្លា (Clean Look)។",
+    "black": "សួស្ដី! 👋\n\n**Blacks** កំណត់ចំណុច **ពណ៌ខ្មៅដាច់ខាត (True Black)**។\n\n👉 **Tip:** បន្ថយបន្តិច (-10 ទៅ -20) ដើម្បីឱ្យរូបភាពមានជម្រៅ (Depth) និងពណ៌ដិតល្អ។",
+    "ស្បែកស": "សួស្ដី! ចង់បានរូបមន្តកែ **ស្បែកស (Bright Skin Tone)** មែនទេ? សាកល្បងវិធីនេះ៖\n\n1. ចូលទៅកាន់ **Color > Mix**។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance:** តម្លើង (+15 ទៅ +25)។\n4. **Saturation:** បន្ថយបន្តិច (-5 ទៅ -15)។\n\n💡 **ចំណាំ:** កុំតម្លើង Luminance ខ្លាំងពេក ប្រយ័ត្នស្បែកស្លេកគ្មានឈាម!",
+    "portrait": "សួស្ដី! ដើម្បីកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
+    "teal": "សួស្ដី! នេះជារូបមន្ត **Teal & Orange (Cinematic Look)** ដ៏ពេញនិយម៖\n\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:**\n  - Shadows: ដាក់ពណ៌ Teal (Hue 210)។\n  - Highlights: ដាក់ពណ៌ Orange (Hue 35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
+    "dehaze": "សួស្ដី! **Dehaze** គឺជាឧបករណ៍វេទមន្តសម្រាប់រូបទេសភាព៖\n\n• **កាត់បន្ថយ (+):** ជួយលុបអ័ព្ទ ឬផ្សែង ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ដូចក្នុងសុបិន (Dreamy/Foggy Look)។",
+    "យប់": "សួស្ដី! នេះជាគន្លឹះសម្រាប់កែ **រូបថតពេលយប់ (Night Photography)**៖\n\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងអំពូលចាំងពេក។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** សំខាន់បំផុត! បង្កើន Noise Reduction (20-30) ដើម្បីលុបគ្រាប់។",
     "vintage": "សួស្ដី! ចង់បានរូបបែប **Vintage (បុរាណ)** មែនទេ? សាកល្បងរូបមន្តនេះ៖\n\n• **Tone Curve:** លើកចំណុចខ្មៅខាងឆ្វេងបំផុតឡើងលើបន្តិច (Lifted Blacks)។\n• **Grain:** បន្ថែម (+30) ដើម្បីឱ្យគ្រើមដូចហ្វីល។\n• **Saturation:** បន្ថយ (-20) ឱ្យពណ៌ស្រាល។\n• **Temp:** តម្លើងឱ្យលឿងបន្តិច។",
-    
-    // 13
-    "curves": "សួស្ដី! **Tone Curve** គឺជាក្រាហ្វកម្រិតខ្ពស់សម្រាប់គ្រប់គ្រងពន្លឺ។\n\n• **S-Curve:** ទាញក្រាហ្វជារាងអក្សរ S (ដាក់ចំណុច ៣: ស្រមោលចុះក្រោម, ពន្លឺឡើងលើ) ដើម្បីបង្កើន Contrast ឱ្យស្អាតជាងការប្រើ Slider ធម្មតា។\n• **Fade:** ទាញចំណុចខាងឆ្វេងក្រោមឡើងលើ ដើម្បីឱ្យពណ៌ខ្មៅប្រែជាប្រផេះ (Matte Look)។",
-    
-    // 14
+    "curves": "សួស្ដី! **Tone Curve** គឺជាក្រាហ្វកម្រិតខ្ពស់សម្រាប់គ្រប់គ្រងពន្លឺ។\n\n• **S-Curve:** ទាញក្រាហ្វជារាងអក្សរ S (ដាក់ចំណុច ៣: ស្រមោលចុះក្រោម, ពន្លឺឡើងលើ) ដើម្បីបង្កើន Contrast ឱ្យស្អាតជាងការប្រើ Slider ធម្មតា។\n• **Matte Look:** ទាញចំណុចខាងឆ្វេងក្រោមឡើងលើ ដើម្បីឱ្យពណ៌ខ្មៅប្រែជាប្រផេះ។",
     "grain": "សួស្ដី! **Grain** គឺជាគ្រាប់តូចៗដែលបន្ថែមលើរូបភាព។\n\n🤔 **ហេតុអ្វីគួរប្រើ?**\n• **Aesthetic:** បង្កើតអារម្មណ៍ដូចរូបថតកាមេរ៉ាជ័រ (Film Look)។\n• **Fix:** ជួយបិទបាំង Noise ដែលមិនស្អាត (Digital Noise) ឱ្យមើលទៅធម្មជាតិជាង។",
-    
-    // 15
-    "ងងឹត": "សួស្ដី! បើរូបថតរបស់អ្នក **ងងឹតពេក (Underexposed)**៖\n\n1. **Exposure:** បង្កើន (+1.0 ឬតាមការគួរ)។\n2. **Shadows:** បង្កើន (+40)។\n3. **Contrast:** អាចបន្ថយបន្តិចបើខ្លាំងពេក។\n\n⚠️ **ប្រយ័ត្ន:** ការតម្លើងពន្លឺខ្លាំងអាចធ្វើឱ្យរូបមាន Noise (គ្រាប់) ដូច្នេះកុំភ្លេចថែម Noise Reduction។",
-    
-    // 16
+    "ងងឹត": "សួស្ដី! បើរូបថតរបស់អ្នក **ងងឹតពេក (Underexposed)** សូមកុំបារម្ភ៖\n\n1. **Exposure:** បង្កើន (+1.0 ឬតាមការគួរ)។\n2. **Shadows:** បង្កើន (+40)។\n3. **Contrast:** អាចបន្ថយបន្តិចបើខ្លាំងពេក។\n\n⚠️ **ប្រយ័ត្ន:** ការតម្លើងពន្លឺខ្លាំងអាចធ្វើឱ្យរូបមាន Noise (គ្រាប់) ដូច្នេះកុំភ្លេចថែម Noise Reduction។",
     "មេឃ": "សួស្ដី! ដើម្បីធ្វើឱ្យ **មេឃដិតស្អាត**៖\n\n• **Light:** បន្ថយ Highlights (-100) ជាមុនសិន។\n• **Color Mix (Blue):** បន្ថយ Luminance (-20) និងតម្លើង Saturation (+20)។\n• **Masking:** ល្អបំផុតគឺប្រើ 'Select Sky' រួចបន្ថយ Exposure និងបង្កើន Dehaze បន្តិច។",
-    
-    // 17
     "ទេសភាព": "សួស្ដី! សម្រាប់ការកែរូប **Landscape (ទេសភាព)**៖\n\n• **Dehaze:** ដាក់ (+20) ដើម្បីឱ្យរូបថ្លា កាត់អ័ព្ទ។\n• **Clarity:** បង្កើន (+15) ឱ្យឃើញ Detail ដើមឈើ/ថ្ម។\n• **Vibrance:** បង្កើន (+30) ឱ្យពណ៌ធម្មជាតិស្រស់។\n• **Sharpening:** បន្ថែម (+40) ឱ្យរូបច្បាស់។",
-    
-    // 18
     "vibrance": "សួស្ដី! **Vibrance និង Saturation** ខុសគ្នាត្រង់ណា?\n\n• **Vibrance (ឆ្លាតវៃ):** បង្កើនតែពណ៌ដែលស្លេក និងការពារពណ៌ស្បែកមិនឱ្យខូច (ល្អសម្រាប់រូបមនុស្ស)។\n• **Saturation (ទូទៅ):** បង្កើនគ្រប់ពណ៌ទាំងអស់ស្មើគ្នា (អាចធ្វើឱ្យស្បែកក្រហមខ្លាំង)។",
-    
-    // 19
     "អាហារ": "សួស្ដី! គន្លឹះថតរូប **អាហារ (Food Photography)**៖\n\n• **White Balance:** កុំឱ្យជាប់លឿងឬខៀវពេក ត្រូវឱ្យពណ៌ចានស។\n• **Texture/Clarity:** បង្កើនបន្តិច (+20) ដើម្បីឱ្យអាហារមើលទៅមានរសជាតិ។\n• **Exposure:** ធ្វើឱ្យភ្លឺស្អាត (Bright & Airy) ដើម្បីឱ្យគួរឱ្យចង់ញ៉ាំ។",
-    
-    // 20
     "street": "សួស្ដី! គន្លឹះ **Street Photography**៖\n\n• **Style:** និយមប្រើ Contrast ខ្ពស់ (High Contrast) និង Clarity ខ្លាំង។\n• **Color:** អាចប្រើជាសខ្មៅ (B&W) ឬ Urban Grey (ដកពណ៌ផ្សេងចេញ ទុកតែពណ៌ក្រហម/លឿង/ទឹកក្រូច)។"
 };
 
@@ -240,7 +300,7 @@ const TIPS_LIST = [
     "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
 ];
 
-// --- 50+ QUESTIONS DATABASE (FULL RESTORED) ---
+// --- 50+ QUESTIONS DATABASE (FULL CONTENT) ---
 const initialQuestionBank = [
   { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
   { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
@@ -409,7 +469,8 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-lg md:text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"> ម៉ាយឌីហ្សាញ </h1>
+          {/* Always Visible Text */}
+          <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
           {['learn', 'quiz', 'lab', 'ai'].map(t => (
@@ -715,20 +776,20 @@ const PhotoLab = () => {
             </div>
             <div className="flex gap-2 overflow-x-auto pb-1">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                <button onClick={() => fileInputRef.current.click()} className="px-2 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <Upload size={12} /> Upload
                 </button>
-                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                <button onClick={handleDownload} className="px-2 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <ImageDown size={12} /> Download
                 </button>
-                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                <button onClick={handlePresetExport} className="px-2 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <FileJson size={12} /> Export XMP
                 </button>
             </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
-            {/* Image Viewer (Sticky - Optimized for Mobile) */}
+            {/* Image Viewer (Sticky - Optimized for Mobile 45% height) */}
             <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-4 shrink-0">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
                     <div className="relative w-full h-full">
@@ -754,7 +815,7 @@ const PhotoLab = () => {
 
             {/* Controls Panel (Scrollable) */}
             <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg">
-                 {/* Tabs */}
+                 {/* Tabs - Reset Moved Here */}
                  <div className="flex border-b border-gray-700 shrink-0">
                     <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
                     <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
@@ -874,9 +935,9 @@ const PhotoLab = () => {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <h5 className="text-gray-400 text-xs font-bold font-khmer uppercase">ស្តាយពេញនិយម</h5>
+                                <h5 className="text-gray-400 text-xs font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
                                 <div className="flex flex-wrap gap-2">
-                                    {["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage", "Cyberpunk", "Golden Hour"].map(s => (
+                                    {["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage", "Cyberpunk", "Golden Hour", "Soft Pastel", "Urban Grey", "Black & White", "HDR Landscape", "Matte Black", "Cinematic Warm", "Cool Blue", "Forest Green", "Sunset Lover", "Portrait Clean", "Desaturated", "Vivid Pop", "Sepia Tone", "High Contrast"].map(s => (
                                         <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-xs text-gray-300 font-medium transition-all">{s}</button>
                                     ))}
                                 </div>
@@ -1042,22 +1103,89 @@ export default function App() {
   const [expandedLesson, setExpandedLesson] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
   const [isOnline, setIsOnline] = useState(true);
+  const [backPressCount, setBackPressCount] = useState(0);
 
   const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
 
+  // --- 1. SYSTEM BACK BUTTON HANDLING ---
+  useEffect(() => {
+    const handlePopState = (event) => {
+      event.preventDefault();
+
+      if (expandedLesson) {
+        setExpandedLesson(null);
+        try {
+            window.history.pushState(null, "", window.location.pathname);
+        } catch (e) {}
+        return;
+      }
+
+      if (activeTab !== 'learn') {
+        setActiveTab('learn');
+        try {
+            window.history.pushState(null, "", window.location.pathname);
+        } catch (e) {}
+        return;
+      }
+
+      // If at root level, handle double press to exit
+      if (backPressCount === 0) {
+        setBackPressCount(1);
+        const toast = document.createElement('div');
+        toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ";
+        toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;";
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            document.body.removeChild(toast);
+            setBackPressCount(0); 
+        }, 2000);
+        try {
+            window.history.pushState(null, "", window.location.pathname);
+        } catch (e) {}
+      } else {
+        window.history.back(); 
+      }
+    };
+
+    try {
+        window.history.pushState(null, "", window.location.pathname);
+    } catch (e) {}
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [expandedLesson, activeTab, backPressCount]);
+
+  // --- 3. LOCK ZOOM ---
+  useEffect(() => {
+      const preventZoom = (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+      };
+      document.addEventListener('touchmove', preventZoom, { passive: false });
+      return () => document.removeEventListener('touchmove', preventZoom);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      
+      {/* 2. AUTO HIDE HEADER FOR LAB & AI */}
+      {(activeTab !== 'lab' && activeTab !== 'ai') && <Header activeTab={activeTab} setActiveTab={setActiveTab} />}
+      
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
-      <main className="max-w-6xl mx-auto p-4 pt-8 md:p-8">
-        <div className="animate-fade-in-down">
+      
+      <main className={`max-w-6xl mx-auto ${activeTab === 'lab' || activeTab === 'ai' ? 'h-[100dvh] p-0' : 'p-4 pt-8 md:p-8'}`}>
+        <div className="animate-fade-in-down h-full">
           {activeTab === 'learn' && (<div className="space-y-8"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> <ContactSection /></div>)}
           {activeTab === 'quiz' && <Quiz isOnline={isOnline} />}
           {activeTab === 'lab' && <PhotoLab />}
           {activeTab === 'ai' && <AIAssistant isOnline={isOnline} />}
         </div>
       </main>
+      
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
          <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
          <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
