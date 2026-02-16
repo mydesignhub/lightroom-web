@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT RESTORED)
+// 2. DATASETS (ALL PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -158,7 +158,6 @@ const lessonsData = [
   }
 ];
 
-// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -476,7 +475,6 @@ const generateXMP = (recipe, title) => {
 
 // --- COMPONENTS ---
 
-// CircleIcon Component
 const CircleIcon = ({ color }) => (
     <div className={`w-3 h-3 rounded-full bg-${color}-500 inline-block border border-gray-600`}></div>
 );
@@ -744,6 +742,18 @@ const PhotoLab = () => {
       return { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` };
   };
 
+  // Custom CSS for drag-only slider
+  useEffect(() => {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .drag-only-range { pointer-events: none; }
+        .drag-only-range::-webkit-slider-thumb { pointer-events: auto; cursor: pointer; }
+        .drag-only-range::-moz-range-thumb { pointer-events: auto; cursor: pointer; }
+      `;
+      document.head.appendChild(style);
+      return () => document.head.removeChild(style);
+  }, []);
+
   const toolsGroups = [
     { group: 'Light (ពន្លឺ)', icon: <Sun size={18}/>, items: [
       { id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1, desc: 'ពន្លឺរួម' },
@@ -787,14 +797,11 @@ const PhotoLab = () => {
   ];
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
         {/* Header Bar */}
-        <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h2 className="text-2xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
-                <p className="text-gray-400 font-khmer text-sm">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
+            {/* Title removed here for Lab panel to be cleaner/fuller screen as requested */}
+            <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end ml-auto">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
                 <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <Upload size={14} /> Upload
@@ -846,7 +853,7 @@ const PhotoLab = () => {
                  <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-[#0f172a]">
                     {mode === 'manual' ? (
                         <div className="space-y-5 pb-20 lg:pb-10">
-                             {/* Basic Tools */}
+                             {/* Basic Tools with drag-only-range */}
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-2">
                                     <div className="flex items-center justify-between border-b border-gray-700 pb-1">
