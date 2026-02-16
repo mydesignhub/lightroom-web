@@ -370,8 +370,7 @@ const Header = ({ activeTab, setActiveTab }) => {
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
     <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
-</div>
-          </div>
+    </div>
           <h1 className="text-xl font-bold font-khmer hidden sm:block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">  ម៉ាយឌីហ្សាញ </h1>
         </div>
         <nav className="flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
