@@ -5,32 +5,33 @@ import {
   Bot, Settings, HelpCircle, BarChart, Zap, Triangle, Touchpad, 
   AlertTriangle, RotateCcw, Globe, RefreshCw, Layout, Image as ImageIcon, 
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
-  Layers, Crop, Save, ScanFace, Shuffle, Lock, Key
+  Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
+  Monitor, Smartphone
 } from 'lucide-react';
 
 // ==========================================
-// 1. GEMINI API CONFIGURATION
+// 1. CONFIGURATION & UTILS
 // ==========================================
 
 let apiKey = ""; 
 try {
   // @ts-ignore
-  apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+  }
 } catch (e) {
-  console.log("Running in Preview Mode (No API Key)");
   apiKey = ""; 
 }
 
-// CACHE SYSTEM FOR CHAT
-const responseCache = new Map();
+const responseCache = {};
 
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
-  if (!apiKey) return null;
-
-  const cacheKey = JSON.stringify({ prompt, jsonMode });
-  if (responseCache.has(cacheKey)) {
-    return responseCache.get(cacheKey);
+  const cacheKey = prompt + (jsonMode ? "_json" : "");
+  if (responseCache[cacheKey]) {
+      return responseCache[cacheKey];
   }
+
+  if (!apiKey) return null;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
   
@@ -40,147 +41,34 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
     generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
   };
 
-  const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (response.status === 429 || response.status === 503) {
-         console.warn(`AI is busy... Retrying attempt ${attempt + 1}`);
-         await wait(2000 * (attempt + 1)); 
-         continue; 
-      }
-
-      if (!response.ok) throw new Error(`API Error: ${response.status}`);
-      
-      const data = await response.json();
-      let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      
-      if (jsonMode && text) {
-          text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-          text = JSON.parse(text);
-      }
-
-      responseCache.set(cacheKey, text);
-      return text; 
-      
-    } catch (error) {
-      console.error("Gemini API Error:", error);
-      if (attempt === 2) return null;
+    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+    const data = await response.json();
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    let result = text;
+    if (jsonMode && text) {
+        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        result = JSON.parse(text);
     }
+
+    responseCache[cacheKey] = result;
+    return result;
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    return null;
   }
-  return null;
 };
 
 // ==========================================
-// 2. ICONS & ASSETS
+// 2. DATASETS
 // ==========================================
-
-const FacebookIcon = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-  </svg>
-);
-
-// ==========================================
-// 3. DATABASES (LOCAL & CACHED AI)
-// ==========================================
-
-const AI_CACHE_DB = {
-  "តើ Dehaze ប្រើសម្រាប់អ្វី?": "Dehaze គឺជាឧបករណ៍ដ៏អស្ចារ្យសម្រាប់៖\n\n• **កាត់បន្ថយអ័ព្ទ/ផ្សែង៖** ធ្វើឱ្យរូបភាពដែលស្រអាប់មើលទៅច្បាស់និងដិតឡើងវិញ។\n• **បន្ថែមពណ៌មេឃ៖** ធ្វើឱ្យមេឃពណ៌ខៀវកាន់តែដិត និងឃើញពពកច្បាស់។\n• **បង្កើត Effect ស្រទន់៖** បើទាញទៅខាងឆ្វេង (Negative) វានឹងបង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅ Dreamy។",
-  "ចង់កែរូបបែប Vintage": "ដើម្បីទទួលបានរូបបែប Vintage (បុរាណ) សូមសាកល្បង៖\n\n• **Curve:** លើកចំណុចខ្មៅខាងឆ្វេងក្រោមឡើងលើបន្តិច (Lifted Blacks) ដើម្បីឱ្យពណ៌ខ្មៅប្រែជាប្រផេះ។\n• **Color:** បន្ថយ Saturation (-20) និងបន្ថែមពណ៌លឿង (Temp +) បន្តិច។\n• **Effects:** បន្ថែម Grain (+20 ទៅ +40) ដើម្បីឱ្យដូចរូបថតហ្វីល។\n• **Vignette:** ដាក់បន្តិច (-15) ដើម្បីឱ្យគែមងងឹត។",
-  "រូបងងឹតពេក ធ្វើម៉េច?": "បើរូបងងឹតពេក សូមកែតាមលំដាប់នេះ៖\n\n1. **Exposure (+):** តម្លើងពន្លឺរួមជាមុនសិន។\n2. **Shadows (+):** តម្លើងដើម្បីបំភ្លឺតែផ្នែកងងឹត (កុំឱ្យប៉ះពាល់ផ្នែកភ្លឺ)។\n3. **Whites (+):** តម្លើងបន្តិចដើម្បីឱ្យរូបមើលទៅភ្លឺថ្លា។\n\n⚠️ ប្រយ័ត្ន៖ ការតម្លើងពន្លឺខ្លាំងអាចធ្វើឱ្យរូបមានគ្រាប់ (Noise) ដូច្នេះកុំភ្លេចប្រើ Noise Reduction បើចាំបាច់។",
-  "សុំរូបមន្តកែរូបបែប Cinematic": "រូបមន្ត Cinematic ដ៏ពេញនិយម (Teal & Orange)៖\n\n• **Calibration:** Blue Primary (Hue -50, Sat +50), Red Primary (Hue +20, Sat -20)។\n• **Color Grading:** Shadows (Teal/Blue), Highlights (Orange/Yellow)។\n• **Light:** Contrast ខ្ពស់បន្តិច, Blacks បន្ថយចុះ។\n• **Crop:** កាត់រូបជាសមាមាត្រ 16:9 ឬ 2.35:1 ដើម្បីឱ្យដូចកុន។",
-  "របៀបធ្វើអោយស្បែកស?": "នៅក្នុង Lightroom អ្នកអាចធ្វើឱ្យស្បែកសដោយ៖\n\n1. ចូលទៅកាន់ **Color Mix** (ឬ Color Mixer)។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance (+):** តម្លើងដើម្បីឱ្យស្បែកភ្លឺ/ស។\n4. **Saturation (-):** បន្ថយបន្តិចបើស្បែកក្រហមពេក។\n\nកុំប្រើ Exposure រួម ព្រោះវានឹងធ្វើឱ្យភ្លឺទាំង Background។",
-  "កែរូបថតពេលយប់អោយស្អាត": "គន្លឹះកែរូបថតពេលយប់៖\n\n• **Highlights (-):** បន្ថយដើម្បីកុំឱ្យភ្លើងអំពូលចាំងខ្លាំងពេក។\n• **Shadows (+):** តម្លើងដើម្បីឱ្យឃើញព័ត៌មានលម្អិតក្នុងទីងងឹត។\n• **Temp:** កែសីតុណ្ហភាពពណ៌ កុំឱ្យជាប់លឿងពេក (ភ្លើងផ្លូវ)។\n• **Noise Reduction:** ចាំបាច់ណាស់! ដាក់ប្រហែល 20-30 ដើម្បីលុបគ្រាប់។",
-  "របៀបដាក់ពណ៌ Teal & Orange": "របៀបងាយៗ៖\n\n1. **Profiles:** ប្រើ Profile 'Modern 08' ឬ 'Artistic 04' ជាមូលដ្ឋាន។\n2. **Color Mix:**\n   - Blue: Hue ទៅឆ្វេង (Aqua), Saturation (+)\n   - Orange: Saturation (+), Luminance (+)\n   - Green: Hue ទៅឆ្វេង (Yellow), Saturation (-)\n3. **Grading:** Shadows ដាក់ពណ៌ Teal, Highlights ដាក់ពណ៌ Orange។",
-  "ពន្យល់ពី Curves": "Tone Curve គឺជាឧបករណ៍កែពន្លឺកម្រិតខ្ពស់៖\n\n• **ខ្សែបន្ទាត់ (Line):** តំណាងឱ្យពន្លឺពី ខ្មៅ (ឆ្វេង) ទៅ ស (ស្តាំ)។\n• **S-Curve:** ដាក់ចំណុច ៣ (Highlights ឡើង, Midtones នៅស្ងៀម, Shadows ចុះ) ដើម្បីបង្កើត Contrast ស្អាត។\n• **Lifted Blacks:** ទាញចំណុចខ្មៅបំផុត (ឆ្វេងក្រោម) ឡើងលើបន្តិច ដើម្បីបានពណ៌ Faded/Matte។",
-  "តើ Grain ជួយអ្វីខ្លះ?": "Grain (គ្រាប់) មិនមែនអាក្រក់ទាំងអស់ទេ៖\n\n1. **Aesthetic:** ធ្វើឱ្យរូបមើលទៅមានសិល្បៈដូចថតដោយហ្វីលកាមេរ៉ា។\n2. **Masking Noise:** បើកែរូបយប់ហើយ Noise Reduction ធ្វើឱ្យរូបរលោងពេក (Plastic look) ការបន្ថែម Grain បន្តិចអាចជួយឱ្យរូបមើលទៅមាន Texture ធម្មជាតិវិញ។",
-  "របៀបកែរូប Portrait អោយស្អាត": "សម្រាប់រូបមនុស្ស (Portrait)៖\n\n• **Face:** ប្រើ 'Vibrance' ជំនួស 'Saturation'។\n• **Skin:** កែពណ៌ Orange Luminance ឱ្យស្បែកភ្លឺ។\n• **Details:** បន្ថយ Texture/Clarity បន្តិច (-10) ដើម្បីឱ្យស្បែកម៉ត់ (ឬប្រើ Masking លើតែមុខ)។\n• **Eyes:** ប្រើ Brush តម្លើង Exposure និង Clarity លើគ្រាប់ភ្នែកឱ្យភ្លឺ។",
-  "តើ Clarity ខុសពី Texture យ៉ាងណា?": "ទាំងពីរនេះធ្វើឱ្យរូបច្បាស់ដូចគ្នា ប៉ុន្តែ៖\n\n• **Texture:** ប៉ះពាល់តែព័ត៌មានលម្អិតតូចៗ (ស្បែក, ផ្ទៃវត្ថុ)។ ល្អសម្រាប់ធ្វើឱ្យស្បែកម៉ត់ (ពេលបន្ថយ)។\n• **Clarity:** ប៉ះពាល់ Contrast នៅកណ្តាល (Midtones)។ វាខ្លាំងជាង Texture។ ការប្រើ Clarity ខ្លាំងពេកធ្វើឱ្យរូបមើលទៅកខ្វក់ ឬខ្មៅ។",
-  "របៀបកែពណ៌មេឃអោយដិត?": "វិធីធ្វើឱ្យមេឃខៀវដិត៖\n\n1. **HSL:** ចូលពណ៌ Blue -> បន្ថយ Luminance (-) និងតម្លើង Saturation (+)។\n2. **Masking:** ប្រើ 'Select Sky' -> បន្ថយ Exposure បន្តិច, បន្ថយ Highlights, និងតម្លើង Dehaze។",
-  "តើ RAW និង JPG ខុសគ្នាយ៉ាងណា?": "• **RAW (DNG):** ផ្ទុកព័ត៌មានទាំងអស់ពីកាមេរ៉ា។ អាចកែពន្លឺនិងពណ៌បានច្រើនដោយមិនបែករូប។ (ណែនាំឱ្យប្រើ)\n• **JPG:** រូបភាពត្រូវបានកែនិងបង្រួមរួច។ ស្រាល ប៉ុន្តែពេលកែខ្លាំងងាយនឹងបែក ឬខូចពណ៌។",
-  "របៀបលុបមុនក្នុង Lightroom?": "ប្រើឧបករណ៍ **Healing Brush** (រូបបិទដំបៅ)៖\n\n1. ជ្រើសរើសប្រភេទ 'Heal' (មិនមែន Clone)។\n2. ចុចលើគ្រាប់មុន ឬស្នាម។\n3. Lightroom នឹងយកស្បែកស្អាតពីកន្លែងផ្សេងមកជំនួសដោយស្វ័យប្រវត្តិ។",
-  "តើ Vignette ប្រើពេលណា?": "Vignette (ធ្វើឱ្យគែមងងឹត) គួរប្រើនៅជំហានចុងក្រោយ។ វាជួយបិទបាំងអ្វីដែលរញ៉េរញ៉ៃនៅគែមរូប និងរុញការចាប់អារម្មណ៍របស់អ្នកមើលទៅកាន់កណ្តាលរូបភាព (Subject)។",
-  "របៀបធ្វើអោយរូបច្បាស់ (Sharp)?": "• **Sharpening:** តម្លើងកម្រិត 40-50។\n• **Masking (សំខាន់):** ចុចពីរម្រាមដៃ (ឬ Alt) ពេលអូស Slider 'Masking'។ អូសរហូតដល់ឃើញពណ៌សតែនៅតាមគែមវត្ថុ។ នេះជួយឱ្យច្បាស់តែគែម មិនធ្វើឱ្យផ្ទៃរលោង (ដូចស្បែក/មេឃ) មានគ្រាប់។",
-  "តើ HSL ប្រើសម្រាប់អ្វី?": "HSL គឺជាបេះដូងនៃការកែពណ៌៖\n\n• **H (Hue):** ប្តូរពណ៌ (ឧ. ប្តូរស្លឹកឈើពីបៃតងទៅលឿង)។\n• **S (Saturation):** កំណត់ភាពដិតនៃពណ៌នោះ។\n• **L (Luminance):** កំណត់ពន្លឺនៃពណ៌នោះ (ធ្វើឱ្យពណ៌នោះភ្លឺឬងងឹត)។",
-  "របៀប Copy Settings ទៅរូបផ្សេង?": "ដើម្បីចំណេញពេល៖\n\n1. កែរូបទី ១ ឱ្យស្អាត។\n2. ចុចសញ្ញា ... (More) -> Copy Settings។\n3. បើករូបទី ២ -> ចុច ... -> Paste Settings។\n\nវានឹងអនុវត្តការកែទាំងអស់ទៅរូបថ្មី។",
-  "តើ Color Grading ប្រើដើម្បីអ្វី?": "Color Grading (Split Toning) ប្រើសម្រាប់បន្ថែមពណ៌អារម្មណ៍ (Mood) ទៅក្នុងរូប។\n\n• ខុសពី HSL ដែលកែពណ៌ដែលមានស្រាប់, Grading អាចដាក់ពណ៌ថ្មីចូលទៅក្នុង Shadows (ម្លប់) និង Highlights (កន្លែងភ្លឺ)។",
-  "គន្លឹះថតរូបពេលថ្ងៃលិច?": "• **Golden Hour:** ថតមុនថ្ងៃលិច ១ ម៉ោង ពន្លឺនឹងទន់និងមានពណ៌មាស។\n• **Underexpose:** ថតឱ្យងងឹតបន្តិច ដើម្បីកុំឱ្យបាត់ពណ៌មេឃ។ ក្នុង Lightroom អាចតម្លើង Shadows មកវិញបាន តែបើមេឃស (Overexposed) គឺកែមិនបានទេ។"
-};
-
-const TIP_DATABASE = [
-  "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម រួចកែតម្រូវតាមក្រោយ ដើម្បីចំណេញពេល។",
-  "ចុចសង្កត់លើរូបដើម្បីមើល Before/After ប្រៀបធៀបលទ្ធផល។",
-  "ចុចពីរដងលើ Slider ដើម្បី Reset វាទៅតម្លៃ 0 វិញ។",
-  "ប្រើម្រាមដៃពីរលើ Slider (Whites/Blacks) ដើម្បីមើលកន្លែងដែលបាត់ព័ត៌មាន (Clipping)។",
-  "បន្ថយ Highlights (-50 ដល់ -100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតក្នុងមេឃ។",
-  "តម្លើង Shadows (+30 ដល់ +60) ដើម្បីមើលឃើញរបស់ក្នុងម្លប់ច្បាស់ជាងមុន។",
-  "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត ដោយមិនប៉ះពាល់ដី។",
-  "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បានចេញពីរូបភាព។",
-  "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស (Portrait) ព្រោះវាធ្វើឱ្យឃើញស្នាមកាន់តែច្បាស់។",
-  "ប្រើ Vibrance ជំនួស Saturation ដើម្បីទទួលបានពណ៌ស្បែកធម្មជាតិជាង។",
-  "Export ជា DNG ដើម្បីចែករំលែក Preset ទៅឱ្យមិត្តភក្តិ។",
-  "ប្រើ Grid (Rule of Thirds) ពេលថត ដើម្បីឱ្យរូបមានសមាសភាពល្អ។",
-  "បើក 'Lens Profile Corrections' ជានិច្ច ដើម្បីកែភាពកោងនៃកែវថត។",
-  "ប្រើ 'Upright' -> 'Auto' សម្រាប់រូបថតអគារ ដើម្បីឱ្យសរសរត្រង់។",
-  "ដាក់ផ្កាយ (Rate) រូបដែលចូលចិត្ត ដើម្បីងាយស្រួលរកពេលក្រោយ។",
-  "ប្រើ Color Noise Reduction (25-30) សម្រាប់រូបថតយប់ ដើម្បីកាត់បន្ថយគ្រាប់ពណ៌។",
-  "កុំ Sharpen ខ្លាំងពេក ប្រយ័ត្នរូបខូចគុណភាព។",
-  "ធ្វើឱ្យធ្មេញស៖ ប្រើ Brush -> Saturation (-50) -> Exposure (+20)។",
-  "ប្រើ S-Curve បន្តិច ដើម្បីឱ្យរូបមានជម្រៅ (Pop) និង Contrast ស្អាត។",
-  "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើឱ្យប្លែក។",
-  "ធ្វើឱ្យស្មៅបៃតងខ្ចី៖ HSL -> Green -> Hue ទៅឆ្វេង (Yellowish)។",
-  "បន្ថយ Dehaze ទៅឆ្វេងបន្តិច ដើម្បីបង្កើត Effect ដូចសុបិន (Dreamy)។",
-  "ប្រើ Grain បន្តិច (10-15) ដើម្បីបិទបាំង Noise និងឱ្យរូបមើលទៅដូច Film។",
-  "ប្រើ Vignette ដើម្បីឱ្យគេផ្តោតលើកណ្តាលរូប (Subject)។",
-  "កាត់រូប 4:5 សម្រាប់ Instagram Post ដើម្បីបានពេញអេក្រង់។",
-  "កាត់រូប 9:16 សម្រាប់ Story ឬ TikTok។",
-  "ប្រើ Copy Settings ដើម្បីកែរូបជាច្រើនក្នុងពេលតែមួយ។",
-  "ប្រើ Version ដើម្បីសាកល្បងស្តាយផ្សេងៗលើរូបតែមួយ។",
-  "មើល Histogram ដើម្បីដឹងថារូបងងឹតឬភ្លឺពេក។",
-  "ប្រើ Range Mask ដើម្បីកែតែពណ៌ជាក់លាក់ណាមួយ។",
-  "កុំភ្លេចកែ White Balance មុនគេ ដើម្បីឱ្យពណ៌ត្រឹមត្រូវ។",
-  "ប្រើ Temp ដើម្បីបង្កើតអារម្មណ៍ (Mood) កក់ក្តៅ ឬត្រជាក់។",
-  "ប្រើ Tint ដើម្បីកែពណ៌ស្បែកដែលជាប់បៃតង។",
-  "ប្រើ B&W (សខ្មៅ) ប្រសិនបើពន្លឺល្អ ប៉ុន្តែពណ៌មិនស្អាត។",
-  "ប្រើ Split Toning (Color Grading) សម្រាប់ដាក់ពណ៌ក្នុង Shadows និង Highlights។",
-  "Lifted Blacks (Curve) ធ្វើឱ្យរូបមើលទៅដូច Film (Vintage)។",
-  "Invert Mask គឺមានប្រយោជន៍ខ្លាំងណាស់សម្រាប់កែ Background។",
-  "ប្រើ Brush ជាមួយ Flow ទាប ដើម្បីគូរពណ៌តិចៗ លម្អិត។",
-  "កែពណ៌មាត់៖ Mask -> Brush -> Saturation (+) -> Tint (Pink)។",
-  "ធ្វើឱ្យរ៉ូបកូនក្រមុំស៖ HSL -> White -> Saturation (-)។",
-  "ធ្វើឱ្យទឹកសមុទ្រខៀវស្អាត៖ HSL -> Aqua -> Hue ទៅស្តាំ។",
-  "កែពណ៌ថ្ងៃលិច៖ HSL -> Orange/Red -> Saturation (+)។"
-];
-
-const QUESTION_DATABASE = [
-  { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1 },
-  { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1 },
-  { id: 3, question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?", options: ["Green", "Orange", "Blue", "Red"], correct: 2 },
-  { id: 4, question: "តើ Dehaze ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 1 },
-  { id: 5, question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?", options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "បន្ថយ Exposure"], correct: 1 },
-  { id: 6, question: "តើ Tone Curve មួយណាដែលធ្វើឱ្យរូបមាន Contrast ស្អាត (Pop)?", options: ["Linear", "S-Curve", "Flat", "Inverted"], correct: 1 },
-  { id: 7, question: "តើ Temp ប្រើសម្រាប់កែអ្វី?", options: ["ភាពច្បាស់", "សីតុណ្ហភាពពណ៌ (លឿង/ខៀវ)", "ពន្លឺ", "គ្រាប់ Noise"], correct: 1 },
-  { id: 8, question: "តើការប្រើ Sharpening ខ្លាំងពេកនឹងធ្វើឱ្យរូបទៅជាយ៉ាងណា?", options: ["ច្បាស់ស្អាត", "មានគ្រាប់ Noise និងខូចគុណភាព", "មើលទៅទន់", "មានពណ៌ស្រស់"], correct: 1 },
-  { id: 9, question: "តើ DNG ជាប្រភេទ file អ្វី?", options: ["Video", "RAW Image", "Audio", "Text"], correct: 1 },
-  { id: 10, question: "តើឧបករណ៍មួយណាជួយកែរូបដែលថតមកវារេ ឬមិនត្រង់?", options: ["Optics", "Geometry/Upright", "Detail", "Effects"], correct: 1 },
-  { id: 11, question: "តើ HSL តំណាងឱ្យអ្វី?", options: ["Hue, Saturation, Lightness", "High, Standard, Low", "Hue, Shadow, Light", "Highlight, Shadow, Luminance"], correct: 0 },
-  { id: 12, question: "តើធ្វើដូចម្តេចដើម្បីឱ្យស្បែកស?", options: ["បន្ថយ Orange Saturation, តម្លើង Orange Luminance", "តម្លើង Orange Saturation", "បន្ថយ Red Luminance", "តម្លើង Yellow Saturation"], correct: 0 },
-  { id: 13, question: "តើ Grain ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "បន្ថែមគ្រាប់តូចៗបែប Film Look", "លុប Noise", "កែពណ៌"], correct: 1 },
-  { id: 14, question: "តើ Vignette ធ្វើអ្វី?", options: ["ធ្វើឱ្យគែមរូបងងឹត ឬភ្លឺ", "ធ្វើឱ្យរូបកណ្តាលងងឹត", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 0 },
-  { id: 15, question: "តើ Masking ប្រើសម្រាប់អ្វី?", options: ["កែរូបភាពទាំងមូល", "កែតំបន់ជាក់លាក់នៃរូបភាព", "ដាក់ស៊ុមរូប", "Export រូប"], correct: 1 },
-  { id: 16, question: "តើ Color Grading ខុសពី HSL យ៉ាងណា?", options: ["វាមិនខុសគ្នាទេ", "HSL កែពណ៌នីមួយៗ, Grading ដាក់ពណ៌លើ Shadows/Highlights", "Grading សម្រាប់តែរូបសខ្មៅ", "HSL សម្រាប់តែកែពន្លឺ"], correct: 1 },
-  { id: 17, question: "តើ Histogram បង្ហាញអ្វី?", options: ["ទំហំរូបភាព", "ក្រាហ្វិកនៃពន្លឺនិងពណ៌ក្នុងរូប", "ឈ្មោះកាមេរ៉ា", "ទីតាំងថតរូប"], correct: 1 },
-  { id: 18, question: "តើ Clarity ធ្វើអ្វី?", options: ["បន្ថែម Contrast នៅតំបន់ Midtones", "ធ្វើឱ្យរូបព្រាល", "ប្តូរពណ៌", "កែពន្លឺមេឃ"], correct: 0 },
-  { id: 19, question: "តើគួរប្រើអ្វីដើម្បីកាត់បន្ថយ Noise?", options: ["Sharpening", "Noise Reduction", "Grain", "Clarity"], correct: 1 },
-  { id: 20, question: "តើអ្វីទៅជា Chromatic Aberration?", options: ["ពណ៌ស្អាត", "ស្នាមពណ៌ស្វាយ/បៃតងនៅតាមគែមវត្ថុ", "ពន្លឺចាំង", "ប្រភេទ Lens"], correct: 1 }
-];
 
 const lessonsData = [
   {
@@ -189,12 +77,12 @@ const lessonsData = [
     icon: <Sun className="w-5 h-5 text-amber-400" />,
     description: 'រៀនអំពីការកែសម្រួលពន្លឺនៅក្នុងរូបភាពរបស់អ្នក។',
     content: [
-      { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ បង្កើន (+) ដើម្បីឱ្យភ្លឺ និងបន្ថយ (-) ដើម្បីឱ្យងងឹត។', tip: 'កែវាមុនគេបង្អស់។' },
-      { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់ភាពខុសគ្នារវាងផ្នែកភ្លឺ និងផ្នែកងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិតច្បាស់ និងមានជម្រៅ។', tip: 'កុំដាក់ខ្លាំងពេកលើស +40។' },
-      { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានពន្លឺខ្លាំងបំផុត។ បន្ថយវាជួយសង្គ្រោះព័ត៌មានដែលបាត់ដោយសារពន្លឺចាំង។', tip: 'បន្ថយ (-50) ដើម្បីសង្គ្រោះពន្លឺមេឃ។' },
-      { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានស្រមោល។ ការតម្លើងវាជួយឱ្យឃើញព័ត៌មានក្នុងកន្លែងងងឹត។', tip: 'តម្លើង (+40) សម្រាប់រូបថតបញ្ច្រាសថ្ងៃ។' },
-      { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចពណ៌សដាច់ខាត។ បង្កើនវាដើម្បីឱ្យផ្នែកភ្លឺបំផុត ក្លាយជាពណ៌សសុទ្ធ។', tip: 'តម្លើងបន្តិច (+15) ដើម្បីឱ្យរូបភ្លឺថ្លា។' },
-      { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។ បន្ថយវាដើម្បីឱ្យផ្នែកងងឹតបំផុត ក្លាយជាពណ៌ខ្មៅសុទ្ធ។', tip: 'បន្ថយបន្តិច (-15) ដើម្បីឱ្យរូបមានជម្រៅ។' },
+      { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ បង្កើន (+) ដើម្បីឱ្យភ្លឺ និងបន្ថយ (-) ដើម្បីឱ្យងងឹត។ វាជាមូលដ្ឋានគ្រឹះដំបូងគេ។', tip: 'កែវាមុនគេបង្អស់។ បើមិនច្បាស់ ដាក់ត្រឹម +0.50 ទៅ +1.00 គឺល្មម។' },
+      { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់កម្រិតភាពខុសគ្នារវាងផ្នែកភ្លឺ និងផ្នែកងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិតច្បាស់ (Pop)។', tip: 'កុំដាក់លើស +50 ប្រយ័ត្នបាត់ Detail ក្នុងម្លប់។ +20 គឺល្មមស្អាត។' },
+      { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានពន្លឺខ្លាំង (មេឃ, ថ្ងៃចាំង)។', tip: 'បន្ថយ (-50 ទៅ -80) ដើម្បីសង្គ្រោះពន្លឺមេឃ និងពពក។' },
+      { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតែតំបន់ដែលមានស្រមោល។', tip: 'តម្លើង (+40 ទៅ +70) សម្រាប់រូប Backlit (ថតបញ្ច្រាសពន្លឺ)។' },
+      { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចពណ៌សដាច់ខាត។', tip: 'តម្លើងបន្តិច (+10) ឱ្យរូបភ្លឺថ្លា។ ប្រើម្រាមដៃពីរដើម្បីមើលកុំឱ្យលើស។' },
+      { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។', tip: 'បន្ថយបន្តិច (-10) ឱ្យរូបមានជម្រៅ និងពណ៌ដិត។' },
     ]
   },
   {
@@ -203,47 +91,47 @@ const lessonsData = [
     icon: <Droplet className="w-5 h-5 text-cyan-400" />,
     description: 'ធ្វើឱ្យពណ៌មានភាពរស់រវើកនិងកែសម្រួលសីតុណ្ហភាព។',
     content: [
-      { tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កំណត់សីតុណ្ហភាពពណ៌៖ លឿង (Warm) ឬខៀវ (Cool)។', tip: 'ថតពេលថ្ងៃលិច តម្លើងទៅលឿង។' },
-      { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែតម្រូវពណ៌លាំរវាង បៃតង និង ស្វាយ (Magenta)។', tip: 'ប្រើសម្រាប់កែពណ៌ស្បែកដែលជាប់បៃតង។' },
-      { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក ដោយមិនធ្វើឱ្យពណ៌ស្បែកខូចឡើយ។', tip: 'ប្រើជំនួស Saturation សម្រាប់រូបមនុស្ស។' },
-      { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។' },
-      { tool: 'Color Mix', khmer: 'ការលាយពណ៌', desc: 'គ្រប់គ្រង Hue, Saturation, Luminance នៃពណ៌នីមួយៗ។', tip: 'Orange: តម្លើង Luminance ដើម្បីឱ្យស្បែកស។' },
-      { tool: 'Color Grading', khmer: 'ការដាក់ពណ៌', desc: 'ដាក់ពណ៌ចូលទៅក្នុង Shadows, Midtones, និង Highlights។', tip: 'Teal Shadows, Orange Highlights (Cinematic)។' },
+      { tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កំណត់ពណ៌លឿង (Warm) ឬខៀវ (Cool)។', tip: 'ថតពេលថ្ងៃលិច តម្លើងទៅលឿង (+15)។ ថតពេលព្រឹកព្រលឹម បន្ថយទៅខៀវ។' },
+      { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែតម្រូវពណ៌បៃតង និងស្វាយ។', tip: 'ប្រើកែពណ៌ស្បែកដែលជាប់បៃតង (ដោយសារពន្លឺភ្លើង Fluorescent)។' },
+      { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ស្លេក ដោយការពារពណ៌ស្បែក។', tip: 'ល្អសម្រាប់ Portrait ជាង Saturation។ ដាក់ (+30) គឺស្អាត។' },
+      { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យបែកពណ៌។' },
+      { tool: 'Color Mix', khmer: 'ការលាយពណ៌', desc: 'គ្រប់គ្រង HSL នៃពណ៌នីមួយៗ។', tip: 'Orange: តម្លើង Luminance ដើម្បីឱ្យស្បែកស។ Blue: បន្ថយ Luminance ដើម្បីឱ្យមេឃដិត។' },
+      { tool: 'Color Grading', khmer: 'ការដាក់ពណ៌', desc: 'ដាក់ពណ៌ក្នុង Shadows, Midtones, Highlights។', tip: 'Teal Shadows (210), Orange Highlights (35) សម្រាប់ Cinematic Look។' },
     ]
   },
   {
     id: 'effects',
     title: 'បែបផែន (Effects)',
     icon: <Aperture className="w-5 h-5 text-purple-400" />,
-    description: 'បន្ថែមភាពច្បាស់ និងវាយនភាពទៅកាន់រូបភាព។',
+    description: 'បន្ថែមភាពច្បាស់ និងវាយនភាព។',
     content: [
-      { tool: 'Texture', khmer: 'វាយនភាព', desc: 'ធ្វើឱ្យផ្ទៃរបស់វត្ថុ (ស្បែក, ថ្ម) កាន់តែលេចធ្លោ។', tip: 'បន្ថយ (-20) ដើម្បីធ្វើឱ្យស្បែកមុខម៉ត់។' },
-      { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'បន្ថែម Contrast នៅតំបន់កណ្តាល ធ្វើឱ្យរូបមើលទៅមានជម្រៅ។', tip: 'កុំប្រើលើមុខមនុស្សស្ត្រី ឬកុមារ។' },
-      { tool: 'Dehaze', khmer: 'កាត់បន្ថយអ័ព្ទ', desc: 'លុបអ័ព្ទ ឬផ្សែង។', tip: 'តម្លើងបន្តិច (+15) សម្រាប់រូបថតមេឃ។' },
-      { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើឱ្យគែមរូបភាពងងឹត ដើម្បីរុញចំណាប់អារម្មណ៍ទៅកណ្តាល។', tip: 'ដាក់កម្រិត -15 ទៅ -20។' },
+      { tool: 'Texture', khmer: 'វាយនភាព', desc: 'ធ្វើឱ្យផ្ទៃវត្ថុ (ថ្ម, ឈើ) លេចធ្លោ។', tip: 'បន្ថយ (-20) សម្រាប់ធ្វើឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។' },
+      { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'បន្ថែម Contrast កណ្តាល។', tip: 'កុំប្រើលើមុខស្ត្រី/កុមារ ព្រោះវាធ្វើឱ្យឃើញស្នាម។' },
+      { tool: 'Dehaze', khmer: 'កាត់បន្ថយអ័ព្ទ', desc: 'លុបអ័ព្ទ ឬធ្វើឱ្យមេឃដិត។', tip: 'តម្លើងបន្តិច (+15) សម្រាប់រូបថតមេឃឱ្យពណ៌ខៀវដិត។' },
+      { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើឱ្យគែមរូបភាពងងឹត។', tip: 'ដាក់ (-20) ដើម្បីផ្តោតអារម្មណ៍ទៅកណ្តាលរូប។' },
     ]
   },
   {
     id: 'detail',
     title: 'ភាពលម្អិត (Detail)',
     icon: <Triangle className="w-5 h-5 text-pink-400" />,
-    description: 'គ្រប់គ្រងភាពច្បាស់ និងកាត់បន្ថយគ្រាប់ (Noise)។',
+    description: 'គ្រប់គ្រងភាពច្បាស់ និងកាត់បន្ថយគ្រាប់។',
     content: [
-      { tool: 'Sharpening', khmer: 'ការធ្វើឱ្យច្បាស់', desc: 'ធ្វើឱ្យគែមនៃវត្ថុក្នុងរូបភាពកាន់តែមុត។', tip: 'ប្រើ Masking (2 fingers) ដើម្បីកុំឱ្យប៉ះពាល់ស្បែក។' },
-      { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ (Noise) ដែលកើតឡើងដោយសារ ISO ខ្ពស់។', tip: 'កុំដាក់ខ្លាំងពេក ប្រយ័ត្នរូបបាត់ Detail។' },
-      { tool: 'Color Noise', khmer: 'គ្រាប់ពណ៌', desc: 'លុបគ្រាប់ពណ៌ខុសប្រក្រតី (ស្ុចៗពណ៌ស្វាយ/បៃតង)។', tip: 'ទុកនៅតម្លៃ 25 (Default)។' },
+      { tool: 'Sharpening', khmer: 'ការធ្វើឱ្យច្បាស់', desc: 'ធ្វើឱ្យគែមវត្ថុកាន់តែមុត។', tip: 'ចុចពីរម្រាមដៃ (Alt/Option) ពេលអូស Masking ឱ្យដល់ 80% ដើម្បី Sharpen តែគែម។' },
+      { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise (ISO ខ្ពស់)។', tip: 'កុំដាក់លើស 40 ព្រោះវាធ្វើឱ្យរូបមើលទៅដូចប្លាស្ទិក។' },
+      { tool: 'Color Noise', khmer: 'គ្រាប់ពណ៌', desc: 'លុបគ្រាប់ពណ៌ខុសប្រក្រតី។', tip: 'ទុកនៅតម្លៃ 25 (Default) គឺល្អគ្រប់គ្រាន់ហើយ។' },
     ]
   },
   {
     id: 'masking',
     title: 'ការកែតំបន់ (Masking)',
     icon: <ScanFace className="w-5 h-5 text-green-400" />,
-    description: 'កែតម្រូវតែផ្នែកខ្លះនៃរូបភាព (មេឃ, មនុស្ស)។',
+    description: 'កែតម្រូវតែផ្នែកខ្លះនៃរូបភាព។',
     content: [
-      { tool: 'Select Subject', khmer: 'ជ្រើសរើសវត្ថុ', desc: 'AI នឹងជ្រើសរើសមនុស្ស ឬវត្ថុសំខាន់។', tip: 'ធ្វើឱ្យមនុស្សភ្លឺជាង Background។' },
-      { tool: 'Select Sky', khmer: 'ជ្រើសរើសមេឃ', desc: 'AI ជ្រើសរើសផ្ទៃមេឃទាំងអស់។', tip: 'បន្ថយ Highlights ដើម្បីបានមេឃពណ៌ខៀវដិត។' },
-      { tool: 'Linear Gradient', khmer: 'ដេញពណ៌', desc: 'កែតំបន់ជាលក្ខណៈបន្ទាត់។', tip: 'ធ្វើឱ្យដីភ្លឺ ឬមេឃងងឹត។' },
-      { tool: 'Radial Gradient', khmer: 'រង្វង់', desc: 'កែតំបន់ជារង្វង់។', tip: 'ប្រើបង្កើតពន្លឺសិប្បនិម្មិត ឬ Spotlight។' },
+      { tool: 'Select Subject', khmer: 'ជ្រើសរើសវត្ថុ', desc: 'AI នឹងជ្រើសរើសមនុស្ស ឬវត្ថុសំខាន់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើដើម្បីធ្វើឱ្យមនុស្សភ្លឺជាង Background (Exposure +)។' },
+      { tool: 'Select Sky', khmer: 'ជ្រើសរើសមេឃ', desc: 'AI ជ្រើសរើសផ្ទៃមេឃទាំងអស់។', tip: 'បន្ថយ Highlight និងតម្លើង Saturation ដើម្បីបានមេឃពណ៌ខៀវដិតស្អាត។' },
+      { tool: 'Linear Gradient', khmer: 'ដេញពណ៌', desc: 'កែតំបន់ជាលក្ខណៈបន្ទាត់។', tip: 'ប្រើសម្រាប់ធ្វើឱ្យដីភ្លឺ (ទាញពីក្រោមឡើងលើ) ឬធ្វើឱ្យមេឃងងឹត។' },
+      { tool: 'Radial Gradient', khmer: 'រង្វង់', desc: 'កែតំបន់ជារង្វង់។', tip: 'ប្រើបង្កើតពន្លឺសិប្បនិម្មិត (Sun Flare) ឬពន្លឺផ្តោត (Spotlight) លើមុខ។' },
     ]
   },
   {
@@ -252,274 +140,187 @@ const lessonsData = [
     icon: <Crop className="w-5 h-5 text-cyan-400" />,
     description: 'កែទម្រង់រូបភាព និងកែវថត។',
     content: [
-      { tool: 'Lens Corrections', khmer: 'កែកែវថត', desc: 'កែការពន្លយ (Distortion) និង Vignette របស់កែវថត។', tip: 'បើកវាជានិច្ច។' },
-      { tool: 'Chromatic Aberration', khmer: 'ពណ៌តាមគែម', desc: 'លុបស្នាមពណ៌ស្វាយ/បៃតង នៅតាមគែមវត្ថុ។', tip: 'ចាំបាច់សម្រាប់រូបថតដែលមាន Contrast ខ្ពស់។' },
-      { tool: 'Upright', khmer: 'តម្រង់រូប', desc: 'ធ្វើឱ្យអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលរហ័ស។' },
+      { tool: 'Lens Corrections', khmer: 'កែកែវថត', desc: 'កែ Distortion និង Vignette របស់កែវថត។', tip: 'បើកវាជានិច្ច (Enable Lens Corrections)។' },
+      { tool: 'Chromatic Aberration', khmer: 'ពណ៌តាមគែម', desc: 'លុបស្នាមពណ៌ស្វាយ/បៃតងតាមគែម។', tip: 'ចាំបាច់សម្រាប់រូប Contrast ខ្ពស់។' },
+      { tool: 'Upright', khmer: 'តម្រង់រូប', desc: 'ធ្វើឱ្យអគារត្រង់។', tip: 'ប្រើ Auto សម្រាប់លទ្ធផលរហ័ស។' },
     ]
   },
   {
     id: 'export',
     title: 'រក្សាទុក (Export)',
     icon: <Save className="w-5 h-5 text-indigo-500" />,
-    description: 'របៀបរក្សាទុករូបភាពឱ្យមានគុណភាពខ្ពស់។',
+    description: 'របៀបរក្សាទុករូបភាព។',
     content: [
-      { tool: 'JPG', khmer: 'រូបភាពធម្មតា', desc: 'ឯកសាររូបភាពដែលត្រូវបានបង្រួម។', tip: 'ល្អសម្រាប់បង្ហោះលើបណ្តាញសង្គម។' },
-      { tool: 'DNG', khmer: 'ឯកសារ RAW', desc: 'ឯកសារដើមដែលអាចកែពណ៌បន្តបានល្អ។', tip: 'ប្រើសម្រាប់រក្សាទុក Preset ដើម្បីចែករំលែក។' },
-      { tool: 'Watermark', khmer: 'ឈ្មោះលើរូប', desc: 'ដាក់ឈ្មោះ ឬ Logo របស់អ្នកលើរូបភាព។', tip: 'ការពារកម្មសិទ្ធិបញ្ញា។' },
+      { tool: 'JPG', khmer: 'រូបភាពធម្មតា', desc: 'ឯកសារបង្រួម។', tip: 'កំណត់ Quality 100% សម្រាប់បង្ហោះលើ Facebook/Instagram។' },
+      { tool: 'DNG', khmer: 'ឯកសារ RAW', desc: 'ឯកសារដើមដែលអាចកែពណ៌បន្តបាន។', tip: 'ប្រើសម្រាប់រក្សាទុក Preset ដើម្បីចែករំលែក។' },
+      { tool: 'Watermark', khmer: 'ឈ្មោះលើរូប', desc: 'ដាក់ឈ្មោះការពារកម្មសិទ្ធិ។', tip: 'Customize ក្នុង Export Settings។' },
     ]
   }
 ];
 
-// 🔥 NEW: 15+ Preset Database (No API required)
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
         detail: { Sharpening: 40, Noise: 10, ColorNoise: 25 },
         effects: { Grain: 0 },
         curve: { RGB: "S-Curve" },
-        colorMix: [
-            { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 },
-            { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 }
-        ],
+        colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
-    "dark moody": {
-        basic: { Exposure: -0.15, Contrast: 30, Highlights: -60, Shadows: -10, Whites: -30, Blacks: -10, Temp: -5, Tint: 0, Vibrance: -10, Saturation: -25, Clarity: 15, Dehaze: 10, Vignette: -30 },
-        detail: { Sharpening: 35, Noise: 0, ColorNoise: 25 },
-        effects: { Grain: 10 },
-        curve: { RGB: "Matte" },
-        colorMix: [
-            { color: "Red", h: 0, s: -20, l: -10 }, { color: "Orange", h: 0, s: -10, l: 0 }, { color: "Yellow", h: -100, s: -50, l: 0 },
-            { color: "Green", h: -100, s: -60, l: -30 }, { color: "Aqua", h: 0, s: -50, l: 0 }, { color: "Blue", h: 0, s: -50, l: -20 }, { color: "Purple", h: 0, s: -50, l: 0 }, { color: "Magenta", h: 0, s: -50, l: 0 }
-        ],
-        grading: { Shadows: { h: 220, s: 15, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 5, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "bright & airy": {
-        basic: { Exposure: 0.50, Contrast: 10, Highlights: -30, Shadows: 60, Whites: 40, Blacks: 20, Temp: 5, Tint: 5, Vibrance: 30, Saturation: 5, Clarity: -10, Dehaze: 0, Vignette: 0 },
-        detail: { Sharpening: 25, Noise: 20, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "Linear" },
-        colorMix: [
-            { color: "Red", h: 10, s: 10, l: 5 }, { color: "Orange", h: 5, s: 10, l: 15 }, { color: "Yellow", h: 10, s: 15, l: 10 },
-            { color: "Green", h: 30, s: 20, l: 20 }, { color: "Aqua", h: 0, s: 15, l: 10 }, { color: "Blue", h: 0, s: 15, l: 10 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
-        ],
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 10, l: 5 }, Blending: 50, Balance: 0 }
-    },
-    "vintage film": {
-        basic: { Exposure: 0.10, Contrast: 10, Highlights: -20, Shadows: 20, Whites: -20, Blacks: 30, Temp: 10, Tint: 0, Vibrance: -10, Saturation: -15, Clarity: 0, Dehaze: -5, Vignette: -20 },
-        detail: { Sharpening: 20, Noise: 0, ColorNoise: 25 },
-        effects: { Grain: 40 },
-        curve: { RGB: "Faded" },
-        colorMix: [
-             { color: "Red", h: 0, s: -10, l: 0 }, { color: "Orange", h: 0, s: -5, l: 0 }, { color: "Yellow", h: -20, s: -30, l: 0 },
-             { color: "Green", h: -40, s: -40, l: 0 }, { color: "Aqua", h: 0, s: -30, l: 0 }, { color: "Blue", h: -10, s: -30, l: 0 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 }
-        ],
-        grading: { Shadows: { h: 40, s: 15, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 200, s: 10, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "cyberpunk": {
-        basic: { Exposure: 0.20, Contrast: 20, Highlights: 10, Shadows: 10, Whites: 20, Blacks: -10, Temp: -20, Tint: 30, Vibrance: 50, Saturation: 10, Clarity: 20, Dehaze: 15, Vignette: -10 },
-        detail: { Sharpening: 50, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "High Contrast" },
-        colorMix: [
-             { color: "Red", h: 20, s: 30, l: 0 }, { color: "Orange", h: 0, s: 10, l: 5 }, { color: "Yellow", h: -100, s: 0, l: 0 },
-             { color: "Green", h: 100, s: -50, l: 0 }, { color: "Aqua", h: -30, s: 50, l: 0 }, { color: "Blue", h: -30, s: 50, l: 0 }, { color: "Purple", h: 50, s: 40, l: 0 }, { color: "Magenta", h: 50, s: 40, l: 0 }
-        ],
-        grading: { Shadows: { h: 260, s: 40, l: -5 }, Midtones: { h: 300, s: 20, l: 0 }, Highlights: { h: 320, s: 30, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "golden hour": {
-        basic: { Exposure: 0.15, Contrast: 15, Highlights: -30, Shadows: 30, Whites: 10, Blacks: -10, Temp: 20, Tint: 10, Vibrance: 30, Saturation: 10, Clarity: 10, Dehaze: 0, Vignette: -10 },
-        detail: { Sharpening: 35, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "S-Curve" },
-        colorMix: [
-            { color: "Red", h: 10, s: 10, l: 0 }, { color: "Orange", h: -5, s: 20, l: 10 }, { color: "Yellow", h: -15, s: 25, l: 5 },
-            { color: "Green", h: -20, s: 10, l: 0 }, { color: "Aqua", h: 0, s: 0, l: 0 }, { color: "Blue", h: 0, s: 10, l: 0 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
-        ],
-        grading: { Shadows: { h: 40, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 30, l: 5 }, Blending: 50, Balance: 0 }
-    },
-    "soft pastel": {
-        basic: { Exposure: 0.30, Contrast: -15, Highlights: -40, Shadows: 50, Whites: 20, Blacks: 30, Temp: 0, Tint: 10, Vibrance: 35, Saturation: -10, Clarity: -15, Dehaze: -5, Vignette: 0 },
-        detail: { Sharpening: 20, Noise: 20, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "Matte" },
-        colorMix: [
-             { color: "Red", h: 15, s: 10, l: 10 }, { color: "Orange", h: 10, s: 10, l: 15 }, { color: "Yellow", h: -5, s: 15, l: 10 },
-             { color: "Green", h: 40, s: 10, l: 10 }, { color: "Aqua", h: -10, s: 20, l: 15 }, { color: "Blue", h: -10, s: 20, l: 15 }, { color: "Purple", h: 20, s: 10, l: 5 }, { color: "Magenta", h: 20, s: 10, l: 5 }
-        ],
-        grading: { Shadows: { h: 220, s: 10, l: 5 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 5 }, Blending: 50, Balance: 0 }
-    },
-    "urban grey": {
-        basic: { Exposure: 0.05, Contrast: 30, Highlights: -40, Shadows: 25, Whites: 25, Blacks: -30, Temp: -5, Tint: 0, Vibrance: -25, Saturation: -40, Clarity: 30, Dehaze: 10, Vignette: -20 },
-        detail: { Sharpening: 50, Noise: 0, ColorNoise: 25 },
-        effects: { Grain: 25 },
-        curve: { RGB: "High Contrast" },
-        colorMix: [
-             { color: "Red", h: 0, s: -30, l: -10 }, { color: "Orange", h: 0, s: 10, l: 0 }, { color: "Yellow", h: -100, s: -100, l: 0 },
-             { color: "Green", h: -100, s: -100, l: 0 }, { color: "Aqua", h: -100, s: -100, l: -10 }, { color: "Blue", h: -100, s: -100, l: -10 }, { color: "Purple", h: -100, s: -100, l: 0 }, { color: "Magenta", h: -100, s: -100, l: 0 }
-        ],
-        grading: { Shadows: { h: 210, s: 15, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "black & white": {
-        basic: { Exposure: 0.0, Contrast: 40, Highlights: -20, Shadows: 20, Whites: 30, Blacks: -30, Temp: 0, Tint: 0, Vibrance: 0, Saturation: -100, Clarity: 25, Dehaze: 10, Vignette: -15 },
-        detail: { Sharpening: 45, Noise: 15, ColorNoise: 0 },
-        effects: { Grain: 30 },
-        curve: { RGB: "S-Curve" },
-        colorMix: [
-            { color: "Red", h: 0, s: 0, l: -15 }, { color: "Orange", h: 0, s: 0, l: -5 }, { color: "Yellow", h: 0, s: 0, l: 15 },
-            { color: "Green", h: 0, s: 0, l: -10 }, { color: "Aqua", h: 0, s: 0, l: -25 }, { color: "Blue", h: 0, s: 0, l: -30 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
-        ],
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "hdr landscape": {
-        basic: { Exposure: 0.0, Contrast: 15, Highlights: -90, Shadows: 90, Whites: 30, Blacks: -30, Temp: 5, Tint: 5, Vibrance: 45, Saturation: 15, Clarity: 35, Dehaze: 25, Vignette: -10 },
-        detail: { Sharpening: 65, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "Linear" },
-        colorMix: [
-            { color: "Red", h: 0, s: 15, l: 0 }, { color: "Orange", h: 0, s: 15, l: 0 }, { color: "Yellow", h: 0, s: 20, l: 0 },
-            { color: "Green", h: 15, s: 25, l: -10 }, { color: "Aqua", h: -10, s: 35, l: -15 }, { color: "Blue", h: -10, s: 35, l: -15 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
-        ],
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 15, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "matte black": {
-        basic: { Exposure: 0.05, Contrast: 10, Highlights: -30, Shadows: 40, Whites: -10, Blacks: 20, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -20, Clarity: 10, Dehaze: 0, Vignette: -15 },
-        detail: { Sharpening: 25, Noise: 0, ColorNoise: 25 },
-        effects: { Grain: 15 },
-        curve: { RGB: "Matte" }, // Important: Lifted blacks
-        colorMix: [
-            { color: "Red", h: 0, s: -10, l: 0 }, { color: "Orange", h: 0, s: -5, l: 0 }, { color: "Yellow", h: 0, s: -20, l: 0 },
-            { color: "Green", h: 0, s: -30, l: -10 }, { color: "Aqua", h: 0, s: -30, l: 0 }, { color: "Blue", h: 0, s: -30, l: -10 }, { color: "Purple", h: 0, s: -30, l: 0 }, { color: "Magenta", h: 0, s: -30, l: 0 }
-        ],
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "warm coffee": {
-        basic: { Exposure: 0.10, Contrast: 15, Highlights: -40, Shadows: 25, Whites: 10, Blacks: -10, Temp: 15, Tint: 5, Vibrance: 10, Saturation: -15, Clarity: 10, Dehaze: 5, Vignette: -15 },
-        detail: { Sharpening: 30, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 20 },
-        curve: { RGB: "S-Curve" },
-        colorMix: [
-            { color: "Red", h: 10, s: 0, l: -5 }, { color: "Orange", h: 5, s: 10, l: 0 }, { color: "Yellow", h: -10, s: -10, l: 5 },
-            { color: "Green", h: -20, s: -40, l: 0 }, { color: "Aqua", h: 0, s: -50, l: 0 }, { color: "Blue", h: -10, s: -50, l: -10 }, { color: "Purple", h: 0, s: -50, l: 0 }, { color: "Magenta", h: 0, s: -50, l: 0 }
-        ],
-        grading: { Shadows: { h: 30, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 40, s: 15, l: 5 }, Blending: 50, Balance: 0 }
-    },
-    "cool blue": {
-        basic: { Exposure: 0.10, Contrast: 20, Highlights: -30, Shadows: 20, Whites: 20, Blacks: -10, Temp: -15, Tint: 0, Vibrance: 20, Saturation: 0, Clarity: 15, Dehaze: 10, Vignette: -10 },
-        detail: { Sharpening: 40, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "S-Curve" },
-        colorMix: [
-            { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: 0, s: 10, l: 5 }, { color: "Yellow", h: 0, s: 0, l: 0 },
-            { color: "Green", h: 20, s: 10, l: 0 }, { color: "Aqua", h: 10, s: 20, l: 0 }, { color: "Blue", h: 0, s: 30, l: 5 }, { color: "Purple", h: 0, s: 0, l: 0 }, { color: "Magenta", h: 0, s: 0, l: 0 }
-        ],
-        grading: { Shadows: { h: 210, s: 25, l: -5 }, Midtones: { h: 220, s: 10, l: 0 }, Highlights: { h: 200, s: 15, l: 0 }, Blending: 50, Balance: 0 }
-    },
-    "desaturated brown": {
-        basic: { Exposure: 0.0, Contrast: 10, Highlights: -50, Shadows: 40, Whites: 10, Blacks: 10, Temp: 10, Tint: 0, Vibrance: -20, Saturation: -30, Clarity: 10, Dehaze: 0, Vignette: -10 },
-        detail: { Sharpening: 30, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 15 },
-        curve: { RGB: "Faded" },
-        colorMix: [
-            { color: "Red", h: 10, s: -20, l: -10 }, { color: "Orange", h: 5, s: -10, l: 0 }, { color: "Yellow", h: -15, s: -40, l: 5 },
-            { color: "Green", h: -30, s: -60, l: -10 }, { color: "Aqua", h: 0, s: -70, l: 0 }, { color: "Blue", h: 0, s: -70, l: -10 }, { color: "Purple", h: 0, s: -50, l: 0 }, { color: "Magenta", h: 0, s: -50, l: 0 }
-        ],
-        grading: { Shadows: { h: 30, s: 15, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 5 }, Blending: 50, Balance: 0 }
-    },
-    "vibrant pop": {
-        basic: { Exposure: 0.15, Contrast: 30, Highlights: -40, Shadows: 30, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 60, Saturation: 10, Clarity: 20, Dehaze: 10, Vignette: -10 },
-        detail: { Sharpening: 50, Noise: 10, ColorNoise: 25 },
-        effects: { Grain: 0 },
-        curve: { RGB: "High Contrast" },
-        colorMix: [
-            { color: "Red", h: 0, s: 20, l: 5 }, { color: "Orange", h: 0, s: 15, l: 5 }, { color: "Yellow", h: 0, s: 20, l: 5 },
-            { color: "Green", h: 10, s: 30, l: 5 }, { color: "Aqua", h: 0, s: 30, l: 5 }, { color: "Blue", h: 0, s: 30, l: 5 }, { color: "Purple", h: 10, s: 20, l: 0 }, { color: "Magenta", h: 10, s: 20, l: 0 }
-        ],
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 }, Blending: 50, Balance: 0 }
-    }
+    "dark moody": { basic: { Exposure: -0.2, Contrast: 30, Highlights: -50 }, grading: { Shadows: {h:0,s:0,l:0}, Midtones: {h:0,s:0,l:0}, Highlights: {h:0,s:0,l:0} } } 
+};
+
+const QA_DB = {
+    // 20 Common Questions
+    "exposure": "• **Exposure (ការប៉ះពន្លឺ):** កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។\n• **វិធីប្រើ:** អូសទៅស្តាំ (+) ដើម្បីឱ្យភ្លឺ និងទៅឆ្វេង (-) ដើម្បីឱ្យងងឹត។",
+    "contrast": "• **Contrast (ភាពផ្ទុយ):** កំណត់គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។\n• **Contrast ខ្ពស់:** រូបភាពដិតច្បាស់ (Pop)។\n• **Contrast ទាប:** រូបភាពមើលទៅស្រាល (Flat/Fade)។",
+    "highlight": "• **Highlights:** គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ពពក)។\n• **គន្លឹះ:** បន្ថយ (-100) ដើម្បីសង្គ្រោះព័ត៌មានលម្អិតក្នុងមេឃ។",
+    "shadow": "• **Shadows:** គ្រប់គ្រងតំបន់ងងឹត ឬស្រមោល។\n• **គន្លឹះ:** តម្លើង (+) ដើម្បីមើលឃើញព័ត៌មាននៅក្នុងម្លប់។",
+    "white": "• **Whites:** កំណត់ចំណុចពណ៌សដាច់ខាត។\n• **គន្លឹះ:** តម្លើងបន្តិច (+10) ដើម្បីឱ្យរូបភ្លឺថ្លា។",
+    "black": "• **Blacks:** កំណត់ចំណុចពណ៌ខ្មៅដាច់ខាត។\n• **គន្លឹះ:** បន្ថយបន្តិច (-10) ដើម្បីឱ្យរូបមានជម្រៅ។",
+    "ស្បែកស": "រូបមន្តកែស្បែកស (Skin Tone)៖\n• ចូលទៅកាន់ **Color Mix** (ឧបករណ៍លាយពណ៌)។\n• ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n• **Luminance:** តម្លើង (+15 ទៅ +25) ដើម្បីឱ្យស្បែកភ្លឺ។\n• **Saturation:** បន្ថយ (-5 ទៅ -15) ដើម្បីកាត់បន្ថយភាពក្រហម។",
+    "portrait": "ការកែរូប Portrait (មនុស្ស)៖\n• **Face:** បន្ថយ Texture (-15) ឱ្យស្បែកម៉ត់។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារពណ៌ស្បែក។\n• **Eyes:** បង្កើន Clarity តិចៗលើភ្នែក (ប្រើ Masking)។",
+    "teal": "រូបមន្ត Teal & Orange (Cinematic)៖\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:** Shadows (Teal/210), Highlights (Orange/35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
+    "dehaze": "មុខងារ Dehaze៖\n• **កាត់បន្ថយ (+):** លុបអ័ព្ទ ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ (Dreamy)។",
+    "យប់": "គន្លឹះកែរូបថតពេលយប់ (Night Mode)៖\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងចាំង។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** បង្កើន Noise Reduction (20-30)។",
+    "vintage": "រូបមន្ត Vintage (បុរាណ)៖\n• **Tone Curve:** លើកចំណុចខ្មៅឡើងលើ (Lifted Blacks)។\n• **Grain:** បន្ថែម (+30) ដើម្បីឱ្យគ្រើមដូចហ្វីល។\n• **Saturation:** បន្ថយ (-20) ឱ្យពណ៌ស្រាល។\n• **Vignette:** ដាក់ (-20) ឱ្យគែមងងឹត។",
+    "curves": "ការពន្យល់អំពី Tone Curve៖\n• **S-Curve:** ទាញរាងអក្សរ S ដើម្បីបង្កើន Contrast ឱ្យស្អាត។\n• **Blacks:** ចំណុចខាងឆ្វេងក្រោម (គ្រប់គ្រងផ្នែកងងឹត)។\n• **Whites:** ចំណុចខាងស្តាំលើ (គ្រប់គ្រងផ្នែកភ្លឺ)។",
+    "grain": "អត្ថប្រយោជន៍នៃ Grain៖\n• **Aesthetic:** បង្កើតអារម្មណ៍ដូចរូបថតកាមេរ៉ាជ័រ (Film Look)។\n• **Fix:** ជួយបិទបាំង Noise ដែលមិនស្អាត (Digital Noise)។\n• **Texture:** បន្ថែមវាយនភាពឱ្យរូបមើលទៅមិនរលោងពេក។",
+    "ងងឹត": "ដំណោះស្រាយរូបងងឹតពេក៖\n• **Exposure:** បង្កើន (+1.0 ឬតាមការគួរ)។\n• **Shadows:** បង្កើន (+40)។\n• **Contrast:** អាចបន្ថយបន្តិចបើខ្លាំងពេក។\n• **Note:** ប្រយ័ត្ន Noise កើនឡើងពេលតម្លើងពន្លឺ។",
+    "មេឃ": "គន្លឹះធ្វើឱ្យមេឃដិតស្អាត៖\n• **Light:** បន្ថយ Highlights (-100)។\n• **Color Mix (Blue):** បន្ថយ Luminance (-20), តម្លើង Saturation (+20)។\n• **Masking:** ប្រើ 'Select Sky' រួចបន្ថយ Exposure បន្តិច។",
+    "ទេសភាព": "ការកែរូប Landscape៖\n• **Dehaze:** ដាក់ (+20) ដើម្បីឱ្យរូបថ្លា កាត់អ័ព្ទ។\n• **Clarity:** បង្កើន (+15) ឱ្យឃើញ Detail ដើមឈើ/ថ្ម។\n• **Vibrance:** បង្កើន (+30) ឱ្យពណ៌ធម្មជាតិស្រស់។",
+    "vibrance": "ភាពខុសគ្នារវាង Vibrance និង Saturation៖\n• **Vibrance:** ឆ្លាតវៃជាង! បង្កើនតែពណ៌ស្លេក និងការពារពណ៌ស្បែក (ល្អសម្រាប់មនុស្ស)។\n• **Saturation:** បង្កើនគ្រប់ពណ៌ទាំងអស់ស្មើគ្នា (អាចធ្វើឱ្យស្បែកក្រហមខ្លាំង)។",
+    "អាហារ": "គន្លឹះថតរូបអាហារ (Food Photography)៖\n• **White Balance:** កុំឱ្យជាប់លឿងឬខៀវពេក។\n• **Texture/Clarity:** បង្កើនបន្តិចឱ្យអាហារមើលទៅមានរសជាតិ។\n• **Exposure:** ធ្វើឱ្យភ្លឺស្អាត (Bright & Airy)។",
+    "street": "គន្លឹះ Street Photography៖\n• **Style:** និយមប្រើ Contrast ខ្ពស់ (High Contrast)។\n• **Color:** អាចប្រើជាសខ្មៅ (B&W) ឬ Urban Grey (ដកពណ៌ផ្សេងទុកតែពណ៌ក្រហម/លឿង)។\n• **Clarity:** ដាក់ខ្លាំង (+30) ឱ្យរូបមុត។"
+};
+
+const TIPS_LIST = [
+    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម រួចកែតម្រូវតាមក្រោយ។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset វាទៅ 0។", 
+    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping ពេលអូស Whites/Blacks។", "បន្ថយ Highlights និងតម្លើង Shadows ដើម្បីបានរូបបែប HDR។", 
+    "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត។", "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បាន។", "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស។",
+    "ប្រើ Vibrance ជំនួស Saturation។", "Export ជា DNG ដើម្បីចែករំលែក Preset។", "ប្រើ Grid ពេលថត ដើម្បីឱ្យរូបត្រង់។",
+    "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
+];
+
+const initialQuestionBank = [
+  { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
+  { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
+  { id: 3, question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?", options: ["Green", "Orange", "Blue", "Red"], correct: 2, level: "beginner" },
+  { id: 4, question: "តើ Dehaze ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 1, level: "beginner" },
+  { id: 5, question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?", options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "តម្លើង Sharpening"], correct: 1, level: "advanced" },
+  { id: 6, question: "តើឧបករណ៍មួយណាជួយកែរូបដែលថតមកវារេ ឬមិនត្រង់?", options: ["Optics", "Geometry/Upright", "Detail", "Effects"], correct: 1, level: "advanced" },
+  { id: 7, question: "តើ Tone Curve មួយណាដែលធ្វើឱ្យរូបមាន Contrast ស្អាត (Pop)?", options: ["Linear", "S-Curve", "Flat", "Inverted"], correct: 1, level: "advanced" },
+  { id: 8, question: "តើ DNG ជាប្រភេទ file អ្វី?", options: ["Video", "RAW Image", "Audio", "Text"], correct: 1, level: "advanced" },
+  { id: 9, question: "តើ Temp ប្រើសម្រាប់កែអ្វី?", options: ["ភាពច្បាស់", "សីតុណ្ហភាពពណ៌ (លឿង/ខៀវ)", "ពន្លឺ", "គ្រាប់ Noise"], correct: 1, level: "beginner" },
+  { id: 10, question: "តើការប្រើ Sharpening ខ្លាំងពេកនឹងធ្វើឱ្យរូបទៅជាយ៉ាងណា?", options: ["ច្បាស់ស្អាត", "មានគ្រាប់ Noise និងខូចគុណភាព", "មើលទៅទន់", "មានពណ៌ស្រស់"], correct: 1, level: "advanced" },
+  { id: 11, question: "តើ Vignette ធ្វើអ្វី?", options: ["ធ្វើឱ្យរូបភ្លឺ", "ធ្វើឱ្យគែមងងឹត", "ប្តូរពណ៌រូប", "ធ្វើឱ្យរូបព្រាល"], correct: 1, level: "beginner" },
+  { id: 12, question: "តើ Color Grading ប្រើសម្រាប់អ្វី?", options: ["ដាក់ពណ៌ចូល Shadows/Highlights", "កែពន្លឺ", "កាត់រូប", "លុបមុន"], correct: 0, level: "advanced" },
+  { id: 13, question: "តើ Highlights គ្រប់គ្រងតំបន់ណា?", options: ["តំបន់ងងឹត", "តំបន់កណ្តាល", "តំបន់ភ្លឺខ្លាំង", "ពណ៌ទាំងអស់"], correct: 2, level: "beginner" },
+  { id: 14, question: "តើ Masking ប្រើសម្រាប់អ្វី?", options: ["កែរូបទាំងមូល", "កែតំបន់ជាក់លាក់", "Export រូប", "Share រូប"], correct: 1, level: "advanced" },
+  { id: 15, question: "តើ Healing Brush ប្រើសម្រាប់អ្វី?", options: ["គូររូប", "លុបមុនឬវត្ថុមិនចង់បាន", "ប្តូរពណ៌", "ដាក់អក្សរ"], correct: 1, level: "beginner" }
+];
+
+// --- 3. HELPER FUNCTIONS ---
+
+const getLocalResponse = (prompt) => {
+    const lower = prompt.toLowerCase();
+    for (let key of Object.keys(QA_DB)) { if (lower.includes(key)) return QA_DB[key]; }
+    return null; 
+};
+
+const getLocalPreset = (style) => {
+    const lower = style.toLowerCase();
+    for (let key of Object.keys(PRESET_DB)) { if (lower.includes(key)) return PRESET_DB[key]; }
+    return null;
+};
+
+const generateXMP = (recipe, title) => {
+    const basic = recipe.basic || {};
+    // Lightroom scale logic for exposure can be different, often 1.0 is +1 stop. Slider here is -5 to 5.
+    const exposureVal = basic.Exposure || 0;
+    
+    const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+    crs:Version="14.0"
+    crs:ProcessVersion="11.0"
+    crs:Name="${title}"
+    crs:Exposure2012="${exposureVal}"
+    crs:Contrast2012="${basic.Contrast || 0}"
+    crs:Highlights2012="${basic.Highlights || 0}"
+    crs:Shadows2012="${basic.Shadows || 0}"
+    crs:Whites2012="${basic.Whites || 0}"
+    crs:Blacks2012="${basic.Blacks || 0}"
+    crs:Clarity2012="${basic.Clarity || 0}"
+    crs:Dehaze="${basic.Dehaze || 0}"
+    crs:Vibrance="${basic.Vibrance || 0}"
+    crs:Saturation="${basic.Saturation || 0}"
+    crs:Temperature="${basic.Temp || 0}"
+    crs:Tint="${basic.Tint || 0}"
+    crs:LensProfileEnable="1"
+   >
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>`;
+    
+    const blob = new Blob([xmpContent.trim()], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${title.replace(/\s+/g, '_')}.xmp`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 // --- COMPONENTS ---
 
+// CircleIcon Component
+const CircleIcon = ({ color }) => (
+    <div className={`w-3 h-3 rounded-full bg-${color}-500 inline-block border border-gray-600`}></div>
+);
+
 const Header = ({ activeTab, setActiveTab }) => {
-  const [logoSrc, setLogoSrc] = useState('/logo.svg');
   return (
     <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800">
-      <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
-          <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm bg-white/10 flex-shrink-0">
-            {!logoSrc.startsWith('/') && !logoSrc.startsWith('http') ? (
-                 <div className="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-                      <ImageIcon className="w-6 h-6 text-white" />
-                 </div>
-            ) : (
-                <img src={logoSrc} alt="App Logo" className="w-full h-full object-cover" onError={(e) => setLogoSrc('')} />
-            )}
+          <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm bg-white/10 flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600">
+             <ImageIcon className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-lg font-bold font-khmer">Lightroom <span className="text-blue-400">ម៉ាយឌីហ្សាញ</span></h1>
+          <h1 className="text-lg font-bold font-khmer hidden sm:block">Lightroom <span className="text-blue-400">ម៉ាយឌីហ្សាញ</span></h1>
         </div>
-        <nav className="hidden md:flex space-x-2 bg-[#1e293b] p-1 rounded-full text-sm border border-gray-700">
-          <button onClick={() => setActiveTab('learn')} className={`px-4 py-2 rounded-full transition-all flex items-center space-x-2 ${activeTab === 'learn' ? 'bg-[#334155] text-white shadow' : 'text-gray-400 hover:text-white hover:bg-[#334155]'}`}><BookOpen className="w-4 h-4" /> <span className="font-khmer">មេរៀន</span></button>
-          <button onClick={() => setActiveTab('quiz')} className={`px-4 py-2 rounded-full transition-all flex items-center space-x-2 ${activeTab === 'quiz' ? 'bg-[#334155] text-white shadow' : 'text-gray-400 hover:text-white hover:bg-[#334155]'}`}><Award className="w-4 h-4" /> <span className="font-khmer">តេស្ត</span></button>
-          <button onClick={() => setActiveTab('ai')} className={`px-4 py-2 rounded-full transition-all flex items-center space-x-2 ${activeTab === 'ai' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow' : 'text-gray-400 hover:text-white hover:bg-[#334155]'}`}><Sparkles className="w-4 h-4" /> <span className="font-khmer">គ្រូ AI</span></button>
+        <nav className="flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
+          {['learn', 'quiz', 'lab', 'ai'].map(t => (
+            <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === t ? 'bg-[#334155] text-white shadow-md' : 'text-gray-400 hover:text-white hover:bg-[#334155]/50'}`}>
+               {t === 'learn' && <BookOpen size={16}/>}
+               {t === 'quiz' && <Award size={16}/>}
+               {t === 'lab' && <Sliders size={16}/>}
+               {t === 'ai' && <Bot size={16}/>}
+               <span className="font-khmer text-xs font-bold uppercase hidden md:block">{t === 'learn' ? 'មេរៀន' : t === 'quiz' ? 'តេស្ត' : t === 'lab' ? 'Lab' : 'គ្រូ AI'}</span>
+            </button>
+          ))}
         </nav>
       </div>
     </header>
   );
 };
 
-const CurveVisualizer = ({ type }) => {
-    const getPath = () => {
-        const t = (type || "").toLowerCase();
-        if (t.includes("s-curve")) return "M 0 100 C 25 100, 25 75, 50 50 C 75 25, 75 0, 100 0";
-        if (t.includes("matte")) return "M 0 80 C 25 80, 25 75, 50 50 C 75 25, 75 0, 100 0";
-        return "M 0 100 L 100 0";
-    };
-    return (
-        <div className="relative w-full aspect-square bg-[#1e293b] border border-gray-700 rounded-lg overflow-hidden shadow-inner">
-            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-30">
-                {[25, 50, 75].map(i => <React.Fragment key={i}><line x1={i} y1="0" x2={i} y2="100" stroke="gray" strokeWidth="0.5" /><line x1="0" y1={i} x2="100" y2={i} stroke="gray" strokeWidth="0.5" /></React.Fragment>)}
-            </svg>
-            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full p-0" preserveAspectRatio="none">
-                <path d={getPath()} stroke="white" strokeWidth="2" fill="none" vectorEffect="non-scaling-stroke" />
-            </svg>
-        </div>
-    );
-};
-
-const ColorWheel = ({ h, s, l, label }) => {
-  const angle = h; 
-  const distance = Math.min(s, 100) / 2; 
-  const radians = (angle - 90) * (Math.PI / 180);
-  const x = 50 + (distance * Math.cos(radians));
-  const y = 50 + (distance * Math.sin(radians));
-
-  return (
-    <div className="flex flex-col items-center">
-       <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-600 shadow-inner overflow-hidden mb-1">
-          <div className="absolute inset-0 opacity-30 bg-[conic-gradient(red,yellow,lime,cyan,blue,magenta,red)] rounded-full"></div>
-          <div className="absolute w-2 h-2 bg-white rounded-full shadow border border-black transform -translate-x-1/2 -translate-y-1/2" style={{ left: `${x}%`, top: `${y}%` }} />
-       </div>
-       <div className="text-[10px] text-gray-400 font-mono text-center">
-          <span className="block font-bold text-gray-300 mb-1">{label}</span>
-          H{h} S{s} L{l}
-       </div>
-    </div>
-  );
-};
-
 const LessonModal = ({ lesson, onClose }) => {
   useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = 'auto'; }; }, []);
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4">
       <div className={`absolute inset-0 bg-black/80 backdrop-blur-sm`} onClick={onClose} />
-      <div className={`relative w-full h-[92%] sm:h-[85%] sm:w-[90%] max-w-2xl bg-[#1e293b] rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl flex flex-col`}>
+      <div className={`relative w-full max-w-2xl bg-[#1e293b] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]`}>
         <div className="bg-[#0f172a] border-b border-gray-800 p-4 flex items-center justify-between sticky top-0 z-10"><h2 className="text-xl font-bold font-khmer text-white">{lesson.title}</h2><button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-gray-300"><X className="w-6 h-6" /></button></div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-12">{lesson.content.map((item, idx) => (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">{lesson.content.map((item, idx) => (
           <div key={idx} className="bg-[#334155]/50 p-4 rounded-xl border border-gray-700">
             <div className="flex justify-between items-center mb-2 gap-2">
               <span className="font-bold text-lg text-blue-400">{item.tool}</span>
-              <span className="text-xs font-bold bg-[#0f172a] text-gray-300 px-2 py-1 rounded font-khmer border border-gray-700 whitespace-nowrap flex-shrink-0">{item.khmer}</span>
+              <span className="text-xs font-bold bg-[#0f172a] text-gray-300 px-2 py-1 rounded font-khmer border border-gray-700 whitespace-nowrap">{item.khmer}</span>
             </div>
             <p className="text-gray-200 text-sm font-khmer leading-relaxed">{item.desc}</p>
             {item.tip && <div className="mt-3 pt-3 border-t border-gray-700 flex items-start space-x-2"><span className="text-lg">💡</span><p className="text-yellow-400/90 text-sm font-khmer italic leading-relaxed"><span className="font-bold mr-1">គន្លឹះ:</span>{item.tip}</p></div>}
@@ -538,19 +339,9 @@ const LessonCard = ({ lesson, onClick }) => (
     </button>
 );
 
-const TipsSection = ({ isExpanded, onToggle, isOnline }) => {
+const TipsSection = ({ isExpanded, onToggle }) => {
   const [randomTip, setRandomTip] = useState(null);
-  
-  const getRandomTip = () => {
-    // ប្រើ TIP_DATABASE ជំនួស AI
-    const random = TIP_DATABASE[Math.floor(Math.random() * TIP_DATABASE.length)];
-    setRandomTip(random);
-  };
-
-  useEffect(() => {
-     if(isExpanded && !randomTip) getRandomTip();
-  }, [isExpanded]);
-
+  const getTip = () => setRandomTip(TIPS_LIST[Math.floor(Math.random() * TIPS_LIST.length)]);
   return (
     <div className="mt-8">
       <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#1e293b] p-4 rounded-xl border border-gray-800 shadow-sm hover:border-gray-500 transition-all group active:scale-95">
@@ -560,24 +351,16 @@ const TipsSection = ({ isExpanded, onToggle, isOnline }) => {
       {isExpanded && (
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-down">
           <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-xl p-4 md:col-span-2 relative overflow-hidden backdrop-blur-sm">
-             <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-white font-khmer flex items-center gap-2 z-10"><Sparkles className="w-4 h-4 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4><button onClick={getRandomTip} className="z-10 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-full font-khmer transition-all shadow-lg hover:shadow-indigo-500/50"><Shuffle size={14} className="inline mr-1"/> ប្តូរថ្មី</button></div>
-             <p className="text-gray-200 text-sm font-khmer leading-relaxed border-l-2 border-indigo-500 pl-3 mt-2">{randomTip || "ចុចប៊ូតុងដើម្បីទទួលបានគន្លឹះ..."}</p>
+             <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-white font-khmer flex items-center gap-2 z-10"><Sparkles className="w-4 h-4 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4><button onClick={getTip} className="z-10 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-full font-khmer transition-all shadow-lg hover:shadow-indigo-500/50">បង្ហាញគន្លឹះ</button></div>
+             <p className="text-gray-200 text-sm font-khmer leading-relaxed border-l-2 border-indigo-500 pl-3 mt-2">{randomTip || "ចុចប៊ូតុងខាងលើដើម្បីទទួលបានគន្លឹះកែរូប។"}</p>
           </div>
           <div className="bg-[#1e293b]/80 border border-gray-800 rounded-xl p-4 md:col-span-2">
             <h4 className="font-bold text-white font-khmer mb-3 flex items-center"><Zap className="w-4 h-4 mr-2 text-yellow-400" /> គន្លឹះប្រើកម្មវិធី (Shortcut Tricks)</h4>
             <ul className="space-y-3 text-sm text-gray-300 font-khmer">
-              <li className="flex items-start gap-2">
-                <span className="font-bold text-blue-400">1.</span>
-                <span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before) ដើម្បីប្រៀបធៀប។</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="font-bold text-blue-400">2.</span>
-                <span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃនោះទៅ 0 វិញ (Reset)។</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="font-bold text-blue-400">3.</span>
-                <span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> (Whites/Blacks) ដើម្បីមើលកន្លែងដែលបាត់ព័ត៌មាន (Clipping)។</span>
-              </li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">1.</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">2.</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> មើល Clipping (Whites/Blacks) ថាបាត់ព័ត៌មានត្រង់ណា។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយដើម្បីចំណេញពេល។</span></li>
             </ul>
           </div>
         </div>
@@ -587,26 +370,324 @@ const TipsSection = ({ isExpanded, onToggle, isOnline }) => {
 };
 
 const ContactSection = () => (
-  <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><FacebookIcon className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 Lightroom My Design. All Right Reserved.</p></div>
+  <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Facebook className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 Lightroom My Design. All Right Reserved.</p></div>
 );
 
-const Quiz = ({ isOnline }) => {
+// --- 4. PHOTO LAB (MODERN UI & PRESERVED LOGIC) ---
+const PhotoLab = () => {
+  const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
+  const [mode, setMode] = useState('manual');
+  const fileInputRef = useRef(null);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [activeRecipe, setActiveRecipe] = useState(null); 
+
+  const defaultSettings = {
+    exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0,
+    temp: 0, tint: 0, vibrance: 0, saturation: 0,
+    texture: 0, clarity: 0, dehaze: 0, vignette: 0
+  };
+  
+  const [settings, setSettings] = useState(defaultSettings);
+
+  const updateSetting = (key, value) => {
+      setSettings(prev => ({...prev, [key]: value}));
+  };
+
+  const resetSettings = () => {
+      setSettings(defaultSettings);
+      setActiveRecipe(null);
+  }
+
+  const resetGroup = (groupItems) => {
+      const newSettings = {...settings};
+      groupItems.forEach(item => newSettings[item.id] = 0);
+      setSettings(newSettings);
+  }
+
+  const handleImageUpload = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+          const url = URL.createObjectURL(file);
+          setImage(url);
+      }
+  };
+
+  const handleDownload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = image;
+      img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.filter = getFilterString();
+          ctx.drawImage(img, 0, 0);
+          const link = document.createElement('a');
+          link.download = 'edited-photo.jpg';
+          link.href = canvas.toDataURL('image/jpeg');
+          link.click();
+      };
+  };
+
+  const handlePresetExport = () => {
+    const recipe = {
+      basic: {
+        Exposure: settings.exposure / 10,
+        Contrast: settings.contrast,
+        Highlights: settings.highlights,
+        Shadows: settings.shadows,
+        Whites: settings.whites,
+        Blacks: settings.blacks,
+        Temp: settings.temp,
+        Tint: settings.tint,
+        Vibrance: settings.vibrance,
+        Saturation: settings.saturation,
+        Clarity: settings.clarity,
+        Dehaze: settings.dehaze,
+        Vignette: settings.vignette
+      },
+      detail: activeRecipe?.detail || { Sharpening: 40, Noise: 0, ColorNoise: 0 },
+      effects: activeRecipe?.effects || { Grain: 0 },
+      curve: activeRecipe?.curve || { RGB: "Linear" },
+      colorMix: activeRecipe?.colorMix || [], 
+      grading: activeRecipe?.grading || { Shadows: {h:0,s:0,l:0}, Midtones: {h:0,s:0,l:0}, Highlights: {h:0,s:0,l:0} }
+    };
+    generateXMP(recipe, aiPrompt || "My_Custom_Preset");
+  };
+
+  const generateAIPreset = async () => {
+      if (!aiPrompt.trim()) return;
+      setAiLoading(true);
+      const localPreset = getLocalPreset(aiPrompt);
+      if (localPreset && localPreset.basic) {
+           applyPresetToSettings(localPreset);
+           setAiLoading(false);
+           return;
+      }
+      const prompt = `Create a Lightroom preset for style "${aiPrompt}". Return JSON: { "basic": { "Exposure": 0, "Contrast": 0, "Highlights": 0, "Shadows": 0, "Whites": 0, "Blacks": 0, "Temp": 0, "Tint": 0, "Vibrance": 0, "Saturation": 0, "Clarity": 0, "Dehaze": 0, "Vignette": 0 } }`;
+      const data = await callGemini(prompt, "Expert photo editor.", true);
+      
+      if (data && data.basic) {
+          applyPresetToSettings(data);
+      } else {
+          applyPresetToSettings(PRESET_DB["teal & orange"]);
+      }
+      setAiLoading(false);
+  };
+
+  const applyPresetToSettings = (presetData) => {
+      setActiveRecipe(presetData); 
+      const b = presetData.basic;
+      const newSettings = { ...defaultSettings };
+      
+      if (b.Exposure) newSettings.exposure = b.Exposure * 10;
+      if (b.Contrast) newSettings.contrast = b.Contrast;
+      if (b.Highlights) newSettings.highlights = b.Highlights;
+      if (b.Shadows) newSettings.shadows = b.Shadows;
+      if (b.Whites) newSettings.whites = b.Whites;
+      if (b.Blacks) newSettings.blacks = b.Blacks;
+      if (b.Temp) newSettings.temp = b.Temp;
+      if (b.Tint) newSettings.tint = b.Tint;
+      if (b.Vibrance) newSettings.vibrance = b.Vibrance;
+      if (b.Saturation) newSettings.saturation = b.Saturation;
+      if (b.Clarity) newSettings.clarity = b.Clarity;
+      if (b.Dehaze) newSettings.dehaze = b.Dehaze;
+      if (b.Vignette) newSettings.vignette = b.Vignette;
+      setSettings(newSettings);
+  };
+
+  const getFilterString = () => {
+    let b = 100 + (settings.exposure * 10) + (settings.highlights * 0.1) + (settings.whites * 0.1) + (settings.shadows * 0.1); 
+    let c = 100 + settings.contrast + (settings.dehaze * 0.5) + (settings.clarity * 0.2) + (settings.blacks * 0.1);
+    let s = 100 + settings.saturation + (settings.vibrance * 0.5);
+    let sepia = settings.temp > 0 ? settings.temp * 0.4 : 0; 
+    let hue = settings.tint + (settings.temp < 0 ? settings.temp * 0.3 : 0);
+    let blur = settings.texture < 0 ? Math.abs(settings.texture) * 0.02 : 0;
+    return `brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${sepia}%) hue-rotate(${hue}deg) blur(${blur}px)`;
+  };
+
+  const getVignetteStyle = () => {
+      const v = settings.vignette;
+      if (v < 0) return { background: `radial-gradient(circle, transparent ${60 + (v * 0.4)}%, rgba(0,0,0,${Math.abs(v)/100}))` };
+      return { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` };
+  };
+
+  const toolsGroups = [
+    { group: 'Light (ពន្លឺ)', icon: <Sun size={18}/>, items: [
+      { id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1, desc: 'ពន្លឺរួម' },
+      { id: 'contrast', label: 'Contrast', min: -100, max: 100, desc: 'ភាពផ្ទុយ' },
+      { id: 'highlights', label: 'Highlights', min: -100, max: 100, desc: 'តំបន់ភ្លឺ' },
+      { id: 'shadows', label: 'Shadows', min: -100, max: 100, desc: 'តំបន់ងងឹត' },
+      { id: 'whites', label: 'Whites', min: -100, max: 100, desc: 'ពណ៌ស' },
+      { id: 'blacks', label: 'Blacks', min: -100, max: 100, desc: 'ពណ៌ខ្មៅ' },
+    ]},
+    { group: 'Color (ពណ៌)', icon: <Palette size={18}/>, items: [
+      { id: 'temp', label: 'Temp', min: -100, max: 100, desc: 'សីតុណ្ហភាព' },
+      { id: 'tint', label: 'Tint', min: -100, max: 100, desc: 'ពណ៌លាំ' },
+      { id: 'vibrance', label: 'Vibrance', min: -100, max: 100, desc: 'ភាពរស់រវើក' },
+      { id: 'saturation', label: 'Saturation', min: -100, max: 100, desc: 'ភាពឆ្អែតពណ៌' },
+    ]},
+    { group: 'Effects (បែបផែន)', icon: <Aperture size={18}/>, items: [
+      { id: 'texture', label: 'Texture', min: -100, max: 100, desc: 'វាយនភាព' },
+      { id: 'clarity', label: 'Clarity', min: -100, max: 100, desc: 'ភាពច្បាស់' },
+      { id: 'dehaze', label: 'Dehaze', min: -100, max: 100, desc: 'កាត់អ័ព្ទ' },
+      { id: 'vignette', label: 'Vignette', min: -100, max: 100, desc: 'គែម' },
+    ]}
+  ];
+  
+  const sampleImages = [
+    { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" },
+    { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" },
+    { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" },
+    { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" },
+    { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" }
+  ];
+
+  return (
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-full max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
+        {/* Header Bar */}
+        <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 className="text-2xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
+                <p className="text-gray-400 font-khmer text-sm">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
+            </div>
+            <div className="flex gap-2">
+                <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <Upload size={14} /> Upload
+                </button>
+                <button onClick={handleDownload} className="px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <ImageDown size={14} /> Download
+                </button>
+                <button onClick={handlePresetExport} className="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2">
+                    <FileJson size={14} /> Export XMP
+                </button>
+                <button onClick={resetSettings} className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg font-bold text-xs transition-all flex items-center gap-2 border border-red-500/30">
+                    <RotateCcw size={14} /> Reset
+                </button>
+            </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
+            {/* Image Viewer (Sticky) */}
+            <div className="flex-1 flex flex-col gap-4 min-h-[400px]">
+                <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
+                    <div className="relative max-h-full max-w-full">
+                        <img 
+                            src={image} 
+                            alt="Edit Target" 
+                            className="max-h-[60vh] lg:max-h-full max-w-full object-contain transition-all duration-75 ease-linear"
+                            style={{ filter: getFilterString() }}
+                        />
+                        <div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div>
+                    </div>
+                </div>
+                
+                {/* Image Selector */}
+                <div className="flex justify-center gap-3 bg-[#0f172a] p-3 rounded-xl border border-gray-700 overflow-x-auto">
+                    {sampleImages.map((item, idx) => (
+                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-12 h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
+                            <img src={item.src} className="w-full h-full object-cover" />
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Controls Panel (Scrollable) */}
+            <div className="w-full lg:w-96 flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg">
+                 {/* Tabs */}
+                 <div className="flex border-b border-gray-700">
+                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
+                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+                 </div>
+                 
+                 {/* Controls Content */}
+                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                    {mode === 'manual' ? (
+                        <div className="space-y-8">
+                             {toolsGroups.map((group, gIdx) => (
+                                <div key={gIdx} className="space-y-4">
+                                    <div className="flex items-center justify-between border-b border-gray-700 pb-2">
+                                        <h4 className="text-sm font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
+                                        <button onClick={() => resetGroup(group.items)} className="text-[10px] text-gray-500 hover:text-white">Reset</button>
+                                    </div>
+                                    <div className="space-y-5 px-1">
+                                        {group.items.map(t => (
+                                            <div key={t.id} className="group/item">
+                                                <div className="flex justify-between mb-2 items-center">
+                                                    <label 
+                                                        className="text-xs font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" 
+                                                        onDoubleClick={() => updateSetting(t.id, 0)} 
+                                                        title="Double click label to reset"
+                                                    >
+                                                        {t.label}
+                                                    </label>
+                                                    <input 
+                                                        type="number" 
+                                                        value={settings[t.id]}
+                                                        onChange={(e) => updateSetting(t.id, Number(e.target.value))}
+                                                        className="w-12 bg-gray-800 text-right text-xs text-blue-400 font-mono border border-gray-700 rounded px-1 py-0.5 focus:border-blue-500 outline-none"
+                                                    />
+                                                </div>
+                                                <input 
+                                                    type="range" 
+                                                    min={t.min} 
+                                                    max={t.max} 
+                                                    step={t.step || 1}
+                                                    value={settings[t.id]} 
+                                                    onChange={(e) => updateSetting(t.id, Number(e.target.value))}
+                                                    onDoubleClick={() => updateSetting(t.id, 0)}
+                                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
+                                                />
+                                                <p className="text-[10px] text-gray-500 mt-1.5 font-khmer opacity-0 group-hover/item:opacity-100 transition-opacity">{t.desc}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="bg-purple-900/20 p-4 rounded-xl border border-purple-500/30">
+                                <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2"><Sparkles size={16} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
+                                <p className="text-gray-400 text-xs font-khmer mb-4">បញ្ចូលឈ្មោះស្តាយដែលអ្នកចង់បាន (ឧ. Vintage, Cyberpunk, Soft Skin) AI នឹងកែ Slider ជូនអ្នក។</p>
+                                <div className="flex gap-2">
+                                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="ឈ្មោះស្តាយ..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 font-khmer" />
+                                    <button onClick={generateAIPreset} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold font-khmer disabled:opacity-50">{aiLoading ? <Loader2 className="animate-spin" size={18}/> : 'បង្កើត'}</button>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <h5 className="text-gray-400 text-xs font-bold font-khmer uppercase">ស្តាយពេញនិយម</h5>
+                                <div className="flex flex-wrap gap-2">
+                                    {["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage", "Cyberpunk", "Golden Hour"].map(s => (
+                                        <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-xs text-gray-300 font-medium transition-all">{s}</button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                 </div>
+            </div>
+        </div>
+    </div>
+  );
+};
+
+const Quiz = () => {
   const [gameState, setGameState] = useState('menu');
-  const [quizConfig, setQuizConfig] = useState({ level: 'beginner', amount: 10 });
-  const [questions, setQuestions] = useState(QUESTION_DATABASE);
+  const [questions, setQuestions] = useState(initialQuestionBank);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
-  const startQuiz = () => {
-    // ប្រើ QUESTION_DATABASE ជំនួស AI
-    let filtered = QUESTION_DATABASE; // ប្រើ DB ថ្មី
-    
-    // Shuffle and slice
+  const startQuiz = (level) => {
+    let filtered = questions.filter(q => level === 'all' || q.level === level);
+    if (filtered.length < 1) filtered = questions;
     const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, quizConfig.amount);
-    
+    const selected = shuffled.slice(0, 10);
     setQuestions(selected);
     setCurrentQuestion(0);
     setScore(0);
@@ -627,266 +708,128 @@ const Quiz = ({ isOnline }) => {
     if (nextQuestion < questions.length) { setCurrentQuestion(nextQuestion); setIsAnswered(false); setSelectedOption(null); } else { setGameState('result'); }
   };
 
-  const resetQuiz = () => { setGameState('menu'); setScore(0); setIsAnswered(false); setSelectedOption(null); setQuestions(QUESTION_DATABASE); };
-
-  if (gameState === 'menu') return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" /><h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2><p className="text-gray-400 font-khmer mb-8">សាកល្បងចំណេះដឹងរបស់អ្នកអំពី Lightroom</p><div className="space-y-6"><div className="flex justify-center gap-2 items-center"><span className="text-gray-400 text-sm font-khmer mr-2">ចំនួនសំណួរ:</span>{[5, 10, 15].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-lg font-bold transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>))}</div>
-  <div className="flex gap-2 flex-col">
-      <button onClick={startQuiz} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold font-khmer shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-1">ចាប់ផ្ដើមសំណួរ</button>
-  </div>
-  </div></div>;
+  if (gameState === 'menu') return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" /><h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2><p className="text-gray-400 font-khmer mb-8">សាកល្បងចំណេះដឹងរបស់អ្នកអំពី Lightroom (សំណួរជាង ២០+ នៅក្នុង Database)</p><div className="flex gap-4 justify-center"><button onClick={() => startQuiz('beginner')} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all">កម្រិតដំបូង</button><button onClick={() => startQuiz('advanced')} className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all">កម្រិតខ្ពស់</button></div></div>;
   
   if (gameState === 'result') {
       const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-      return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><div className="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="64" cy="64" r="60" stroke="#334155" strokeWidth="8" fill="none" /><circle cx="64" cy="64" r="60" stroke={percentage > 70 ? "#22c55e" : percentage > 40 ? "#eab308" : "#ef4444"} strokeWidth="8" fill="none" strokeDasharray={377} strokeDashoffset={377 - (377 * percentage) / 100} className="transition-all duration-1000 ease-out" /></svg><div className="absolute text-3xl font-bold text-white">{percentage}%</div></div><h2 className="text-2xl font-bold text-white font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2><p className="text-gray-400 font-khmer mb-8">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p><button onClick={resetQuiz} className="px-8 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-khmer transition-all">សាកល្បងម្តងទៀត</button></div>;
+      return <div className="bg-[#1e293b] p-8 text-center rounded-2xl border border-gray-800 shadow-2xl max-w-lg mx-auto"><div className="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="64" cy="64" r="60" stroke="#334155" strokeWidth="8" fill="none" /><circle cx="64" cy="64" r="60" stroke={percentage > 70 ? "#22c55e" : percentage > 40 ? "#eab308" : "#ef4444"} strokeWidth="8" fill="none" strokeDasharray={377} strokeDashoffset={377 - (377 * percentage) / 100} className="transition-all duration-1000 ease-out" /></svg><div className="absolute text-3xl font-bold text-white">{percentage}%</div></div><h2 className="text-2xl font-bold text-white font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2><p className="text-gray-400 font-khmer mb-8">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p><button onClick={() => setGameState('menu')} className="px-8 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-khmer transition-all">សាកល្បងម្តងទៀត</button></div>;
   }
 
   const q = questions[currentQuestion];
-  if (!q) return <div className="text-white text-center">No questions available.</div>;
-
   return (
-    <div className="bg-[#1e293b] p-8 rounded-2xl border border-gray-800 shadow-2xl max-w-2xl mx-auto"><div className="flex justify-between mb-6"><span className="text-sm font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full">សំណួរ {currentQuestion + 1}/{questions.length}</span><span className="text-xs text-gray-500 uppercase tracking-wider mt-1">{q.level || 'General'}</span></div><h3 className="text-xl md:text-2xl font-bold text-white mb-8 font-khmer leading-relaxed">{q.question}</h3><div className="grid gap-3">{q.options.map((opt, i) => <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-4 text-left rounded-xl border transition-all duration-200 font-khmer text-sm ${isAnswered ? (i === q.correct ? 'bg-green-500/20 border-green-500/50 text-green-200' : (i === selectedOption ? 'bg-red-500/20 border-red-500/50 text-red-200' : 'bg-[#0f172a] border-gray-800 text-gray-400 opacity-50')) : 'bg-[#0f172a] border-gray-700 text-gray-200 hover:bg-[#334155] hover:border-gray-500'}`}>{opt}</button>)}</div>{isAnswered && <div className="mt-8 flex justify-end"><button onClick={handleNextQuestion} className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all flex items-center gap-2">បន្ទាប់ <ChevronRight size={18}/></button></div>}</div>
+    <div className="bg-[#1e293b] p-8 rounded-2xl border border-gray-800 shadow-2xl max-w-2xl mx-auto">
+      <div className="flex justify-between mb-6"><span className="text-sm font-bold text-blue-400 bg-blue-400/10 px-3 py-1 rounded-full">សំណួរ {currentQuestion + 1}/{questions.length}</span><span className="text-xs text-gray-500 uppercase tracking-wider mt-1">{q.level || 'General'}</span></div><h3 className="text-xl md:text-2xl font-bold text-white mb-8 font-khmer leading-relaxed">{q.question}</h3><div className="grid gap-3">{q.options.map((opt, i) => <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-4 text-left rounded-xl border transition-all duration-200 font-khmer text-sm ${isAnswered ? (i === q.correct ? 'bg-green-500/20 border-green-500/50 text-green-200' : (i === selectedOption ? 'bg-red-500/20 border-red-500/50 text-red-200' : 'bg-[#0f172a] border-gray-800 text-gray-400 opacity-50')) : 'bg-[#0f172a] border-gray-700 text-gray-200 hover:bg-[#334155] hover:border-gray-500'}`}>{opt}</button>)}</div>{isAnswered && <div className="mt-8 flex justify-end"><button onClick={handleNextQuestion} className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all flex items-center gap-2">បន្ទាប់ <ChevronRight size={18}/></button></div>}</div>
   );
 };
 
-const CircleIcon = ({color}) => <div className={`w-3 h-3 rounded-full bg-${color}-500 inline-block`}></div>;
-
-const PresetGenerator = ({ isOnline }) => {
-    const [styleInput, setStyleInput] = useState('');
-    const [recipe, setRecipe] = useState(null);
-    const [loading, setLoading] = useState(false);
-    
-    // 🔥 NEW: 15 Suggested Styles (Based on your request)
-    const popularStyles = Object.keys(PRESET_DB).map(key => 
-        key.charAt(0).toUpperCase() + key.slice(1) // Capitalize
-    );
-
-    const generateRecipe = async (styleOverride = null) => {
-        const style = styleOverride || styleInput;
-        // Normalize input
-        const normalizedStyle = style.toLowerCase().trim();
-        
-        if (!style) return;
-        setLoading(true);
-        
-        // 1. ពិនិត្យក្នុង Database មុន (Instant Load)
-        if (PRESET_DB[normalizedStyle]) {
-             await new Promise(r => setTimeout(r, 800)); // Fake AI delay for realism
-             setRecipe(PRESET_DB[normalizedStyle]);
-             setLoading(false);
-             return;
-        }
-
-        // 2. បើគ្មានក្នុង DB ទើបហៅ AI (Fallback)
-        const prompt = `Create a Lightroom preset recipe for the style: "${style}". 
-        Return strictly valid JSON with this structure: 
-        { 
-          "basic": { "Exposure": number (-5 to 5), "Contrast": number (-100 to 100), "Highlights": number, "Shadows": number, "Whites": number, "Blacks": number, "Temp": number, "Tint": number, "Vibrance": number, "Saturation": number }, 
-          "detail": { "Sharpening": number (0-150), "Noise": number (0-100), "ColorNoise": number }, 
-          "effects": { "Grain": number (0-100) }, 
-          "curve": { "RGB": string ("S-Curve", "Linear", "Matte", "High Contrast", "Faded") }, 
-          "colorMix": [array of 8 objects with "color" (Red, Orange, Yellow, Green, Aqua, Blue, Purple, Magenta), "h", "s", "l"], 
-          "grading": { "Shadows": { "h": number, "s": number, "l": number }, "Midtones": { "h", "s", "l" }, "Highlights": { "h", "s", "l" }, "Blending": number, "Balance": number } 
-        }`;
-        
-        const systemPrompt = "You are an expert Lightroom photo editor. Generate high-quality JSON presets.";
-        const data = await callGemini(prompt, systemPrompt, true);
-
-        if (data) {
-            setRecipe(data);
-        } else {
-             // Fallback default
-             setRecipe(PRESET_DB["teal & orange"]);
-        }
-        
-        if (styleOverride) setStyleInput(styleOverride);
-        setLoading(false);
-    };
-
-    const handleExport = () => { if (recipe) generateXMP(recipe, styleInput || "Preset"); };
-    
-    const Slider = ({ label, value, min = -100, max = 100 }) => (
-        <div className="mb-3">
-            <div className="flex justify-between text-[11px] text-gray-400 font-mono mb-1.5 uppercase tracking-wider">
-                <span>{label}</span>
-                <span className={value > 0 ? "text-blue-400" : value < 0 ? "text-red-400" : "text-gray-300"}>{value > 0 ? `+${value}` : value}</span>
-            </div>
-            <div className="relative h-2 bg-gray-800 rounded-full overflow-hidden">
-                <div className={`absolute top-0 bottom-0 ${value === 0 ? 'hidden' : 'bg-gradient-to-r from-blue-600 to-cyan-500'}`}
-                     style={{
-                         left: value < 0 ? `${50 + (value / (max - min)) * 100}%` : '50%',
-                         width: `${Math.abs(value) / (max - min) * 100}%`
-                     }}
-                />
-                <div className="absolute top-0 bottom-0 w-0.5 bg-gray-500 left-1/2 -translate-x-1/2 opacity-50"></div>
-            </div>
-        </div>
-    );
-
-    return (
-         <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-full max-w-4xl mx-auto overflow-hidden shadow-2xl">
-            <div className="bg-[#0f172a] p-5 border-b border-gray-800"><h3 className="font-bold font-khmer text-white flex items-center gap-2 text-lg"><Sliders className="text-purple-400 w-6 h-6" /> អ្នកបង្កើតរូបមន្ត AI ✨</h3></div>
-            <div className="p-6 space-y-6 overflow-y-auto flex-1">
-                <div className="flex gap-3"><input value={styleInput} onChange={(e) => setStyleInput(e.target.value)} placeholder="បញ្ចូលរចនាប័ទ្ម (ឧ. Cyberpunk, Soft Wedding)..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors font-khmer text-sm" /><button onClick={() => generateRecipe()} disabled={loading} className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-6 py-3 rounded-xl font-bold font-khmer disabled:opacity-50 shadow-lg">{loading ? <Loader2 className="animate-spin" /> : 'បង្កើត ✨'}</button></div>
-                <div className="flex flex-wrap gap-2">
-                    {/* Auto-generate buttons from DB */}
-                    {popularStyles.map(s => (
-                        <button key={s} onClick={() => generateRecipe(s)} className="px-4 py-2 bg-[#0f172a] border border-gray-700 hover:border-purple-500 hover:bg-[#334155] rounded-full text-xs text-gray-300 transition-all font-medium whitespace-nowrap">
-                            {s}
-                        </button>
-                    ))}
-                </div>
-                {recipe && <div className="bg-[#0f172a] rounded-2xl p-6 border border-gray-800 animate-fade-in-down shadow-inner">
-                    <button onClick={handleExport} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-lg font-khmer tracking-wide"><Download size={18} /> ទាញយក XMP (Export)</button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                         <div className="bg-[#1e293b]/50 p-4 rounded-xl border border-gray-800">
-                            <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2 pb-2 border-b border-gray-700"><Sun size={14} className="text-orange-400"/> Light & Color</h5>
-                            <Slider label="Exposure" value={Math.round(recipe.basic.Exposure * 50)} /> 
-                            <Slider label="Contrast" value={recipe.basic.Contrast} />
-                            <Slider label="Highlights" value={recipe.basic.Highlights} />
-                            <Slider label="Shadows" value={recipe.basic.Shadows} />
-                            <Slider label="Whites" value={recipe.basic.Whites} />
-                            <Slider label="Blacks" value={recipe.basic.Blacks} />
-                             <div className="mt-6 pt-4 border-t border-gray-700">
-                                <div className="grid grid-cols-2 gap-x-6">
-                                    <Slider label="Temp" value={recipe.basic.Temp} />
-                                    <Slider label="Tint" value={recipe.basic.Tint} />
-                                    <Slider label="Vibrance" value={recipe.basic.Vibrance} />
-                                    <Slider label="Saturation" value={recipe.basic.Saturation} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-[#1e293b]/50 p-4 rounded-xl border border-gray-800 flex flex-col justify-between">
-                             <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2 pb-2 border-b border-gray-700"><TrendingUp size={14} className="text-green-400"/> Curve</h5>
-                             <div className="flex-1 flex items-center justify-center"><CurveVisualizer type={recipe.curve.RGB} /></div>
-                        </div>
-                    </div>
-                    <div className="mt-6 pt-6 border-t border-gray-800">
-                        <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2"><Palette size={14} className="text-pink-400"/> Color Mix</h5>
-                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] font-mono">
-                            {recipe.colorMix.map((c) => (
-                                <div key={c.color} className="flex justify-between items-center bg-[#1e293b] p-2 rounded-lg border border-gray-700">
-                                    <div className="flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${c.color === 'Red' ? 'bg-red-500' : c.color === 'Green' ? 'bg-green-500' : c.color === 'Blue' ? 'bg-blue-500' : 'bg-gray-500'}`}></div><span className="font-bold text-gray-300">{c.color}</span></div>
-                                    <div className="flex flex-col text-gray-500 text-[8px]"><span>H {c.h}</span><span>S {c.s}</span><span>L {c.l}</span></div>
-                                </div>
-                            ))}
-                         </div>
-                    </div>
-                     <div className="mt-6 pt-6 border-t border-gray-800">
-                        <h5 className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2"><CircleIcon color="purple"/> Color Grading</h5>
-                        <div className="grid grid-cols-3 gap-6">
-                            <ColorWheel h={recipe.grading.Shadows.h} s={recipe.grading.Shadows.s} l={recipe.grading.Shadows.l} label="Shadows" />
-                            <ColorWheel h={recipe.grading.Midtones.h} s={recipe.grading.Midtones.s} l={recipe.grading.Midtones.l} label="Midtones" />
-                            <ColorWheel h={recipe.grading.Highlights.h} s={recipe.grading.Highlights.s} l={recipe.grading.Highlights.l} label="Highlights" />
-                        </div>
-                    </div>
-                </div>}
-            </div>
-        </div>
-    );
-};
-
 const ChatBot = ({ isOnline }) => {
-  const [messages, setMessages] = useState([{ role: 'model', text: 'សួស្ដី! ខ្ញុំជាគ្រូជំនួយ AI។ អ្នកអាចសួរខ្ញុំអំពីរបៀបកែរូប ឬអោយខ្ញុំណែនាំ Setting។' }]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-  
-  const suggestedQuestionsPool = ["តើ Dehaze ប្រើសម្រាប់អ្វី?", "ចង់កែរូបបែប Vintage", "រូបងងឹតពេក ធ្វើម៉េច?", "សុំរូបមន្តកែរូបបែប Cinematic", "របៀបធ្វើអោយស្បែកស?", "កែរូបថតពេលយប់អោយស្អាត", "របៀបដាក់ពណ៌ Teal & Orange", "ពន្យល់ពី Curves", "តើ Grain ជួយអ្វីខ្លះ?", "របៀបកែរូប Portrait អោយស្អាត"];
-  const [suggestions, setSuggestions] = useState([]);
+  const [messages, setMessages] = useState([{ role: 'model', text: 'សួស្ដី! ខ្ញុំជាគ្រូជំនួយ AI។ អ្នកអាចសួរខ្ញុំអំពីរបៀបកែរូប ឬអោយខ្ញុំណែនាំ Setting។' }]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  
+  const suggestedQuestionsPool = [
+    "របៀបធ្វើអោយស្បែកស?", "របៀបកែរូប Portrait?", "របៀបដាក់ពណ៌ Teal & Orange?", 
+    "តើ Dehaze ប្រើសម្រាប់អ្វី?", "កែរូបថតពេលយប់?", "រូបមន្ត Vintage?", "ពន្យល់ពី Curves?", 
+    "តើ Grain ជួយអ្វី?", "រូបងងឹតពេកធ្វើម៉េច?", "របៀបធ្វើអោយមេឃដិត?", "របៀបកែរូបទេសភាព?",
+    "តើ Vibrance ខុសពី Saturation ម៉េច?", "របៀបកែរូបថតអាហារ?", "របៀបកែរូបថត Street?", "របៀបកែរូបថតសមុទ្រ?"
+  ];
+  const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => {
-    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
-    setSuggestions(shuffled.slice(0, 3));
-  }, []);
+  useEffect(() => {
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+    setSuggestions(shuffled.slice(0, 3));
+  }, []);
 
-  const randomizeSuggestions = () => {
-    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
-    setSuggestions(shuffled.slice(0, 3));
-  };
+  const randomizeSuggestions = () => {
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+    setSuggestions(shuffled.slice(0, 3));
+  };
 
-  const handleSend = async (text = null) => {
-    const msg = text || input;
-    if (!msg.trim()) return;
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: msg }]);
-    setLoading(true);
+  const handleSend = async (text = null) => {
+    const msg = text || input;
+    if (!msg.trim()) return;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: msg }]);
+    setLoading(true);
 
-    // 🔥 NEW: Check Cache First
-    if (AI_CACHE_DB[msg]) {
-        await new Promise(r => setTimeout(r, 500)); // Fake delay for realism
-        setMessages(prev => [...prev, { role: 'model', text: AI_CACHE_DB[msg] }]);
-        setLoading(false);
+    const localReply = getLocalResponse(msg);
+    if (localReply) {
+        setTimeout(() => {
+            setMessages(prev => [...prev, { role: 'model', text: localReply }]);
+            setLoading(false);
+        }, 500); 
         return;
     }
 
-    const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. You STRICTLY only answer questions related to Adobe Lightroom, photo editing, color grading, photography techniques, and camera settings. If a user asks about anything else (e.g., general knowledge, math, politics, sports), politely apologize in Khmer and state that you can only help with photography and Lightroom matters. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
-    let reply = await callGemini(msg, systemPrompt);
-    
-    if (!reply) {
-        if (!apiKey) {
-            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។ (សូមចូលទៅកាន់ Settings -> Environment Variables -> បន្ថែម VITE_GEMINI_API_KEY)";
-        } else {
-            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។";
-        }
-    }
+    const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
+    let reply = await callGemini(msg, systemPrompt);
+    
+    if (!reply) {
+        if (!apiKey) {
+            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។";
+        } else {
+            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀត។";
+        }
+    }
 
-    setMessages(prev => [...prev, { role: 'model', text: reply }]);
-    setLoading(false);
-  };
-  
-  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
+    setMessages(prev => [...prev, { role: 'model', text: reply }]);
+    setLoading(false);
+  };
+  
+  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
-  return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-full max-w-4xl mx-auto">
-      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini ✨</p></div></div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
-        {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
-          <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
-      </div>
-    </div>
-  );
+  return (
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-full max-w-4xl mx-auto">
+      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
+        {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
+          <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+      </div>
+    </div>
+  );
 };
 
 const AIAssistant = ({ isOnline }) => {
-    const [mode, setMode] = useState('chat');
-    return (
-        <div className="h-[75vh] min-h-[600px] flex flex-col">
-            <div className="flex justify-center mb-6 bg-[#0f172a] p-1.5 rounded-xl self-center border border-gray-800 shadow-md"><button onClick={() => setMode('chat')} className={`px-6 py-2 rounded-lg text-sm font-khmer transition-all ${mode === 'chat' ? 'bg-[#1e293b] text-white shadow-md border border-gray-700' : 'text-gray-400 hover:text-white'}`}>គ្រូជំនួយ AI</button><button onClick={() => setMode('preset')} className={`px-6 py-2 rounded-lg text-sm font-khmer transition-all ${mode === 'preset' ? 'bg-[#1e293b] text-white shadow-md border border-gray-700' : 'text-gray-400 hover:text-white'}`}>បង្កើតរូបមន្ត AI</button></div>
-            <div className="flex-1 overflow-hidden">{mode === 'chat' ? <ChatBot isOnline={isOnline} /> : <PresetGenerator isOnline={isOnline} />}</div>
-        </div>
-    );
+    return (
+        <div className="h-[75vh] min-h-[600px] flex flex-col">
+            <ChatBot isOnline={isOnline} />
+        </div>
+    );
 };
 
 // --- APP COMPONENT (LAST) ---
 export default function App() {
-  const [activeTab, setActiveTab] = useState('learn');
-  const [expandedLesson, setExpandedLesson] = useState(null);
-  const [expandedSection, setExpandedSection] = useState(null);
-  const [isOnline, setIsOnline] = useState(true);
+  const [activeTab, setActiveTab] = useState('learn');
+  const [expandedLesson, setExpandedLesson] = useState(null);
+  const [expandedSection, setExpandedSection] = useState(null);
+  const [isOnline, setIsOnline] = useState(true);
 
-  const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
+  const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
 
-  return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30">
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
-      {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
-      <main className="max-w-6xl mx-auto p-4 pt-8 md:p-8">
-        <div className="animate-fade-in-down">
-          {activeTab === 'learn' && (<div className="space-y-8"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} isOnline={isOnline} /><ContactSection /></div>)}
-          {activeTab === 'quiz' && <Quiz isOnline={isOnline} />}
-          {activeTab === 'ai' && <AIAssistant isOnline={isOnline} />}
-        </div>
-      </main>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
-         <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
-         <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
-         <button onClick={() => setActiveTab('ai')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'ai' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sparkles size={20}/><span className="text-[10px] font-khmer mt-1">គ្រូ AI</span></button>
-      </div>
-    </div>
-  );
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30">
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
+      <main className="max-w-6xl mx-auto p-4 pt-8 md:p-8">
+        <div className="animate-fade-in-down">
+          {activeTab === 'learn' && (<div className="space-y-8"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> <ContactSection /></div>)}
+          {activeTab === 'quiz' && <Quiz isOnline={isOnline} />}
+          {activeTab === 'lab' && <PhotoLab />}
+          {activeTab === 'ai' && <AIAssistant isOnline={isOnline} />}
+        </div>
+      </main>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
+         <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
+         <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
+         <button onClick={() => setActiveTab('lab')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'lab' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sliders size={20}/><span className="text-[10px] font-khmer mt-1">Lab</span></button>
+         <button onClick={() => setActiveTab('ai')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'ai' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sparkles size={20}/><span className="text-[10px] font-khmer mt-1">គ្រូ AI</span></button>
+      </div>
+    </div>
+  );
 }
