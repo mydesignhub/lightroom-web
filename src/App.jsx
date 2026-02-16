@@ -416,7 +416,7 @@ const generateXMP = (recipe, title) => {
     crs:Version="14.0"
     crs:ProcessVersion="11.0"
     crs:Name="${title}"
-    ${wbSetting}
+    crs:WhiteBalance="As Shot"
     crs:Exposure2012="${basic.Exposure || 0}"
     crs:Contrast2012="${basic.Contrast || 0}"
     crs:Highlights2012="${basic.Highlights || 0}"
@@ -427,8 +427,8 @@ const generateXMP = (recipe, title) => {
     crs:Dehaze="${basic.Dehaze || 0}"
     crs:Vibrance="${basic.Vibrance || 0}"
     crs:Saturation="${basic.Saturation || 0}"
-    crs:Temperature="${basic.Temp || 0}"
-    crs:Tint="${basic.Tint || 0}"
+    crs:IncrementalTemperature="${basic.Temp || 0}"
+    crs:IncrementalTint="${basic.Tint || 0}"
     crs:Texture="${basic.Texture || 0}"
     crs:PostCropVignetteAmount="${basic.Vignette || 0}"
     
@@ -557,7 +557,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">1.</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">2.</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> មើល Clipping (Whites/Blacks) ថាបាត់ព័ត៌មានត្រង់ណា។</span></li>
-              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយ។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយដើម្បីចំណេញពេល។</span></li>
             </ul>
           </div>
         </div>
@@ -1124,15 +1124,15 @@ const ChatBot = ({ isOnline }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-150px)] max-h-[600px] w-full max-w-4xl mx-auto">
       <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-[#1e293b] border-t border-gray-800 pb-20 md:pb-4">
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" style={{ touchAction: 'manipulation' }} /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
     </div>
   );
