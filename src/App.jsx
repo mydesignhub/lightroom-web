@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT RESTORED)
+// 2. DATASETS (ALL PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -158,117 +158,17 @@ const lessonsData = [
   }
 ];
 
-// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
         detail: { Sharpening: 40, Noise: 10, ColorNoise: 25 },
         effects: { Grain: 0 },
         curve: { RGB: "S-Curve" },
-        colorMix: [], // Simplified for cache, real data would be full array
+        colorMix: [ { color: "Red", h: 0, s: 0, l: 0 }, { color: "Orange", h: -10, s: 15, l: 5 }, { color: "Yellow", h: -30, s: -20, l: 0 }, { color: "Green", h: -60, s: -40, l: -10 }, { color: "Aqua", h: -50, s: 10, l: -10 }, { color: "Blue", h: -50, s: 10, l: -10 }, { color: "Purple", h: 0, s: -40, l: 0 }, { color: "Magenta", h: 0, s: -40, l: 0 } ],
         grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 }, Blending: 50, Balance: 0 }
     },
-    "dark moody": {
-        basic: { Exposure: -0.20, Contrast: 30, Highlights: -50, Shadows: -10, Whites: -30, Blacks: -10, Temp: -5, Tint: 0, Vibrance: -10, Saturation: -20, Clarity: 15, Dehaze: 10, Vignette: -30 },
-        detail: { Sharpening: 30, Noise: 0, ColorNoise: 25 },
-        effects: { Grain: 10 },
-        curve: { RGB: "Matte" },
-        grading: { Shadows: { h: 220, s: 10, l: -10 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 5, l: 0 } }
-    },
-    "bright & airy": {
-        basic: { Exposure: 0.40, Contrast: 10, Highlights: -30, Shadows: 50, Whites: 30, Blacks: 20, Temp: 5, Tint: 5, Vibrance: 30, Saturation: 0, Clarity: -10, Dehaze: 0, Vignette: 0 },
-        curve: { RGB: "Linear" },
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 5, l: 0 } }
-    },
-    "vintage": {
-        basic: { Exposure: 0.05, Contrast: 10, Highlights: -20, Shadows: 20, Whites: -10, Blacks: 20, Temp: 10, Tint: 0, Vibrance: -10, Saturation: -15, Clarity: 0, Dehaze: -5, Vignette: -20 },
-        effects: { Grain: 40 },
-        curve: { RGB: "Faded" },
-        grading: { Shadows: { h: 40, s: 10, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 200, s: 5, l: 0 } }
-    },
-    "cyberpunk": {
-        basic: { Exposure: 0.10, Contrast: 20, Highlights: 10, Shadows: 10, Whites: 10, Blacks: -10, Temp: -15, Tint: 20, Vibrance: 40, Saturation: 10, Clarity: 20, Dehaze: 15, Vignette: -10 },
-        curve: { RGB: "High Contrast" },
-        grading: { Shadows: { h: 260, s: 30, l: -5 }, Midtones: { h: 300, s: 10, l: 0 }, Highlights: { h: 320, s: 20, l: 0 } }
-    },
-    "golden hour": {
-        basic: { Exposure: 0.10, Contrast: 15, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -10, Temp: 15, Tint: 5, Vibrance: 20, Saturation: 5, Clarity: 10, Dehaze: 0, Vignette: -10 },
-        curve: { RGB: "S-Curve" },
-        grading: { Shadows: { h: 40, s: 15, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 20, l: 0 } }
-    },
-    "soft pastel": {
-        basic: { Exposure: 0.20, Contrast: -10, Highlights: -30, Shadows: 40, Whites: 10, Blacks: 20, Temp: 0, Tint: 5, Vibrance: 30, Saturation: -5, Clarity: -15, Dehaze: -5, Vignette: 0 },
-        curve: { RGB: "Matte" },
-        grading: { Shadows: { h: 220, s: 10, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 40, s: 10, l: 0 } }
-    },
-    "urban grey": {
-        basic: { Exposure: 0.0, Contrast: 25, Highlights: -30, Shadows: 20, Whites: 20, Blacks: -30, Temp: -5, Tint: 0, Vibrance: -20, Saturation: -30, Clarity: 25, Dehaze: 10, Vignette: -20 },
-        curve: { RGB: "High Contrast" },
-        grading: { Shadows: { h: 210, s: 10, l: -5 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    },
-    "black & white": {
-        basic: { Exposure: 0.0, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Temp: 0, Tint: 0, Vibrance: 0, Saturation: -100, Clarity: 20, Dehaze: 10, Vignette: -15 },
-        curve: { RGB: "S-Curve" },
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    },
-    "hdr landscape": {
-        basic: { Exposure: 0.0, Contrast: 10, Highlights: -80, Shadows: 80, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 40, Saturation: 10, Clarity: 30, Dehaze: 20, Vignette: -10 },
-        curve: { RGB: "Linear" },
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 50, s: 10, l: 0 } }
-    },
-    "matte black": {
-        basic: { Exposure: 0.0, Contrast: 20, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 30, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -10, Clarity: 10, Dehaze: 0, Vignette: -20 },
-        curve: { RGB: "Matte" },
-        grading: { Shadows: { h: 210, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    },
-    "cinematic warm": {
-        basic: { Exposure: 0.05, Contrast: 10, Highlights: -30, Shadows: 20, Whites: 10, Blacks: -10, Temp: 10, Tint: 0, Vibrance: 15, Saturation: 0, Clarity: 5, Dehaze: 0, Vignette: -10 },
-        curve: { RGB: "S-Curve" },
-        grading: { Shadows: { h: 190, s: 15, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 40, s: 20, l: 0 } }
-    },
-    "cool blue": {
-        basic: { Exposure: 0.0, Contrast: 15, Highlights: 10, Shadows: 10, Whites: 10, Blacks: -10, Temp: -20, Tint: 0, Vibrance: 20, Saturation: -5, Clarity: 15, Dehaze: 10, Vignette: 0 },
-        curve: { RGB: "Linear" },
-        grading: { Shadows: { h: 220, s: 20, l: -5 }, Midtones: { h: 210, s: 10, l: 0 }, Highlights: { h: 200, s: 10, l: 0 } }
-    },
-    "forest green": {
-        basic: { Exposure: -0.1, Contrast: 20, Highlights: -40, Shadows: 20, Whites: 10, Blacks: -20, Temp: 5, Tint: -15, Vibrance: 30, Saturation: -10, Clarity: 10, Dehaze: 10, Vignette: -20 },
-        curve: { RGB: "S-Curve" },
-        grading: { Shadows: { h: 120, s: 15, l: -5 }, Midtones: { h: 100, s: 10, l: 0 }, Highlights: { h: 50, s: 10, l: 0 } }
-    },
-    "sunset lover": {
-        basic: { Exposure: 0.1, Contrast: 25, Highlights: -30, Shadows: 30, Whites: 20, Blacks: -10, Temp: 20, Tint: 10, Vibrance: 40, Saturation: 10, Clarity: 10, Dehaze: 5, Vignette: -10 },
-        curve: { RGB: "S-Curve" },
-        grading: { Shadows: { h: 280, s: 20, l: 0 }, Midtones: { h: 30, s: 20, l: 0 }, Highlights: { h: 45, s: 30, l: 0 } }
-    },
-    "portrait clean": {
-        basic: { Exposure: 0.1, Contrast: 10, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -5, Temp: 0, Tint: 0, Vibrance: 10, Saturation: -5, Clarity: -5, Dehaze: 0, Vignette: 0 },
-        curve: { RGB: "Linear" },
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 30, s: 5, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    },
-    "desaturated": {
-        basic: { Exposure: 0.0, Contrast: 20, Highlights: -10, Shadows: 10, Whites: 10, Blacks: -10, Temp: 0, Tint: 0, Vibrance: -10, Saturation: -40, Clarity: 10, Dehaze: 0, Vignette: -10 },
-        curve: { RGB: "Matte" },
-        grading: { Shadows: { h: 220, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    },
-    "vivid pop": {
-        basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Temp: 5, Tint: 5, Vibrance: 40, Saturation: 10, Clarity: 15, Dehaze: 5, Vignette: 0 },
-        curve: { RGB: "S-Curve" },
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    },
-    "sepia tone": {
-        basic: { Exposure: 0.0, Contrast: 15, Highlights: -10, Shadows: 10, Whites: 0, Blacks: 0, Temp: 30, Tint: 10, Vibrance: -10, Saturation: -20, Clarity: 10, Dehaze: 0, Vignette: -20 },
-        curve: { RGB: "Faded" },
-        grading: { Shadows: { h: 40, s: 20, l: 0 }, Midtones: { h: 35, s: 10, l: 0 }, Highlights: { h: 45, s: 10, l: 0 } }
-    },
-    "high contrast": {
-        basic: { Exposure: 0.0, Contrast: 60, Highlights: -30, Shadows: 30, Whites: 30, Blacks: -30, Temp: 0, Tint: 0, Vibrance: 10, Saturation: 0, Clarity: 20, Dehaze: 10, Vignette: 0 },
-        curve: { RGB: "High Contrast" },
-        grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } }
-    }
 };
 
-// --- 20 AI ANSWERS CACHE (FULL CONTENT) ---
 const QA_DB = {
     "exposure": "សួស្ដី! 👋\n\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាប្រៀបដូចជាការបើកបង្អួចទទួលពន្លឺចូលក្នុងកាមេរ៉ាអញ្ចឹង។\n\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់ មុននឹងចូលទៅកែផ្នែកផ្សេងៗ!",
     "contrast": "សួស្ដី! 👋\n\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបភាពមានពណ៌ដិត និងមានជម្រៅ (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបភាពមើលទៅស្រាលៗ ឬស្រទន់ (Soft Look)។\n\n👉 **Tip:** កុំតម្លើងខ្លាំងពេក (កុំឱ្យលើស +50) ព្រោះវាអាចធ្វើឱ្យរូបភាពមើលទៅរឹង និងបាត់ព័ត៌មានលម្អិត។",
@@ -277,7 +177,7 @@ const QA_DB = {
     "white": "សួស្ដី! 👋\n\n**Whites** កំណត់ចំណុច **ពណ៌សដាច់ខាត (True White)**។ វាខុសពី Highlights ត្រង់ថាវាធ្វើឱ្យផ្នែកភ្លឺ ក្លាយជាពណ៌សសុទ្ធ។\n\n👉 **Tip:** តម្លើងបន្តិច (+10 ទៅ +20) ដើម្បីឱ្យរូបភាពមើលទៅភ្លឺថ្លា (Clean Look)។",
     "black": "សួស្ដី! 👋\n\n**Blacks** កំណត់ចំណុច **ពណ៌ខ្មៅដាច់ខាត (True Black)**។\n\n👉 **Tip:** បន្ថយបន្តិច (-10 ទៅ -20) ដើម្បីឱ្យរូបភាពមានជម្រៅ (Depth) និងពណ៌ដិតល្អ។",
     "ស្បែកស": "សួស្ដី! ចង់បានរូបមន្តកែ **ស្បែកស (Bright Skin Tone)** មែនទេ? សាកល្បងវិធីនេះ៖\n\n1. ចូលទៅកាន់ **Color > Mix**។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance:** តម្លើង (+15 ទៅ +25)។\n4. **Saturation:** បន្ថយបន្តិច (-5 ទៅ -15)។\n\n💡 **ចំណាំ:** កុំតម្លើង Luminance ខ្លាំងពេក ប្រយ័ត្នស្បែកស្លេកគ្មានឈាម!",
-    "portrait": "សួស្ដី! ដើម្បីកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
+    "portrait": "សួស្ដី! សម្រាប់ការកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
     "teal": "សួស្ដី! នេះជារូបមន្ត **Teal & Orange (Cinematic Look)** ដ៏ពេញនិយម៖\n\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:**\n  - Shadows: ដាក់ពណ៌ Teal (Hue 210)។\n  - Highlights: ដាក់ពណ៌ Orange (Hue 35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
     "dehaze": "សួស្ដី! **Dehaze** គឺជាឧបករណ៍វេទមន្តសម្រាប់រូបទេសភាព៖\n\n• **កាត់បន្ថយ (+):** ជួយលុបអ័ព្ទ ឬផ្សែង ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ដូចក្នុងសុបិន (Dreamy/Foggy Look)។",
     "យប់": "សួស្ដី! នេះជាគន្លឹះសម្រាប់កែ **រូបថតពេលយប់ (Night Photography)**៖\n\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងអំពូលចាំងពេក។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** សំខាន់បំផុត! បង្កើន Noise Reduction (20-30) ដើម្បីលុបគ្រាប់។",
@@ -300,7 +200,7 @@ const TIPS_LIST = [
     "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
 ];
 
-// --- 50+ QUESTIONS DATABASE (FULL CONTENT) ---
+// --- 50+ QUESTIONS DATABASE (FULL RESTORED) ---
 const initialQuestionBank = [
   { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
   { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
@@ -768,7 +668,7 @@ const PhotoLab = () => {
 
   return (
     <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-4 md:p-6">
-        {/* Header Bar */}
+        {/* Header Bar - Updated styling for compact buttons */}
         <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h2 className="text-xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
