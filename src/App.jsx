@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT)
+// 2. DATASETS (FULL CONTENT RESTORED)
 // ==========================================
 
 const lessonsData = [
@@ -476,18 +476,20 @@ const generateXMP = (recipe, title) => {
 
 // --- COMPONENTS ---
 
+// CircleIcon Component
 const CircleIcon = ({ color }) => (
     <div className={`w-3 h-3 rounded-full bg-${color}-500 inline-block border border-gray-600`}></div>
 );
 
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800`}>
+    <header className="bg-[#0f172a] text-white sticky top-0 z-50 shadow-lg border-b border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
+          {/* Always Visible Text */}
           <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
@@ -557,7 +559,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">1.</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">2.</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> មើល Clipping (Whites/Blacks) ថាបាត់ព័ត៌មានត្រង់ណា។</span></li>
-              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយដើម្បីចំណេញពេល។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយ។</span></li>
             </ul>
           </div>
         </div>
@@ -790,28 +792,25 @@ const PhotoLab = () => {
         <div className="mb-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h2 className="text-2xl font-bold font-khmer text-white mb-1">បន្ទប់ពិសោធន៍រូបភាព (Photo Lab)</h2>
-                <p className="text-gray-400 font-khmer text-xs">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
+                <p className="text-gray-400 font-khmer text-sm">សាកល្បងកែរូបភាពជាក់ស្តែងជាមួយឧបករណ៍ដូច Lightroom</p>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-1">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <Upload size={12} /> Upload
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <Upload size={14} /> Upload
                 </button>
-                <button onClick={handleDownload} className="px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <ImageDown size={12} /> Download
+                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <ImageDown size={14} /> Download
                 </button>
-                <button onClick={handlePresetExport} className="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <FileJson size={12} /> Export XMP
-                </button>
-                <button onClick={resetSettings} className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 border border-red-500/30">
-                    <RotateCcw size={12} /> Reset
+                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <FileJson size={14} /> Export XMP
                 </button>
             </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
-            {/* Image Viewer (Sticky) */}
-            <div className="flex-1 flex flex-col gap-4 h-full">
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
+            {/* Image Viewer (Sticky - Optimized for Mobile 45% height) */}
+            <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
                     <div className="relative w-full h-full">
                         <img 
@@ -825,9 +824,9 @@ const PhotoLab = () => {
                 </div>
                 
                 {/* Image Selector */}
-                <div className="flex justify-center gap-3 bg-[#0f172a] p-3 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
+                <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
                     {sampleImages.map((item, idx) => (
-                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-12 h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
+                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
                             <img src={item.src} className="w-full h-full object-cover" />
                         </button>
                     ))}
@@ -835,41 +834,37 @@ const PhotoLab = () => {
             </div>
 
             {/* Controls Panel (Scrollable) */}
-            <div className="w-full lg:w-96 flex flex-col h-full bg-[#0f172a] rounded-xl border border-gray-700 overflow-hidden shadow-lg shrink-0">
-                 {/* Tabs */}
-                 <div className="flex border-b border-gray-700 shrink-0">
-                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 bg-[#1e293b] border-b-2 border-blue-400' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
-                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-sm font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 bg-[#1e293b] border-b-2 border-purple-400' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+            <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-2xl lg:rounded-xl border-t lg:border border-gray-700 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-lg">
+                 {/* Tabs - Reset Moved Here */}
+                 <div className="flex border-b border-gray-700 shrink-0 bg-[#1e293b] lg:bg-transparent">
+                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 border-b-2 border-blue-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
+                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 border-b-2 border-purple-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+                    <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
                  </div>
                  
-                 {/* Controls Content */}
-                 <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                 {/* Controls Content - Reduced Gaps */}
+                 <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-[#0f172a]">
                     {mode === 'manual' ? (
-                        <div className="space-y-8 pb-10">
+                        <div className="space-y-5 pb-20 lg:pb-10">
                              {/* Basic Tools */}
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-4">
-                                    <div className="flex items-center justify-between border-b border-gray-700 pb-2">
-                                        <h4 className="text-sm font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
-                                        <button onClick={() => resetGroup(group.items)} className="text-[10px] text-gray-500 hover:text-white">Reset</button>
+                                <div key={gIdx} className="space-y-2">
+                                    <div className="flex items-center justify-between border-b border-gray-700 pb-1">
+                                        <h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
+                                        <button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white">Reset</button>
                                     </div>
-                                    <div className="space-y-5 px-1">
+                                    <div className="space-y-3 px-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
-                                                <div className="flex justify-between mb-2 items-center">
+                                                <div className="flex justify-between mb-1 items-center">
                                                     <label 
-                                                        className="text-xs font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" 
+                                                        className="text-[10px] font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" 
                                                         onDoubleClick={() => updateSetting(t.id, 0)} 
-                                                        title="Double click label to reset"
+                                                        title="Double click to reset"
                                                     >
                                                         {t.label}
                                                     </label>
-                                                    <input 
-                                                        type="number" 
-                                                        value={settings[t.id]}
-                                                        onChange={(e) => updateSetting(t.id, Number(e.target.value))}
-                                                        className="w-12 bg-gray-800 text-right text-xs text-blue-400 font-mono border border-gray-700 rounded px-1 py-0.5 focus:border-blue-500 outline-none"
-                                                    />
+                                                    <span className="text-[10px] text-blue-400 font-mono bg-gray-800 px-1.5 rounded">{settings[t.id]}</span>
                                                 </div>
                                                 <input 
                                                     type="range" 
@@ -879,7 +874,7 @@ const PhotoLab = () => {
                                                     value={settings[t.id]} 
                                                     onChange={(e) => updateSetting(t.id, Number(e.target.value))}
                                                     onDoubleClick={() => updateSetting(t.id, 0)}
-                                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
+                                                    className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all drag-only-range"
                                                 />
                                             </div>
                                         ))}
@@ -888,33 +883,33 @@ const PhotoLab = () => {
                             ))}
 
                             {/* Color Mix */}
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-2">
-                                    <h4 className="text-sm font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={18}/> Color Mix</h4>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-1">
+                                    <h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4>
                                 </div>
-                                <div className="flex justify-between gap-1 mb-4">
+                                <div className="flex justify-between gap-1 mb-2">
                                     {colors.map(c => (
                                         <button 
                                             key={c.id} 
                                             onClick={() => setActiveColor(c.name)}
-                                            className={`w-6 h-6 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
+                                            className={`w-7 h-7 md:w-5 md:h-5 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
                                         />
                                     ))}
                                 </div>
-                                <div className="space-y-5 px-1 bg-[#151f32] p-3 rounded-xl border border-gray-700/50">
+                                <div className="space-y-3 px-2 bg-[#151f32] p-2 rounded-lg border border-gray-700/50">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
                                             <div key={key}>
-                                                <div className="flex justify-between mb-2">
-                                                    <label className="text-xs font-bold text-gray-300 font-khmer">{type}</label>
-                                                    <span className="text-xs text-blue-400 font-mono">{settings[key]}</span>
+                                                <div className="flex justify-between mb-1">
+                                                    <label className="text-[10px] font-bold text-gray-400 font-khmer">{type}</label>
+                                                    <span className="text-[10px] text-blue-400 font-mono">{settings[key]}</span>
                                                 </div>
                                                 <input 
                                                     type="range" min="-100" max="100" 
                                                     value={settings[key]} 
                                                     onChange={(e) => updateSetting(key, Number(e.target.value))}
-                                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                                    className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500 drag-only-range"
                                                 />
                                             </div>
                                         )
@@ -923,21 +918,21 @@ const PhotoLab = () => {
                             </div>
 
                             {/* Grading */}
-                            <div className="space-y-4 pb-4">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-2">
-                                    <h4 className="text-sm font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={18}/> Grading</h4>
+                            <div className="space-y-3 pb-4">
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-1">
+                                    <h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4>
                                 </div>
                                 {['Shadow', 'Mid', 'Highlight'].map(tone => (
-                                    <div key={tone} className="bg-[#151f32] p-3 rounded-xl border border-gray-700/50 space-y-3">
-                                        <h5 className="text-xs font-bold text-gray-400 font-khmer">{tone}s</h5>
+                                    <div key={tone} className="bg-[#151f32] p-2 rounded-lg border border-gray-700/50 space-y-2">
+                                        <h5 className="text-[10px] font-bold text-gray-400 font-khmer">{tone}s</h5>
                                         <div className="flex gap-2">
                                             <div className="flex-1">
-                                                <label className="text-[10px] text-gray-500 block mb-1">Hue</label>
-                                                <input type="range" min="0" max="360" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500"/>
+                                                <label className="text-[9px] text-gray-500 block mb-0.5">Hue</label>
+                                                <input type="range" min="0" max="360" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
                                             </div>
                                             <div className="flex-1">
-                                                <label className="text-[10px] text-gray-500 block mb-1">Sat</label>
-                                                <input type="range" min="0" max="100" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500"/>
+                                                <label className="text-[9px] text-gray-500 block mb-0.5">Sat</label>
+                                                <input type="range" min="0" max="100" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
                                             </div>
                                         </div>
                                     </div>
@@ -945,20 +940,19 @@ const PhotoLab = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="space-y-6">
-                            <div className="bg-purple-900/20 p-4 rounded-xl border border-purple-500/30">
-                                <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2"><Sparkles size={16} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
-                                <p className="text-gray-400 text-xs font-khmer mb-4">បញ្ចូលឈ្មោះស្តាយដែលអ្នកចង់បាន (ឧ. Vintage, Cyberpunk, Soft Skin) AI នឹងកែ Slider ជូនអ្នក។</p>
+                        <div className="space-y-4 pb-20">
+                            <div className="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
+                                <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2 text-xs"><Sparkles size={14} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
                                 <div className="flex gap-2">
-                                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="ឈ្មោះស្តាយ..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 font-khmer" />
-                                    <button onClick={generateAIPreset} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold font-khmer disabled:opacity-50">{aiLoading ? <Loader2 className="animate-spin" size={18}/> : 'បង្កើត'}</button>
+                                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="ឈ្មោះស្តាយ..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-purple-500 font-khmer" />
+                                    <button onClick={generateAIPreset} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg font-bold font-khmer text-xs disabled:opacity-50">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <h5 className="text-gray-400 text-xs font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
-                                <div className="flex flex-wrap gap-2">
+                                <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
+                                <div className="flex flex-wrap gap-1.5">
                                     {["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage", "Cyberpunk", "Golden Hour", "Soft Pastel", "Urban Grey", "Black & White", "HDR Landscape", "Matte Black", "Cinematic Warm", "Cool Blue", "Forest Green", "Sunset Lover", "Portrait Clean", "Desaturated", "Vivid Pop", "Sepia Tone", "High Contrast"].map(s => (
-                                        <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-3 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-xs text-gray-300 font-medium transition-all">{s}</button>
+                                        <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-2.5 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-[10px] text-gray-300 font-medium transition-all">{s}</button>
                                     ))}
                                 </div>
                             </div>
