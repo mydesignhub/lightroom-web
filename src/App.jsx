@@ -322,19 +322,18 @@ const LessonModal = ({ lesson, onClose }) => {
 };
 
 const LessonCard = ({ lesson, onClick }) => (
-    <button onClick={onClick} className="bg-[#1C1C1E] rounded-3xl overflow-hidden border border-white/5 transition-all duration-500 ease-spring hover:scale-[1.02] active:scale-95 cursor-pointer h-full flex flex-col group w-full text-left relative shadow-lg hover:shadow-2xl hover:shadow-black/50">
-      <div className="p-8 flex flex-col justify-between h-full relative z-10">
-        <div className="mb-6">
-            <div className="bg-[#2C2C2E] w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-white/5 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors text-gray-300">
+    <button onClick={onClick} className="bg-[#1C1C1E] rounded-3xl overflow-hidden border border-white/5 transition-all duration-500 ease-spring hover:scale-[1.02] active:scale-95 cursor-pointer w-full text-left relative shadow-lg hover:shadow-2xl hover:shadow-black/50 group">
+      <div className="p-6 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-5">
+            <div className="bg-[#2C2C2E] w-12 h-12 rounded-2xl flex flex-shrink-0 items-center justify-center shadow-inner border border-white/5 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors text-gray-300">
                 {lesson.icon}
             </div>
-            <h3 className="font-bold text-white text-xl font-khmer mb-2 group-hover:text-blue-400 transition-colors tracking-tight">{lesson.title}</h3>
-            <p className="text-gray-500 text-sm font-khmer line-clamp-2 leading-relaxed">{lesson.description}</p>
+            <div>
+                <h3 className="font-bold text-white text-lg font-khmer group-hover:text-blue-400 transition-colors tracking-tight mb-0.5">{lesson.title}</h3>
+                <p className="text-gray-500 text-xs font-khmer line-clamp-1 leading-relaxed">{lesson.description}</p>
+            </div>
         </div>
-        <div className="flex justify-between items-center mt-auto pt-4 border-t border-white/5">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-400 transition-colors">Start Lesson</span>
-            <div className="bg-[#2C2C2E] p-2 rounded-full text-gray-400 group-hover:bg-blue-500 group-hover:text-white transition-all transform group-hover:translate-x-1"><ChevronRight className="w-4 h-4" /></div>
-        </div>
+        <div className="bg-[#2C2C2E] p-2.5 rounded-full text-gray-400 group-hover:bg-blue-500 group-hover:text-white transition-all transform group-hover:translate-x-1 flex-shrink-0 ml-4"><ChevronRight className="w-4 h-4" /></div>
       </div>
     </button>
 );
