@@ -355,7 +355,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
           <div className="bg-gradient-to-br from-[#2C2C2E] to-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 relative overflow-hidden shadow-2xl">
              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
              <div className="flex justify-between items-start mb-6 relative z-10">
-                 <h4 className="font-bold text-white font-khmer flex items-center gap-3 text-lg"><Sparkles className="w-5 h-5 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4>
+                 <h4 className="font-bold text-white font-khmer flex items-center gap-3 text-lg whitespace-nowrap"><Sparkles className="w-5 h-5 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4>
                  <button onClick={getTip} className="bg-white/10 hover:bg-white/20 text-white text-xs px-5 py-2.5 rounded-full font-khmer transition-all font-bold tracking-wide border border-white/5">បង្ហាញគន្លឹះ</button>
              </div>
              <p className="text-gray-300 text-base font-khmer leading-relaxed border-l-4 border-blue-500 pl-6 py-2 relative z-10">{randomTip || "ចុចប៊ូតុងខាងលើដើម្បីទទួលបានគន្លឹះកែរូប។"}</p>
@@ -482,14 +482,14 @@ const PhotoLab = () => {
         <div className="p-3 md:p-0 bg-[#000000] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
             <div className="grid grid-cols-3 gap-2 w-full md:w-auto md:flex md:justify-end ml-auto px-2 md:px-0">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-3 py-3 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-xl font-bold text-[10px] transition-all flex flex-col items-center justify-center gap-1"><Upload size={16} /> Upload</button>
-                <button onClick={handleDownload} className="px-3 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-[10px] transition-all flex flex-col items-center justify-center gap-1 shadow-lg shadow-blue-500/20"><ImageDown size={16} /> Download</button>
-                <button onClick={handlePresetExport} className="px-3 py-3 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-xl font-bold text-[10px] transition-all flex flex-col items-center justify-center gap-1"><FileJson size={16} /> Export XMP</button>
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-xl font-bold text-[10px] transition-all flex flex-row items-center justify-center gap-2"><Upload size={14} /> Upload</button>
+                <button onClick={handleDownload} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-[10px] transition-all flex flex-row items-center justify-center gap-2 shadow-lg shadow-blue-500/20"><ImageDown size={14} /> Download</button>
+                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-xl font-bold text-[10px] transition-all flex flex-row items-center justify-center gap-2"><FileJson size={14} /> Export XMP</button>
             </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
-            <div className="h-[52%] lg:h-full lg:flex-1 flex flex-col gap-4 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-4 lg:p-0">
+            <div className="h-[62%] lg:h-full lg:flex-1 flex flex-col gap-4 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-4 lg:p-0">
                 <div className="flex-1 bg-[#1C1C1E] rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-2xl">
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
@@ -505,14 +505,14 @@ const PhotoLab = () => {
                  
                  <div className="flex-1 flex flex-col bg-[#1C1C1E] overflow-hidden relative">
                     {mode === 'manual' ? (
-                        <div className="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-8 pb-24 lg:pb-10">
+                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-4 pb-24 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-4">
+                                <div key={gIdx} className="space-y-2">
                                     <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[10px] text-blue-500 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider">Reset</button></div>
-                                    <div className="space-y-5">
+                                    <div className="space-y-2">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
-                                                <div className="flex justify-between mb-3 items-center">
+                                                <div className="flex justify-between mb-1 items-center">
                                                     <label className="text-xs font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors" onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
                                                     <span className="text-xs text-blue-400 font-mono font-bold">{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
                                                 </div>
@@ -527,12 +527,12 @@ const PhotoLab = () => {
                                 </div>
                             ))}
 
-                            <div className="space-y-6">
+                            <div className="space-y-3">
                                 <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><Palette size={16}/> Color Mix</h4></div>
-                                <div className="flex justify-between gap-2 mb-4">
+                                <div className="flex justify-between gap-2 mb-2">
                                     {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-8 h-8 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-lg ring-2 ring-white/10' : 'border-transparent opacity-40 hover:opacity-100'} transition-all duration-300 ease-spring`} />))}
                                 </div>
-                                <div className="space-y-6 px-2">
+                                <div className="space-y-3 px-2">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
@@ -546,15 +546,15 @@ const PhotoLab = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-6 pb-6">
+                            <div className="space-y-3 pb-4">
                                 <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><TrendingUp size={16}/> Grading</h4></div>
-                                <div className="flex justify-around mb-4 bg-[#2C2C2E] p-1.5 rounded-xl">
+                                <div className="flex justify-around mb-2 bg-[#2C2C2E] p-1.5 rounded-xl">
                                     {['Shadows', 'Midtones', 'Highlights'].map(t => (
                                         <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>{t}</button>
                                     ))}
                                 </div>
-                                <div className="p-4 space-y-6">
-                                    <div className="flex justify-center py-4">
+                                <div className="p-2 space-y-3">
+                                    <div className="flex justify-center py-2">
                                         <ColorWheel 
                                             hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}
                                             sat={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']}
@@ -567,12 +567,12 @@ const PhotoLab = () => {
                                         <input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="flex-1"/>
                                         <input type="number" className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} />
                                     </div>
-                                    <div className="pt-4 border-t border-white/5 space-y-4 px-2">
-                                        <div className="flex flex-col gap-2">
+                                    <div className="pt-2 border-t border-white/5 space-y-2 px-2">
+                                        <div className="flex flex-col gap-1">
                                             <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Blending</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBlending}</span></div>
                                             <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/>
                                         </div>
-                                        <div className="flex flex-col gap-2">
+                                        <div className="flex flex-col gap-1">
                                             <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Balance</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBalance}</span></div>
                                             <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/>
                                         </div>
@@ -582,7 +582,7 @@ const PhotoLab = () => {
                         </div>
                     ) : (
                         <div className="flex flex-col h-full bg-[#1C1C1E]">
-                            <div className="p-6 border-b border-white/5 shrink-0 z-10">
+                            <div className="p-3 border-b border-white/5 shrink-0 z-10">
                                 <div className="bg-[#2C2C2E] p-1 rounded-2xl border border-white/5 shadow-inner">
                                     <div className="flex gap-2 items-center px-2">
                                         <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="Describe a style (e.g. Moody Blue)..." className="flex-1 bg-transparent px-2 py-3 text-white text-sm outline-none font-khmer placeholder:text-gray-500" />
@@ -590,12 +590,12 @@ const PhotoLab = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                                <div className="space-y-6 pb-20">
+                            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                                <div className="space-y-3 pb-20">
                                     <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">AI Presets</h4>
                                     <div className="grid grid-cols-2 gap-3">
                                         {Object.keys(PRESET_DB).map(s => (
-                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(s); }} className="px-4 py-6 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/5 rounded-2xl text-center flex flex-col items-center justify-center gap-3 transition-all duration-300 ease-spring active:scale-95 group relative overflow-hidden shadow-sm hover:shadow-lg">
+                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(s); }} className="px-4 py-4 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/5 rounded-2xl text-center flex flex-col items-center justify-center gap-3 transition-all duration-300 ease-spring active:scale-95 group relative overflow-hidden shadow-sm hover:shadow-lg">
                                                 <span className="capitalize text-xs font-bold text-gray-300 group-hover:text-white z-10 tracking-wide">{s}</span>
                                             </button>
                                         ))}
@@ -797,6 +797,11 @@ const ChatBot = ({ isOnline, messages, setMessages }) => {
             <div className="bg-[#2C2C2E] rounded-[20px] p-1 flex-1 border border-white/5 focus-within:border-gray-500 transition-colors flex items-center">
                 <input 
                     ref={inputRef}
+                    type="text"
+                    name="chat-message"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck="false"
                     value={input} 
                     onChange={e => setInput(e.target.value)} 
                     onKeyPress={e => e.key === 'Enter' && handleSend()} 
@@ -886,7 +891,7 @@ export default function App() {
               <div className="text-center mb-16 mt-8 relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
                  <h2 className="text-3xl md:text-5xl font-black text-white mb-6 font-khmer relative z-10 tracking-tight leading-tight">វគ្គសិក្សា Lightroom</h2>
-                 <p className="text-gray-400 font-khmer max-w-xl mx-auto text-lg leading-relaxed relative z-10 font-medium">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព ជាមួយឧបករណ៍ទំនើប។</p>
+                 <p className="text-gray-500 font-khmer max-w-xl mx-auto text-sm leading-relaxed relative z-10 font-medium">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព ជាមួយឧបករណ៍ទំនើប។</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div>
               <TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> 
