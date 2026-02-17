@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+const { useState, useEffect, useRef } = React;
 import { 
   Sun, Aperture, Droplet, Sliders, ChevronRight, CheckCircle, XCircle, 
   BookOpen, Award, PlayCircle, MessageCircle, Send, Sparkles, Loader2, 
@@ -467,7 +467,7 @@ const PhotoLab = () => {
   };
   const getVignetteStyle = () => { const v = settings.vignette; if (v < 0) return { background: `radial-gradient(circle, transparent ${60 + (v * 0.4)}%, rgba(0,0,0,${Math.abs(v)/100}))` }; return { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` }; };
 
-  useEffect(() => { const style = document.createElement('style'); style.innerHTML = `.grad-hue { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red); } .grad-sat { background: linear-gradient(to right, #333, #ccc); } .grad-lum { background: linear-gradient(to right, black, white); } input[type=range] { -webkit-appearance: none; background: transparent; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #ffffff; border: 1px solid #000000; box-shadow: 0 2px 5px rgba(0,0,0,0.4); margin-top: -7px; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); } input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #3A3A3C; border-radius: 10px; }`; document.head.appendChild(style); return () => document.head.removeChild(style); }, []);
+  useEffect(() => { const style = document.createElement('style'); style.innerHTML = `.grad-hue { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red); } .grad-sat { background: linear-gradient(to right, #333, #ccc); } .grad-lum { background: linear-gradient(to right, black, white); } input[type=range] { -webkit-appearance: none; background: transparent; pointer-events: none; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #ffffff; border: 1px solid #000000; box-shadow: 0 2px 5px rgba(0,0,0,0.4); margin-top: -7px; cursor: grab; pointer-events: auto; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); cursor: grabbing; } input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #3A3A3C; border-radius: 10px; }`; document.head.appendChild(style); return () => document.head.removeChild(style); }, []);
   const toolsGroups = [ { group: 'Light', icon: <Sun size={18}/>, items: [{ id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1 }, { id: 'contrast', label: 'Contrast', min: -100, max: 100 }, { id: 'highlights', label: 'Highlights', min: -100, max: 100 }, { id: 'shadows', label: 'Shadows', min: -100, max: 100 }, { id: 'whites', label: 'Whites', min: -100, max: 100 }, { id: 'blacks', label: 'Blacks', min: -100, max: 100 }] }, { group: 'Color', icon: <Palette size={18}/>, items: [{ id: 'temp', label: 'Temp', min: -100, max: 100 }, { id: 'tint', label: 'Tint', min: -100, max: 100 }, { id: 'vibrance', label: 'Vibrance', min: -100, max: 100 }, { id: 'saturation', label: 'Saturation', min: -100, max: 100 }] }, { group: 'Effects', icon: <Aperture size={18}/>, items: [{ id: 'texture', label: 'Texture', min: -100, max: 100 }, { id: 'clarity', label: 'Clarity', min: -100, max: 100 }, { id: 'dehaze', label: 'Dehaze', min: -100, max: 100 }, { id: 'vignette', label: 'Vignette', min: -100, max: 100 }] } ];
   const colors = [ { name: 'Red', id: 'red', color: 'bg-red-500' }, { name: 'Orange', id: 'orange', color: 'bg-orange-500' }, { name: 'Yellow', id: 'yellow', color: 'bg-yellow-500' }, { name: 'Green', id: 'green', color: 'bg-green-500' }, { name: 'Aqua', id: 'aqua', color: 'bg-cyan-400' }, { name: 'Blue', id: 'blue', color: 'bg-blue-600' }, { name: 'Purple', id: 'purple', color: 'bg-purple-600' }, { name: 'Magenta', id: 'magenta', color: 'bg-pink-500' } ];
   const sampleImages = [ { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" }, { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" }, { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" }, { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" }, { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" } ];
@@ -489,7 +489,7 @@ const PhotoLab = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
-            <div className="h-[62%] lg:h-full lg:flex-1 flex flex-col gap-4 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-4 lg:p-0">
+            <div className="h-[57%] lg:h-full lg:flex-1 flex flex-col gap-4 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-4 lg:p-0">
                 <div className="flex-1 bg-[#1C1C1E] rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-2xl">
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
@@ -505,18 +505,18 @@ const PhotoLab = () => {
                  
                  <div className="flex-1 flex flex-col bg-[#1C1C1E] overflow-hidden relative">
                     {mode === 'manual' ? (
-                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-4 pb-24 lg:pb-10">
+                        <div className="flex-1 overflow-y-auto p-2 custom-scrollbar space-y-2 pb-24 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-2">
-                                    <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[10px] text-blue-500 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider">Reset</button></div>
-                                    <div className="space-y-2">
+                                <div key={gIdx} className="space-y-1">
+                                    <div className="flex items-center justify-between pb-0 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[10px] text-blue-500 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider">Reset</button></div>
+                                    <div className="space-y-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
-                                                <div className="flex justify-between mb-1 items-center">
+                                                <div className="flex justify-between mb-0.5 items-center">
                                                     <label className="text-xs font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors" onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
                                                     <span className="text-xs text-blue-400 font-mono font-bold">{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
                                                 </div>
-                                                <div className="flex items-center gap-4">
+                                                <div className="flex items-center gap-2">
                                                     <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Minus size={14}/></button>
                                                     <input type="range" min={t.min} max={t.max} step={t.step || 1} value={settings[t.id]} onChange={(e) => updateSetting(t.id, Number(e.target.value))} className="flex-1" />
                                                     <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Plus size={14}/></button>
@@ -527,16 +527,16 @@ const PhotoLab = () => {
                                 </div>
                             ))}
 
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><Palette size={16}/> Color Mix</h4></div>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between pb-0 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><Palette size={16}/> Color Mix</h4></div>
                                 <div className="flex justify-between gap-2 mb-2">
                                     {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-8 h-8 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-lg ring-2 ring-white/10' : 'border-transparent opacity-40 hover:opacity-100'} transition-all duration-300 ease-spring`} />))}
                                 </div>
-                                <div className="space-y-3 px-2">
+                                <div className="space-y-2 px-2">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
-                                            <div key={key} className="flex items-center gap-4">
+                                            <div key={key} className="flex items-center gap-2">
                                                 <label className="text-[10px] font-bold text-gray-400 font-khmer w-8 uppercase tracking-wider">{type}</label>
                                                 <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
                                                 <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" />
@@ -546,33 +546,33 @@ const PhotoLab = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-3 pb-4">
-                                <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><TrendingUp size={16}/> Grading</h4></div>
+                            <div className="space-y-2 pb-4">
+                                <div className="flex items-center justify-between pb-0 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><TrendingUp size={16}/> Grading</h4></div>
                                 <div className="flex justify-around mb-2 bg-[#2C2C2E] p-1.5 rounded-xl">
                                     {['Shadows', 'Midtones', 'Highlights'].map(t => (
                                         <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>{t}</button>
                                     ))}
                                 </div>
-                                <div className="p-2 space-y-3">
-                                    <div className="flex justify-center py-2">
+                                <div className="p-1 space-y-2">
+                                    <div className="flex justify-center py-1">
                                         <ColorWheel 
                                             hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}
                                             sat={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']}
                                             onChange={(h, s) => updateGrading(gradingTab, h, s)}
-                                            size={200}
+                                            size={140}
                                         />
                                     </div>
-                                    <div className="flex items-center gap-4 px-2">
+                                    <div className="flex items-center gap-2 px-1">
                                         <label className="text-[10px] font-bold text-gray-400 w-8 uppercase tracking-wider">Lum</label>
                                         <input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="flex-1"/>
                                         <input type="number" className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} />
                                     </div>
-                                    <div className="pt-2 border-t border-white/5 space-y-2 px-2">
-                                        <div className="flex flex-col gap-1">
+                                    <div className="pt-1 border-t border-white/5 space-y-1 px-1">
+                                        <div className="flex flex-col gap-0.5">
                                             <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Blending</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBlending}</span></div>
                                             <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/>
                                         </div>
-                                        <div className="flex flex-col gap-1">
+                                        <div className="flex flex-col gap-0.5">
                                             <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Balance</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBalance}</span></div>
                                             <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/>
                                         </div>
@@ -640,63 +640,71 @@ const Quiz = ({ isOnline }) => {
   };
 
   if (gameState === 'menu') return (
-    <div className="bg-[#1C1C1E]/80 backdrop-blur-md p-10 sm:p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg mx-auto mt-12 animate-fade-in-up">
-        <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 w-28 h-28 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/5">
-          <Award className="w-14 h-14 text-blue-400 drop-shadow-lg" />
-        </div>
-        <h2 className="text-4xl font-extrabold text-white font-khmer mb-4 tracking-tight">ការធ្វើតេស្ត</h2>
-        <p className="text-gray-400 text-base font-khmer mb-10 leading-relaxed">វាស់ស្ទង់សមត្ថភាពរបស់អ្នក។</p>
-        <div className="space-y-8">
-            <div className="flex justify-center gap-3 bg-[#000000] p-1.5 rounded-2xl w-fit mx-auto border border-white/10">
-              <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
-              <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
-            </div>
-            <div className="flex justify-center gap-4 items-center">
-              <span className="text-gray-500 text-xs font-khmer uppercase tracking-widest font-bold">ចំនួន</span>
-              {[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-12 h-12 rounded-2xl font-bold text-sm transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/5 hover:bg-[#3A3A3C]'}`}>{num}</button>))}
-            </div>
-            <button onClick={startQuiz} className="w-full py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-base tracking-wide">ចាប់ផ្ដើម</button>
-        </div>
+    <div className="flex h-full items-center justify-center p-4">
+      <div className="bg-[#1C1C1E]/80 backdrop-blur-md p-10 sm:p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
+          <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 w-28 h-28 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/5">
+            <Award className="w-14 h-14 text-blue-400 drop-shadow-lg" />
+          </div>
+          <h2 className="text-4xl font-extrabold text-white font-khmer mb-4 tracking-tight">ការធ្វើតេស្ត</h2>
+          <p className="text-gray-400 text-base font-khmer mb-10 leading-relaxed">វាស់ស្ទង់សមត្ថភាពរបស់អ្នក។</p>
+          <div className="space-y-8">
+              <div className="flex justify-center gap-3 bg-[#000000] p-1.5 rounded-2xl w-fit mx-auto border border-white/10">
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
+              </div>
+              <div className="flex justify-center gap-4 items-center">
+                <span className="text-gray-500 text-xs font-khmer uppercase tracking-widest font-bold">ចំនួន</span>
+                {[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-12 h-12 rounded-2xl font-bold text-sm transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/5 hover:bg-[#3A3A3C]'}`}>{num}</button>))}
+              </div>
+              <button onClick={startQuiz} className="w-full py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-base tracking-wide">ចាប់ផ្ដើម</button>
+          </div>
+      </div>
     </div>
   );
   
   if (gameState === 'result') {
       const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-      return <div className="bg-[#1C1C1E] p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg mx-auto mt-12 animate-fade-in-up">
-        <div className="relative w-48 h-48 mx-auto mb-10 flex items-center justify-center">
-          <svg className="w-full h-full transform -rotate-90">
-            <circle cx="96" cy="96" r="80" stroke="#2C2C2E" strokeWidth="16" fill="none" />
-            <circle cx="96" cy="96" r="80" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={502} strokeDashoffset={502 - (502 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
-          </svg>
-          <div className="absolute text-5xl font-black text-white tracking-tighter">{percentage}%</div>
+      return (
+        <div className="flex h-full items-center justify-center p-4">
+          <div className="bg-[#1C1C1E] p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
+            <div className="relative w-48 h-48 mx-auto mb-10 flex items-center justify-center">
+              <svg className="w-full h-full transform -rotate-90">
+                <circle cx="96" cy="96" r="80" stroke="#2C2C2E" strokeWidth="16" fill="none" />
+                <circle cx="96" cy="96" r="80" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={502} strokeDashoffset={502 - (502 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
+              </svg>
+              <div className="absolute text-5xl font-black text-white tracking-tighter">{percentage}%</div>
+            </div>
+            <h2 className="text-3xl font-bold text-white font-khmer mb-3">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
+            <p className="text-gray-400 font-khmer mb-12 text-lg">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p>
+            <button onClick={() => setGameState('menu')} className="px-12 py-4 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full">សាកល្បងម្តងទៀត</button>
+          </div>
         </div>
-        <h2 className="text-3xl font-bold text-white font-khmer mb-3">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
-        <p className="text-gray-400 font-khmer mb-12 text-lg">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p>
-        <button onClick={() => setGameState('menu')} className="px-12 py-4 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full">សាកល្បងម្តងទៀត</button>
-      </div>;
+      );
   }
 
   const q = questions[currentQuestion];
   return (
-    <div className="bg-[#1C1C1E] p-8 sm:p-12 rounded-[32px] border border-white/10 shadow-2xl max-w-3xl mx-auto mt-6 sm:mt-10 animate-fade-in-up">
-      <div className="flex justify-between mb-10 items-center">
-        <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-2 rounded-full ring-1 ring-blue-500/20">សំណួរ {currentQuestion + 1} / {questions.length}</span>
-        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{q.level || 'General'}</span>
-      </div>
-      <h3 className="text-2xl md:text-3xl font-bold text-white mb-12 font-khmer leading-snug">{q.question}</h3>
-      <div className="grid gap-4">
-        {q.options.map((opt, i) => (
-          <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-6 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-base relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : 'bg-[#2C2C2E]/30 border-transparent text-gray-600 opacity-50')) : 'bg-[#2C2C2E]/50 border-transparent text-gray-200 hover:bg-[#3A3A3C]'}`}>
-            <span className={`inline-flex w-7 h-7 items-center justify-center rounded-full mr-4 text-xs font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-black' : 'bg-[#3A3A3C] text-gray-400 group-hover:bg-white group-hover:text-black transition-colors'}`}>{String.fromCharCode(65 + i)}</span>
-            {opt}
-          </button>
-        ))}
-      </div>
-      {isAnswered && (
-        <div className="mt-12 flex justify-end animate-fade-in-up">
-          <button onClick={handleNextQuestion} className="px-10 py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-3 transform hover:translate-x-1">បន្ទាប់ <ChevronRight size={20}/></button>
+    <div className="flex h-full items-center justify-center p-4">
+      <div className="bg-[#1C1C1E] p-8 sm:p-12 rounded-[32px] border border-white/10 shadow-2xl max-w-3xl w-full animate-fade-in-up">
+        <div className="flex justify-between mb-10 items-center">
+          <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-2 rounded-full ring-1 ring-blue-500/20">សំណួរ {currentQuestion + 1} / {questions.length}</span>
+          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{q.level || 'General'}</span>
         </div>
-      )}
+        <h3 className="text-2xl md:text-3xl font-bold text-white mb-12 font-khmer leading-snug">{q.question}</h3>
+        <div className="grid gap-4">
+          {q.options.map((opt, i) => (
+            <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-6 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-base relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : 'bg-[#2C2C2E]/30 border-transparent text-gray-600 opacity-50')) : 'bg-[#2C2C2E]/50 border-transparent text-gray-200 hover:bg-[#3A3A3C]'}`}>
+              <span className={`inline-flex w-7 h-7 items-center justify-center rounded-full mr-4 text-xs font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-black' : 'bg-[#3A3A3C] text-gray-400 group-hover:bg-white group-hover:text-black transition-colors'}`}>{String.fromCharCode(65 + i)}</span>
+              {opt}
+            </button>
+          ))}
+        </div>
+        {isAnswered && (
+          <div className="mt-12 flex justify-end animate-fade-in-up">
+            <button onClick={handleNextQuestion} className="px-10 py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-3 transform hover:translate-x-1">បន្ទាប់ <ChevronRight size={20}/></button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
