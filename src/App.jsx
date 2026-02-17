@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (ALL PRESERVED)
+// 2. DATASETS (FULL CONTENT PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -1241,6 +1241,7 @@ export default function App() {
       // If at root level, handle double press to exit
       if (backPressCount === 0) {
         setBackPressCount(1);
+        // Show toast or visual cue here (simplified with console for now, or add a Toast component)
         const toast = document.createElement('div');
         toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ";
         toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;";
@@ -1253,6 +1254,7 @@ export default function App() {
             window.history.pushState(null, "", window.location.pathname);
         } catch (e) {}
       } else {
+        // Allow exit (default browser behavior)
         window.history.back(); 
       }
     };
