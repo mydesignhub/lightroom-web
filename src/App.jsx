@@ -6,7 +6,7 @@ import {
   AlertTriangle, RotateCcw, Globe, RefreshCw, Layout, Image as ImageIcon, 
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
-  Monitor, Smartphone, ArrowLeft, Minus, Plus
+  Monitor, Smartphone
 } from 'lucide-react';
 
 // ==========================================
@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (FULL CONTENT - PRO TIPS & QA RESTORED)
+// 2. DATASETS (FULL CONTENT PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -158,6 +158,7 @@ const lessonsData = [
   }
 ];
 
+// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -315,14 +316,7 @@ const TIPS_LIST = [
     "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping ពេលអូស Whites/Blacks។", "បន្ថយ Highlights និងតម្លើង Shadows ដើម្បីបានរូបបែប HDR។", 
     "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត។", "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បាន។", "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស។",
     "ប្រើ Vibrance ជំនួស Saturation។", "Export ជា DNG ដើម្បីចែករំលែក Preset។", "ប្រើ Grid ពេលថត ដើម្បីឱ្យរូបត្រង់។",
-    "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។",
-    "កុំប្រើ Clarity ខ្លាំងពេកលើមុខ។", "ប្រើ Radial Gradient ដើម្បីបង្កើតពន្លឺសិប្បនិម្មិត។", "បន្ថយ Highlights ដើម្បីសង្គ្រោះមេឃ។",
-    "តម្លើង Shadows សម្រាប់រូប Backlit។", "ប្រើ Linear Gradient សម្រាប់មេឃងងឹត។", "ប្រើ Healing Brush លុបមនុស្សមិនចង់បាន។",
-    "ប្រើ Masking 'Select Subject' ដើម្បីកែពន្លឺលើមនុស្ស។", "ប្រើ Vignette ដើម្បីផ្តោតអារម្មណ៍កណ្តាល។", "ប្រើ Geometry 'Upright' ដើម្បីតម្រង់អគារ។",
-    "ប្រើ Dehaze ដើម្បីកាត់អ័ព្ទ។", "ប្រើ Texture សម្រាប់រូបថ្ម ឬឈើ។", "ប្រើ Vibrance សម្រាប់រូបមនុស្ស។",
-    "ប្រើ B&W សម្រាប់រូបដែលមានអារម្មណ៍។", "ប្រើ Split Toning សម្រាប់ដាក់ពណ៌ស្រមោល។", "ប្រើ Tone Curve សម្រាប់ Contrast ល្អ។",
-    "ប្រើ Optic Corrections ជានិច្ច។", "ប្រើ Crop ដើម្បីកែសមាសភាពរូប។", "ប្រើ Presets ដើម្បីចំណេញពេល។",
-    "ប្រើ Versions ដើម្បីសាកល្បងស្តាយផ្សេងៗ។", "ប្រើ Histogram ដើម្បីមើលពន្លឺ។", "ចុចលើចុងសងខាង Slider ដើម្បីបន្ថែម/បន្ថយលេខ។"
+    "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
 ];
 
 // --- 50+ QUESTIONS DATABASE (FULL RESTORED) ---
@@ -423,7 +417,6 @@ const generateXMP = (recipe, title) => {
     };
 
     // FIX: Using IncrementalTemperature and WhiteBalance="As Shot" for compatibility
-    // ADDED: HasSettings="True" to ensure Lightroom recognizes it
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -625,7 +618,8 @@ const TipsSection = ({ isExpanded, onToggle }) => {
             <ul className="space-y-3 text-sm text-gray-300 font-khmer">
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">1.</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
               <li className="flex items-start gap-2"><span className="font-bold text-blue-400">2.</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
-              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ចុចចុងសងខាង Slider៖</span> បន្ថែមឬបន្ថយលេខម្ដង ១ លេខ។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">3.</span><span><span className="font-bold text-white">ប្រើម្រាមដៃពីរលើ Slider៖</span> មើល Clipping (Whites/Blacks) ថាបាត់ព័ត៌មានត្រង់ណា។</span></li>
+              <li className="flex items-start gap-2"><span className="font-bold text-blue-400">4.</span><span><span className="font-bold text-white">Auto + Tweak៖</span> ប្រើ Auto ជាមូលដ្ឋានសិន ចាំកែតាមក្រោយ។</span></li>
             </ul>
           </div>
         </div>
@@ -638,7 +632,7 @@ const ContactSection = () => (
   <div className="mt-8 mb-4 border-t border-gray-800 pt-6"><h3 className="text-center text-gray-400 text-sm font-khmer mb-4">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-4"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Facebook className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Send className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Globe className="w-5 h-5 text-white" /></div><span className="text-xs text-gray-400 font-khmer mt-1">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-6 font-khmer">© 2026 My Design. All Right Reserved.</p></div>
 );
 
-// --- 4. PHOTO LAB ---
+// --- 4. PHOTO LAB (STICKY IMAGE & SCROLLABLE CONTROLS) ---
 const PhotoLab = () => {
   const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
   const [mode, setMode] = useState('manual');
@@ -649,55 +643,172 @@ const PhotoLab = () => {
 
   const defaultSettings = {
     exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0,
-    temp: 0, tint: 0, vibrance: 0, saturation: 0, texture: 0, clarity: 0, dehaze: 0, vignette: 0,
-    redHue: 0, redSat: 0, redLum: 0, orangeHue: 0, orangeSat: 0, orangeLum: 0, yellowHue: 0, yellowSat: 0, yellowLum: 0, greenHue: 0, greenSat: 0, greenLum: 0, aquaHue: 0, aquaSat: 0, aquaLum: 0, blueHue: 0, blueSat: 0, blueLum: 0, purpleHue: 0, purpleSat: 0, purpleLum: 0, magentaHue: 0, magentaSat: 0, magentaLum: 0,
-    shadowHue: 0, shadowSat: 0, shadowLum: 0, midHue: 0, midSat: 0, midLum: 0, highlightHue: 0, highlightSat: 0, highlightLum: 0, gradingBlending: 50, gradingBalance: 0
+    temp: 0, tint: 0, vibrance: 0, saturation: 0,
+    texture: 0, clarity: 0, dehaze: 0, vignette: 0,
+    // Color Mix (HSL for 8 colors)
+    redHue: 0, redSat: 0, redLum: 0,
+    orangeHue: 0, orangeSat: 0, orangeLum: 0,
+    yellowHue: 0, yellowSat: 0, yellowLum: 0,
+    greenHue: 0, greenSat: 0, greenLum: 0,
+    aquaHue: 0, aquaSat: 0, aquaLum: 0,
+    blueHue: 0, blueSat: 0, blueLum: 0,
+    purpleHue: 0, purpleSat: 0, purpleLum: 0,
+    magentaHue: 0, magentaSat: 0, magentaLum: 0,
+    // Grading
+    shadowHue: 0, shadowSat: 0, shadowLum: 0,
+    midHue: 0, midSat: 0, midLum: 0,
+    highlightHue: 0, highlightSat: 0, highlightLum: 0
   };
   
   const [settings, setSettings] = useState(defaultSettings);
   const [activeColor, setActiveColor] = useState('Orange'); 
 
-  const updateSetting = (key, value) => { setSettings(prev => ({...prev, [key]: value})); };
-  const resetSettings = () => { setSettings(defaultSettings); setActiveRecipe(null); }
-  const resetGroup = (groupItems) => { const newSettings = {...settings}; groupItems.forEach(item => newSettings[item.id] = 0); setSettings(newSettings); }
+  const updateSetting = (key, value) => {
+      setSettings(prev => ({...prev, [key]: value}));
+  };
 
-  const handleImageUpload = (e) => { const file = e.target.files[0]; if (file) { setImage(URL.createObjectURL(file)); } };
+  const resetSettings = () => {
+      setSettings(defaultSettings);
+      setActiveRecipe(null);
+  }
+
+  const resetGroup = (groupItems) => {
+      const newSettings = {...settings};
+      groupItems.forEach(item => newSettings[item.id] = 0);
+      setSettings(newSettings);
+  }
+
+  const handleImageUpload = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+          const url = URL.createObjectURL(file);
+          setImage(url);
+      }
+  };
+
   const handleDownload = () => {
-      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const img = new Image(); img.crossOrigin = "anonymous"; img.src = image;
-      img.onload = () => { canvas.width = img.width; canvas.height = img.height; ctx.filter = getFilterString(); ctx.drawImage(img, 0, 0); const link = document.createElement('a'); link.download = 'edited-photo.jpg'; link.href = canvas.toDataURL('image/jpeg'); link.click(); };
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = image;
+      img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.filter = getFilterString();
+          ctx.drawImage(img, 0, 0);
+          const link = document.createElement('a');
+          link.download = 'edited-photo.jpg';
+          link.href = canvas.toDataURL('image/jpeg');
+          link.click();
+      };
   };
 
   const handlePresetExport = () => {
+    // Construct Color Mix array
     const colors = ['Red', 'Orange', 'Yellow', 'Green', 'Aqua', 'Blue', 'Purple', 'Magenta'];
-    const colorMix = colors.map(c => ({ color: c, h: settings[`${c.toLowerCase()}Hue`], s: settings[`${c.toLowerCase()}Sat`], l: settings[`${c.toLowerCase()}Lum`] }));
+    const colorMix = colors.map(c => ({
+        color: c,
+        h: settings[`${c.toLowerCase()}Hue`],
+        s: settings[`${c.toLowerCase()}Sat`],
+        l: settings[`${c.toLowerCase()}Lum`]
+    }));
+
     const recipe = {
-      basic: { Exposure: settings.exposure / 10, Contrast: settings.contrast, Highlights: settings.highlights, Shadows: settings.shadows, Whites: settings.whites, Blacks: settings.blacks, Temp: settings.temp, Tint: settings.tint, Vibrance: settings.vibrance, Saturation: settings.saturation, Clarity: settings.clarity, Dehaze: settings.dehaze, Vignette: settings.vignette },
-      detail: activeRecipe?.detail || { Sharpening: 40, Noise: 0, ColorNoise: 0 }, effects: activeRecipe?.effects || { Grain: 0 }, curve: activeRecipe?.curve || { RGB: "Linear" },
-      colorMix: colorMix, grading: { Shadows: {h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum}, Midtones: {h: settings.midHue, s: settings.midSat, l: settings.midLum}, Highlights: {h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum}, Blending: settings.gradingBlending, Balance: settings.gradingBalance }
+      basic: {
+        Exposure: settings.exposure / 10,
+        Contrast: settings.contrast,
+        Highlights: settings.highlights,
+        Shadows: settings.shadows,
+        Whites: settings.whites,
+        Blacks: settings.blacks,
+        Temp: settings.temp,
+        Tint: settings.tint,
+        Vibrance: settings.vibrance,
+        Saturation: settings.saturation,
+        Clarity: settings.clarity,
+        Dehaze: settings.dehaze,
+        Vignette: settings.vignette
+      },
+      detail: activeRecipe?.detail || { Sharpening: 40, Noise: 0, ColorNoise: 0 },
+      effects: activeRecipe?.effects || { Grain: 0 },
+      curve: activeRecipe?.curve || { RGB: "Linear" },
+      colorMix: colorMix, 
+      grading: { 
+          Shadows: {h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum}, 
+          Midtones: {h: settings.midHue, s: settings.midSat, l: settings.midLum}, 
+          Highlights: {h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum} 
+      }
     };
     generateXMP(recipe, aiPrompt || "My_Custom_Preset");
   };
 
   const generateAIPreset = async () => {
-      if (!aiPrompt.trim()) return; setAiLoading(true);
+      if (!aiPrompt.trim()) return;
+      setAiLoading(true);
       const localPreset = getLocalPreset(aiPrompt);
-      if (localPreset && localPreset.basic) { applyPresetToSettings(localPreset); setAiLoading(false); return; }
-      const prompt = `Create a Lightroom preset for style "${aiPrompt}". Return JSON.`;
+      if (localPreset && localPreset.basic) {
+           applyPresetToSettings(localPreset);
+           setAiLoading(false);
+           return;
+      }
+      const prompt = `Create a Lightroom preset for style "${aiPrompt}". Return JSON: { "basic": { "Exposure": 0, "Contrast": 0, "Highlights": 0, "Shadows": 0, "Whites": 0, "Blacks": 0, "Temp": 0, "Tint": 0, "Vibrance": 0, "Saturation": 0, "Clarity": 0, "Dehaze": 0, "Vignette": 0 } }`;
       const data = await callGemini(prompt, "Expert photo editor.", true);
-      if (data && data.basic) applyPresetToSettings(data); else applyPresetToSettings(PRESET_DB["teal & orange"]);
+      
+      if (data && data.basic) {
+          applyPresetToSettings(data);
+      } else {
+          applyPresetToSettings(PRESET_DB["teal & orange"]);
+      }
       setAiLoading(false);
   };
 
   const applyPresetToSettings = (presetData) => {
-      setActiveRecipe(presetData); const b = presetData.basic; const newSettings = { ...defaultSettings };
+      setActiveRecipe(presetData); 
+      // Force Reset to clean default values before applying new ones
+      const b = presetData.basic;
+      const newSettings = { ...defaultSettings };
+      
       if (b) {
-          if (b.Exposure) newSettings.exposure = b.Exposure * 10; if (b.Contrast) newSettings.contrast = b.Contrast; if (b.Highlights) newSettings.highlights = b.Highlights; if (b.Shadows) newSettings.shadows = b.Shadows; if (b.Whites) newSettings.whites = b.Whites; if (b.Blacks) newSettings.blacks = b.Blacks; if (b.Temp) newSettings.temp = b.Temp; if (b.Tint) newSettings.tint = b.Tint; if (b.Vibrance) newSettings.vibrance = b.Vibrance; if (b.Saturation) newSettings.saturation = b.Saturation; if (b.Clarity) newSettings.clarity = b.Clarity; if (b.Dehaze) newSettings.dehaze = b.Dehaze; if (b.Vignette) newSettings.vignette = b.Vignette;
+          // Map basic adjustments
+          if (b.Exposure) newSettings.exposure = b.Exposure * 10;
+          if (b.Contrast) newSettings.contrast = b.Contrast;
+          if (b.Highlights) newSettings.highlights = b.Highlights;
+          if (b.Shadows) newSettings.shadows = b.Shadows;
+          if (b.Whites) newSettings.whites = b.Whites;
+          if (b.Blacks) newSettings.blacks = b.Blacks;
+          if (b.Temp) newSettings.temp = b.Temp;
+          if (b.Tint) newSettings.tint = b.Tint;
+          if (b.Vibrance) newSettings.vibrance = b.Vibrance;
+          if (b.Saturation) newSettings.saturation = b.Saturation;
+          if (b.Clarity) newSettings.clarity = b.Clarity;
+          if (b.Dehaze) newSettings.dehaze = b.Dehaze;
+          if (b.Vignette) newSettings.vignette = b.Vignette;
       }
-      if (presetData.colorMix) presetData.colorMix.forEach(c => { const name = c.color.toLowerCase(); newSettings[`${name}Hue`] = c.h; newSettings[`${name}Sat`] = c.s; newSettings[`${name}Lum`] = c.l; });
+
+      // Map color mix if available
+      if (presetData.colorMix) {
+          presetData.colorMix.forEach(c => {
+              const name = c.color.toLowerCase();
+              newSettings[`${name}Hue`] = c.h;
+              newSettings[`${name}Sat`] = c.s;
+              newSettings[`${name}Lum`] = c.l;
+          });
+      }
+      
+      // Map grading if available
       if (presetData.grading) {
-          newSettings.shadowHue = presetData.grading.Shadows?.h || 0; newSettings.shadowSat = presetData.grading.Shadows?.s || 0; newSettings.shadowLum = presetData.grading.Shadows?.l || 0; newSettings.highlightHue = presetData.grading.Highlights?.h || 0; newSettings.highlightSat = presetData.grading.Highlights?.s || 0; newSettings.highlightLum = presetData.grading.Highlights?.l || 0; newSettings.midHue = presetData.grading.Midtones?.h || 0; newSettings.midSat = presetData.grading.Midtones?.s || 0; newSettings.midLum = presetData.grading.Midtones?.l || 0;
-          if (presetData.grading.Blending) newSettings.gradingBlending = presetData.grading.Blending; if (presetData.grading.Balance) newSettings.gradingBalance = presetData.grading.Balance;
+          newSettings.shadowHue = presetData.grading.Shadows?.h || 0;
+          newSettings.shadowSat = presetData.grading.Shadows?.s || 0;
+          newSettings.shadowLum = presetData.grading.Shadows?.l || 0;
+          newSettings.highlightHue = presetData.grading.Highlights?.h || 0;
+          newSettings.highlightSat = presetData.grading.Highlights?.s || 0;
+          newSettings.highlightLum = presetData.grading.Highlights?.l || 0;
+          newSettings.midHue = presetData.grading.Midtones?.h || 0;
+          newSettings.midSat = presetData.grading.Midtones?.s || 0;
+          newSettings.midLum = presetData.grading.Midtones?.l || 0;
       }
+
       setSettings(newSettings);
   };
 
@@ -708,8 +819,10 @@ const PhotoLab = () => {
     let sepia = settings.temp > 0 ? settings.temp * 0.4 : 0; 
     let hue = settings.tint + (settings.temp < 0 ? settings.temp * 0.3 : 0);
     let blur = settings.texture < 0 ? Math.abs(settings.texture) * 0.02 : 0;
+    
     if (Math.abs(settings.orangeSat) > 20) s += settings.orangeSat * 0.2; 
     if (Math.abs(settings.blueSat) > 20) s += settings.blueSat * 0.2;
+
     return `brightness(${b}%) contrast(${c}%) saturate(${s}%) sepia(${sepia}%) hue-rotate(${hue}deg) blur(${blur}px)`;
   };
 
@@ -719,110 +832,208 @@ const PhotoLab = () => {
       return { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` };
   };
 
+  // Custom CSS for drag-only slider
   useEffect(() => {
       const style = document.createElement('style');
-      style.innerHTML = `.drag-only-range { pointer-events: none; } .drag-only-range::-webkit-slider-thumb { pointer-events: auto; cursor: pointer; } .drag-only-range::-moz-range-thumb { pointer-events: auto; cursor: pointer; } .grad-hue { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red); } .grad-sat { background: linear-gradient(to right, #333, #ccc); } .grad-lum { background: linear-gradient(to right, black, white); }`;
-      document.head.appendChild(style); return () => document.head.removeChild(style);
+      style.innerHTML = `
+        .drag-only-range { pointer-events: none; }
+        .drag-only-range::-webkit-slider-thumb { pointer-events: auto; cursor: pointer; }
+        .drag-only-range::-moz-range-thumb { pointer-events: auto; cursor: pointer; }
+      `;
+      document.head.appendChild(style);
+      return () => document.head.removeChild(style);
   }, []);
 
   const toolsGroups = [
-    { group: 'Light (ពន្លឺ)', icon: <Sun size={18}/>, items: [{ id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1 }, { id: 'contrast', label: 'Contrast', min: -100, max: 100 }, { id: 'highlights', label: 'Highlights', min: -100, max: 100 }, { id: 'shadows', label: 'Shadows', min: -100, max: 100 }, { id: 'whites', label: 'Whites', min: -100, max: 100 }, { id: 'blacks', label: 'Blacks', min: -100, max: 100 }] },
-    { group: 'Color (ពណ៌)', icon: <Palette size={18}/>, items: [{ id: 'temp', label: 'Temp', min: -100, max: 100 }, { id: 'tint', label: 'Tint', min: -100, max: 100 }, { id: 'vibrance', label: 'Vibrance', min: -100, max: 100 }, { id: 'saturation', label: 'Saturation', min: -100, max: 100 }] },
-    { group: 'Effects (បែបផែន)', icon: <Aperture size={18}/>, items: [{ id: 'texture', label: 'Texture', min: -100, max: 100 }, { id: 'clarity', label: 'Clarity', min: -100, max: 100 }, { id: 'dehaze', label: 'Dehaze', min: -100, max: 100 }, { id: 'vignette', label: 'Vignette', min: -100, max: 100 }] }
+    { group: 'Light (ពន្លឺ)', icon: <Sun size={18}/>, items: [
+      { id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1, desc: 'ពន្លឺរួម' },
+      { id: 'contrast', label: 'Contrast', min: -100, max: 100, desc: 'ភាពផ្ទុយ' },
+      { id: 'highlights', label: 'Highlights', min: -100, max: 100, desc: 'តំបន់ភ្លឺ' },
+      { id: 'shadows', label: 'Shadows', min: -100, max: 100, desc: 'តំបន់ងងឹត' },
+      { id: 'whites', label: 'Whites', min: -100, max: 100, desc: 'ពណ៌ស' },
+      { id: 'blacks', label: 'Blacks', min: -100, max: 100, desc: 'ពណ៌ខ្មៅ' },
+    ]},
+    { group: 'Color (ពណ៌)', icon: <Palette size={18}/>, items: [
+      { id: 'temp', label: 'Temp', min: -100, max: 100, desc: 'សីតុណ្ហភាព' },
+      { id: 'tint', label: 'Tint', min: -100, max: 100, desc: 'ពណ៌លាំ' },
+      { id: 'vibrance', label: 'Vibrance', min: -100, max: 100, desc: 'ភាពរស់រវើក' },
+      { id: 'saturation', label: 'Saturation', min: -100, max: 100, desc: 'ភាពឆ្អែតពណ៌' },
+    ]},
+    { group: 'Effects (បែបផែន)', icon: <Aperture size={18}/>, items: [
+      { id: 'texture', label: 'Texture', min: -100, max: 100, desc: 'វាយនភាព' },
+      { id: 'clarity', label: 'Clarity', min: -100, max: 100, desc: 'ភាពច្បាស់' },
+      { id: 'dehaze', label: 'Dehaze', min: -100, max: 100, desc: 'កាត់អ័ព្ទ' },
+      { id: 'vignette', label: 'Vignette', min: -100, max: 100, desc: 'គែម' },
+    ]}
   ];
 
-  const colors = [ { name: 'Red', id: 'red', color: 'bg-red-500' }, { name: 'Orange', id: 'orange', color: 'bg-orange-500' }, { name: 'Yellow', id: 'yellow', color: 'bg-yellow-500' }, { name: 'Green', id: 'green', color: 'bg-green-500' }, { name: 'Aqua', id: 'aqua', color: 'bg-cyan-400' }, { name: 'Blue', id: 'blue', color: 'bg-blue-600' }, { name: 'Purple', id: 'purple', color: 'bg-purple-600' }, { name: 'Magenta', id: 'magenta', color: 'bg-pink-500' } ];
-  const sampleImages = [ { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" }, { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" }, { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" }, { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" }, { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" } ];
+  const colors = [
+      { name: 'Red', id: 'red', color: 'bg-red-500' },
+      { name: 'Orange', id: 'orange', color: 'bg-orange-500' },
+      { name: 'Yellow', id: 'yellow', color: 'bg-yellow-500' },
+      { name: 'Green', id: 'green', color: 'bg-green-500' },
+      { name: 'Aqua', id: 'aqua', color: 'bg-cyan-400' },
+      { name: 'Blue', id: 'blue', color: 'bg-blue-600' },
+      { name: 'Purple', id: 'purple', color: 'bg-purple-600' },
+      { name: 'Magenta', id: 'magenta', color: 'bg-pink-500' },
+  ];
+  
+  const sampleImages = [
+    { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" },
+    { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" },
+    { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" },
+    { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" },
+    { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" }
+  ];
 
   return (
-    <div className="bg-[#1e293b] rounded-none md:rounded-2xl border-0 md:border border-gray-800 shadow-none md:shadow-2xl flex flex-col h-full max-w-6xl mx-auto overflow-hidden">
-        <div className="p-2 bg-[#1e293b] flex flex-row justify-end items-center gap-2 z-10 shrink-0">
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
+        {/* Header Bar */}
+        <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
+            {/* Title removed here for Lab panel to be cleaner/fuller screen as requested */}
             <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end ml-auto">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap"><Upload size={14} /> Upload</button>
-                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap"><ImageDown size={14} /> Download</button>
-                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap"><FileJson size={14} /> Export XMP</button>
+                <button onClick={() => fileInputRef.current.click()} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <Upload size={14} /> Upload
+                </button>
+                <button onClick={handleDownload} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <ImageDown size={14} /> Download
+                </button>
+                <button onClick={handlePresetExport} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <FileJson size={14} /> Export XMP
+                </button>
             </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
-            <div className="h-[55%] lg:h-full lg:flex-1 flex flex-col gap-2 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
+            {/* Image Viewer (Sticky - Optimized for Mobile 55% height) */}
+            <div className="h-[55%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
-                    <div className="relative w-full h-full"><img src={image} className="w-full h-full object-contain transition-all duration-75 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
+                    <div className="relative w-full h-full">
+                        <img 
+                            src={image} 
+                            alt="Edit Target" 
+                            className="w-full h-full object-contain transition-all duration-75 ease-linear"
+                            style={{ filter: getFilterString() }}
+                        />
+                        <div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div>
+                    </div>
                 </div>
-                <div className="flex justify-center gap-2 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
-                    {sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}
+                
+                {/* Image Selector */}
+                <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">
+                    {sampleImages.map((item, idx) => (
+                        <button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}>
+                            <img src={item.src} className="w-full h-full object-cover" />
+                        </button>
+                    ))}
                 </div>
             </div>
 
+            {/* Controls Panel (Scrollable) */}
             <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-2xl lg:rounded-xl border-t lg:border border-gray-700 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-lg">
+                 {/* Tabs - Reset Moved Here */}
                  <div className="flex border-b border-gray-700 shrink-0 bg-[#1e293b] lg:bg-transparent">
                     <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 border-b-2 border-blue-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
                     <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 border-b-2 border-purple-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
                     <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
                  </div>
                  
+                 {/* Controls Content - Reduced Gaps */}
                  <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-[#0f172a]">
                     {mode === 'manual' ? (
                         <div className="space-y-5 pb-20 lg:pb-10">
+                             {/* Basic Tools with drag-only-range */}
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-2">
-                                    <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white">Reset</button></div>
+                                    <div className="flex items-center justify-between border-b border-gray-700 pb-1">
+                                        <h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4>
+                                        <button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white">Reset</button>
+                                    </div>
                                     <div className="space-y-3 px-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
                                                 <div className="flex justify-between mb-1 items-center">
-                                                    <label className="text-[10px] font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" onDoubleClick={() => updateSetting(t.id, 0)} title="Double click to reset">{t.label}</label>
-                                                    <span className="text-[10px] text-blue-400 font-mono bg-gray-800 px-1.5 rounded min-w-[30px] text-center">{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
+                                                    <label 
+                                                        className="text-[10px] font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" 
+                                                        onDoubleClick={() => updateSetting(t.id, 0)} 
+                                                        title="Double click to reset"
+                                                    >
+                                                        {t.label}
+                                                    </label>
+                                                    <span className="text-[10px] text-blue-400 font-mono bg-gray-800 px-1.5 rounded">{settings[t.id]}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className="text-gray-400 hover:text-white p-1 bg-gray-800 rounded"><Minus size={10}/></button>
-                                                    <input type="range" min={t.min} max={t.max} step={t.step || 1} value={settings[t.id]} onChange={(e) => updateSetting(t.id, Number(e.target.value))} onDoubleClick={() => updateSetting(t.id, 0)} className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all drag-only-range" />
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className="text-gray-400 hover:text-white p-1 bg-gray-800 rounded"><Plus size={10}/></button>
-                                                </div>
+                                                <input 
+                                                    type="range" 
+                                                    min={t.min} 
+                                                    max={t.max} 
+                                                    step={t.step || 1}
+                                                    value={settings[t.id]} 
+                                                    onChange={(e) => updateSetting(t.id, Number(e.target.value))}
+                                                    onDoubleClick={() => updateSetting(t.id, 0)}
+                                                    className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all drag-only-range"
+                                                />
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             ))}
 
+                            {/* Color Mix */}
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4></div>
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-1">
+                                    <h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4>
+                                </div>
                                 <div className="flex justify-between gap-1 mb-2">
-                                    {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-7 h-7 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`} />))}
+                                    {colors.map(c => (
+                                        <button 
+                                            key={c.id} 
+                                            onClick={() => setActiveColor(c.name)}
+                                            className={`w-7 h-7 md:w-5 md:h-5 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`}
+                                        />
+                                    ))}
                                 </div>
                                 <div className="space-y-3 px-2 bg-[#151f32] p-2 rounded-lg border border-gray-700/50">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
-                                            <div key={key} className="flex items-center gap-2">
-                                                <label className="text-[10px] font-bold text-gray-400 font-khmer w-8">{type}</label>
-                                                <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer drag-only-range ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
-                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-600 rounded p-0.5" />
+                                            <div key={key}>
+                                                <div className="flex justify-between mb-1">
+                                                    <label className="text-[10px] font-bold text-gray-400 font-khmer">{type}</label>
+                                                    <span className="text-[10px] text-blue-400 font-mono">{settings[key]}</span>
+                                                </div>
+                                                <input 
+                                                    type="range" min="-100" max="100" 
+                                                    value={settings[key]} 
+                                                    onChange={(e) => updateSetting(key, Number(e.target.value))}
+                                                    className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500 drag-only-range"
+                                                />
                                             </div>
                                         )
                                     })}
                                 </div>
                             </div>
 
+                            {/* Grading */}
                             <div className="space-y-3 pb-4">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4></div>
+                                <div className="flex items-center justify-between border-b border-gray-700 pb-1">
+                                    <h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4>
+                                </div>
                                 {['Shadow', 'Mid', 'Highlight'].map(tone => (
                                     <div key={tone} className="bg-[#151f32] p-2 rounded-lg border border-gray-700/50 space-y-2">
                                         <h5 className="text-[10px] font-bold text-gray-400 font-khmer">{tone}s</h5>
-                                        <div className="flex gap-2 items-center">
-                                            <div className="flex-1"><label className="text-[9px] text-gray-500 block mb-0.5">Hue</label><div className="flex gap-1"><input type="range" min="0" max="360" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))} className="w-full h-1 rounded accent-purple-500 drag-only-range grad-hue"/><input type="number" className="w-8 bg-gray-800 text-[9px] text-white border border-gray-600 rounded text-center" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))}/></div></div>
-                                            <div className="flex-1"><label className="text-[9px] text-gray-500 block mb-0.5">Sat</label><div className="flex gap-1"><input type="range" min="0" max="100" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/><input type="number" className="w-8 bg-gray-800 text-[9px] text-white border border-gray-600 rounded text-center" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))}/></div></div>
-                                            <div className="flex-1"><label className="text-[9px] text-gray-500 block mb-0.5">Lum</label><div className="flex gap-1"><input type="range" min="-100" max="100" value={settings[`${tone.toLowerCase()}Lum`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Lum`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/><input type="number" className="w-8 bg-gray-800 text-[9px] text-white border border-gray-600 rounded text-center" value={settings[`${tone.toLowerCase()}Lum`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Lum`, Number(e.target.value))}/></div></div>
+                                        <div className="flex gap-2">
+                                            <div className="flex-1">
+                                                <label className="text-[9px] text-gray-500 block mb-0.5">Hue</label>
+                                                <input type="range" min="0" max="360" value={settings[`${tone.toLowerCase()}Hue`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Hue`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className="text-[9px] text-gray-500 block mb-0.5">Sat</label>
+                                                <input type="range" min="0" max="100" value={settings[`${tone.toLowerCase()}Sat`]} onChange={(e) => updateSetting(`${tone.toLowerCase()}Sat`, Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
-                                <div className="pt-2 border-t border-gray-700">
-                                    <div className="flex justify-between items-center mb-1"><label className="text-[10px] text-gray-400">Blending</label><span className="text-[10px] text-purple-400">{settings.gradingBlending}</span></div>
-                                    <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
-                                    <div className="flex justify-between items-center mb-1 mt-2"><label className="text-[10px] text-gray-400">Balance</label><span className="text-[10px] text-purple-400">{settings.gradingBalance}</span></div>
-                                    <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
-                                </div>
                             </div>
                         </div>
                     ) : (
@@ -837,7 +1048,9 @@ const PhotoLab = () => {
                             <div className="space-y-2">
                                 <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
                                 <div className="flex flex-wrap gap-1.5">
-                                    {Object.keys(PRESET_DB).map(s => (<button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-2.5 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-[10px] text-gray-300 font-medium transition-all capitalize">{s}</button>))}
+                                    {["Teal & Orange", "Dark Moody", "Bright & Airy", "Vintage", "Cyberpunk", "Golden Hour", "Soft Pastel", "Urban Grey", "Black & White", "HDR Landscape", "Matte Black", "Cinematic Warm", "Cool Blue", "Forest Green", "Sunset Lover", "Portrait Clean", "Desaturated", "Vivid Pop", "Sepia Tone", "High Contrast"].map(s => (
+                                        <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-2.5 py-1.5 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-full text-[10px] text-gray-300 font-medium transition-all">{s}</button>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -860,15 +1073,21 @@ const Quiz = ({ isOnline }) => {
 
   const startQuiz = () => {
     let filtered = questions.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level);
-    if (filtered.length < quizConfig.amount) filtered = questions;
+    if (filtered.length < quizConfig.amount) filtered = questions; // Fallback
     const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-    setQuestions(shuffled.slice(0, quizConfig.amount));
-    setCurrentQuestion(0); setScore(0); setIsAnswered(false); setSelectedOption(null); setGameState('playing');
+    const selected = shuffled.slice(0, quizConfig.amount);
+    setQuestions(selected);
+    setCurrentQuestion(0);
+    setScore(0);
+    setIsAnswered(false);
+    setSelectedOption(null);
+    setGameState('playing');
   };
 
   const handleAnswerOptionClick = (index) => {
     if (isAnswered) return;
-    setSelectedOption(index); setIsAnswered(true);
+    setSelectedOption(index);
+    setIsAnswered(true);
     if (index === questions[currentQuestion].correct) setScore(score + 1);
   };
 
@@ -882,8 +1101,16 @@ const Quiz = ({ isOnline }) => {
         <Award className="w-20 h-20 text-blue-500 mx-auto mb-6 drop-shadow-lg" />
         <h2 className="text-3xl font-bold text-white font-khmer mb-2">ការធ្វើតេស្តសមត្ថភាព</h2>
         <div className="space-y-6 mt-6">
-            <div className="flex justify-center gap-2 bg-[#0f172a] p-1 rounded-xl w-fit mx-auto"><button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='beginner'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>មូលដ្ឋាន</button><button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='advanced'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>កម្រិតខ្ពស់</button></div>
-            <div className="flex justify-center gap-2 items-center"><span className="text-gray-400 text-sm font-khmer mr-2">ចំនួន:</span>{[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-lg font-bold transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>))}</div>
+            <div className="flex justify-center gap-2 bg-[#0f172a] p-1 rounded-xl w-fit mx-auto">
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='beginner'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>មូលដ្ឋាន</button>
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-lg font-khmer text-sm transition-all ${quizConfig.level==='advanced'?'bg-blue-600 text-white shadow-lg':'text-gray-400 hover:text-white'}`}>កម្រិតខ្ពស់</button>
+            </div>
+            <div className="flex justify-center gap-2 items-center">
+                <span className="text-gray-400 text-sm font-khmer mr-2">ចំនួន:</span>
+                {[5, 10, 15, 20].map(num => (
+                    <button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-lg font-bold transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>
+                ))}
+            </div>
             <button onClick={startQuiz} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold font-khmer shadow-lg transition-all transform hover:-translate-y-1">ចាប់ផ្ដើមសំណួរ</button>
         </div>
     </div>
@@ -907,38 +1134,65 @@ const ChatBot = ({ isOnline }) => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
   
-  const suggestedQuestionsPool = [ "របៀបធ្វើអោយស្បែកស?", "របៀបកែរូប Portrait?", "របៀបដាក់ពណ៌ Teal & Orange?", "តើ Dehaze ប្រើសម្រាប់អ្វី?", "កែរូបថតពេលយប់?", "រូបមន្ត Vintage?", "ពន្យល់ពី Curves?", "តើ Grain ជួយអ្វី?", "រូបងងឹតពេកធ្វើម៉េច?", "របៀបធ្វើអោយមេឃដិត?", "របៀបកែរូបទេសភាព?", "តើ Vibrance ខុសពី Saturation ម៉េច?", "របៀបកែរូបថតអាហារ?", "របៀបកែរូបថត Street?", "របៀបកែរូបថតសមុទ្រ?" ];
+  const suggestedQuestionsPool = [
+    "របៀបធ្វើអោយស្បែកស?", "របៀបកែរូប Portrait?", "របៀបដាក់ពណ៌ Teal & Orange?", 
+    "តើ Dehaze ប្រើសម្រាប់អ្វី?", "កែរូបថតពេលយប់?", "រូបមន្ត Vintage?", "ពន្យល់ពី Curves?", 
+    "តើ Grain ជួយអ្វី?", "រូបងងឹតពេកធ្វើម៉េច?", "របៀបធ្វើអោយមេឃដិត?", "របៀបកែរូបទេសភាព?",
+    "តើ Vibrance ខុសពី Saturation ម៉េច?", "របៀបកែរូបថតអាហារ?", "របៀបកែរូបថត Street?", "របៀបកែរូបថតសមុទ្រ?"
+  ];
   const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => { const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random()); setSuggestions(shuffled.slice(0, 3)); }, []);
-  const randomizeSuggestions = () => { const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random()); setSuggestions(shuffled.slice(0, 3)); };
+  useEffect(() => {
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+    setSuggestions(shuffled.slice(0, 3));
+  }, []);
+
+  const randomizeSuggestions = () => {
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+    setSuggestions(shuffled.slice(0, 3));
+  };
 
   const handleSend = async (text = null) => {
     const msg = text || input;
-    if (!msg.trim()) return; setInput(''); setMessages(prev => [...prev, { role: 'user', text: msg }]); setLoading(true);
+    if (!msg.trim()) return;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: msg }]);
+    setLoading(true);
+
     const localReply = getLocalResponse(msg);
-    if (localReply) { setTimeout(() => { setMessages(prev => [...prev, { role: 'model', text: localReply }]); setLoading(false); }, 500); return; }
+    if (localReply) {
+        setTimeout(() => {
+            setMessages(prev => [...prev, { role: 'model', text: localReply }]);
+            setLoading(false);
+        }, 500); 
+        return;
+    }
+
     const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
     let reply = await callGemini(msg, systemPrompt);
-    if (!reply) { if (!apiKey) { reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។"; } else { reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀត។"; } }
-    setMessages(prev => [...prev, { role: 'model', text: reply }]); setLoading(false);
+    
+    if (!reply) {
+        if (!apiKey) {
+            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។";
+        } else {
+            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀត។";
+        }
+    }
+
+    setMessages(prev => [...prev, { role: 'model', text: reply }]);
+    setLoading(false);
   };
   
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-none md:rounded-2xl border-0 md:border border-gray-800 shadow-2xl flex flex-col h-full max-w-6xl mx-auto w-full">
-      <div className="flex-none bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3">
-          <button className="md:hidden p-2 bg-white/10 rounded-full text-white" onClick={() => window.history.back()}><ArrowLeft size={20}/></button>
-          <div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div>
-          <div className="flex-1"><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div>
-      </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a] custom-scrollbar">
-        {messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
+      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
         <div ref={messagesEndRef} />
       </div>
-      <div className="flex-none p-4 bg-[#1e293b] border-t border-gray-800 pb-safe md:pb-4">
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800 pb-20 md:pb-4">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
           <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" style={{ touchAction: 'manipulation' }} /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
@@ -946,7 +1200,13 @@ const ChatBot = ({ isOnline }) => {
   );
 };
 
-const AIAssistant = ({ isOnline }) => { return <div className="h-full flex flex-col justify-center w-full"><ChatBot isOnline={isOnline} /></div>; };
+const AIAssistant = ({ isOnline }) => {
+    return (
+        <div className="h-full flex flex-col justify-center">
+            <ChatBot isOnline={isOnline} />
+        </div>
+    );
+};
 
 // --- APP COMPONENT (LAST) ---
 export default function App() {
@@ -958,46 +1218,88 @@ export default function App() {
 
   const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
 
+  // --- 1. SYSTEM BACK BUTTON HANDLING ---
   useEffect(() => {
     const handlePopState = (event) => {
       event.preventDefault();
-      if (expandedLesson) { setExpandedLesson(null); try { window.history.pushState(null, "", window.location.pathname); } catch (e) {} return; }
-      if (activeTab !== 'learn') { setActiveTab('learn'); try { window.history.pushState(null, "", window.location.pathname); } catch (e) {} return; }
+
+      if (expandedLesson) {
+        setExpandedLesson(null);
+        try {
+            window.history.pushState(null, "", window.location.pathname);
+        } catch (e) {}
+        return;
+      }
+
+      if (activeTab !== 'learn') {
+        setActiveTab('learn');
+        try {
+            window.history.pushState(null, "", window.location.pathname);
+        } catch (e) {}
+        return;
+      }
+
+      // If at root level, handle double press to exit
       if (backPressCount === 0) {
         setBackPressCount(1);
-        const toast = document.createElement('div'); toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ"; toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;"; document.body.appendChild(toast);
-        setTimeout(() => { document.body.removeChild(toast); setBackPressCount(0); }, 2000);
-        try { window.history.pushState(null, "", window.location.pathname); } catch (e) {}
-      } else { window.history.back(); }
+        const toast = document.createElement('div');
+        toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ";
+        toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;";
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            document.body.removeChild(toast);
+            setBackPressCount(0); 
+        }, 2000);
+        try {
+            window.history.pushState(null, "", window.location.pathname);
+        } catch (e) {}
+      } else {
+        window.history.back(); 
+      }
     };
-    try { window.history.pushState(null, "", window.location.pathname); } catch (e) {}
+
+    try {
+        window.history.pushState(null, "", window.location.pathname);
+    } catch (e) {}
     window.addEventListener('popstate', handlePopState);
-    return () => { window.removeEventListener('popstate', handlePopState); };
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, [expandedLesson, activeTab, backPressCount]);
 
+  // --- 3. LOCK ZOOM ---
   useEffect(() => {
-      const preventZoom = (e) => { if (e.touches.length > 1) { e.preventDefault(); } };
+      const preventZoom = (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+      };
       document.addEventListener('touchmove', preventZoom, { passive: false });
       return () => document.removeEventListener('touchmove', preventZoom);
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-16 md:pb-0 selection:bg-blue-500/30 flex flex-col h-[100dvh]" style={{ touchAction: 'pan-x pan-y' }}>
+    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-24 md:pb-0 selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
-      <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block flex-none' : 'block flex-none'}`}><Header activeTab={activeTab} setActiveTab={setActiveTab} /></div>
+      {/* 2. AUTO HIDE HEADER FOR LAB & AI (Only on mobile) */}
+      <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : 'block'}`}>
+        <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
+      
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
       
-      <main className={`flex-1 overflow-hidden max-w-6xl mx-auto w-full relative ${activeTab === 'lab' || activeTab === 'ai' ? 'p-0' : 'p-4 pt-4 md:p-8 overflow-y-auto custom-scrollbar'}`}>
+      <main className={`max-w-6xl mx-auto ${activeTab === 'lab' || activeTab === 'ai' ? 'h-[100dvh] p-0' : 'p-4 pt-8 md:p-8'}`}>
         <div className="animate-fade-in-down h-full">
-          {activeTab === 'learn' && (<div className="space-y-8 pb-10"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> <ContactSection /></div>)}
+          {activeTab === 'learn' && (<div className="space-y-8"><div className="text-center mb-8"><h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 font-khmer">វគ្គសិក្សា Lightroom</h2><p className="text-gray-400 font-khmer max-w-lg mx-auto">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព។</p></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div><TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> <ContactSection /></div>)}
           {activeTab === 'quiz' && <Quiz isOnline={isOnline} />}
           {activeTab === 'lab' && <PhotoLab />}
           {activeTab === 'ai' && <AIAssistant isOnline={isOnline} />}
         </div>
       </main>
       
-      <div className="flex-none md:hidden bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
          <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
          <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
          <button onClick={() => setActiveTab('lab')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'lab' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sliders size={20}/><span className="text-[10px] font-khmer mt-1">Lab</span></button>
