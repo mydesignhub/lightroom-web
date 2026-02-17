@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+\import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sun, Aperture, Droplet, Sliders, ChevronRight, CheckCircle, XCircle, 
   BookOpen, Award, PlayCircle, MessageCircle, Send, Sparkles, Loader2, 
@@ -6,7 +6,7 @@ import {
   AlertTriangle, RotateCcw, Globe, RefreshCw, Layout, Image as ImageIcon, 
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
-  Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Grid
+  Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 // ==========================================
@@ -44,10 +44,8 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
     let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     let result = text;
     if (jsonMode && text) {
-        try {
-            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-            result = JSON.parse(text);
-        } catch (e) { console.error("JSON Parse Error", e); }
+        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        result = JSON.parse(text);
     }
     responseCache[cacheKey] = result;
     return result;
@@ -218,7 +216,6 @@ const generateXMP = (recipe, title) => {
 
 // --- COMPONENTS ---
 
-// 1. Color Wheel Component (Interactive)
 const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
     const wheelRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -707,7 +704,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-16 md:pb-0 selection:bg-blue-500/30 flex flex-col h-[100dvh]" style={{ touchAction: 'pan-x pan-y' }}>
+    <div className="fixed inset-0 w-full h-full flex flex-col overflow-hidden bg-[#0f172a] text-gray-100 font-sans selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
       <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block flex-none' : 'block flex-none'}`}><Header activeTab={activeTab} setActiveTab={setActiveTab} /></div>
