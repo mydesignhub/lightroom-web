@@ -296,6 +296,7 @@ const generateXMP = (recipe, title) => {
 
 // --- COMPONENTS ---
 
+// 1. Color Wheel Component (Interactive)
 const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
     const wheelRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -347,6 +348,7 @@ const Header = ({ activeTab, setActiveTab }) => {
   );
 };
 
+// --- DYNAMIC BOTTOM SHEET FOR LESSONS ---
 const LessonModal = ({ lesson, onClose }) => {
   const [closing, setClosing] = useState(false);
   const modalRef = useRef(null);
@@ -509,7 +511,7 @@ const PhotoLab = () => {
   };
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
+    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 fixed inset-0 z-0">
         <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
             <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end ml-auto">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
@@ -520,7 +522,7 @@ const PhotoLab = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
-            <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
+            <div className="h-[38%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover transition-all duration-75 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
@@ -615,17 +617,15 @@ const PhotoLab = () => {
                     ) : (
                         <div className="flex flex-col h-full bg-[#0f172a]">
                             <div className="p-3 border-b border-gray-800 bg-[#0f172a] shrink-0 z-10">
-                                <div className="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
-                                    <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2 text-xs"><Sparkles size={14} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
-                                    <div className="flex gap-2">
-                                        <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="ឈ្មោះស្តាយ..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-purple-500 font-khmer" />
-                                        <button onClick={generateAIPreset} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg font-bold font-khmer text-xs disabled:opacity-50">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
+                                <div className="bg-purple-900/20 p-2 rounded-xl border border-purple-500/30">
+                                    <div className="flex gap-2 items-center">
+                                        <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="បង្កើតពណ៌ដោយ AI..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-purple-500 font-khmer" />
+                                        <button onClick={() => generateAIPreset()} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg font-bold font-khmer text-xs disabled:opacity-50 whitespace-nowrap">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
                                     </div>
                                 </div>
                             </div>
                             <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
                                 <div className="space-y-2 pb-20">
-                                    <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
                                     <div className="grid grid-cols-3 gap-1.5">
                                         {Object.keys(PRESET_DB).map(s => (
                                             <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(s); }} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
@@ -785,7 +785,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-16 md:pb-0 selection:bg-blue-500/30 flex flex-col h-[100dvh]" style={{ touchAction: 'pan-x pan-y' }}>
+    <div className="fixed inset-0 w-full h-full flex flex-col overflow-hidden bg-[#0f172a] text-gray-100 font-sans selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
       <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block flex-none' : 'block flex-none'}`}><Header activeTab={activeTab} setActiveTab={setActiveTab} /></div>
