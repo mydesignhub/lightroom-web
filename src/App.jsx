@@ -6,7 +6,7 @@ import {
   AlertTriangle, RotateCcw, Globe, RefreshCw, Layout, Image as ImageIcon, 
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
-  Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp
+  Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Grid
 } from 'lucide-react';
 
 // ==========================================
@@ -58,7 +58,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 
 const lessonsData = [
   { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-5 h-5 text-amber-400" />, description: 'ការកែសម្រួលពន្លឺមូលដ្ឋាន', content: [{ tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាព។', tip: 'ចាប់ផ្តើមពីនេះមុនគេ។' }, { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។', tip: 'កុំអោយលើស +50។' }, { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ភ្លឺខ្លាំង។', tip: 'បន្ថយដើម្បីសង្គ្រោះមេឃ។' }, { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ក្នុងម្លប់។', tip: 'តម្លើងសម្រាប់រូប Backlit។' }, { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត។', tip: 'Alt+Drag ដើម្បីមើល Clipping។' }, { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចខ្មៅបំផុត។', tip: 'បន្ថយបន្តិចអោយរូបមានជម្រៅ។' }] },
-  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-5 h-5 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [{ tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌លឿង/ខៀវ។', tip: 'ថតពេលថ្ងៃលិចអោយជាប់លឿង។' }, { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌បៃតង/ស្វាយ។', tip: 'កែពណ៌ស្បែកដែលជាប់បៃតង។' }, { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក។', tip: 'ល្អសម្រាប់ Portrait។' }, { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនគ្រប់ពណ៌។', tip: 'ប្រយ័ត្នស្បែកក្រហម។' }, { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'HSL (Hue, Sat, Lum) សម្រាប់ពណ៌នីមួយៗ។', tip: 'Orange Lum សម្រាប់ស្បែកស។' }] },
+  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-5 h-5 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [{ tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌លឿង/ខៀវ។', tip: 'ថតពេលថ្ងៃលិចអោយជាប់លឿង។' }, { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌បៃតង/ស្វាយ។', tip: 'កែពណ៌ស្បែកដែលជាប់បៃតង។' }, { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក។', tip: 'ល្អសម្រាប់ Portrait។' }, { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យបែកពណ៌។' }, { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'HSL (Hue, Sat, Lum) សម្រាប់ពណ៌នីមួយៗ។', tip: 'Orange Lum សម្រាប់ស្បែកស។' }] },
   { id: 'effects', title: 'បែបផែន (Effects)', icon: <Aperture className="w-5 h-5 text-purple-400" />, description: 'Texture, Clarity, Dehaze', content: [{ tool: 'Texture', khmer: 'វាយនភាព', desc: 'កែផ្ទៃអោយគ្រើមឬរលោង។', tip: '-10 សម្រាប់ស្បែកមុខ។' }, { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'Contrast នៅកណ្តាល។', tip: 'កុំប្រើច្រើនលើមុខមនុស្ស។' }, { tool: 'Dehaze', khmer: 'កាត់អ័ព្ទ', desc: 'លុបឬបន្ថែមអ័ព្ទ។', tip: 'ប្រើពេលមេឃស្រអាប់។' }, { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើអោយគែមរូបងងឹត។', tip: 'ជួយផ្តោតអារម្មណ៍កណ្តាល។' }] },
   { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-5 h-5 text-pink-400" />, description: 'Sharpening & Noise', content: [{ tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយរូបច្បាស់។', tip: 'ប្រើ Masking ជាមួយ។' }, { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise។', tip: 'សម្រាប់រូបថតយប់។' }] },
   { id: 'optics', title: 'Optics', icon: <Crop className="w-5 h-5 text-green-400" />, description: 'Lens Corrections', content: [{ tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែ Distortion របស់លែន។', tip: 'គួរតែបើកជានិច្ច។' }, { tool: 'Chromatic', khmer: 'ពណ៌តាមគែម', desc: 'លុបពណ៌ស្វាយតាមគែម។', tip: 'ប្រើលើរូប Contrast ខ្ពស់។' }] },
@@ -82,14 +82,14 @@ const PRESET_DB = {
     "forest green": { basic: { Exposure: -0.1, Contrast: 20, Highlights: -40, Shadows: 20, Temp: 5, Tint: -15, Vibrance: 30 }, grading: { Shadows: { h: 120, s: 15, l: -5 }, Highlights: { h: 50, s: 10, l: 0 } } },
     "sunset lover": { basic: { Exposure: 0.1, Contrast: 25, Highlights: -30, Shadows: 30, Temp: 20, Tint: 10, Vibrance: 40 }, grading: { Shadows: { h: 280, s: 20, l: 0 }, Highlights: { h: 45, s: 30, l: 0 } } },
     "portrait clean": { basic: { Exposure: 0.1, Contrast: 10, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -5, Vibrance: 10, Saturation: -5, Clarity: -5 }, grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 30, s: 5, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } } },
-    "desaturated": { basic: { Contrast: 20, Highlights: -10, Shadows: 10, Saturation: -40, Clarity: 10 }, grading: { Shadows: { h: 220, s: 5, l: 0 } } },
-    "vivid pop": { basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 20, Vibrance: 40, Saturation: 10, Clarity: 15 }, grading: { } },
+    "desaturated": { basic: { Contrast: 20, Highlights: -10, Shadows: 10, Saturation: -40, Clarity: 10 }, grading: { Shadows: { h: 220, s: 5, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } } },
+    "vivid pop": { basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 20, Vibrance: 40, Saturation: 10, Clarity: 15 }, grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } } },
     "sepia tone": { basic: { Contrast: 15, Highlights: -10, Shadows: 10, Temp: 30, Tint: 10, Saturation: -20, Vignette: -20 }, grading: { Shadows: { h: 40, s: 20, l: 0 }, Highlights: { h: 45, s: 10, l: 0 } } },
     "high contrast": { basic: { Contrast: 60, Highlights: -30, Shadows: 30, Whites: 30, Blacks: -30, Vibrance: 10, Clarity: 20 }, grading: { Shadows: { h: 0, s: 0, l: 0 }, Midtones: { h: 0, s: 0, l: 0 }, Highlights: { h: 0, s: 0, l: 0 } } }
 };
 
 const QA_DB = {
-    "exposure": "សួស្ដី! 👋\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាព។\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់!",
+    "exposure": "សួស្ដី! 👋\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់!",
     "contrast": "សួស្ដី! 👋\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបដិត (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបស្រាល (Soft)។",
     "highlight": "**Highlights** គ្រប់គ្រងតំបន់ដែល **ភ្លឺខ្លាំងបំផុត** (ដូចជាមេឃ)។ បន្ថយ (-100) ដើម្បីសង្គ្រោះពពក។",
     "shadow": "**Shadows** គ្រប់គ្រងតំបន់ងងឹត។ តម្លើង (+) ដើម្បីមើលឃើញព័ត៌មានក្នុងម្លប់។",
@@ -380,11 +380,22 @@ const PhotoLab = () => {
   const handleDownload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const img = new Image(); img.crossOrigin = "anonymous"; img.src = image; img.onload = () => { canvas.width = img.width; canvas.height = img.height; ctx.filter = getFilterString(); ctx.drawImage(img, 0, 0); const link = document.createElement('a'); link.download = 'edited-photo.jpg'; link.href = canvas.toDataURL('image/jpeg'); link.click(); }; };
   const handlePresetExport = () => { generateXMP(settings, aiPrompt || "Custom"); };
 
-  const generateAIPreset = async () => {
-      if (!aiPrompt.trim()) return; setAiLoading(true);
-      const localPreset = getLocalPreset(aiPrompt);
+  const generateAIPreset = async (manualPrompt = null) => {
+      // Use manualPrompt if provided (from clicking a preset button), otherwise use state aiPrompt (from text input)
+      const targetPrompt = typeof manualPrompt === 'string' ? manualPrompt : aiPrompt;
+      if (!targetPrompt.trim()) return; 
+      
+      setAiLoading(true);
+
+      // If clicked from a button, update the input box to reflect the selection
+      if (typeof manualPrompt === 'string') {
+          setAiPrompt(manualPrompt);
+      }
+
+      const localPreset = getLocalPreset(targetPrompt);
       if (localPreset && localPreset.basic) { applyPresetToSettings(localPreset); setAiLoading(false); return; }
-      const prompt = `Create a Lightroom preset for style "${aiPrompt}". Return JSON.`;
+      
+      const prompt = `Create a Lightroom preset for style "${targetPrompt}". Return JSON.`;
       const data = await callGemini(prompt, "Expert photo editor.", true);
       if (data && data.basic) applyPresetToSettings(data); else applyPresetToSettings(PRESET_DB["teal & orange"]);
       setAiLoading(false);
@@ -437,9 +448,9 @@ const PhotoLab = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
-            <div className="h-[55%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
+            <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
                 <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
-                    <div className="relative w-full h-full"><img src={image} className="w-full h-full object-contain transition-all duration-75 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
+                    <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover transition-all duration-75 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
                 <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
             </div>
@@ -451,9 +462,9 @@ const PhotoLab = () => {
                     <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
                  </div>
                  
-                 <div className="flex-1 overflow-y-auto p-3 custom-scrollbar bg-[#0f172a]">
+                 <div className="flex-1 flex flex-col bg-[#0f172a] overflow-hidden">
                     {mode === 'manual' ? (
-                        <div className="space-y-5 pb-20 lg:pb-10">
+                        <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-5 pb-20 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-2">
                                     <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white">Reset</button></div>
@@ -545,7 +556,7 @@ const PhotoLab = () => {
                                     <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
                                     <div className="grid grid-cols-3 gap-1.5">
                                         {Object.keys(PRESET_DB).map(s => (
-                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
+                                            <button key={s} onClick={() => generateAIPreset(s)} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
                                                 <span className="capitalize text-[9px] font-bold text-gray-300 group-hover:text-white line-clamp-2 leading-tight">{s}</span>
                                             </button>
                                         ))}
