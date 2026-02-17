@@ -44,8 +44,10 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
     let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     let result = text;
     if (jsonMode && text) {
-        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        result = JSON.parse(text);
+        try {
+            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            result = JSON.parse(text);
+        } catch (e) { console.error("JSON Parse Error", e); }
     }
     responseCache[cacheKey] = result;
     return result;
@@ -181,104 +183,24 @@ const generateXMP = (recipe, title) => {
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
-    crs:Version="14.5"
-    crs:ProcessVersion="11.0"
-    crs:Name="${escapeXML(title)}"
-    crs:HasSettings="True"
-    crs:CropConstrainToWarp="0"
-    crs:WhiteBalance="As Shot"
-    crs:IncrementalTemperature="${basic.Temp || 0}"
-    crs:IncrementalTint="${basic.Tint || 0}"
-    crs:Exposure2012="${basic.Exposure || 0}"
-    crs:Contrast2012="${basic.Contrast || 0}"
-    crs:Highlights2012="${basic.Highlights || 0}"
-    crs:Shadows2012="${basic.Shadows || 0}"
-    crs:Whites2012="${basic.Whites || 0}"
-    crs:Blacks2012="${basic.Blacks || 0}"
-    crs:Texture="${basic.Texture || 0}"
-    crs:Clarity2012="${basic.Clarity || 0}"
-    crs:Dehaze="${basic.Dehaze || 0}"
-    crs:Vibrance="${basic.Vibrance || 0}"
-    crs:Saturation="${basic.Saturation || 0}"
-    crs:ParametricShadows="0"
-    crs:ParametricDarks="0"
-    crs:ParametricLights="0"
-    crs:ParametricHighlights="0"
-    crs:ParametricShadowSplit="25"
-    crs:ParametricMidtoneSplit="50"
-    crs:ParametricHighlightSplit="75"
-    crs:Sharpness="${detail.Sharpening || 40}"
-    crs:SharpenRadius="+1.0"
-    crs:SharpenDetail="25"
-    crs:SharpenEdgeMasking="0"
-    crs:LuminanceSmoothing="${detail.Noise || 0}"
-    crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
-    crs:HueAdjustmentRed="${getHSL('Red').h}"
-    crs:HueAdjustmentOrange="${getHSL('Orange').h}"
-    crs:HueAdjustmentYellow="${getHSL('Yellow').h}"
-    crs:HueAdjustmentGreen="${getHSL('Green').h}"
-    crs:HueAdjustmentAqua="${getHSL('Aqua').h}"
-    crs:HueAdjustmentBlue="${getHSL('Blue').h}"
-    crs:HueAdjustmentPurple="${getHSL('Purple').h}"
-    crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
-    crs:SaturationAdjustmentRed="${getHSL('Red').s}"
-    crs:SaturationAdjustmentOrange="${getHSL('Orange').s}"
-    crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}"
-    crs:SaturationAdjustmentGreen="${getHSL('Green').s}"
-    crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}"
-    crs:SaturationAdjustmentBlue="${getHSL('Blue').s}"
-    crs:SaturationAdjustmentPurple="${getHSL('Purple').s}"
-    crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
-    crs:LuminanceAdjustmentRed="${getHSL('Red').l}"
-    crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}"
-    crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}"
-    crs:LuminanceAdjustmentGreen="${getHSL('Green').l}"
-    crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}"
-    crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}"
-    crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}"
-    crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
-    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}"
-    crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}"
-    crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}"
-    crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}"
-    crs:SplitToningBalance="${grading.Balance || 0}"
-    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}"
-    crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}"
-    crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}"
-    crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}"
-    crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}"
-    crs:ColorGradeBlending="${grading.Blending || 50}"
-    crs:ColorGradeGlobalHue="0"
-    crs:ColorGradeGlobalSat="0"
-    crs:ColorGradeGlobalLum="0"
-    crs:GrainAmount="${effects.Grain || 0}"
-    crs:PostCropVignetteAmount="${basic.Vignette || 0}"
-    crs:LensProfileEnable="1"
-   >
-   <crs:ToneCurvePV2012>
-    <rdf:Seq>
-     <rdf:li>0, 0</rdf:li>
-     <rdf:li>255, 255</rdf:li>
-    </rdf:Seq>
-   </crs:ToneCurvePV2012>
-   <crs:ToneCurvePV2012Red>
-    <rdf:Seq>
-     <rdf:li>0, 0</rdf:li>
-     <rdf:li>255, 255</rdf:li>
-    </rdf:Seq>
-   </crs:ToneCurvePV2012Red>
-   <crs:ToneCurvePV2012Green>
-    <rdf:Seq>
-     <rdf:li>0, 0</rdf:li>
-     <rdf:li>255, 255</rdf:li>
-    </rdf:Seq>
-   </crs:ToneCurvePV2012Green>
-   <crs:ToneCurvePV2012Blue>
-    <rdf:Seq>
-     <rdf:li>0, 0</rdf:li>
-     <rdf:li>255, 255</rdf:li>
-    </rdf:Seq>
-   </crs:ToneCurvePV2012Blue>
+    crs:Version="14.5" crs:ProcessVersion="11.0"
+    crs:Name="${escapeXML(title)}" crs:HasSettings="True" crs:CropConstrainToWarp="0" crs:WhiteBalance="As Shot"
+    crs:IncrementalTemperature="${basic.Temp || 0}" crs:IncrementalTint="${basic.Tint || 0}"
+    crs:Exposure2012="${basic.Exposure || 0}" crs:Contrast2012="${basic.Contrast || 0}" crs:Highlights2012="${basic.Highlights || 0}" crs:Shadows2012="${basic.Shadows || 0}" crs:Whites2012="${basic.Whites || 0}" crs:Blacks2012="${basic.Blacks || 0}"
+    crs:Texture="${basic.Texture || 0}" crs:Clarity2012="${basic.Clarity || 0}" crs:Dehaze="${basic.Dehaze || 0}" crs:Vibrance="${basic.Vibrance || 0}" crs:Saturation="${basic.Saturation || 0}"
+    crs:ParametricShadows="0" crs:ParametricDarks="0" crs:ParametricLights="0" crs:ParametricHighlights="0" crs:ParametricShadowSplit="25" crs:ParametricMidtoneSplit="50" crs:ParametricHighlightSplit="75"
+    crs:Sharpness="${detail.Sharpening || 40}" crs:SharpenRadius="+1.0" crs:SharpenDetail="25" crs:SharpenEdgeMasking="0"
+    crs:LuminanceSmoothing="${detail.Noise || 0}" crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
+    crs:HueAdjustmentRed="${getHSL('Red').h}" crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:HueAdjustmentAqua="${getHSL('Aqua').h}" crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
+    crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
+    crs:LuminanceAdjustmentRed="${getHSL('Red').l}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
+    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}" crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}" crs:SplitToningBalance="${grading.Balance || 0}"
+    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}" crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}" crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}" crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}" crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}" crs:ColorGradeBlending="${grading.Blending || 50}" crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
+    crs:GrainAmount="${effects.Grain || 0}" crs:PostCropVignetteAmount="${basic.Vignette || 0}" crs:LensProfileEnable="1">
+   <crs:ToneCurvePV2012><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012>
+   <crs:ToneCurvePV2012Red><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Red>
+   <crs:ToneCurvePV2012Green><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Green>
+   <crs:ToneCurvePV2012Blue><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Blue>
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>
@@ -523,17 +445,17 @@ const PhotoLab = () => {
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
             <div className="h-[38%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
-                <div className="flex-1 bg-[#020617] rounded-xl overflow-hidden flex items-center justify-center relative border border-gray-700 group shadow-inner">
+                <div className="flex-1 bg-[#020617] rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/10 group shadow-inner">
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover transition-all duration-75 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
-                <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-xl border border-gray-700 overflow-x-auto shrink-0">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
+                <div className="flex justify-center gap-2 lg:gap-3 bg-[#0f172a] p-2 rounded-2xl border border-white/10 overflow-x-auto shrink-0">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-xl border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-gray-600 hover:border-gray-400'} overflow-hidden transition-all relative group`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
             </div>
 
-            <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-2xl lg:rounded-xl border-t lg:border border-gray-700 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-lg">
-                 <div className="flex border-b border-gray-700 shrink-0 bg-[#1e293b] lg:bg-transparent">
-                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'manual' ? 'text-blue-400 border-b-2 border-blue-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
-                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-xs font-bold font-khmer ${mode === 'ai' ? 'text-purple-400 border-b-2 border-purple-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
-                    <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
+            <div className="flex-1 lg:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-3xl lg:rounded-2xl border-t border-white/10 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-xl">
+                 <div className="flex border-b border-white/10 shrink-0 bg-[#1e293b] lg:bg-transparent">
+                    <button onClick={() => setMode('manual')} className={`flex-1 py-3 text-xs font-bold font-khmer transition-colors ${mode === 'manual' ? 'text-blue-400 border-b-2 border-blue-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
+                    <button onClick={() => setMode('ai')} className={`flex-1 py-3 text-xs font-bold font-khmer transition-colors ${mode === 'ai' ? 'text-purple-400 border-b-2 border-purple-400 bg-[#0f172a]' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+                    <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-white/10 flex items-center gap-1 transition-all active:scale-95"><RotateCcw size={12}/> Reset</button>
                  </div>
                  
                  <div className="flex-1 flex flex-col bg-[#0f172a] overflow-hidden">
@@ -541,7 +463,7 @@ const PhotoLab = () => {
                         <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-5 pb-20 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-2">
-                                    <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white">Reset</button></div>
+                                    <div className="flex items-center justify-between border-b border-white/10 pb-1"><h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white transition-colors">Reset</button></div>
                                     <div className="space-y-3 px-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
@@ -550,9 +472,9 @@ const PhotoLab = () => {
                                                     <span className="text-[10px] text-blue-400 font-mono bg-gray-800 px-1.5 rounded min-w-[30px] text-center">{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className="text-gray-400 hover:text-white p-1 bg-gray-800 rounded"><Minus size={10}/></button>
+                                                    <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className="text-gray-400 hover:text-white p-1.5 bg-gray-800 rounded-lg active:scale-90 transition-transform"><Minus size={10}/></button>
                                                     <input type="range" min={t.min} max={t.max} step={t.step || 1} value={settings[t.id]} onChange={(e) => updateSetting(t.id, Number(e.target.value))} className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all drag-only-range" />
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className="text-gray-400 hover:text-white p-1 bg-gray-800 rounded"><Plus size={10}/></button>
+                                                    <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className="text-gray-400 hover:text-white p-1.5 bg-gray-800 rounded-lg active:scale-90 transition-transform"><Plus size={10}/></button>
                                                 </div>
                                             </div>
                                         ))}
@@ -561,20 +483,20 @@ const PhotoLab = () => {
                             ))}
 
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4></div>
+                                <div className="flex items-center justify-between border-b border-white/10 pb-1"><h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4></div>
                                 <div className="flex justify-between gap-1 mb-2">
-                                    {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-7 h-7 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`} />))}
+                                    {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-7 h-7 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'} transition-all`} />))}
                                 </div>
-                                <div className="space-y-3 px-2 bg-[#151f32] p-2 rounded-lg border border-gray-700/50">
+                                <div className="space-y-3 px-3 py-3 bg-[#151f32] rounded-xl border border-white/5">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
                                             <div key={key} className="flex items-center gap-2">
                                                 <label className="text-[10px] font-bold text-gray-400 font-khmer w-8">{type}</label>
-                                                <button onClick={() => updateSetting(key, settings[key] - 1)} className="text-gray-400 hover:text-white p-0.5 bg-gray-800 rounded"><Minus size={8}/></button>
+                                                <button onClick={() => updateSetting(key, settings[key] - 1)} className="text-gray-400 hover:text-white p-1 bg-gray-800 rounded active:scale-90 transition-transform"><Minus size={10}/></button>
                                                 <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer drag-only-range ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
-                                                <button onClick={() => updateSetting(key, settings[key] + 1)} className="text-gray-400 hover:text-white p-0.5 bg-gray-800 rounded"><Plus size={8}/></button>
-                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-600 rounded p-0.5" />
+                                                <button onClick={() => updateSetting(key, settings[key] + 1)} className="text-gray-400 hover:text-white p-1 bg-gray-800 rounded active:scale-90 transition-transform"><Plus size={10}/></button>
+                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-600 rounded p-0.5 outline-none focus:border-blue-500" />
                                             </div>
                                         )
                                     })}
@@ -582,13 +504,13 @@ const PhotoLab = () => {
                             </div>
 
                             <div className="space-y-3 pb-4">
-                                <div className="flex items-center justify-between border-b border-gray-700 pb-1"><h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4></div>
+                                <div className="flex items-center justify-between border-b border-white/10 pb-1"><h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4></div>
                                 <div className="flex justify-around mb-2 bg-gray-800/50 p-1 rounded-lg">
                                     {['Shadows', 'Midtones', 'Highlights'].map(t => (
-                                        <button key={t} onClick={() => setGradingTab(t)} className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${gradingTab === t ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}>{t}</button>
+                                        <button key={t} onClick={() => setGradingTab(t)} className={`px-3 py-1 rounded text-[10px] font-bold transition-all ${gradingTab === t ? 'bg-purple-600 text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>{t}</button>
                                     ))}
                                 </div>
-                                <div className="bg-[#151f32] p-3 rounded-lg border border-gray-700/50 space-y-4">
+                                <div className="bg-[#151f32] p-3 rounded-xl border border-white/5 space-y-4">
                                     <div className="flex justify-center py-2">
                                         <ColorWheel 
                                             hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}
@@ -599,10 +521,10 @@ const PhotoLab = () => {
                                     <div className="flex items-center gap-2">
                                         <label className="text-[10px] font-bold text-gray-400 w-8">Lum</label>
                                         <input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500 drag-only-range"/>
-                                        <input type="number" className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-600 rounded p-0.5" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} />
+                                        <input type="number" className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-600 rounded p-0.5 outline-none focus:border-purple-500" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} />
                                     </div>
                                 </div>
-                                <div className="pt-2 border-t border-gray-700 space-y-2">
+                                <div className="pt-2 border-t border-white/10 space-y-2">
                                     <div className="flex flex-col gap-1">
                                         <div className="flex justify-between"><label className="text-[10px] text-gray-400">Blending</label><span className="text-[10px] text-purple-400">{settings.gradingBlending}</span></div>
                                         <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full h-1 bg-gray-700 rounded accent-purple-500 drag-only-range"/>
@@ -616,11 +538,11 @@ const PhotoLab = () => {
                         </div>
                     ) : (
                         <div className="flex flex-col h-full bg-[#0f172a]">
-                            <div className="p-3 border-b border-gray-800 bg-[#0f172a] shrink-0 z-10">
-                                <div className="bg-purple-900/20 p-2 rounded-xl border border-purple-500/30">
+                            <div className="p-3 border-b border-white/10 bg-[#0f172a] shrink-0 z-10">
+                                <div className="bg-purple-900/20 p-2 rounded-xl border border-purple-500/30 backdrop-blur-sm">
                                     <div className="flex gap-2 items-center">
-                                        <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="បង្កើតពណ៌ដោយ AI..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-purple-500 font-khmer" />
-                                        <button onClick={() => generateAIPreset()} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg font-bold font-khmer text-xs disabled:opacity-50 whitespace-nowrap">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
+                                        <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="បង្កើតពណ៌ដោយ AI..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-purple-500 font-khmer transition-colors" />
+                                        <button onClick={() => generateAIPreset()} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg font-bold font-khmer text-xs disabled:opacity-50 whitespace-nowrap active:scale-95 transition-transform">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
                                     </div>
                                 </div>
                             </div>
@@ -785,7 +707,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full flex flex-col overflow-hidden bg-[#0f172a] text-gray-100 font-sans selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
+    <div className="min-h-screen bg-[#0f172a] text-gray-100 font-sans pb-16 md:pb-0 selection:bg-blue-500/30 flex flex-col h-[100dvh]" style={{ touchAction: 'pan-x pan-y' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
       <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block flex-none' : 'block flex-none'}`}><Header activeTab={activeTab} setActiveTab={setActiveTab} /></div>
