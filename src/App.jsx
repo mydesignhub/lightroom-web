@@ -296,7 +296,6 @@ const generateXMP = (recipe, title) => {
 
 // --- COMPONENTS ---
 
-// 1. Color Wheel Component (Interactive)
 const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
     const wheelRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -348,7 +347,6 @@ const Header = ({ activeTab, setActiveTab }) => {
   );
 };
 
-// --- DYNAMIC BOTTOM SHEET FOR LESSONS ---
 const LessonModal = ({ lesson, onClose }) => {
   const [closing, setClosing] = useState(false);
   const modalRef = useRef(null);
@@ -461,16 +459,10 @@ const PhotoLab = () => {
   const handlePresetExport = () => { generateXMP(settings, aiPrompt || "Custom"); };
 
   const generateAIPreset = async (manualPrompt = null) => {
-      // Use manualPrompt if provided (from clicking a preset button), otherwise use state aiPrompt (from text input)
       const targetPrompt = typeof manualPrompt === 'string' ? manualPrompt : aiPrompt;
       if (!targetPrompt.trim()) return; 
-      
       setAiLoading(true);
-
-      // If clicked from a button, update the input box to reflect the selection
-      if (typeof manualPrompt === 'string') {
-          setAiPrompt(manualPrompt);
-      }
+      if (typeof manualPrompt === 'string') setAiPrompt(manualPrompt);
 
       const localPreset = getLocalPreset(targetPrompt);
       if (localPreset && localPreset.basic) { applyPresetToSettings(localPreset); setAiLoading(false); return; }
