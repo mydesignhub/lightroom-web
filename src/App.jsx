@@ -462,8 +462,10 @@ const PhotoLab = () => {
                     <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
                  </div>
                  
+                 {/* Fixed: Remove padding/overflow from parent container to remove gap */}
                  <div className="flex-1 flex flex-col bg-[#0f172a] overflow-hidden">
                     {mode === 'manual' ? (
+                        /* Add padding/overflow back to specific child container */
                         <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-5 pb-20 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-2">
@@ -541,7 +543,9 @@ const PhotoLab = () => {
                             </div>
                         </div>
                     ) : (
+                        /* AI Mode: Flex column to keep header fixed */
                         <div className="flex flex-col h-full bg-[#0f172a]">
+                            {/* Fixed Header */}
                             <div className="p-3 border-b border-gray-800 bg-[#0f172a] shrink-0 z-10">
                                 <div className="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
                                     <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2 text-xs"><Sparkles size={14} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
@@ -551,12 +555,14 @@ const PhotoLab = () => {
                                     </div>
                                 </div>
                             </div>
+                            
+                            {/* Scrollable Presets Grid */}
                             <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
                                 <div className="space-y-2 pb-20">
                                     <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
                                     <div className="grid grid-cols-3 gap-1.5">
                                         {Object.keys(PRESET_DB).map(s => (
-                                            <button key={s} onClick={() => generateAIPreset(s)} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
+                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
                                                 <span className="capitalize text-[9px] font-bold text-gray-300 group-hover:text-white line-clamp-2 leading-tight">{s}</span>
                                             </button>
                                         ))}
@@ -678,8 +684,16 @@ export default function App() {
   const [expandedSection, setExpandedSection] = useState(null);
   const [isOnline, setIsOnline] = useState(true);
   const [backPressCount, setBackPressCount] = useState(0);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const toggleSection = (id) => setExpandedSection(prev => prev === id ? null : id);
+
+  useEffect(() => {
+    const handleFocus = (e) => { if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) setIsInputFocused(true); };
+    const handleBlur = (e) => { if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) setIsInputFocused(false); };
+    window.addEventListener('focus', handleFocus, true); window.addEventListener('blur', handleBlur, true);
+    return () => { window.removeEventListener('focus', handleFocus, true); window.removeEventListener('blur', handleBlur, true); };
+  }, []);
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -720,7 +734,7 @@ export default function App() {
         </div>
       </main>
       
-      <div className="flex-none md:hidden bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2">
+      <div className={`flex-none md:hidden bg-[#0f172a]/90 backdrop-blur-md border-t border-gray-800 pb-safe z-40 flex justify-around p-2 ${isInputFocused ? 'hidden' : ''}`}>
          <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'learn' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><BookOpen size={20}/><span className="text-[10px] font-khmer mt-1">មេរៀន</span></button>
          <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'quiz' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Award size={20}/><span className="text-[10px] font-khmer mt-1">តេស្ត</span></button>
          <button onClick={() => setActiveTab('lab')} className={`flex flex-col items-center p-2 rounded-xl transition-all ${activeTab === 'lab' ? 'text-blue-400 bg-blue-500/10' : 'text-gray-500 hover:text-gray-300'}`}><Sliders size={20}/><span className="text-[10px] font-khmer mt-1">Lab</span></button>
