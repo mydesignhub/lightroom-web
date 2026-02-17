@@ -671,7 +671,8 @@ const ChatBot = ({ isOnline, messages, setMessages }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  
+  const inputRef = useRef(null); 
+
   const suggestedQuestionsPool = [ "របៀបធ្វើអោយស្បែកស?", "របៀបកែរូប Portrait?", "របៀបដាក់ពណ៌ Teal & Orange?", "តើ Dehaze ប្រើសម្រាប់អ្វី?", "កែរូបថតពេលយប់?", "រូបមន្ត Vintage?", "ពន្យល់ពី Curves?", "តើ Grain ជួយអ្វី?", "រូបងងឹតពេកធ្វើម៉េច?", "របៀបធ្វើអោយមេឃដិត?", "របៀបកែរូបទេសភាព?", "តើ Vibrance ខុសពី Saturation ម៉េច?", "របៀបកែរូបថតអាហារ?", "របៀបកែរូបថត Street?", "របៀបកែរូបថតសមុទ្រ?" ];
   const [suggestions, setSuggestions] = useState([]);
 
@@ -689,54 +690,96 @@ const ChatBot = ({ isOnline, messages, setMessages }) => {
     setMessages(prev => [...prev, { role: 'model', text: reply }]); setLoading(false);
   };
   
-  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
+  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
 
   return (
-    <div className="bg-[#1e293b] rounded-none md:rounded-3xl border-0 md:border border-gray-800 shadow-2xl flex flex-col h-[100dvh] md:h-[calc(100dvh-150px)] md:max-h-[700px] max-w-5xl mx-auto w-full fixed inset-0 z-50 md:relative md:z-0 overflow-hidden">
-      <div className="flex-none bg-[#1e293b]/90 backdrop-blur-md p-5 border-b border-gray-800 flex items-center space-x-4 sticky top-0 z-20">
-          <button className="md:hidden p-2 bg-white/5 rounded-full text-white" onClick={() => window.history.back()}><ArrowLeft size={20}/></button>
-          <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-3 rounded-2xl shadow-lg shadow-purple-500/20"><Bot className="w-6 h-6 text-white" /></div>
-          <div className="flex-1">
-            <h3 className="font-bold text-white font-khmer text-lg">គ្រូជំនួយ AI</h3>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              <p className="text-xs text-gray-400 font-khmer">Online • Powered by Gemini</p>
+    <div className="flex flex-col h-[100dvh] md:h-[600px] w-full bg-[#0f172a] md:rounded-3xl overflow-hidden shadow-2xl relative">
+      <div className="flex-none bg-[#1e293b]/80 backdrop-blur-md border-b border-gray-800 p-4 flex items-center gap-3 z-20">
+         <button className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white" onClick={() => window.history.back()}>
+            <ArrowLeft size={24} />
+         </button>
+         
+         <div className="relative">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <Bot size={20} className="text-white" />
             </div>
-          </div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#1e293b] rounded-full"></div>
+         </div>
+         
+         <div>
+            <h3 className="font-bold text-white font-khmer text-base leading-tight">គ្រូជំនួយ AI</h3>
+            <p className="text-xs text-blue-400 font-khmer">Online</p>
+         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-[#0f172a] custom-scrollbar">
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
         {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`p-4 sm:p-5 rounded-3xl max-w-[85%] sm:max-w-[75%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap relative ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none shadow-blue-900/20' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700 shadow-sm'}`}>
-              {m.text}
+            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
+                {m.role === 'model' && (
+                    <div className="w-8 h-8 rounded-full bg-[#334155] flex-shrink-0 flex items-center justify-center mr-2 mt-auto">
+                        <Sparkles size={14} className="text-purple-400" />
+                    </div>
+                )}
+                <div 
+                    className={`max-w-[80%] px-4 py-3 text-sm font-khmer leading-relaxed whitespace-pre-wrap shadow-sm 
+                    ${m.role === 'user' 
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl rounded-tr-sm' 
+                        : 'bg-[#1e293b] text-gray-200 border border-gray-800 rounded-2xl rounded-tl-sm'}`}
+                >
+                    {m.text}
+                </div>
             </div>
-          </div>
         ))}
-        {loading && <div className="flex justify-start"><div className="p-4 rounded-3xl bg-[#1e293b] border border-gray-700 rounded-bl-none shadow-sm"><Loader2 className="w-5 h-5 text-purple-400 animate-spin" /></div></div>}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="flex-none p-5 bg-[#1e293b] border-t border-gray-800 pb-safe md:pb-5">
-          <div className="flex gap-2 items-center mb-4 overflow-x-auto no-scrollbar pb-1">
-            <button onClick={randomizeSuggestions} className="p-2 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all border border-gray-700"><RefreshCw className="w-3.5 h-3.5" /></button>
-            {suggestions.map((q, i) => (
-              <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-4 py-2 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500/30 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer shadow-sm hover:shadow-md">
-                {q}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 bg-[#0f172a] border border-gray-700 rounded-2xl px-5 py-3.5 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/20 transition-all">
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="w-full bg-transparent text-base text-white focus:outline-none font-khmer placeholder:text-gray-500" style={{ touchAction: 'manipulation' }} />
+        {loading && (
+            <div className="flex justify-start">
+                 <div className="w-8 h-8 rounded-full bg-[#334155] flex-shrink-0 flex items-center justify-center mr-2 mt-auto">
+                        <Sparkles size={14} className="text-purple-400" />
+                 </div>
+                 <div className="px-4 py-3 bg-[#1e293b] border border-gray-800 rounded-2xl rounded-tl-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
+                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></span>
+                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></span>
+                 </div>
             </div>
-            <button 
-              onMouseDown={(e) => e.preventDefault()} 
-              onClick={() => handleSend()} 
-              disabled={loading || !input.trim()} 
-              className="bg-blue-600 hover:bg-blue-500 p-4 rounded-2xl text-white shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:shadow-none transition-all active:scale-95"
-            >
-              <Send size={20}/>
+        )}
+        <div ref={messagesEndRef} className="h-1" />
+      </div>
+
+      <div className="flex-none bg-[#1e293b] border-t border-gray-800 p-3 pb-safe md:pb-3 z-20">
+         <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar mask-gradient-right">
+            {suggestions.map((q, i) => (
+                <button 
+                    key={i} 
+                    onClick={() => handleSend(q)} 
+                    className="flex-shrink-0 px-4 py-1.5 bg-[#334155]/50 hover:bg-[#334155] text-gray-300 text-xs rounded-full border border-gray-700 transition-colors font-khmer whitespace-nowrap"
+                >
+                    {q}
+                </button>
+            ))}
+            <button onClick={randomizeSuggestions} className="flex-shrink-0 p-1.5 bg-[#334155]/50 rounded-full text-gray-400 border border-gray-700">
+                <RefreshCw size={14} />
             </button>
-          </div>
+         </div>
+
+         <div className="flex items-end gap-2 bg-[#0f172a] rounded-[24px] p-1.5 border border-gray-700 transition-colors focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/20">
+            <input 
+                ref={inputRef}
+                value={input} 
+                onChange={e => setInput(e.target.value)} 
+                onKeyPress={e => e.key === 'Enter' && handleSend()} 
+                placeholder="សរសេរសំណួរ..." 
+                className="flex-1 bg-transparent text-white px-4 py-3 text-sm focus:outline-none font-khmer placeholder:text-gray-500 max-h-32 overflow-y-auto"
+                style={{ touchAction: 'manipulation' }}
+            />
+            <button 
+                onMouseDown={(e) => e.preventDefault()} 
+                onClick={() => handleSend()} 
+                disabled={loading || !input.trim()} 
+                className={`p-3 rounded-full flex-shrink-0 transition-all ${input.trim() ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20 hover:bg-blue-600' : 'bg-[#334155] text-gray-500'}`}
+            >
+                <Send size={18} className={input.trim() ? "translate-x-0.5" : ""} />
+            </button>
+         </div>
       </div>
     </div>
   );
