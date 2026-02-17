@@ -89,7 +89,7 @@ const PRESET_DB = {
 };
 
 const QA_DB = {
-    "exposure": "សួស្ដី! 👋\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់!",
+    "exposure": "សួស្ដី! 👋\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាព។\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់!",
     "contrast": "សួស្ដី! 👋\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបដិត (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបស្រាល (Soft)។",
     "highlight": "**Highlights** គ្រប់គ្រងតំបន់ដែល **ភ្លឺខ្លាំងបំផុត** (ដូចជាមេឃ)។ បន្ថយ (-100) ដើម្បីសង្គ្រោះពពក។",
     "shadow": "**Shadows** គ្រប់គ្រងតំបន់ងងឹត។ តម្លើង (+) ដើម្បីមើលឃើញព័ត៌មានក្នុងម្លប់។",
@@ -181,24 +181,104 @@ const generateXMP = (recipe, title) => {
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
-    crs:Version="14.5" crs:ProcessVersion="11.0"
-    crs:Name="${escapeXML(title)}" crs:HasSettings="True" crs:CropConstrainToWarp="0" crs:WhiteBalance="As Shot"
-    crs:IncrementalTemperature="${basic.Temp || 0}" crs:IncrementalTint="${basic.Tint || 0}"
-    crs:Exposure2012="${basic.Exposure || 0}" crs:Contrast2012="${basic.Contrast || 0}" crs:Highlights2012="${basic.Highlights || 0}" crs:Shadows2012="${basic.Shadows || 0}" crs:Whites2012="${basic.Whites || 0}" crs:Blacks2012="${basic.Blacks || 0}"
-    crs:Texture="${basic.Texture || 0}" crs:Clarity2012="${basic.Clarity || 0}" crs:Dehaze="${basic.Dehaze || 0}" crs:Vibrance="${basic.Vibrance || 0}" crs:Saturation="${basic.Saturation || 0}"
-    crs:ParametricShadows="0" crs:ParametricDarks="0" crs:ParametricLights="0" crs:ParametricHighlights="0" crs:ParametricShadowSplit="25" crs:ParametricMidtoneSplit="50" crs:ParametricHighlightSplit="75"
-    crs:Sharpness="${detail.Sharpening || 40}" crs:SharpenRadius="+1.0" crs:SharpenDetail="25" crs:SharpenEdgeMasking="0"
-    crs:LuminanceSmoothing="${detail.Noise || 0}" crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
-    crs:HueAdjustmentRed="${getHSL('Red').h}" crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:HueAdjustmentAqua="${getHSL('Aqua').h}" crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
-    crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
-    crs:LuminanceAdjustmentRed="${getHSL('Red').l}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
-    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}" crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}" crs:SplitToningBalance="${grading.Balance || 0}"
-    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}" crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}" crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}" crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}" crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}" crs:ColorGradeBlending="${grading.Blending || 50}" crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
-    crs:GrainAmount="${effects.Grain || 0}" crs:PostCropVignetteAmount="${basic.Vignette || 0}" crs:LensProfileEnable="1">
-   <crs:ToneCurvePV2012><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012>
-   <crs:ToneCurvePV2012Red><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Red>
-   <crs:ToneCurvePV2012Green><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Green>
-   <crs:ToneCurvePV2012Blue><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Blue>
+    crs:Version="14.5"
+    crs:ProcessVersion="11.0"
+    crs:Name="${escapeXML(title)}"
+    crs:HasSettings="True"
+    crs:CropConstrainToWarp="0"
+    crs:WhiteBalance="As Shot"
+    crs:IncrementalTemperature="${basic.Temp || 0}"
+    crs:IncrementalTint="${basic.Tint || 0}"
+    crs:Exposure2012="${basic.Exposure || 0}"
+    crs:Contrast2012="${basic.Contrast || 0}"
+    crs:Highlights2012="${basic.Highlights || 0}"
+    crs:Shadows2012="${basic.Shadows || 0}"
+    crs:Whites2012="${basic.Whites || 0}"
+    crs:Blacks2012="${basic.Blacks || 0}"
+    crs:Texture="${basic.Texture || 0}"
+    crs:Clarity2012="${basic.Clarity || 0}"
+    crs:Dehaze="${basic.Dehaze || 0}"
+    crs:Vibrance="${basic.Vibrance || 0}"
+    crs:Saturation="${basic.Saturation || 0}"
+    crs:ParametricShadows="0"
+    crs:ParametricDarks="0"
+    crs:ParametricLights="0"
+    crs:ParametricHighlights="0"
+    crs:ParametricShadowSplit="25"
+    crs:ParametricMidtoneSplit="50"
+    crs:ParametricHighlightSplit="75"
+    crs:Sharpness="${detail.Sharpening || 40}"
+    crs:SharpenRadius="+1.0"
+    crs:SharpenDetail="25"
+    crs:SharpenEdgeMasking="0"
+    crs:LuminanceSmoothing="${detail.Noise || 0}"
+    crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
+    crs:HueAdjustmentRed="${getHSL('Red').h}"
+    crs:HueAdjustmentOrange="${getHSL('Orange').h}"
+    crs:HueAdjustmentYellow="${getHSL('Yellow').h}"
+    crs:HueAdjustmentGreen="${getHSL('Green').h}"
+    crs:HueAdjustmentAqua="${getHSL('Aqua').h}"
+    crs:HueAdjustmentBlue="${getHSL('Blue').h}"
+    crs:HueAdjustmentPurple="${getHSL('Purple').h}"
+    crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
+    crs:SaturationAdjustmentRed="${getHSL('Red').s}"
+    crs:SaturationAdjustmentOrange="${getHSL('Orange').s}"
+    crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}"
+    crs:SaturationAdjustmentGreen="${getHSL('Green').s}"
+    crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}"
+    crs:SaturationAdjustmentBlue="${getHSL('Blue').s}"
+    crs:SaturationAdjustmentPurple="${getHSL('Purple').s}"
+    crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
+    crs:LuminanceAdjustmentRed="${getHSL('Red').l}"
+    crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}"
+    crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}"
+    crs:LuminanceAdjustmentGreen="${getHSL('Green').l}"
+    crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}"
+    crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}"
+    crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}"
+    crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
+    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}"
+    crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}"
+    crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}"
+    crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}"
+    crs:SplitToningBalance="${grading.Balance || 0}"
+    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}"
+    crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}"
+    crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}"
+    crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}"
+    crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}"
+    crs:ColorGradeBlending="${grading.Blending || 50}"
+    crs:ColorGradeGlobalHue="0"
+    crs:ColorGradeGlobalSat="0"
+    crs:ColorGradeGlobalLum="0"
+    crs:GrainAmount="${effects.Grain || 0}"
+    crs:PostCropVignetteAmount="${basic.Vignette || 0}"
+    crs:LensProfileEnable="1"
+   >
+   <crs:ToneCurvePV2012>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012>
+   <crs:ToneCurvePV2012Red>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012Red>
+   <crs:ToneCurvePV2012Green>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012Green>
+   <crs:ToneCurvePV2012Blue>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012Blue>
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>
@@ -462,10 +542,8 @@ const PhotoLab = () => {
                     <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 border-l border-gray-700 flex items-center gap-1 transition-all"><RotateCcw size={12}/> Reset</button>
                  </div>
                  
-                 {/* Fixed: Remove padding/overflow from parent container to remove gap */}
                  <div className="flex-1 flex flex-col bg-[#0f172a] overflow-hidden">
                     {mode === 'manual' ? (
-                        /* Add padding/overflow back to specific child container */
                         <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-5 pb-20 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-2">
@@ -543,9 +621,7 @@ const PhotoLab = () => {
                             </div>
                         </div>
                     ) : (
-                        /* AI Mode: Flex column to keep header fixed */
                         <div className="flex flex-col h-full bg-[#0f172a]">
-                            {/* Fixed Header */}
                             <div className="p-3 border-b border-gray-800 bg-[#0f172a] shrink-0 z-10">
                                 <div className="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
                                     <h4 className="text-white font-bold font-khmer mb-2 flex items-center gap-2 text-xs"><Sparkles size={14} className="text-purple-400"/> បង្កើតពណ៌ដោយ AI</h4>
@@ -555,14 +631,12 @@ const PhotoLab = () => {
                                     </div>
                                 </div>
                             </div>
-                            
-                            {/* Scrollable Presets Grid */}
                             <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
                                 <div className="space-y-2 pb-20">
                                     <h5 className="text-gray-400 text-[10px] font-bold font-khmer uppercase">ស្តាយពេញនិយម (20 Moods)</h5>
                                     <div className="grid grid-cols-3 gap-1.5">
                                         {Object.keys(PRESET_DB).map(s => (
-                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(); }} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
+                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(s); }} className="px-1 py-2 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 rounded-lg text-center flex flex-col items-center justify-center gap-1 transition-all active:scale-95 group">
                                                 <span className="capitalize text-[9px] font-bold text-gray-300 group-hover:text-white line-clamp-2 leading-tight">{s}</span>
                                             </button>
                                         ))}
