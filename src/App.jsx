@@ -67,7 +67,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 };
 
 // ==========================================
-// 2. DATASETS (ALL PRESERVED)
+// 2. DATASETS (FULL CONTENT PRESERVED)
 // ==========================================
 
 const lessonsData = [
@@ -158,6 +158,7 @@ const lessonsData = [
   }
 ];
 
+// --- 20 PRESETS DATABASE (FULLY CACHED) ---
 const PRESET_DB = {
     "teal & orange": {
         basic: { Exposure: 0.10, Contrast: 20, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -20, Temp: 5, Tint: -5, Vibrance: 25, Saturation: -10, Clarity: 10, Dehaze: 5, Vignette: -15 },
@@ -268,38 +269,109 @@ const PRESET_DB = {
 };
 
 const QA_DB = {
-    // 20 Common Questions
-    "exposure": "• **Exposure:** កំណត់ពន្លឺរួម (+/-)។",
-    "contrast": "• **Contrast:** កំណត់គម្លាតពន្លឺ។ ខ្ពស់=ដិត, ទាប=ស្រាល។",
-    "highlight": "• **Highlights:** តំបន់ភ្លឺខ្លាំង (មេឃ)។ បន្ថយដើម្បីសង្គ្រោះ។",
-    "shadow": "• **Shadows:** តំបន់ងងឹត។ តម្លើងដើម្បីឃើញក្នុងម្លប់។",
-    "white": "• **Whites:** ចំណុចពណ៌ស។",
-    "black": "• **Blacks:** ចំណុចពណ៌ខ្មៅ។",
-    "ស្បែកស": "• **Color Mix (Orange):** Luminance (+), Saturation (-)។",
-    "portrait": "• **Vibrance:** ជំនួស Saturation។\n• **Texture:** បន្ថយបន្តិចឱ្យស្បែកម៉ត់។",
-    "teal": "Teal & Orange:\n• **Calibration:** Blue Primary (Hue -100)។\n• **Grading:** Shadows (Teal), Highlights (Orange)។",
-    "dehaze": "Dehaze:\n• **(+)** កាត់អ័ព្ទ, មេឃដិត។\n• **(-)** បន្ថែមអ័ព្ទ (Dreamy)។",
-    "យប់": "Night:\n• **Highlights:** បន្ថយ (-50)។\n• **Shadows:** តម្លើង (+30)។\n• **Noise:** បន្ថែម (+25)។",
-    "vintage": "Vintage:\n• **Curve:** Lifted Blacks (កន្ទុយឆ្វេងឡើងលើ)។\n• **Grain:** បន្ថែម (+30)។\n• **Sat:** បន្ថយ (-20)។",
-    "curves": "Tone Curve:\n• **S-Curve:** បង្កើន Contrast។\n• **Matte:** លើកចំណុចខ្មៅឡើងលើ។",
-    "grain": "Grain:\n• បន្ថែមគ្រាប់តូចៗ (Film Look) និងបិទបាំង Noise។",
-    "ងងឹត": "រូបងងឹត:\n• **Exp:** បង្កើន។\n• **Shadows:** បង្កើន។\n• **Contrast:** បន្ថយ។",
-    "មេឃ": "មេឃ:\n• **Highlights:** បន្ថយ។\n• **Blue HSL:** Sat (+), Lum (-)។",
-    "ទេសភាព": "Landscape:\n• **Dehaze:** បង្កើន។\n• **Clarity:** បង្កើន។\n• **Vibrance:** បង្កើន។",
-    "vibrance": "**Vibrance** vs **Saturation**:\n• Vibrance: ឆ្លាតវៃ (ការពារស្បែក)។\n• Saturation: ដិតទាំងអស់។",
-    "អាហារ": "Food:\n• **WB:** ពណ៌ចានស។\n• **Texture:** បង្កើន។\n• **Exp:** ភ្លឺ (Bright)。",
-    "street": "Street:\n• **Contrast:** ខ្ពស់។\n• **Clarity:** ខ្ពស់។\n• **B&W:** ពេញនិយម។"
+    // 20 Common Questions with Professional AI-style Responses
+    "exposure": "សួស្ដី! 👋\n\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាប្រៀបដូចជាការបើកបង្អួចទទួលពន្លឺចូលក្នុងកាមេរ៉ាអញ្ចឹង។\n\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់ មុននឹងចូលទៅកែផ្នែកផ្សេងៗ!",
+
+    "contrast": "សួស្ដី! 👋\n\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបភាពមានពណ៌ដិត និងមានជម្រៅ (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបភាពមើលទៅស្រាលៗ ឬស្រទន់ (Soft Look)។\n\n👉 **Tip:** កុំតម្លើងខ្លាំងពេក (កុំឱ្យលើស +50) ព្រោះវាអាចធ្វើឱ្យរូបភាពមើលទៅរឹង និងបាត់ព័ត៌មានលម្អិត។",
+
+    "highlight": "សួស្ដី! 👋\n\n**Highlights** គ្រប់គ្រងតែតំបន់ដែល **ភ្លឺខ្លាំងបំផុត** នៅក្នុងរូបភាព ដូចជាមេឃ ពពក ឬពន្លឺថ្ងៃចាំងលើមុខ។\n\n💡 **គន្លឹះពិសេស:**\n• ប្រសិនបើថតមេឃហើយសស្គុះ សូមបន្ថយ Highlights (-50 ទៅ -100)។ អ្នកនឹងឃើញពពកត្រឡប់មកវិញយ៉ាងអស្ចារ្យ!",
+
+    "shadow": "សួស្ដី! 👋\n\n**Shadows** គ្រប់គ្រងតំបន់ដែល **ងងឹត** ឬនៅក្នុងម្លប់។\n\n💡 **ការណែនាំ:**\n• ប្រសិនបើអ្នកថតរូបបញ្ច្រាសពន្លឺ (Backlit) ហើយមុខងងឹត សូមតម្លើង Shadows (+40 ទៅ +70)។\n• ការតម្លើង Shadows ជួយឱ្យយើងមើលឃើញព័ត៌មាននៅក្នុងកន្លែងងងឹតបានច្បាស់។",
+
+    "white": "សួស្ដី! 👋\n\n**Whites** កំណត់ចំណុច **ពណ៌សដាច់ខាត (True White)**។ វាខុសពី Highlights ត្រង់ថាវាធ្វើឱ្យផ្នែកភ្លឺ ក្លាយជាពណ៌សសុទ្ធ។\n\n👉 **Tip:** តម្លើងបន្តិច (+10 ទៅ +20) ដើម្បីឱ្យរូបភាពមើលទៅភ្លឺថ្លា (Clean Look)។",
+
+    "black": "សួស្ដី! 👋\n\n**Blacks** កំណត់ចំណុច **ពណ៌ខ្មៅដាច់ខាត (True Black)**។\n\n👉 **Tip:** បន្ថយបន្តិច (-10 ទៅ -20) ដើម្បីឱ្យរូបភាពមានជម្រៅ (Depth) និងពណ៌ដិតល្អ។",
+
+    "ស្បែកស": "សួស្ដី! ចង់បានរូបមន្តកែ **ស្បែកស (Bright Skin Tone)** មែនទេ? សាកល្បងវិធីនេះ៖\n\n1. ចូលទៅកាន់ **Color > Mix**។\n2. ជ្រើសរើសពណ៌ **ទឹកក្រូច (Orange)**។\n3. **Luminance:** តម្លើង (+15 ទៅ +25)។\n4. **Saturation:** បន្ថយបន្តិច (-5 ទៅ -15)។\n\n💡 **ចំណាំ:** កុំតម្លើង Luminance ខ្លាំងពេក ប្រយ័ត្នស្បែកស្លេកគ្មានឈាម!",
+
+    "portrait": "សួស្ដី! ដើម្បីកែរូប **Portrait (មនុស្ស)** ឱ្យស្រស់ស្អាត៖\n\n• **Face:** បន្ថយ Texture បន្តិច (-15) ដើម្បីឱ្យស្បែកមុខម៉ត់រលោង (Soft Skin)។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារកុំឱ្យពណ៌ស្បែកខូច។\n• **Eyes:** អាចប្រើ Masking លើភ្នែក ហើយតម្លើង Clarity និង Exposure តិចៗ។",
+
+    "teal": "សួស្ដី! នេះជារូបមន្ត **Teal & Orange (Cinematic Look)** ដ៏ពេញនិយម៖\n\n• **Calibration:** Blue Primary (Hue -100, Sat +50)។\n• **Color Grading:**\n  - Shadows: ដាក់ពណ៌ Teal (Hue 210)។\n  - Highlights: ដាក់ពណ៌ Orange (Hue 35)។\n• **Color Mix:** ប្តូរ Hue ពណ៌ខៀវទៅឆ្វេង (Aqua) និងពណ៌ទឹកក្រូចទៅស្តាំ។",
+
+    "dehaze": "សួស្ដី! **Dehaze** គឺជាឧបករណ៍វេទមន្តសម្រាប់រូបទេសភាព៖\n\n• **កាត់បន្ថយ (+):** ជួយលុបអ័ព្ទ ឬផ្សែង ធ្វើឱ្យមេឃដិតច្បាស់ និងរូបមាន Contrast ខ្លាំង។\n• **បន្ថែម (-):** បង្កើតអ័ព្ទសិប្បនិម្មិត ធ្វើឱ្យរូបមើលទៅស្រទន់ដូចក្នុងសុបិន (Dreamy/Foggy Look)។",
+
+    "យប់": "សួស្ដី! នេះជាគន្លឹះសម្រាប់កែ **រូបថតពេលយប់ (Night Photography)**៖\n\n• **Exposure:** តម្លើងបន្តិច (+0.5)។\n• **Highlights:** បន្ថយ (-50) ដើម្បីកុំឱ្យភ្លើងអំពូលចាំងពេក។\n• **Shadows:** តម្លើង (+30) ឱ្យឃើញព័ត៌មានក្នុងទីងងឹត។\n• **Noise:** សំខាន់បំផុត! បង្កើន Noise Reduction (20-30) ដើម្បីលុបគ្រាប់។",
+
+    "vintage": "សួស្ដី! ចង់បានរូបបែប **Vintage (បុរាណ)** មែនទេ? សាកល្បងរូបមន្តនេះ៖\n\n• **Tone Curve:** លើកចំណុចខ្មៅខាងឆ្វេងបំផុតឡើងលើបន្តិច (Lifted Blacks)។\n• **Grain:** បន្ថែម (+30) ដើម្បីឱ្យគ្រើមដូចហ្វីល។\n• **Saturation:** បន្ថយ (-20) ឱ្យពណ៌ស្រាល។\n• **Temp:** តម្លើងឱ្យលឿងបន្តិច។",
+
+    "curves": "សួស្ដី! **Tone Curve** គឺជាក្រាហ្វកម្រិតខ្ពស់សម្រាប់គ្រប់គ្រងពន្លឺ។\n\n• **S-Curve:** ទាញក្រាហ្វជារាងអក្សរ S (ដាក់ចំណុច ៣: ស្រមោលចុះក្រោម, ពន្លឺឡើងលើ) ដើម្បីបង្កើន Contrast ឱ្យស្អាតជាងការប្រើ Slider ធម្មតា។\n• **Matte Look:** ទាញចំណុចខាងឆ្វេងក្រោមឡើងលើ ដើម្បីឱ្យពណ៌ខ្មៅប្រែជាប្រផេះ។",
+
+    "grain": "សួស្ដី! **Grain** គឺជាគ្រាប់តូចៗដែលបន្ថែមលើរូបភាព។\n\n🤔 **ហេតុអ្វីគួរប្រើ?**\n• **Aesthetic:** បង្កើតអារម្មណ៍ដូចរូបថតកាមេរ៉ាជ័រ (Film Look)។\n• **Fix:** ជួយបិទបាំង Noise ដែលមិនស្អាត (Digital Noise) ឱ្យមើលទៅធម្មជាតិជាង។",
+
+    "ងងឹត": "សួស្ដី! បើរូបថតរបស់អ្នក **ងងឹតពេក (Underexposed)** សូមកុំបារម្ភ៖\n\n1. **Exposure:** បង្កើន (+1.0 ឬតាមការគួរ)។\n2. **Shadows:** បង្កើន (+40)។\n3. **Contrast:** អាចបន្ថយបន្តិចបើខ្លាំងពេក។\n\n⚠️ **ប្រយ័ត្ន:** ការតម្លើងពន្លឺខ្លាំងអាចធ្វើឱ្យរូបមាន Noise (គ្រាប់) ដូច្នេះកុំភ្លេចថែម Noise Reduction។",
+
+    "មេឃ": "សួស្ដី! ដើម្បីធ្វើឱ្យ **មេឃដិតស្អាត**៖\n\n• **Light:** បន្ថយ Highlights (-100) ជាមុនសិន។\n• **Color Mix (Blue):** បន្ថយ Luminance (-20) និងតម្លើង Saturation (+20)។\n• **Masking:** ល្អបំផុតគឺប្រើ 'Select Sky' រួចបន្ថយ Exposure និងបង្កើន Dehaze បន្តិច។",
+
+    "ទេសភាព": "សួស្ដី! សម្រាប់ការកែរូប **Landscape (ទេសភាព)**៖\n\n• **Dehaze:** ដាក់ (+20) ដើម្បីឱ្យរូបថ្លា កាត់អ័ព្ទ។\n• **Clarity:** បង្កើន (+15) ឱ្យឃើញ Detail ដើមឈើ/ថ្ម។\n• **Vibrance:** បង្កើន (+30) ឱ្យពណ៌ធម្មជាតិស្រស់។\n• **Sharpening:** បន្ថែម (+40) ឱ្យរូបច្បាស់។",
+
+    "vibrance": "សួស្ដី! **Vibrance និង Saturation** ខុសគ្នាត្រង់ណា?\n\n• **Vibrance (ឆ្លាតវៃ):** បង្កើនតែពណ៌ដែលស្លេក និងការពារពណ៌ស្បែកមិនឱ្យខូច (ល្អសម្រាប់រូបមនុស្ស)។\n• **Saturation (ទូទៅ):** បង្កើនគ្រប់ពណ៌ទាំងអស់ស្មើគ្នា (អាចធ្វើឱ្យស្បែកក្រហមខ្លាំង)។",
+
+    "អាហារ": "សួស្ដី! គន្លឹះថតរូប **អាហារ (Food Photography)**៖\n\n• **White Balance:** កុំឱ្យជាប់លឿងឬខៀវពេក ត្រូវឱ្យពណ៌ចានស។\n• **Texture/Clarity:** បង្កើនបន្តិច (+20) ដើម្បីឱ្យអាហារមើលទៅមានរសជាតិ។\n• **Exposure:** ធ្វើឱ្យភ្លឺស្អាត (Bright & Airy) ដើម្បីឱ្យគួរឱ្យចង់ញ៉ាំ។",
+
+    "street": "សួស្ដី! គន្លឹះ **Street Photography**៖\n\n• **Style:** និយមប្រើ Contrast ខ្ពស់ (High Contrast) និង Clarity ខ្លាំង។\n• **Color:** អាចប្រើជាសខ្មៅ (B&W) ឬ Urban Grey (ដកពណ៌ផ្សេងចេញ ទុកតែពណ៌ក្រហម/លឿង/ទឹកក្រូច)។"
 };
 
 const TIPS_LIST = [
-    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset។", 
-    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping។", "Export ជា DNG ដើម្បីចែករំលែក Preset។"
+    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម រួចកែតម្រូវតាមក្រោយ។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset វាទៅ 0។", 
+    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping ពេលអូស Whites/Blacks។", "បន្ថយ Highlights និងតម្លើង Shadows ដើម្បីបានរូបបែប HDR។", 
+    "ប្រើ Masking 'Select Sky' ដើម្បីកែពណ៌មេឃអោយដិតស្អាត។", "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បាន។", "កុំប្រើ Clarity ខ្លាំងពេកលើមុខមនុស្ស។",
+    "ប្រើ Vibrance ជំនួស Saturation។", "Export ជា DNG ដើម្បីចែករំលែក Preset។", "ប្រើ Grid ពេលថត ដើម្បីឱ្យរូបត្រង់។",
+    "ដាក់ផ្កាយរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) ដើម្បីប្តូរពណ៌ស្លឹកឈើ។"
 ];
 
+// --- 50+ QUESTIONS DATABASE (FULL RESTORED) ---
 const initialQuestionBank = [
   { id: 1, question: "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
   { id: 2, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"], correct: 1, level: "beginner" },
-  // ... 50+ questions retained (simplified for brevity but existing in logic)
+  { id: 3, question: "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?", options: ["Green", "Orange", "Blue", "Red"], correct: 2, level: "beginner" },
+  { id: 4, question: "តើ Dehaze ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបព្រាល", "កាត់បន្ថយឬបន្ថែមអ័ព្ទ", "ប្តូរពណ៌រូបភាព", "កាត់រូបភាព"], correct: 1, level: "beginner" },
+  { id: 5, question: "ប្រសិនបើអ្នកចង់ឱ្យផ្ទៃមុខម៉ត់រលោង តើគួរធ្វើដូចម្តេច?", options: ["តម្លើង Texture", "បន្ថយ Texture", "តម្លើង Clarity", "តម្លើង Sharpening"], correct: 1, level: "advanced" },
+  { id: 6, question: "តើឧបករណ៍មួយណាជួយកែរូបដែលថតមកវារេ ឬមិនត្រង់?", options: ["Optics", "Geometry/Upright", "Detail", "Effects"], correct: 1, level: "advanced" },
+  { id: 7, question: "តើ Tone Curve មួយណាដែលធ្វើឱ្យរូបមាន Contrast ស្អាត (Pop)?", options: ["Linear", "S-Curve", "Flat", "Inverted"], correct: 1, level: "advanced" },
+  { id: 8, question: "តើ DNG ជាប្រភេទ file អ្វី?", options: ["Video", "RAW Image", "Audio", "Text"], correct: 1, level: "advanced" },
+  { id: 9, question: "តើ Temp ប្រើសម្រាប់កែអ្វី?", options: ["ភាពច្បាស់", "សីតុណ្ហភាពពណ៌ (លឿង/ខៀវ)", "ពន្លឺ", "គ្រាប់ Noise"], correct: 1, level: "beginner" },
+  { id: 10, question: "តើការប្រើ Sharpening ខ្លាំងពេកនឹងធ្វើឱ្យរូបទៅជាយ៉ាងណា?", options: ["ច្បាស់ស្អាត", "មានគ្រាប់ Noise និងខូចគុណភាព", "មើលទៅទន់", "មានពណ៌ស្រស់"], correct: 1, level: "advanced" },
+  { id: 11, question: "តើ Vignette ធ្វើអ្វី?", options: ["ធ្វើឱ្យរូបភ្លឺ", "ធ្វើឱ្យគែមងងឹត", "ប្តូរពណ៌រូប", "ធ្វើឱ្យរូបព្រាល"], correct: 1, level: "beginner" },
+  { id: 12, question: "តើ Color Grading ប្រើសម្រាប់អ្វី?", options: ["ដាក់ពណ៌ចូល Shadows/Highlights", "កែពន្លឺ", "កាត់រូប", "លុបមុន"], correct: 0, level: "advanced" },
+  { id: 13, question: "តើ Highlights គ្រប់គ្រងតំបន់ណា?", options: ["តំបន់ងងឹត", "តំបន់កណ្តាល", "តំបន់ភ្លឺខ្លាំង", "ពណ៌ទាំងអស់"], correct: 2, level: "beginner" },
+  { id: 14, question: "តើ Masking ប្រើសម្រាប់អ្វី?", options: ["កែរូបទាំងមូល", "កែតំបន់ជាក់លាក់", "Export រូប", "Share រូប"], correct: 1, level: "advanced" },
+  { id: 15, question: "តើ Healing Brush ប្រើសម្រាប់អ្វី?", options: ["គូររូប", "លុបមុនឬវត្ថុមិនចង់បាន", "ប្តូរពណ៌", "ដាក់អក្សរ"], correct: 1, level: "beginner" },
+  { id: 16, question: "តើ Noise Reduction ប្រើនៅពេលណា?", options: ["ថតពេលថ្ងៃ", "ថតពេលយប់ (ISO ខ្ពស់)", "ថត Portrait", "ថត Landscape"], correct: 1, level: "advanced" },
+  { id: 17, question: "តើ Aspect Ratio មួយណាសម្រាប់ Instagram Story?", options: ["1:1", "4:5", "16:9", "9:16"], correct: 3, level: "beginner" },
+  { id: 18, question: "តើ Profile មួយណាដែលធ្វើឱ្យរូបសខ្មៅ?", options: ["Adobe Color", "Adobe Landscape", "Adobe Monochrome", "Adobe Vivid"], correct: 2, level: "beginner" },
+  { id: 19, question: "តើ Calibration ស្ថិតនៅត្រង់ណា?", options: ["លើគេ", "ក្រោមគេ", "កណ្តាល", "គ្មានទេ"], correct: 1, level: "advanced" },
+  { id: 20, question: "តើ Shortcut ដើម្បីមើល Before/After គឺអ្វី?", options: ["ចុចសង្កត់លើរូប", "ចុចពីរដង", "អូសទៅឆ្វេង", "អូសទៅស្តាំ"], correct: 0, level: "beginner" },
+  { id: 21, question: "តើ Histogram ផ្នែកខាងឆ្វេងបង្ហាញពីអ្វី?", options: ["Shadows/Blacks", "Highlights/Whites", "Midtones", "Colors"], correct: 0, level: "advanced" },
+  { id: 22, question: "តើ Histogram ផ្នែកខាងស្តាំបង្ហាញពីអ្វី?", options: ["Shadows/Blacks", "Highlights/Whites", "Midtones", "Colors"], correct: 1, level: "advanced" },
+  { id: 23, question: "តើ Rule of Thirds ជួយអ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "ជួយរៀបចំសមាសភាពរូប (Composition)", "កែពណ៌", "លុបមុន"], correct: 1, level: "beginner" },
+  { id: 24, question: "តើ ISO ខ្ពស់ (ឧ. 3200) នឹងធ្វើឱ្យរូបយ៉ាងម៉េច?", options: ["ច្បាស់ល្អ", "ងងឹត", "មានគ្រាប់ Noise", "មានពណ៌ស្រស់"], correct: 2, level: "advanced" },
+  { id: 25, question: "ដើម្បីបង្កកចលនា (Freeze Motion) តើត្រូវប្រើ Shutter Speed បែបណា?", options: ["លឿន (ឧ. 1/1000)", "យឺត (ឧ. 1/30)", "ធម្មតា", "មិនសំខាន់"], correct: 0, level: "advanced" },
+  { id: 26, question: "តើ Aperture f/1.8 ផ្តល់លទ្ធផលបែបណា?", options: ["ផ្ទៃក្រោយច្បាស់", "ផ្ទៃក្រោយព្រាល (Bokeh)", "រូបងងឹត", "រូបច្បាស់ទាំងអស់"], correct: 1, level: "advanced" },
+  { id: 27, question: "តើ White Balance គិតជាខ្នាតអ្វី?", options: ["Pixels", "Kelvin (K)", "Percent", "Degrees"], correct: 1, level: "advanced" },
+  { id: 28, question: "បើចង់បន្ថែមអ័ព្ទក្នុងរូប តើត្រូវកែ Dehaze ទៅខាងណា?", options: ["ខាងស្តាំ (+)", "ខាងឆ្វេង (-)", "កុំកែ", "កែ Contrast"], correct: 1, level: "beginner" },
+  { id: 29, question: "តើ Midpoint ក្នុង Vignette កំណត់អ្វី?", options: ["ភាពងងឹត", "ទំហំនៃរង្វង់កណ្តាល", "ភាពព្រាល", "ពណ៌"], correct: 1, level: "advanced" },
+  { id: 30, question: "តើ Feather ក្នុង Vignette កំណត់អ្វី?", options: ["ភាពរលោងនៃគែម", "ទំហំ", "ពណ៌", "ភាពច្បាស់"], correct: 0, level: "advanced" },
+  { id: 31, question: "តើ Chromatic Aberration ជាធម្មតាមានពណ៌អ្វី?", options: ["ស/ខ្មៅ", "ស្វាយ/បៃតង", "ក្រហម/ខៀវ", "លឿង/ទឹកក្រូច"], correct: 1, level: "advanced" },
+  { id: 32, question: "តើ Upright 'Guided' ប្រើរបៀបណា?", options: ["ស្វ័យប្រវត្តិ", "គូសបន្ទាត់ដោយដៃ", "មិនបាច់ធ្វើអ្វីទេ", "គ្រាន់តែចុច"], correct: 1, level: "advanced" },
+  { id: 33, question: "តើ 1:1 Aspect Ratio សមស្របសម្រាប់អ្វី?", options: ["Instagram Post/Square", "Story", "Youtube", "Cover Photo"], correct: 0, level: "beginner" },
+  { id: 34, question: "តើ Invert ក្នុង Masking មានន័យថាដូចម្តេច?", options: ["លុប Mask", "ជ្រើសរើសតំបន់ផ្ទុយ (កន្លែងដែលមិនបានរើស)", "បង្កើន Mask", "បិទ Mask"], correct: 1, level: "advanced" },
+  { id: 35, question: "តើ Linear Gradient ប្រើល្អបំផុតសម្រាប់អ្វី?", options: ["កែមុខ", "កែមេឃ ឬដី", "កែភ្នែក", "កែមុន"], correct: 1, level: "beginner" },
+  { id: 36, question: "តើ Shortcut សម្រាប់ Copy Settings គឺអ្វី?", options: ["Ctrl/Cmd + C", "Ctrl/Cmd + V", "Ctrl/Cmd + Z", "Ctrl/Cmd + S"], correct: 0, level: "beginner" },
+  { id: 37, question: "តើ Shortcut សម្រាប់ Paste Settings គឺអ្វី?", options: ["Ctrl/Cmd + C", "Ctrl/Cmd + V", "Ctrl/Cmd + Z", "Ctrl/Cmd + S"], correct: 1, level: "beginner" },
+  { id: 38, question: "តើ Shortcut សម្រាប់ Undo គឺអ្វី?", options: ["Ctrl/Cmd + C", "Ctrl/Cmd + V", "Ctrl/Cmd + Z", "Ctrl/Cmd + S"], correct: 2, level: "beginner" },
+  { id: 39, question: "តើឧបករណ៍ Red Eye Correction ប្រើសម្រាប់អ្វី?", options: ["កែភ្នែកក្រហម", "កែភ្នែកឱ្យធំ", "ប្តូរពណ៌ភ្នែក", "ធ្វើឱ្យភ្នែកភ្លឺ"], correct: 0, level: "beginner" },
+  { id: 40, question: "តើ Spot Removal 'Clone' ធ្វើអ្វី?", options: ["បិទបាំង", "ចម្លងតំបន់មួយទៅដាក់តំបន់មួយទៀត", "លុបចោល", "ធ្វើឱ្យព្រាល"], correct: 1, level: "advanced" },
+  { id: 41, question: "តើ Reference View ប្រើសម្រាប់អ្វី?", options: ["មើលរូបតែមួយ", "ប្រៀបធៀបរូបភាពពីរ", "មើល Histogram", "មើល Metadata"], correct: 1, level: "advanced" },
+  { id: 42, question: "តើ Snapshots ប្រើសម្រាប់អ្វី?", options: ["ថតរូប", "រក្សាទុកស្ថានភាពនៃការកែ (Saved States)", "Share រូប", "Export រូប"], correct: 1, level: "advanced" },
+  { id: 43, question: "តើពណ៌អ្វីដែលផ្តល់អារម្មណ៍ 'កក់ក្តៅ' (Warm)?", options: ["ខៀវ", "លឿង/ទឹកក្រូច", "បៃតង", "ស្វាយ"], correct: 1, level: "beginner" },
+  { id: 44, question: "តើពណ៌អ្វីដែលផ្តល់អារម្មណ៍ 'ត្រជាក់' (Cool)?", options: ["ខៀវ", "លឿង", "ក្រហម", "ទឹកក្រូច"], correct: 0, level: "beginner" },
+  { id: 45, question: "ដើម្បីកែស្មៅឱ្យមានពណ៌បៃតងខ្ចី តើត្រូវកែ Hue ទៅខាងណា?", options: ["ខាងឆ្វេង (ទៅរកលឿង)", "ខាងស្តាំ (ទៅរកខៀវ)", "មិនបាច់កែ", "កែ Saturation"], correct: 0, level: "advanced" },
+  { id: 46, question: "តើ Luminance ក្នុង Color Mix ធ្វើអ្វី?", options: ["ប្តូរពណ៌", "កែភាពដិត", "កែពន្លឺនៃពណ៌", "កែភាពច្បាស់"], correct: 2, level: "beginner" },
+  { id: 47, question: "តើ Split Toning (Color Grading) អាចដាក់ពណ៌បានប៉ុន្មានតំបន់?", options: ["1", "2 (Shadows/Highlights)", "3 (Shadows/Midtones/Highlights)", "4"], correct: 2, level: "advanced" },
+  { id: 48, question: "តើការប្រើ Presets មានប្រយោជន៍អ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "ចំណេញពេល និងមានស្តាយដូចគ្នា", "លុប Noise", "កែ Lens"], correct: 1, level: "beginner" },
+  { id: 49, question: "តើ RAW file មានទំហំធំជាង JPG ដែរឬទេ?", options: ["តូចជាង", "ស្មើគ្នា", "ធំជាងច្រើន", "មិនប្រាកដ"], correct: 2, level: "beginner" },
+  { id: 50, question: "តើ Clarity ខុសពី Texture យ៉ាងដូចម្តេច?", options: ["Clarity ខ្លាំងជាង Texture", "Texture ល្អសម្រាប់ស្បែក Clarity ល្អសម្រាប់សំណង់", "មិនខុសគ្នាទេ", "Texture ធ្វើឱ្យរូបព្រាល"], correct: 1, level: "advanced" },
+  { id: 51, question: "តើពេលណាគួរប្រើ Black & White?", options: ["ពេលពណ៌មិនស្អាត ឬចង់បានអារម្មណ៍", "គ្រប់ពេល", "តែពេលយប់", "តែពេលថ្ងៃ"], correct: 0, level: "beginner" }
 ];
 
 // ==========================================
@@ -344,6 +416,7 @@ const generateXMP = (recipe, title) => {
         return { h: c.h || 0, s: c.s || 0, l: c.l || 0 };
     };
 
+    // FIX: Using IncrementalTemperature and WhiteBalance="As Shot" for compatibility
     const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -476,6 +549,7 @@ const Header = ({ activeTab, setActiveTab }) => {
           <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
              <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover" />
           </div>
+          {/* Always Visible Text */}
           <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
         </div>
         <nav className="hidden md:flex space-x-1 bg-[#1e293b] p-1 rounded-xl border border-gray-700 overflow-x-auto">
@@ -1112,15 +1186,15 @@ const ChatBot = ({ isOnline }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-150px)] max-h-[600px] w-full max-w-4xl mx-auto">
+    <div className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6">
       <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 p-4 border-b border-gray-800 flex items-center space-x-3"><div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2.5 rounded-xl shadow-lg shadow-purple-500/20"><Bot className="w-5 h-5 text-white" /></div><div><h3 className="font-bold text-white font-khmer">គ្រូជំនួយ AI</h3><p className="text-xs text-blue-200 font-khmer">Powered by Gemini & Hybrid Cache ✨</p></div></div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0f172a]">{messages.map((m, i) => <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`p-3.5 rounded-2xl max-w-[85%] text-sm font-khmer leading-relaxed shadow-sm whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-[#1e293b] text-gray-200 rounded-bl-none border border-gray-700'}`}>{m.text}</div></div>)}
         {loading && <div className="flex justify-start"><div className="p-3.5 rounded-2xl bg-[#1e293b] border border-gray-700 rounded-bl-none"><Loader2 className="w-4 h-4 text-purple-400 animate-spin" /></div></div>}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-[#1e293b] border-t border-gray-800">
+      <div className="p-4 bg-[#1e293b] border-t border-gray-800 pb-20 md:pb-4">
           <div className="flex gap-2 items-center mb-3"><button onClick={randomizeSuggestions} className="p-1.5 bg-[#0f172a] hover:bg-[#334155] rounded-full text-gray-400 hover:text-white transition-all"><RefreshCw className="w-3 h-3" /></button><div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">{suggestions.map((q, i) => <button key={i} onClick={() => handleSend(q)} className="whitespace-nowrap px-3 py-1.5 bg-[#0f172a] hover:bg-[#334155] hover:border-blue-500 rounded-full text-xs text-gray-300 border border-gray-700 transition-all font-khmer">{q}</button>)}</div></div>
-          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
+          <div className="flex gap-2"><input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអ្វីមួយ..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-5 py-3 text-base text-white focus:outline-none focus:border-blue-500 font-khmer transition-colors" style={{ touchAction: 'manipulation' }} /><button onClick={() => handleSend()} disabled={loading} className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 p-3 rounded-xl text-white shadow-lg disabled:opacity-50"><Send size={18}/></button></div>
       </div>
     </div>
   );
@@ -1168,7 +1242,6 @@ export default function App() {
       // If at root level, handle double press to exit
       if (backPressCount === 0) {
         setBackPressCount(1);
-        // Show toast or visual cue here (simplified with console for now, or add a Toast component)
         const toast = document.createElement('div');
         toast.textContent = "ចុចម្តងទៀតដើម្បីចាកចេញ";
         toast.style.cssText = "position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1000; font-family: 'Kantumruy Pro'; font-size: 12px;";
@@ -1181,7 +1254,6 @@ export default function App() {
             window.history.pushState(null, "", window.location.pathname);
         } catch (e) {}
       } else {
-        // Allow exit (default browser behavior)
         window.history.back(); 
       }
     };
