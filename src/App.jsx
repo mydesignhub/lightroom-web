@@ -58,12 +58,38 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 // ==========================================
 
 const lessonsData = [
-  { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-6 h-6 text-yellow-400" />, description: 'ការកែសម្រួលពន្លឺមូលដ្ឋាន', content: [{ tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាព។', tip: 'ចាប់ផ្តើមពីនេះមុនគេ។' }, { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។', tip: 'កុំអោយលើស +50។' }, { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ភ្លឺខ្លាំង។', tip: 'បន្ថយដើម្បីសង្គ្រោះមេឃ។' }, { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ក្នុងម្លប់។', tip: 'តម្លើងសម្រាប់រូប Backlit។' }, { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត។', tip: 'Alt+Drag ដើម្បីមើល Clipping។' }, { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចខ្មៅបំផុត។', tip: 'បន្ថយបន្តិចអោយរូបមានជម្រៅ។' }] },
-  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-6 h-6 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [{ tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌លឿង/ខៀវ។', tip: 'ថតពេលថ្ងៃលិចអោយជាប់លឿង។' }, { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌បៃតង/ស្វាយ។', tip: 'កែពណ៌ស្បែកដែលជាប់បៃតង។' }, { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក។', tip: 'ល្អសម្រាប់ Portrait។' }, { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យបែកពណ៌។' }, { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'HSL (Hue, Sat, Lum) សម្រាប់ពណ៌នីមួយៗ។', tip: 'Orange Lum សម្រាប់ស្បែកស។' }] },
-  { id: 'effects', title: 'បែបផែន (Effects)', icon: <Aperture className="w-6 h-6 text-purple-400" />, description: 'Texture, Clarity, Dehaze', content: [{ tool: 'Texture', khmer: 'វាយនភាព', desc: 'កែផ្ទៃអោយគ្រើមឬរលោង។', tip: '-10 សម្រាប់ស្បែកមុខ។' }, { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'Contrast នៅកណ្តាល។', tip: 'កុំប្រើច្រើនលើមុខមនុស្ស។' }, { tool: 'Dehaze', khmer: 'កាត់អ័ព្ទ', desc: 'លុបឬបន្ថែមអ័ព្ទ។', tip: 'ប្រើពេលមេឃស្រអាប់។' }, { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើអោយគែមរូបងងឹត។', tip: 'ជួយផ្តោតអារម្មណ៍កណ្តាល។' }] },
-  { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-6 h-6 text-pink-400" />, description: 'Sharpening & Noise', content: [{ tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយរូបច្បាស់។', tip: 'ប្រើ Masking ជាមួយ។' }, { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise។', tip: 'សម្រាប់រូបថតយប់។' }] },
-  { id: 'optics', title: 'Optics', icon: <Crop className="w-6 h-6 text-green-400" />, description: 'Lens Corrections', content: [{ tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែ Distortion របស់លែន។', tip: 'គួរតែបើកជានិច្ច។' }, { tool: 'Chromatic', khmer: 'ពណ៌តាមគែម', desc: 'លុបពណ៌ស្វាយតាមគែម។', tip: 'ប្រើលើរូប Contrast ខ្ពស់។' }] },
-  { id: 'geometry', title: 'Geometry', icon: <Layout className="w-6 h-6 text-blue-400" />, description: 'តម្រង់រូប', content: [{ tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារត្រង់។', tip: 'ប្រើ Auto សម្រាប់លទ្ធផលលឿន។' }] }
+  { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-6 h-6 text-yellow-400" />, description: 'ការគ្រប់គ្រងពន្លឺនិងភាពផ្ទុយ', content: [
+    { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាជាជំហានដំបូងក្នុងការកែ។', tip: 'ឧទាហរណ៍៖ រូបថតពេលល្ងាចងងឹតបន្តិច ដាក់ +0.50 ទៅ +1.00។' }, 
+    { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត។', tip: 'ឧទាហរណ៍៖ រូបសន្លប់ៗ ដាក់ +20។ កុំឱ្យលើស +50 ប្រយ័ត្នបែកពណ៌។' }, 
+    { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ឬពន្លឺថ្ងៃ)។', tip: 'ឧទាហរណ៍៖ បើថតមេឃហើយបាត់ពពក ដាក់ -80 ដល់ -100 ដើម្បីសង្គ្រោះពពកមកវិញ។' }, 
+    { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ដែលស្ថិតក្នុងម្លប់។', tip: 'ឧទាហរណ៍៖ បើថតបញ្ច្រាស់ថ្ងៃមុខខ្មៅ ដាក់ +40 ដល់ +60 ដើម្បីឱ្យមុខភ្លឺ។' }, 
+    { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត (White Point) នៃរូបភាព។', tip: 'ចុច Alt+Drag (ឬប្រើម្រាមដៃពីរ) ដើម្បីមើលកន្លែងដែលភ្លឺពេក (Clipping)។' }, 
+    { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចខ្មៅបំផុត។ ធ្វើឱ្យរូបមានជម្រៅ។', tip: 'ឧទាហរណ៍៖ ដាក់ -10 ទៅ -20 ដើម្បីឱ្យរូបមើលទៅមានទម្ងន់ និងមិនស្លេក។' }
+  ] },
+  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-6 h-6 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [
+    { tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌អោយទៅជាលឿង (ក្តៅ) ឬ ខៀវ (ត្រជាក់)។', tip: 'ឧទាហរណ៍៖ រូបថត Golden Hour ដាក់ +10។ រូបថតក្នុងអគារភ្លើងលឿង ដាក់ -10។' }, 
+    { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌អោយទៅជាបៃតង ឬ ស្វាយ។ ប្រើសម្រាប់កែ White Balance។', tip: 'ឧទាហរណ៍៖ បើថតក្នុងព្រៃហើយស្បែកជាប់បៃតង ដាក់ +15 (ទៅរកស្វាយ)។' }, 
+    { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក ដោយមិនប៉ះពាល់ពណ៌ដែលដិតស្រាប់ (ការពារពណ៌ស្បែក)។', tip: 'ល្អសម្រាប់រូប Portrait។ ប្រើ +20 ជំនួស Saturation។' }, 
+    { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យស្បែកទៅជាពណ៌ទឹកក្រូចខ្លាំង។' }, 
+    { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'ឧបករណ៍ HSL (Hue, Saturation, Luminance) សម្រាប់កែពណ៌នីមួយៗដាច់ដោយឡែក។', tip: 'ឧទាហរណ៍ (ស្បែកស)៖ Orange Luminance +20, Saturation -10។' }
+  ] },
+  { id: 'effects', title: 'បែបផែន (Effects)', icon: <Aperture className="w-6 h-6 text-purple-400" />, description: 'Texture, Clarity, Dehaze', content: [
+    { tool: 'Texture', khmer: 'វាយនភាព', desc: 'កែផ្ទៃអោយគ្រើម (ឃើញលម្អិត) ឬរលោង។', tip: 'ឧទាហរណ៍៖ ដាក់ -15 សម្រាប់ធ្វើឱ្យស្បែកមុខម៉ត់រលោង (Skin Smoothing)។' }, 
+    { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'បង្កើន Contrast នៅតំបន់កណ្តាល (Midtones) ធ្វើឱ្យរូបមើលទៅរឹងមាំ។', tip: 'កុំប្រើច្រើនលើមុខមនុស្ស។ ល្អសម្រាប់រូបថត Street ឬ Landscape (+30)។' }, 
+    { tool: 'Dehaze', khmer: 'កាត់អ័ព្ទ', desc: 'លុបអ័ព្ទធ្វើឱ្យរូបថ្លា ឬបន្ថែមអ័ព្ទ។', tip: 'ឧទាហរណ៍៖ ថតទេសភាពមេឃស្រអាប់ ដាក់ +20 ធ្វើឱ្យមេឃដិតនិងស្រឡះ។' }, 
+    { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើអោយគែមរូបងងឹត ឬភ្លឺ ដើម្បីផ្តោតអារម្មណ៍ទៅកណ្តាល។', tip: 'ដាក់ -20 សម្រាប់រូប Portrait ដើម្បីឱ្យគេមើលតែតួអង្គ។' }
+  ] },
+  { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-6 h-6 text-pink-400" />, description: 'Sharpening & Noise', content: [
+    { tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយគែមនៃវត្ថុក្នុងរូបកាន់តែច្បាស់។', tip: 'ប្រើជាមួយ Masking (Alt/Hold) ដើម្បីកុំឱ្យមុតពេញផ្ទៃមុខ។' }, 
+    { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise ដែលកើតឡើងពេលថតកន្លែងងងឹត (ISO ខ្ពស់)។', tip: 'ដាក់ +20 ដល់ +30 សម្រាប់រូបថតយប់។ កុំដាក់ច្រើនពេករូបនឹងក្លាយជាជ័រ។' }
+  ] },
+  { id: 'optics', title: 'Optics', icon: <Crop className="w-6 h-6 text-green-400" />, description: 'Lens Corrections', content: [
+    { tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែតម្រូវការពត់កោង (Distortion) និង Vignette ដែលបង្កដោយកែវថត (Lens)។', tip: 'គួរតែបើកជានិច្ច (Enable) គ្រប់រូបភាព។' }, 
+    { tool: 'Chromatic', khmer: 'ពណ៌តាមគែម', desc: 'លុបពណ៌ស្វាយ ឬបៃតងដែលមិនចង់បាននៅតាមគែមវត្ថុ (Fringing)។', tip: 'ប្រើលើរូបដែលមាន Contrast ខ្ពស់ ដូចជាថតដើមឈើទល់នឹងមេឃ។' }
+  ] },
+  { id: 'geometry', title: 'Geometry', icon: <Layout className="w-6 h-6 text-blue-400" />, description: 'តម្រង់រូប', content: [
+    { tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលលឿន ឬ "Vertical" សម្រាប់ថតអគារ។' }
+  ] }
 ];
 
 const PRESET_DB = {
@@ -90,59 +116,124 @@ const PRESET_DB = {
 };
 
 const QA_DB = {
-    "exposure": "សួស្ដី! 👋\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាព។\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **គន្លឹះ:** គួរកែ Exposure ជាមុនគេបង្អស់!",
-    "contrast": "សួស្ដី! 👋\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n💡 **ការណែនាំ:**\n• **Contrast ខ្ពស់:** ធ្វើឱ្យរូបដិត (Pop)។\n• **Contrast ទាប:** ធ្វើឱ្យរូបស្រាល (Soft)។",
-    "highlight": "**Highlights** គ្រប់គ្រងតំបន់ដែល **ភ្លឺខ្លាំងបំផុត** (ដូចជាមេឃ)។ បន្ថយ (-100) ដើម្បីសង្គ្រោះពពក។",
-    "shadow": "**Shadows** គ្រប់គ្រងតំបន់ងងឹត។ តម្លើង (+) ដើម្បីមើលឃើញព័ត៌មានក្នុងម្លប់។",
-    "white": "**Whites** កំណត់ចំណុចសដាច់ខាត។ តម្លើងបន្តិច (+10) ឱ្យរូបភ្លឺថ្លា។",
-    "black": "**Blacks** កំណត់ចំណុចខ្មៅដាច់ខាត។ បន្ថយបន្តិច (-10) ឱ្យរូបមានជម្រៅ។",
-    "ស្បែកស": "រូបមន្តកែ **ស្បែកស**:\n1. ចូល Color Mix > Orange។\n2. Luminance (+20)។\n3. Saturation (-10)។",
-    "portrait": "គន្លឹះ **Portrait**:\n• Vibrance (+) ជំនួស Saturation។\n• Texture (-15) ឱ្យស្បែកម៉ត់។",
-    "teal": "**Teal & Orange**:\n• Shadows: ដាក់ពណ៌ Teal (Hue 210)។\n• Highlights: ដាក់ពណ៌ Orange (Hue 35)។",
-    "dehaze": "**Dehaze**:\n• (+) កាត់អ័ព្ទ, មេឃដិត។\n• (-) បន្ថែមអ័ព្ទ (Dreamy)។",
-    "យប់": "រូបថត **យប់**:\n• Highlights (-50)។\n• Shadows (+30)។\n• Noise Reduction (+30)។",
-    "vintage": "**Vintage**:\n• Lift Blacks (Curve)។\n• Grain (+30)។\n• Saturation (-20)។",
-    "curves": "**Tone Curve**:\n• S-Curve: បង្កើន Contrast។\n• Matte: លើកចំណុចខ្មៅឡើងលើ។",
-    "grain": "**Grain** បន្ថែមគ្រាប់តូចៗបង្កើតអារម្មណ៍ Film និងបិទបាំង Noise។",
-    "ងងឹត": "រូប **ងងឹត**:\n• បង្កើន Exposure និង Shadows។\n• បន្ថយ Contrast បន្តិច។",
-    "មេឃ": "**មេឃ**:\n• Highlights (-100)។\n• Blue HSL: Sat (+), Lum (-)។",
-    "ទេសភាព": "**Landscape**:\n• Dehaze (+20)។\n• Clarity (+15)។\n• Vibrance (+30)។",
-    "vibrance": "**Vibrance** vs **Saturation**:\n• Vibrance: ឆ្លាតវៃ (ការពារស្បែក)។\n• Saturation: ដិតទាំងអស់។",
-    "អាហារ": "**Food**:\n• WB: ពណ៌ចានស។\n• Texture: បង្កើនអោយឃើញរសជាតិ។",
-    "street": "**Street**:\n• Contrast & Clarity ខ្ពស់។\n• សាកល្បងសខ្មៅ (B&W)។"
+    "exposure": "សួស្ដី! 👋\n**Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍សម្រាប់កំណត់ពន្លឺរួមនៃរូបភាព។\n👉 **របៀបប្រើ:**\n• អូសទៅស្តាំ (+): ធ្វើឱ្យរូបភាពភ្លឺ។\n• អូសទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពងងឹត។\n\n💡 **Recommendation:** គួរកែ Exposure ជាមុនគេបង្អស់មុននឹងកែពណ៌!",
+    "contrast": "សួស្ដី! 👋\n**Contrast (ភាពផ្ទុយ)** កំណត់ភាពដាច់ស្រឡះរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n👉 **ការណែនាំ:**\n• **Contrast ខ្ពស់ (+):** ធ្វើឱ្យរូបដិត ពណ៌ឆ្អិន (Pop)។\n• **Contrast ទាប (-):** ធ្វើឱ្យរូបស្រាល ទន់ (Soft/Dreamy)។\n\n✨ **Example:** សម្រាប់រូប Street Photography គេនិយមប្រើ Contrast ខ្ពស់។",
+    "skin tone": "សួស្ដី! ដើម្បីកែ **ពណ៌ស្បែក** ឱ្យស្អាតក្នុង Lightroom សូមអនុវត្តតាមជំហាននេះ៖\n\n1. ចូលទៅកាន់ **Color Mix** > **Orange** (ពណ៌ទឹកក្រូច)។\n2. **Luminance (+):** បង្កើនពី +15 ទៅ +25 ដើម្បីឱ្យស្បែកសភ្លឺ។\n3. **Saturation (-):** បន្ថយពី -5 ទៅ -15 ដើម្បីកុំឱ្យស្បែកលឿង ឬក្រហមពេក។\n4. **Hue:** កែតិចៗទៅស្តាំ (+5) បើចង់បានលឿង ឬឆ្វេង (-5) បើចង់បានផ្កាឈូក។\n\n💡 **Recommendation:** កុំប្រើ Clarity លើមុខ វានឹងធ្វើឱ្យឃើញស្នាម។",
+    "portrait": "សួស្ដី! នេះជាគន្លឹះសម្រាប់រូប **Portrait** ឱ្យស្អាត៖\n\n• **Light:** បង្កើន Shadows បន្តិច (+20) ដើម្បីឱ្យមុខភ្លឺ និងកាត់បន្ថយ Contrast បន្តិច។\n• **Color:** ប្រើ Vibrance ជំនួស Saturation ដើម្បីការពារពណ៌ស្បែក។\n• **Effects:** បន្ថយ Texture (-10) និង Clarity (-5) ដើម្បីឱ្យស្បែកម៉ត់ (Skin Softening)។\n• **Detail:** បង្កើន Sharpening (+30) តែប្រើ Masking (ចុចពីរដងហើយអូស Alt)។",
+    "teal orange": "សួស្ដី! រូបមន្ត **Teal & Orange** ដ៏ពេញនិយម៖\n\n1. **Calibration (សំខាន់បំផុត):**\n   • Red Primary: Hue +50, Sat -20\n   • Blue Primary: Hue -50, Sat +50\n2. **Color Mix:**\n   • Orange: Sat (-), Lum (+)\n   • Aqua/Blue: Hue ទៅឆ្វេង (Teal)\n3. **Color Grading:**\n   • Shadows: ដាក់ពណ៌ Teal (Hue ~210)\n   • Highlights: ដាក់ពណ៌ Orange (Hue ~35)",
+    "dehaze": "សួស្ដី! **Dehaze** គឺជាឧបករណ៍ដ៏មានអានុភាព៖\n\n👉 **Dehaze (+):** កាត់អ័ព្ទ ធ្វើឱ្យមេឃស្រឡះ និងពណ៌ដិតខ្លាំង។ ស័ក្តិសមសម្រាប់រូប Landscape។\n👉 **Dehaze (-):** បន្ថែមអ័ព្ទ បង្កើតបរិយាកាសស្រទន់ (Dreamy/Foggy)។\n\n⚠️ **ប្រយ័ត្ន:** ការប្រើ Dehaze (+) ច្រើនពេកអាចធ្វើឱ្យរូបមានពណ៌ដិតហួសហេតុ (Oversaturated)។",
+    "night": "សួស្ដី! គន្លឹះកែរូបថត **ពេលយប់ (Night Photography)**៖\n\n1. **Light:** បន្ថយ Highlights (-100) ដើម្បីសង្គ្រោះពន្លឺភ្លើង។ បង្កើន Shadows និង Whites។\n2. **Temp:** ភាគច្រើនរូបយប់ស្អាតជាមួយពណ៌ត្រជាក់ (Temp -10)។\n3. **Detail:** សំខាន់ណាស់! បង្កើន **Noise Reduction** (+30 ទៅ +50) ដើម្បីលុបគ្រាប់ Noise។\n\n✨ **Example:** រូបថតទីក្រុងពេលយប់ (Cityscape)។",
+    "vintage": "សួស្ដី! ដើម្បីបានរូបបែប **Vintage (បុរាណ)**៖\n\n1. **Tone Curve:** ទាញចំណុចខ្មៅ (Black Point) ខាងឆ្វេងក្រោមឡើងលើបន្តិច (Faded Blacks/Matte Look)។\n2. **Color:** បន្ថយ Saturation (-20)។\n3. **Effects:** បន្ថែម **Grain** (+30 ទៅ +40) ដើម្បីឱ្យដូចរូបថតហ្វីល។\n4. **Color Grading:** ដាក់ពណ៌បៃតងឬលឿងក្នុង Shadows។",
+    "curves": "សួស្ដី! **Tone Curve** គឺជាឧបករណ៍កម្រិតខ្ពស់៖\n\n• **S-Curve:** ទាញពន្លឺ (Highlights) ឡើង និងងងឹត (Shadows) ចុះ បង្កើតជាអក្សរ S។ វាជួយបង្កើន Contrast បានស្អាតជាង Slider ធម្មតា។\n• **Matte Look:** ទាញចំណុចខ្មៅបំផុតឡើងលើ។\n• **RGB Curves:** ប្រើសម្រាប់កែពណ៌ក្នុងកម្រិតពន្លឺនីមួយៗ។",
+    "grain": "សួស្ដី! **Grain** បន្ថែមគ្រាប់តូចៗ (Noise សិប្បនិម្មិត) ទៅក្នុងរូបភាព។\n\n👉 **ហេតុអ្វីប្រើ?**\n1. ដើម្បីបង្កើតអារម្មណ៍ Film (Cinematic/Vintage)។\n2. ដើម្បីបិទបាំង Noise មិនស្អាតដែលកើតពី ISO ខ្ពស់។\n3. ធ្វើឱ្យរូបភាពមើលទៅមានសាច់ (Texture) មិនរលោងពេក។\n\n✨ **Example:** រូបសខ្មៅ (B&W) ដាក់ Grain +40 គឺស្អាតណាស់។",
+    "sky": "សួស្ដី! ដើម្បីកែ **មេឃ (Sky)** ឱ្យដិតស្អាត៖\n\n1. **Light:** បន្ថយ Highlights (-50 ដល់ -100)។\n2. **Color Mix (Blue):**\n   • **Saturation:** បង្កើន (+) ដើម្បីឱ្យខៀវដិត។\n   • **Luminance:** បន្ថយ (-) ដើម្បីឱ្យខៀវងងឹត/ធ្ងន់។\n3. **Dehaze:** បង្កើន (+10 ដល់ +20) នឹងជួយឱ្យពពកដាច់ច្បាស់។",
+    "landscape": "សួស្ដី! គន្លឹះកែរូប **ទេសភាព (Landscape)**៖\n\n• **Light:** Highlights (-100), Shadows (+50) ដើម្បីឃើញព័ត៌មានទាំងមេឃនិងដី (HDR Look)។\n• **Effects:** បង្កើន Clarity (+20) និង Dehaze (+15) ឱ្យរូបច្បាស់។\n• **Color:** បង្កើន Vibrance (+30) ដើម្បីឱ្យពណ៌រស់រវើក។\n• **Composition:** កុំភ្លេចតម្រង់ជើងមេឃ (Horizon line) ឱ្យត្រង់!",
+    "vibrance": "សួស្ដី! **Vibrance vs Saturation**:\n\n• **Saturation:** បង្កើនភាពដិតនៃពណ៌ *ទាំងអស់* ស្មើៗគ្នា។ អាចធ្វើឱ្យស្បែកខូចពណ៌។\n• **Vibrance:** បង្កើនភាពដិតនៃពណ៌ *ដែលស្លេក* ប៉ុណ្ណោះ ហើយការពារពណ៌ស្បែក (Skin tones)។\n\n💡 **Recommendation:** តែងតែប្រើ Vibrance មុន ជាពិសេសរូបមានមនុស្ស។",
+    "food": "សួស្ដី! គន្លឹះកែរូប **អាហារ (Food)**៖\n\n1. **White Balance:** ត្រូវប្រាកដថាចានពណ៌ស គឺសពិតប្រាកដ (មិនជាប់លឿង)។\n2. **Light:** បង្កើន Whites និង Shadows ឱ្យរូបភ្លឺថ្លា (Bright & Airy)។\n3. **Effects:** បង្កើន **Texture** (+20) ឱ្យឃើញសរសៃសាច់ ឬបន្លែច្បាស់ គួរឱ្យចង់ញ៉ាំ។\n4. **Color:** បង្កើន Saturation ពណ៌ក្រហម/បៃតង/លឿង។",
+    "street": "សួស្ដី! គន្លឹះកែរូប **Street Photography**៖\n\n• **Contrast:** ប្រើ Contrast និង Clarity ខ្ពស់ (+30) ដើម្បីឱ្យរូបមើលទៅរឹងមាំ (Gritty)។\n• **Highlights:** បន្ថយដើម្បីកុំឱ្យចាំង។\n• **Color:** សាកល្បង Desaturate (បន្ថយពណ៌) ឬធ្វើជាសខ្មៅ (B&W) ដើម្បីឱ្យមានអារម្មណ៍ (Mood)។\n• **Vignette:** ដាក់បន្តិច (-10) ដើម្បីឱ្យគេមើលចំកណ្តាល។",
+    "moody": "សួស្ដី! ដើម្បីបានរូប **Dark & Moody**៖\n\n• **Exposure:** បន្ថយបន្តិច (-0.5)។\n• **Contrast:** ប្រើ Contrast ទាប ប៉ុន្តែទាញ Blacks ចុះ (-30)។\n• **Color:** បន្ថយ Saturation (-40) ស្ទើរតែគ្រប់ពណ៌ លើកលែងតែពណ៌ស្បែក (Orange)។\n• **Grading:** ដាក់ពណ៌ខៀវស្រាលក្នុង Shadows។",
+    "sharpness": "សួស្ដី! ការប្រើ **Sharpening**៖\n\n• **Amount:** កំណត់កម្រិតភាពមុត (+40 គឺល្មម)។\n• **Radius:** ទំហំនៃគែម (+1.0)។\n• **Masking (សំខាន់!):** សង្កត់ Alt (ឬម្រាមដៃពីរ) ពេលអូស។ ពណ៌សគឺកន្លែងដែលនឹងមុត ពណ៌ខ្មៅគឺមិនប៉ះពាល់។ ព្យាយាមឱ្យមុតតែគែមវត្ថុ កុំឱ្យមុតលើផ្ទៃរលោង (ដូចមេឃ ឬស្បែក)។",
+    "export": "សួស្ដី! ការ **Export** រូបភាព៖\n\n• **JPG (Small):** សម្រាប់បង្ហោះ Facebook/Instagram (លឿន)។\n• **JPG (Large/100%):** សម្រាប់បោះពុម្ព ឬទុកជាឯកសារ។\n• **DNG:** រក្សាទុកជា RAW អាចយកទៅកែបន្តក្នុងកម្មវិធីផ្សេងដោយមិនបាត់បង់គុណភាព។\n• **Watermark:** អាចដាក់ឈ្មោះរបស់អ្នកបានក្នុង Settings។",
+    "histogram": "សួស្ដី! **Histogram** គឺជាក្រាហ្វបង្ហាញពន្លឺ៖\n\n• **ឆ្វេង:** តំបន់ងងឹត (Shadows/Blacks)។\n• **កណ្តាល:** តំបន់ពន្លឺមធ្យម (Midtones)។\n• **ស្តាំ:** តំបន់ភ្លឺ (Highlights/Whites)។\n\n💡 **Tip:** រូបដែលល្អ (Correct Exposure) គួរតែមានក្រាហ្វនៅកណ្តាល មិនប៉ះជញ្ជាំងឆ្វេង (ងងឹតឈុល) ឬស្តាំ (ភ្លឺចាំង) ខ្លាំងពេកទេ។",
+    "masking": "សួស្ដី! **Masking** (កែតំបន់ជាក់លាក់)៖\n\n• **Select Subject:** AI ជ្រើសរើសមនុស្ស/វត្ថុឯង។ ល្អសម្រាប់ធ្វើឱ្យតួអង្គភ្លឺ។\n• **Select Sky:** AI ជ្រើសរើសមេឃ។ ល្អសម្រាប់ធ្វើឱ្យមេឃដិត។\n• **Linear Gradient:** អូសពីក្រោម/លើ។ ល្អសម្រាប់ធ្វើឱ្យដីភ្លឺ ឬមេឃងងឹត។\n• **Radial Gradient:** ជារង្វង់។ ល្អសម្រាប់បង្កើតពន្លឺព្រះអាទិត្យ ឬ Highlight មុខ។",
+    "sunset": "សួស្ដី! គន្លឹះកែរូប **ថ្ងៃលិច (Sunset)**៖\n\n• **White Balance:** បង្កើន Temp (+) និង Tint (+) ដើម្បីឱ្យពណ៌មាស/ស្វាយកាន់តែខ្លាំង។\n• **Highlights:** បន្ថយ (-100) ដើម្បីឃើញដួងអាទិត្យច្បាស់។\n• **Shadows:** បង្កើន (+) ដើម្បីឃើញផ្ទៃខាងមុខ (Foreground)។\n• **Color Mix:** បង្កើន Saturation ពណ៌លឿង និងទឹកក្រូច។",
+    "raw": "សួស្ដី! **RAW (DNG)** vs **JPEG**:\n\n• **RAW:** ផ្ទុកព័ត៌មានពន្លឺ/ពណ៌ច្រើន។ អាចកែ Highlights/Shadows បានល្អជាងឆ្ងាយ។ ឯកសារធំ។\n• **JPEG:** រូបភាពដែលកាមេរ៉ាកែសម្រួលរួច។ ឯកសារតូច។\n\n💡 **Recommendation:** បើចង់កែរូបបានស្អាត គួរថតជា RAW (DNG) ក្នុង Lightroom Camera។",
+    "split tone": "សួស្ដី! **Split Toning** (ឥឡូវហៅថា Color Grading)៖\n\nប្រើសម្រាប់ដាក់ពណ៌ផ្សេងគ្នាទៅក្នុង Shadows និង Highlights។\n\n✨ **Classic Example:**\n• **Highlights:** ដាក់ពណ៌លឿង/ទឹកក្រូច (កក់ក្តៅ)។\n• **Shadows:** ដាក់ពណ៌ខៀវ/Teal (ត្រជាក់)។\nនេះបង្កើតបានជា 'Color Contrast' ដែលធ្វើឱ្យរូបមានជម្រៅ។",
+    "healing": "សួស្ដី! **Healing Brush** ប្រើសម្រាប់លុបស្នាម ឬវត្ថុមិនចង់បាន។\n\n• **Heal:** ចម្លងកន្លែងផ្សេងមកបិទ (Copy texture)។\n• **Clone:** ចម្លងទាំងស្រុង (Copy pixels)។\n\n💡 **Tip:** ប្រើ Heal សម្រាប់លុបមុន ឬស្នាមលើមុខ ព្រោះវាបញ្ចូលពណ៌បានល្អជាង។",
+    "geometry": "សួស្ដី! **Geometry** ប្រើសម្រាប់រូបថតអគារ (Architecture)។\n\n• **Upright Auto:** តម្រង់ដោយស្វ័យប្រវត្តិ។\n• **Upright Vertical:** តម្រង់តែសសរឈរឱ្យត្រង់ (កុំឱ្យអគារដួល)។\n• **Distortion:** កែការពត់កោងរបស់ឡេន (Fisheye effect)។"
 };
 
 const TIPS_LIST = [
-    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset។", 
-    "ប្រើម្រាមដៃពីរដើម្បីមើល Clipping។", "Export ជា DNG ដើម្បីចែករំលែក Preset។", "ប្រើ Grid ពេលថត។",
-    "ដាក់ Rating លើរូបដែលចូលចិត្ត។", "ប្រើ Color Noise Reduction សម្រាប់រូបយប់។", "ប្រើ Calibration (Blue Primary) សម្រាប់ស្លឹកឈើ។",
-    "កុំប្រើ Clarity ខ្លាំងពេកលើមុខ។", "ប្រើ Radial Gradient បង្កើត Sun Flare។", "បន្ថយ Highlights សង្គ្រោះមេឃ។",
-    "តម្លើង Shadows សម្រាប់រូប Backlit។", "ប្រើ Linear Gradient សម្រាប់មេឃងងឹត។", "ប្រើ Healing Brush លុបមនុស្សមិនចង់បាន។",
-    "ប្រើ Masking 'Select Subject' កែពន្លឺមនុស្ស។", "ប្រើ Vignette ផ្តោតអារម្មណ៍។", "ប្រើ Geometry 'Upright' តម្រង់អគារ។",
-    "ប្រើ Dehaze កាត់អ័ព្ទ។", "ប្រើ Texture សម្រាប់ថ្ម/ឈើ។", "ប្រើ Vibrance សម្រាប់រូបមនុស្ស។",
-    "ប្រើ B&W សម្រាប់អារម្មណ៍។", "ប្រើ Split Toning សម្រាប់ដាក់ពណ៌ស្រមោល។", "ប្រើ Tone Curve សម្រាប់ Contrast ល្អ។",
-    "ប្រើ Optic Corrections ជានិច្ច។", "ប្រើ Crop កែសមាសភាព។", "ប្រើ Presets ដើម្បីចំណេញពេល។",
-    "ប្រើ Versions សាកល្បងស្តាយ។", "ប្រើ Histogram មើលពន្លឺ។", "ចុចចុង Slider (+/-) ដើម្បី Fine Tune។",
-    "Blacks -10 ធ្វើអោយរូបដិត។", "Whites +10 ធ្វើអោយរូបថ្លា។"
+    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម ហើយកែតម្រូវតាមក្រោយ។", 
+    "ចុចសង្កត់លើរូបដើម្បីមើល Before/After ភ្លាមៗ។", 
+    "ចុចពីរដង (Double Tap) លើ Slider ដើម្បី Reset តម្លៃទៅ 0។", 
+    "ប្រើម្រាមដៃពីរចុចលើអេក្រង់ពេលអូស Slider (Whites/Blacks) ដើម្បីមើល Clipping (J Mode)។", 
+    "Export ជា DNG ដើម្បីចែករំលែក Preset ទៅមិត្តភក្តិ។", 
+    "ប្រើ Grid (Rule of Thirds) ពេលថត ដើម្បីសមាសភាពល្អ។",
+    "ដាក់ Rating (ផ្កាយ) លើរូបដែលចូលចិត្ត ដើម្បីងាយស្រួលរក។", 
+    "ប្រើ Color Noise Reduction (+15) សម្រាប់រូបថតយប់ ដើម្បីកាត់បន្ថយគ្រាប់ពណ៌។", 
+    "ប្រើ Calibration (Blue Primary Saturation +) ដើម្បីឱ្យពណ៌ស្លឹកឈើ និងស្បែកស្អាត។",
+    "កុំប្រើ Clarity លើសពី +20 លើរូប Portrait វាធ្វើឱ្យស្បែកមើលទៅចាស់។", 
+    "ប្រើ Radial Gradient បង្កើតពន្លឺព្រះអាទិត្យ (Sun Flare) សិប្បនិម្មិត។", 
+    "បន្ថយ Highlights (-100) ជាជំហានដំបូងដើម្បីសង្គ្រោះព័ត៌មានមេឃ។",
+    "តម្លើង Shadows សម្រាប់រូប Backlit (ថតបញ្ច្រាស់ថ្ងៃ)។", 
+    "ប្រើ Linear Gradient ទាញពីក្រោមឡើងលើ ដើម្បីធ្វើឱ្យដីភ្លឺ តែមេឃនៅដដែល។", 
+    "ប្រើ Healing Brush (Mode: Heal) ដើម្បីលុបមុន ឬស្នាមតូចៗ។",
+    "ប្រើ Masking 'Select Subject' រួចបង្កើន Exposure ដើម្បីឱ្យតួអង្គភ្លឺជាង Background (Pop)។", 
+    "ប្រើ Vignette (-10 ដល់ -20) ដើម្បីផ្តោតចំណាប់អារម្មណ៍ទៅកណ្តាលរូប។", 
+    "ប្រើ Geometry 'Upright Vertical' ពេលថតអគារ ដើម្បីកុំឱ្យអគារមើលទៅដួល។",
+    "ប្រើ Dehaze បន្តិច (+10) សម្រាប់រូប Landscape ដើម្បីកាត់អ័ព្ទ។", 
+    "ប្រើ Texture ជំនួស Sharpening សម្រាប់បង្កើនភាពលម្អិតនៃថ្ម ឬឈើ។", 
+    "ប្រើ Vibrance ជំនួស Saturation សម្រាប់រូបមនុស្ស (ការពារពណ៌ស្បែក)។",
+    "សាកល្បងប្តូរទៅជាសខ្មៅ (B&W) ប្រសិនបើពណ៌រូបភាពមិនស្អាត ឬរញ៉េរញ៉ៃ។", 
+    "ប្រើ Split Toning (Shadows: Teal, Highlights: Orange) សម្រាប់ Cinematic Look។", 
+    "ប្រើ Tone Curve (S-Curve) ដើម្បីទទួលបាន Contrast ដែលស្អាតជាង Slider ធម្មតា។",
+    "បើក Lens Profile Correction ជានិច្ច ដើម្បីកែការបង្ខូចទ្រង់ទ្រាយរបស់ឡេន។", 
+    "Crop រូបភាពក្នុងអនុបាត 4:5 សម្រាប់ការបង្ហោះលើ Instagram/Facebook (ពេញអេក្រង់)។", 
+    "បង្កើត Presets ផ្ទាល់ខ្លួន ដើម្បីកែរូបភាពមួយឈុតឱ្យមានពណ៌ដូចគ្នា (Consistency)។",
+    "ប្រើ Versions ដើម្បីសាកល្បងការកែច្រើនបែប លើរូបតែមួយដោយមិនបាត់ការកែចាស់។", 
+    "មើល Histogram៖ បើក្រាហ្វប៉ះខាងឆ្វេងខ្លាំង=ងងឹតពេក, ប៉ះស្តាំខ្លាំង=ភ្លឺពេក។", 
+    "ចុចលើលេខនៅចុង Slider ដើម្បីវាយបញ្ចូលលេខដោយផ្ទាល់ (សម្រាប់ភាពជាក់លាក់)។",
+    "Blacks -10 ធ្វើឱ្យរូបភាពមានជម្រៅ (Depth) និងមិនមើលទៅស្លេក។", 
+    "Whites +10 ធ្វើឱ្យរូបភាពភ្លឺថ្លា (Brilliant)។",
+    "ប្រើ Invert Mask ដើម្បីកែផ្ទៃខាងក្រោយ (Background) ដោយមិនប៉ះពាល់តួអង្គ។",
+    "Temperature -5 ធ្វើឱ្យរូបភាពមើលទៅទំនើប (Modern/Clean) ជាងពណ៌លឿងខ្លាំង។",
+    "ថតជា RAW (DNG) ក្នុងកម្មវិធី Lightroom ដើម្បីគុណភាពខ្ពស់បំផុត។",
+    "ប្រើ Long Press លើឧបករណ៍ Masking ដើម្បីបង្ហាញជម្រើសបន្ថែម (Intersect/Subtract)។"
 ];
 
-const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    question: i === 0 ? "តើឧបករណ៍មួយណាសម្រាប់កែពន្លឺទូទៅនៃរូបភាព?" : 
-              i === 1 ? "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?" :
-              i === 2 ? "ដើម្បីកែពណ៌មេឃឱ្យដិតស្អាត តើគួរកែពណ៌អ្វីក្នុង HSL?" :
-              `សំណួរទី ${i+1}: តើឧបករណ៍មួយណាជួយកែរូបភាពឱ្យកាន់តែស្អាត?`,
-    options: i === 0 ? ["Contrast", "Exposure", "Highlights", "Shadows"] :
-             i === 1 ? ["វាធ្វើឱ្យពណ៌ទាំងអស់ដិតស្មើគ្នា", "វាការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "វាមិនខុសគ្នាទេ", "វាសម្រាប់តែកែរូបសខ្មៅ"] :
-             i === 2 ? ["Green", "Orange", "Blue", "Red"] :
-             ["Exposure", "Contrast", "Clarity", "Dehaze"],
-    correct: i === 0 ? 1 : i === 1 ? 1 : i === 2 ? 2 : 0,
-    level: i < 25 ? "beginner" : "advanced"
-}));
-
-// ==========================================
-// 3. HELPER FUNCTIONS
-// ==========================================
+const initialQuestionBank = [
+  { id: 1, question: "ឧបករណ៍មួយណាសម្រាប់កែពន្លឺរួមនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
+  { id: 2, question: "Contrast មានតួនាទីអ្វី?", options: ["កែពន្លឺឱ្យភ្លឺ", "ធ្វើឱ្យរូបភាពច្បាស់", "កំណត់គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត", "កែពណ៌ឱ្យដិត"], correct: 2, level: "beginner" },
+  { id: 3, question: "ដើម្បីសង្គ្រោះព័ត៌មាននៅផ្នែកមេឃដែលភ្លឺពេក តើគួរកែអ្វី?", options: ["Highlights (-)", "Shadows (+)", "Whites (+)", "Exposure (+)"], correct: 0, level: "beginner" },
+  { id: 4, question: "ដើម្បីមើលឃើញព័ត៌មានក្នុងម្លប់ដែលងងឹត តើគួរកែអ្វី?", options: ["Highlights (-)", "Shadows (+)", "Blacks (-)", "Contrast (+)"], correct: 1, level: "beginner" },
+  { id: 5, question: "Temp (Temperature) ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌បៃតង/ស្វាយ", "កែពណ៌លឿង/ខៀវ", "កែពន្លឺ", "កែភាពច្បាស់"], correct: 1, level: "beginner" },
+  { id: 6, question: "Tint ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌បៃតង/ស្វាយ", "កែពណ៌លឿង/ខៀវ", "កែពន្លឺ", "កែភាពច្បាស់"], correct: 0, level: "beginner" },
+  { id: 7, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["Vibrance កែពណ៌ទាំងអស់ស្មើគ្នា", "Vibrance ការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "Vibrance សម្រាប់តែរូបសខ្មៅ", "គ្មានអ្វីខុសគ្នាទេ"], correct: 1, level: "beginner" },
+  { id: 8, question: "ដើម្បីធ្វើឱ្យស្បែកស តើត្រូវកែពណ៌អ្វីក្នុង Color Mix?", options: ["Red", "Orange", "Yellow", "Green"], correct: 1, level: "intermediate" },
+  { id: 9, question: "ក្នុង Color Mix (Orange) តើត្រូវកែអ្វីដើម្បីឱ្យស្បែកភ្លឺ?", options: ["Hue", "Saturation", "Luminance", "All of above"], correct: 2, level: "intermediate" },
+  { id: 10, question: "ដើម្បីធ្វើឱ្យមេឃពណ៌ខៀវដិតស្អាត តើគួរកែពណ៌អ្វី?", options: ["Blue Saturation (+), Luminance (-)", "Blue Hue (+)", "Blue Luminance (+)", "Aqua Saturation (+)"], correct: 0, level: "intermediate" },
+  { id: 11, question: "Clarity ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបភាពស្រាល", "បង្កើន Contrast នៅផ្នែកកណ្តាល (Midtones)", "បន្ថែម Noise", "ប្តូរពណ៌"], correct: 1, level: "beginner" },
+  { id: 12, question: "Dehaze ប្រើសម្រាប់អ្វី?", options: ["កាត់អ័ព្ទ ឬធ្វើឱ្យមេឃស្រឡះ", "ធ្វើឱ្យរូបភាពព្រិល", "ប្តូរពណ៌មេឃ", "បន្ថែមពន្លឺ"], correct: 0, level: "beginner" },
+  { id: 13, question: "Vignette ធ្វើឱ្យរូបភាពមានលក្ខណៈដូចម្តេច?", options: ["ភ្លឺកណ្តាល", "ងងឹតឬភ្លឺនៅតាមគែមទាំង ៤", "ច្បាស់ទាំងអស់", "ប្តូរពណ៌"], correct: 1, level: "beginner" },
+  { id: 14, question: "Grain ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបភាពច្បាស់", "បន្ថែមគ្រាប់តូចៗបែប Film", "លុប Noise", "កែពណ៌"], correct: 1, level: "intermediate" },
+  { id: 15, question: "Sharpening ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យរូបភាពទន់", "ធ្វើឱ្យគែមក្នុងរូបភាពច្បាស់ (មុត)", "ប្តូរពណ៌", "កែពន្លឺ"], correct: 1, level: "beginner" },
+  { id: 16, question: "Noise Reduction ប្រើសម្រាប់អ្វី?", options: ["បន្ថែមគ្រាប់", "លុបគ្រាប់ Noise (រូបភាពរលោង)", "ធ្វើឱ្យរូបភាពច្បាស់", "កែពណ៌"], correct: 1, level: "beginner" },
+  { id: 17, question: "Optics 'Remove Chromatic Aberration' ជួយអ្វី?", options: ["លុបពណ៌ស្វាយ/បៃតងនៅតាមគែមវត្ថុ", "ធ្វើឱ្យរូបភាពច្បាស់", "កែពន្លឺ", "កែទ្រង់ទ្រាយ"], correct: 0, level: "intermediate" },
+  { id: 18, question: "Lens Profile Correction ជួយអ្វី?", options: ["កែការបង្ខូចទ្រង់ទ្រាយរបស់លែន (Distortion)", "កែពណ៌", "កែពន្លឺ", "កែភាពច្បាស់"], correct: 0, level: "intermediate" },
+  { id: 19, question: "Crop Ratio 4:5 គឺស័ក្តិសមសម្រាប់អ្វី?", options: ["Facebook Story", "Instagram Post (Portrait)", "YouTube Thumbnail", "Desktop Wallpaper"], correct: 1, level: "beginner" },
+  { id: 20, question: "Color Grading 'Shadows' ប្រើសម្រាប់អ្វី?", options: ["ដាក់ពណ៌ទៅក្នុងកន្លែងភ្លឺ", "ដាក់ពណ៌ទៅក្នុងកន្លែងងងឹត", "ដាក់ពណ៌ទៅក្នុងកន្លែងកណ្តាល", "ដាក់ពណ៌ទាំងអស់"], correct: 1, level: "intermediate" },
+  { id: 21, question: "Color Grading 'Highlights' ប្រើសម្រាប់អ្វី?", options: ["ដាក់ពណ៌ទៅក្នុងកន្លែងភ្លឺ", "ដាក់ពណ៌ទៅក្នុងកន្លែងងងឹត", "ដាក់ពណ៌ទៅក្នុងកន្លែងកណ្តាល", "ដាក់ពណ៌ទាំងអស់"], correct: 0, level: "intermediate" },
+  { id: 22, question: "តើ S-Curve ក្នុង Tone Curve បង្កើតអ្វី?", options: ["រូបភាពស្រាល (Low Contrast)", "រូបភាពដិត (High Contrast)", "រូបភាពសខ្មៅ", "រូបភាពព្រិល"], correct: 1, level: "advanced" },
+  { id: 23, question: "ដើម្បីធ្វើឱ្យស្លឹកឈើពណ៌បៃតងក្លាយជាពណ៌ទឹកក្រូច តើត្រូវកែអ្វី?", options: ["Green Hue (-)", "Green Saturation (+)", "Green Luminance (+)", "Green Hue (+)"], correct: 0, level: "intermediate" },
+  { id: 24, question: "Masking 'Select Subject' ប្រើសម្រាប់អ្វី?", options: ["ជ្រើសរើសមេឃ", "ជ្រើសរើសវត្ថុ ឬមនុស្សដោយស្វ័យប្រវត្តិ", "ជ្រើសរើសផ្ទៃខាងក្រោយ", "ជ្រើសរើសពណ៌"], correct: 1, level: "intermediate" },
+  { id: 25, question: "Masking 'Select Sky' ប្រើសម្រាប់អ្វី?", options: ["ជ្រើសរើសមេឃដោយស្វ័យប្រវត្តិ", "ជ្រើសរើសដី", "ជ្រើសរើសមនុស្ស", "ជ្រើសរើសពន្លឺ"], correct: 0, level: "intermediate" },
+  { id: 26, question: "Linear Gradient ប្រើសម្រាប់អ្វី?", options: ["កែតំបន់ជារង្វង់", "កែតំបន់ជាបន្ទាត់ត្រង់ (បន្លាយ)", "កែពណ៌ទាំងមូល", "កែតែចំណុចតូច"], correct: 1, level: "intermediate" },
+  { id: 27, question: "Radial Gradient ប្រើសម្រាប់អ្វី?", options: ["កែតំបន់ជារង្វង់", "កែតំបន់ជាបន្ទាត់", "កែពណ៌ទាំងមូល", "កែតែចំណុចតូច"], correct: 0, level: "intermediate" },
+  { id: 28, question: "Healing Brush ប្រើសម្រាប់អ្វី?", options: ["លុបវត្ថុដែលមិនចង់បាន", "គូររូប", "ប្តូរពណ៌", "កែពន្លឺ"], correct: 0, level: "beginner" },
+  { id: 29, question: "ដើម្បី Copy ការកែពីរូបមួយទៅរូបមួយទៀត ត្រូវចូលទៅណា?", options: ["Export", "Settings > Copy Settings", "Crop", "Masking"], correct: 1, level: "beginner" },
+  { id: 30, question: "តើ Preset ជាអ្វី?", options: ["ការកំណត់កែរូបដែលបានរក្សាទុក", "រូបភាពដើម", "កម្មវិធីថតរូប", "ប្រភេទកាមេរ៉ា"], correct: 0, level: "beginner" },
+  { id: 31, question: "DNG គឺជាអ្វី?", options: ["រូបភាព JPEG", "រូបភាព RAW ដែលមានព័ត៌មានច្រើន", "វីដេអូ", "ឯកសារអត្ថបទ"], correct: 1, level: "advanced" },
+  { id: 32, question: "តើធ្វើដូចម្តេចដើម្បីមើលកន្លែងដែលដាច់ព័ត៌មាន (Clipping)?", options: ["ប្រើម្រាមដៃពីរចុចលើអេក្រង់ពេលអូស Slider", "ចុចប៊ូតុង Auto", "ប្រើ Crop", "ប្រើ Masking"], correct: 0, level: "advanced" },
+  { id: 33, question: "Geometry 'Upright' ប្រើសម្រាប់អ្វី?", options: ["តម្រង់អគារ ឬបន្ទាត់ឱ្យត្រង់", "ធ្វើឱ្យរូបភាពកោង", "បង្វិលរូបភាព", "កាត់រូបភាព"], correct: 0, level: "intermediate" },
+  { id: 34, question: "តើ 'Matte Look' ធ្វើឡើងដោយរបៀបណា?", options: ["ទាញចំណុចខ្មៅក្នុង Tone Curve ឡើងលើ", "បង្កើន Contrast", "បង្កើន Saturation", "ប្រើ Dehaze"], correct: 0, level: "advanced" },
+  { id: 35, question: "តើការប្រើ 'Auto' នៅក្នុង Light panel ធ្វើអ្វី?", options: ["កែពន្លឺដោយស្វ័យប្រវត្តិ", "កែពណ៌ដោយស្វ័យប្រវត្តិ", "កាត់រូបភាព", "លុប Noise"], correct: 0, level: "beginner" },
+  { id: 36, question: "ដើម្បីបង្កើតរូបភាពសខ្មៅ (B&W) តើត្រូវធ្វើដូចម្តេច?", options: ["Saturation -100", "Vibrance -100", "ចុចប៊ូតុង B&W", "ទាំងអស់គឺត្រូវ"], correct: 3, level: "beginner" },
+  { id: 37, question: "Calibration 'Blue Primary' ពេញនិយមសម្រាប់អ្វី?", options: ["កែពណ៌ស្បែក និងស្លឹកឈើឱ្យមានពណ៌ទាក់ទាញ (Teal & Orange)", "កែពណ៌មេឃ", "កែពន្លឺ", "កែ Noise"], correct: 0, level: "advanced" },
+  { id: 38, question: "តើឧបករណ៍អ្វីជួយកែភ្នែកក្រហម (Red Eye)?", options: ["Healing Brush", "Red Eye Correction", "Masking", "Crop"], correct: 1, level: "beginner" },
+  { id: 39, question: "Invert Mask មានន័យថាអ្វី?", options: ["ត្រឡប់តំបន់ដែលបានជ្រើសរើស (ផ្ទុយ)", "លុប Mask", "បង្កើត Mask ថ្មី", "កែពណ៌ Mask"], correct: 0, level: "intermediate" },
+  { id: 40, question: "តើ Feather ក្នុង Masking ប្រើសម្រាប់អ្វី?", options: ["ធ្វើឱ្យគែម Mask ទន់ (ព្រិល)", "ធ្វើឱ្យគែម Mask មុត", "ប្តូរពណ៌ Mask", "លុប Mask"], correct: 0, level: "intermediate" },
+  { id: 41, question: "តើ Versions ប្រើសម្រាប់អ្វី?", options: ["រក្សាទុកការកែសម្រួលផ្សេងៗគ្នានៃរូបភាពតែមួយ", "Export រូបភាព", "ចែករំលែករូបភាព", "លុបរូបភាព"], correct: 0, level: "intermediate" },
+  { id: 42, question: "តើការចុចពីរដង (Double Tap) លើ Slider នឹងមានលទ្ធផលអ្វី?", options: ["Reset តម្លៃនោះទៅ 0 ឬ Default", "បង្កើនតម្លៃដល់ 100", "បន្ថយតម្លៃដល់ -100", "គ្មានអ្វីកើតឡើង"], correct: 0, level: "beginner" },
+  { id: 43, question: "តើ Texture ខុសពី Sharpening យ៉ាងដូចម្តេច?", options: ["Texture កែផ្ទៃកណ្តាល (Mid-frequency), Sharpening កែគែម (High-frequency)", "ដូចតែគ្នា", "Sharpening សម្រាប់តែពណ៌", "Texture សម្រាប់តែពន្លឺ"], correct: 0, level: "advanced" },
+  { id: 44, question: "តើពណ៌អ្វីដែលមិនមាននៅក្នុង Color Mix (HSL)?", options: ["Red", "Blue", "Cyan", "Black"], correct: 3, level: "beginner" },
+  { id: 45, question: "Targeted Adjustment Tool ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌ ឬពន្លឺដោយការអូសផ្ទាល់លើរូបភាព", "កែដោយស្វ័យប្រវត្តិ", "កាត់រូបភាព", "បន្ថែមអក្សរ"], correct: 0, level: "advanced" },
+  { id: 46, question: "តើអ្វីទៅជា 'Aspect Ratio'?", options: ["សមាមាត្រទទឹងនិងបណ្តោយនៃរូបភាព", "ទំហំឯកសារ", "គុណភាពរូបភាព", "ពណ៌រូបភាព"], correct: 0, level: "beginner" },
+  { id: 47, question: "តើ 'Constraint Crop' ប្រើសម្រាប់អ្វី?", options: ["រក្សាសមាមាត្រដើមពេលកាត់រូប", "កាត់រូបតាមចិត្ត", "បង្វិលរូប", "ត្រឡប់រូប"], correct: 0, level: "beginner" },
+  { id: 48, question: "តើការ Export 'Small' មានប្រយោជន៍អ្វី?", options: ["ចែករំលែកលឿនលើបណ្តាញសង្គម", "បោះពុម្ពខ្នាតធំ", "រក្សាគុណភាពដើម", "កែសម្រួលបន្ត"], correct: 0, level: "beginner" },
+  { id: 49, question: "តើអាចដាក់ Watermark ក្នុង Lightroom Mobile បានទេ?", options: ["បាន", "មិនបាន", "បានតែក្នុង PC", "បានតែគណនី Premium"], correct: 0, level: "beginner" },
+  { id: 50, question: "តើការប្រើ 'Previous' ក្នុង Presets មានន័យថាអ្វី?", options: ["ប្រើការកែសម្រួលពីរូបភាពមុន", "ប្រើ Preset ដើម", "លុបការកែសម្រួល", "ទៅរូបភាពមុន"], correct: 0, level: "intermediate" },
+];
 
 const getLocalResponse = (prompt) => {
     const lower = prompt.toLowerCase();
@@ -339,8 +430,25 @@ const LessonCard = ({ lesson, onClick }) => (
 );
 
 const TipsSection = ({ isExpanded, onToggle }) => {
-  const [randomTip, setRandomTip] = useState(null);
-  const getTip = () => setRandomTip(TIPS_LIST[Math.floor(Math.random() * TIPS_LIST.length)]);
+  const [tipIndex, setTipIndex] = useState(0);
+
+  useEffect(() => {
+    setTipIndex(Math.floor(Math.random() * TIPS_LIST.length));
+  }, []);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+    const interval = setInterval(() => {
+      setTipIndex((prev) => (prev + 1) % TIPS_LIST.length);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [isExpanded]);
+
+  const nextTip = (e) => {
+    e.stopPropagation();
+    setTipIndex((prev) => (prev + 1) % TIPS_LIST.length);
+  };
+
   return (
     <div className="mt-12">
       <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#1C1C1E] p-6 rounded-3xl border border-white/5 hover:bg-[#2C2C2E] transition-all duration-300 group active:scale-95">
@@ -352,20 +460,58 @@ const TipsSection = ({ isExpanded, onToggle }) => {
       </button>
       {isExpanded && (
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
-          <div className="bg-gradient-to-br from-[#2C2C2E] to-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 relative overflow-hidden shadow-2xl">
+          <div className="bg-gradient-to-br from-[#2C2C2E] to-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 relative overflow-hidden shadow-2xl flex flex-col justify-center min-h-[180px]">
              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-             <div className="flex justify-between items-start mb-6 relative z-10">
-                 <h4 className="font-bold text-white font-khmer flex items-center gap-3 text-lg whitespace-nowrap"><Sparkles className="w-5 h-5 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4>
-                 <button onClick={getTip} className="bg-white/10 hover:bg-white/20 text-white text-xs px-5 py-2.5 rounded-full font-khmer transition-all font-bold tracking-wide border border-white/5">បង្ហាញគន្លឹះ</button>
+             
+             <div className="flex justify-between items-center mb-6 relative z-10">
+                 <h4 className="font-bold text-white font-khmer flex items-center gap-3 text-lg whitespace-nowrap">
+                    <Sparkles className="w-5 h-5 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)
+                 </h4>
+                 <button 
+                    onClick={nextTip} 
+                    className="bg-white/10 hover:bg-white/20 text-white text-[10px] px-4 py-2 rounded-full font-khmer transition-all font-bold tracking-wide border border-white/5 active:scale-95 whitespace-nowrap"
+                 >
+                    គន្លឹះថ្មី
+                 </button>
              </div>
-             <p className="text-gray-300 text-base font-khmer leading-relaxed border-l-4 border-blue-500 pl-6 py-2 relative z-10">{randomTip || "ចុចប៊ូតុងខាងលើដើម្បីទទួលបានគន្លឹះកែរូប។"}</p>
+             
+             <div className="relative z-10 flex-1 flex items-center">
+                 <p key={tipIndex} className="text-gray-300 text-base font-khmer leading-relaxed border-l-4 border-blue-500 pl-6 py-2 animate-fade-in-up">
+                    {TIPS_LIST[tipIndex]}
+                 </p>
+             </div>
           </div>
           <div className="bg-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 shadow-xl">
             <h4 className="font-bold text-white font-khmer mb-6 flex items-center text-lg"><Zap className="w-5 h-5 mr-3 text-yellow-400" /> គន្លឹះប្រើកម្មវិធី (Shortcut Tricks)</h4>
             <ul className="space-y-4 text-sm text-gray-400 font-khmer">
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">1</span><span><span className="font-bold text-white block mb-1">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before) និងលទ្ធផល (After)។</span></li>
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">2</span><span><span className="font-bold text-white block mb-1">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">3</span><span><span className="font-bold text-white block mb-1">ចុចចុងសងខាង (+/-)៖</span> បន្ថែមឬបន្ថយលេខម្ដង ១ សម្រាប់ភាពជាក់លាក់។</span></li>
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+                <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">1</span>
+                <span>
+                    <span className="font-bold text-white block mb-1">មើលរូបដើម (Before/After)៖</span> 
+                    ចុចសង្កត់លើរូបភាពដើម្បីមើលរូបដើម (Before) ហើយដកដៃចេញដើម្បីមើលរូបដែលកែរួច (After)។
+                </span>
+              </li>
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+                <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">2</span>
+                <span>
+                    <span className="font-bold text-white block mb-1">Reset តម្លៃ Slider៖</span> 
+                    ចុចពីរដងលើរង្វង់មូលនៃ Slider ណាមួយ ដើម្បីត្រឡប់តម្លៃនោះទៅ 0 វិញភ្លាមៗ។
+                </span>
+              </li>
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+                <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">3</span>
+                <span>
+                    <span className="font-bold text-white block mb-1">មើល Clipping (J Mode)៖</span> 
+                    ពេលកំពុងអូស Slider (Whites/Blacks/Exposure) យកម្រាមដៃមួយទៀតចុចលើអេក្រង់ ដើម្បីមើលកន្លែងដែលដាច់ព័ត៌មាន។
+                </span>
+              </li>
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+                <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">4</span>
+                <span>
+                    <span className="font-bold text-white block mb-1">Copy/Paste ពណ៌៖</span> 
+                    ចុចលើសញ្ញា (...) ជ្រុងលើស្តាំ {'>'} "Copy Settings" រួចបើករូបថ្មីចុច (...) {'>'} "Paste Settings" ដើម្បីចម្លងការកែទាំងអស់។
+                </span>
+              </li>
             </ul>
           </div>
         </div>
@@ -641,22 +787,22 @@ const Quiz = ({ isOnline }) => {
 
   if (gameState === 'menu') return (
     <div className="flex h-full items-center justify-center p-4">
-      <div className="bg-[#1C1C1E]/80 backdrop-blur-md p-10 sm:p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
-          <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 w-28 h-28 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/5">
-            <Award className="w-14 h-14 text-blue-400 drop-shadow-lg" />
+      <div className="bg-[#1C1C1E]/80 backdrop-blur-md p-6 sm:p-8 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
+          <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-white/5">
+            <Award className="w-12 h-12 text-blue-400 drop-shadow-lg" />
           </div>
-          <h2 className="text-4xl font-extrabold text-white font-khmer mb-4 tracking-tight">ការធ្វើតេស្ត</h2>
-          <p className="text-gray-400 text-base font-khmer mb-10 leading-relaxed">វាស់ស្ទង់សមត្ថភាពរបស់អ្នក។</p>
-          <div className="space-y-8">
+          <h2 className="text-3xl font-extrabold text-white font-khmer mb-3 tracking-tight">ការធ្វើតេស្ត</h2>
+          <p className="text-gray-400 text-sm font-khmer mb-6 leading-relaxed">វាស់ស្ទង់សមត្ថភាពរបស់អ្នក។</p>
+          <div className="space-y-6">
               <div className="flex justify-center gap-3 bg-[#000000] p-1.5 rounded-2xl w-fit mx-auto border border-white/10">
-                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
-                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
               </div>
-              <div className="flex justify-center gap-4 items-center">
+              <div className="flex justify-center gap-3 items-center">
                 <span className="text-gray-500 text-xs font-khmer uppercase tracking-widest font-bold">ចំនួន</span>
-                {[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-12 h-12 rounded-2xl font-bold text-sm transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/5 hover:bg-[#3A3A3C]'}`}>{num}</button>))}
+                {[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-2xl font-bold text-xs transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/5 hover:bg-[#3A3A3C]'}`}>{num}</button>))}
               </div>
-              <button onClick={startQuiz} className="w-full py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-base tracking-wide">ចាប់ផ្ដើម</button>
+              <button onClick={startQuiz} className="w-full py-3.5 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-sm tracking-wide">ចាប់ផ្ដើម</button>
           </div>
       </div>
     </div>
@@ -666,17 +812,17 @@ const Quiz = ({ isOnline }) => {
       const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
       return (
         <div className="flex h-full items-center justify-center p-4">
-          <div className="bg-[#1C1C1E] p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
-            <div className="relative w-48 h-48 mx-auto mb-10 flex items-center justify-center">
+          <div className="bg-[#1C1C1E] p-10 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
+            <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90">
-                <circle cx="96" cy="96" r="80" stroke="#2C2C2E" strokeWidth="16" fill="none" />
-                <circle cx="96" cy="96" r="80" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={502} strokeDashoffset={502 - (502 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
+                <circle cx="80" cy="80" r="64" stroke="#2C2C2E" strokeWidth="12" fill="none" />
+                <circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="12" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
               </svg>
-              <div className="absolute text-5xl font-black text-white tracking-tighter">{percentage}%</div>
+              <div className="absolute text-4xl font-black text-white tracking-tighter">{percentage}%</div>
             </div>
-            <h2 className="text-3xl font-bold text-white font-khmer mb-3">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
-            <p className="text-gray-400 font-khmer mb-12 text-lg">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p>
-            <button onClick={() => setGameState('menu')} className="px-12 py-4 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full">សាកល្បងម្តងទៀត</button>
+            <h2 className="text-2xl font-bold text-white font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
+            <p className="text-gray-400 font-khmer mb-8 text-sm">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p>
+            <button onClick={() => setGameState('menu')} className="px-10 py-3 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full text-sm">សាកល្បងម្តងទៀត</button>
           </div>
         </div>
       );
@@ -685,23 +831,23 @@ const Quiz = ({ isOnline }) => {
   const q = questions[currentQuestion];
   return (
     <div className="flex h-full items-center justify-center p-4">
-      <div className="bg-[#1C1C1E] p-8 sm:p-12 rounded-[32px] border border-white/10 shadow-2xl max-w-3xl w-full animate-fade-in-up">
-        <div className="flex justify-between mb-10 items-center">
-          <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-2 rounded-full ring-1 ring-blue-500/20">សំណួរ {currentQuestion + 1} / {questions.length}</span>
+      <div className="bg-[#1C1C1E] p-6 sm:p-10 rounded-[32px] border border-white/10 shadow-2xl max-w-3xl w-full animate-fade-in-up">
+        <div className="flex justify-between mb-8 items-center">
+          <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-3 py-1.5 rounded-full ring-1 ring-blue-500/20">{currentQuestion + 1} / {questions.length}</span>
           <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{q.level || 'General'}</span>
         </div>
-        <h3 className="text-2xl md:text-3xl font-bold text-white mb-12 font-khmer leading-snug">{q.question}</h3>
-        <div className="grid gap-4">
+        <h3 className="text-xl md:text-2xl font-bold text-white mb-8 font-khmer leading-snug">{q.question}</h3>
+        <div className="grid gap-3">
           {q.options.map((opt, i) => (
-            <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-6 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-base relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : 'bg-[#2C2C2E]/30 border-transparent text-gray-600 opacity-50')) : 'bg-[#2C2C2E]/50 border-transparent text-gray-200 hover:bg-[#3A3A3C]'}`}>
-              <span className={`inline-flex w-7 h-7 items-center justify-center rounded-full mr-4 text-xs font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-black' : 'bg-[#3A3A3C] text-gray-400 group-hover:bg-white group-hover:text-black transition-colors'}`}>{String.fromCharCode(65 + i)}</span>
+            <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-4 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-sm relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : 'bg-[#2C2C2E]/30 border-transparent text-gray-600 opacity-50')) : 'bg-[#2C2C2E]/50 border-transparent text-gray-200 hover:bg-[#3A3A3C]'}`}>
+              <span className={`inline-flex w-6 h-6 items-center justify-center rounded-full mr-3 text-[10px] font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-black' : 'bg-[#3A3A3C] text-gray-400 group-hover:bg-white group-hover:text-black transition-colors'}`}>{String.fromCharCode(65 + i)}</span>
               {opt}
             </button>
           ))}
         </div>
         {isAnswered && (
-          <div className="mt-12 flex justify-end animate-fade-in-up">
-            <button onClick={handleNextQuestion} className="px-10 py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-3 transform hover:translate-x-1">បន្ទាប់ <ChevronRight size={20}/></button>
+          <div className="mt-8 flex justify-end animate-fade-in-up">
+            <button onClick={handleNextQuestion} className="px-8 py-3 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-2 transform hover:translate-x-1 text-sm">បន្ទាប់ <ChevronRight size={16}/></button>
           </div>
         )}
       </div>
@@ -899,7 +1045,7 @@ export default function App() {
               <div className="text-center mb-16 mt-8 relative">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
                  <h2 className="text-3xl md:text-5xl font-black text-white mb-6 font-khmer relative z-10 tracking-tight leading-tight">វគ្គសិក្សា Lightroom</h2>
-                 <p className="text-gray-500 font-khmer max-w-xl mx-auto text-sm leading-relaxed relative z-10 font-medium">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព ជាមួយឧបករណ៍ទំនើប។</p>
+                 <p className="text-gray-500 font-khmer max-w-xl mx-auto text-sm leading-relaxed relative z-10 font-medium">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់ នៃការកែរូបភាពកំរិតស្ដង់ដា។</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div>
               <TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> 
