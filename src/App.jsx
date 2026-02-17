@@ -1,4 +1,4 @@
-\import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sun, Aperture, Droplet, Sliders, ChevronRight, CheckCircle, XCircle, 
   BookOpen, Award, PlayCircle, MessageCircle, Send, Sparkles, Loader2, 
