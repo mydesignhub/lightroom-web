@@ -58,12 +58,12 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 // ==========================================
 
 const lessonsData = [
-  { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-5 h-5 text-amber-400" />, description: 'ការកែសម្រួលពន្លឺមូលដ្ឋាន', content: [{ tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាព។', tip: 'ចាប់ផ្តើមពីនេះមុនគេ។' }, { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។', tip: 'កុំអោយលើស +50។' }, { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ភ្លឺខ្លាំង។', tip: 'បន្ថយដើម្បីសង្គ្រោះមេឃ។' }, { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ក្នុងម្លប់។', tip: 'តម្លើងសម្រាប់រូប Backlit។' }, { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត។', tip: 'Alt+Drag ដើម្បីមើល Clipping។' }, { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចខ្មៅបំផុត។', tip: 'បន្ថយបន្តិចអោយរូបមានជម្រៅ។' }] },
-  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-5 h-5 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [{ tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌លឿង/ខៀវ។', tip: 'ថតពេលថ្ងៃលិចអោយជាប់លឿង។' }, { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌បៃតង/ស្វាយ។', tip: 'កែពណ៌ស្បែកដែលជាប់បៃតង។' }, { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក។', tip: 'ល្អសម្រាប់ Portrait។' }, { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យបែកពណ៌។' }, { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'HSL (Hue, Sat, Lum) សម្រាប់ពណ៌នីមួយៗ។', tip: 'Orange Lum សម្រាប់ស្បែកស។' }] },
-  { id: 'effects', title: 'បែបផែន (Effects)', icon: <Aperture className="w-5 h-5 text-purple-400" />, description: 'Texture, Clarity, Dehaze', content: [{ tool: 'Texture', khmer: 'វាយនភាព', desc: 'កែផ្ទៃអោយគ្រើមឬរលោង។', tip: '-10 សម្រាប់ស្បែកមុខ។' }, { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'Contrast នៅកណ្តាល។', tip: 'កុំប្រើច្រើនលើមុខមនុស្ស។' }, { tool: 'Dehaze', khmer: 'កាត់អ័ព្ទ', desc: 'លុបឬបន្ថែមអ័ព្ទ។', tip: 'ប្រើពេលមេឃស្រអាប់។' }, { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើអោយគែមរូបងងឹត។', tip: 'ជួយផ្តោតអារម្មណ៍កណ្តាល។' }] },
-  { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-5 h-5 text-pink-400" />, description: 'Sharpening & Noise', content: [{ tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយរូបច្បាស់។', tip: 'ប្រើ Masking ជាមួយ។' }, { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise។', tip: 'សម្រាប់រូបថតយប់។' }] },
-  { id: 'optics', title: 'Optics', icon: <Crop className="w-5 h-5 text-green-400" />, description: 'Lens Corrections', content: [{ tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែ Distortion របស់លែន។', tip: 'គួរតែបើកជានិច្ច។' }, { tool: 'Chromatic', khmer: 'ពណ៌តាមគែម', desc: 'លុបពណ៌ស្វាយតាមគែម។', tip: 'ប្រើលើរូប Contrast ខ្ពស់។' }] },
-  { id: 'geometry', title: 'Geometry', icon: <Layout className="w-5 h-5 text-blue-400" />, description: 'តម្រង់រូប', content: [{ tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារត្រង់។', tip: 'ប្រើ Auto សម្រាប់លទ្ធផលលឿន។' }] }
+  { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-6 h-6 text-yellow-400" />, description: 'ការកែសម្រួលពន្លឺមូលដ្ឋាន', content: [{ tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាព។', tip: 'ចាប់ផ្តើមពីនេះមុនគេ។' }, { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត។', tip: 'កុំអោយលើស +50។' }, { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ភ្លឺខ្លាំង។', tip: 'បន្ថយដើម្បីសង្គ្រោះមេឃ។' }, { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ក្នុងម្លប់។', tip: 'តម្លើងសម្រាប់រូប Backlit។' }, { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត។', tip: 'Alt+Drag ដើម្បីមើល Clipping។' }, { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចខ្មៅបំផុត។', tip: 'បន្ថយបន្តិចអោយរូបមានជម្រៅ។' }] },
+  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-6 h-6 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [{ tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌លឿង/ខៀវ។', tip: 'ថតពេលថ្ងៃលិចអោយជាប់លឿង។' }, { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌បៃតង/ស្វាយ។', tip: 'កែពណ៌ស្បែកដែលជាប់បៃតង។' }, { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក។', tip: 'ល្អសម្រាប់ Portrait។' }, { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យបែកពណ៌។' }, { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'HSL (Hue, Sat, Lum) សម្រាប់ពណ៌នីមួយៗ។', tip: 'Orange Lum សម្រាប់ស្បែកស។' }] },
+  { id: 'effects', title: 'បែបផែន (Effects)', icon: <Aperture className="w-6 h-6 text-purple-400" />, description: 'Texture, Clarity, Dehaze', content: [{ tool: 'Texture', khmer: 'វាយនភាព', desc: 'កែផ្ទៃអោយគ្រើមឬរលោង។', tip: '-10 សម្រាប់ស្បែកមុខ។' }, { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'Contrast នៅកណ្តាល។', tip: 'កុំប្រើច្រើនលើមុខមនុស្ស។' }, { tool: 'Dehaze', khmer: 'កាត់អ័ព្ទ', desc: 'លុបឬបន្ថែមអ័ព្ទ។', tip: 'ប្រើពេលមេឃស្រអាប់។' }, { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើអោយគែមរូបងងឹត។', tip: 'ជួយផ្តោតអារម្មណ៍កណ្តាល។' }] },
+  { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-6 h-6 text-pink-400" />, description: 'Sharpening & Noise', content: [{ tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយរូបច្បាស់។', tip: 'ប្រើ Masking ជាមួយ។' }, { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise។', tip: 'សម្រាប់រូបថតយប់។' }] },
+  { id: 'optics', title: 'Optics', icon: <Crop className="w-6 h-6 text-green-400" />, description: 'Lens Corrections', content: [{ tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែ Distortion របស់លែន។', tip: 'គួរតែបើកជានិច្ច។' }, { tool: 'Chromatic', khmer: 'ពណ៌តាមគែម', desc: 'លុបពណ៌ស្វាយតាមគែម។', tip: 'ប្រើលើរូប Contrast ខ្ពស់។' }] },
+  { id: 'geometry', title: 'Geometry', icon: <Layout className="w-6 h-6 text-blue-400" />, description: 'តម្រង់រូប', content: [{ tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារត្រង់។', tip: 'ប្រើ Auto សម្រាប់លទ្ធផលលឿន។' }] }
 ];
 
 const PRESET_DB = {
@@ -240,26 +240,28 @@ const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
     const handleEnd = () => setIsDragging(false);
     const radius = size / 2; const handleDist = (sat / 100) * radius; const handleX = radius + handleDist * Math.cos(hue * Math.PI / 180); const handleY = radius + handleDist * Math.sin(hue * Math.PI / 180);
     return (
-        <div className="relative rounded-full overflow-hidden shadow-2xl border border-gray-700/50 mx-auto group" style={{ width: size, height: size, background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)' }} ref={wheelRef} onMouseDown={handleStart} onMouseMove={handleMove} onMouseUp={handleEnd} onMouseLeave={handleEnd} onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={handleEnd}>
-            <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle, white, transparent 70%)', opacity: 0.5, pointerEvents: 'none' }}></div>
-            <div className="absolute w-5 h-5 bg-white rounded-full border-2 border-gray-900 shadow-md transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-75 group-hover:scale-110" style={{ left: handleX, top: handleY }}></div>
+        <div className="relative rounded-full overflow-hidden shadow-2xl border border-white/10 mx-auto group ring-1 ring-white/5" style={{ width: size, height: size, background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)' }} ref={wheelRef} onMouseDown={handleStart} onMouseMove={handleMove} onMouseUp={handleEnd} onMouseLeave={handleEnd} onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={handleEnd}>
+            <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle, white, transparent 70%)', opacity: 0.3, pointerEvents: 'none' }}></div>
+            <div className="absolute w-5 h-5 bg-white rounded-full border-2 border-black/80 shadow-lg transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-100 ease-spring group-hover:scale-125" style={{ left: handleX, top: handleY }}></div>
         </div>
     );
 };
 
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-[#0f172a]/90 backdrop-blur-md text-white sticky top-0 z-50 shadow-xl border-b border-gray-800`}>
-      <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-black/80 backdrop-blur-xl text-white sticky top-0 z-50 border-b border-white/10`}>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('learn')}>
-          <div className="w-10 h-10 relative rounded-2xl overflow-hidden shadow-md flex-shrink-0 group-hover:shadow-blue-500/20 transition-all"><img src="/logo.svg" alt="Logo" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform" /></div>
-          <h1 className="text-xl font-bold font-khmer text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ម៉ាយឌីហ្សាញ</h1>
+          <div className="w-10 h-10 relative rounded-xl overflow-hidden shadow-lg flex-shrink-0 group-hover:shadow-blue-500/20 transition-all duration-500 ease-spring group-hover:scale-105 bg-white/5 p-1.5 border border-white/10">
+             <img src="/logo.svg" alt="Logo" className="w-full h-full object-cover rounded-lg" />
+          </div>
+          <h1 className="text-xl font-bold font-khmer text-white tracking-tight group-hover:opacity-80 transition-opacity">ម៉ាយឌីហ្សាញ</h1>
         </div>
-        <nav className="hidden md:flex space-x-1 bg-[#1e293b]/80 p-1 rounded-xl border border-gray-700 overflow-x-auto">
+        <nav className="hidden md:flex space-x-1 bg-[#1C1C1E] p-1.5 rounded-full border border-white/10 shadow-lg">
           {['learn', 'quiz', 'lab', 'ai'].map(t => (
-            <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap font-medium ${activeTab === t ? 'bg-[#334155] text-white shadow-md ring-1 ring-white/10' : 'text-gray-400 hover:text-white hover:bg-[#334155]/50'}`}>
+            <button key={t} onClick={() => setActiveTab(t)} className={`px-6 py-2 rounded-full transition-all duration-300 ease-spring flex items-center gap-2 whitespace-nowrap font-medium text-sm ${activeTab === t ? 'bg-[#2C2C2E] text-white shadow-md ring-1 ring-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                {t === 'learn' && <BookOpen size={16}/>}{t === 'quiz' && <Award size={16}/>}{t === 'lab' && <Sliders size={16}/>}{t === 'ai' && <Bot size={16}/>}
-               <span className="font-khmer text-xs font-bold uppercase hidden md:block">{t === 'learn' ? 'មេរៀន' : t === 'quiz' ? 'តេស្ត' : t === 'lab' ? 'Lab' : 'គ្រូ AI'}</span>
+               <span className="font-khmer font-bold uppercase hidden lg:block tracking-wide text-[11px]">{t === 'learn' ? 'មេរៀន' : t === 'quiz' ? 'តេស្ត' : t === 'lab' ? 'Lab' : 'គ្រូ AI'}</span>
             </button>
           ))}
         </nav>
@@ -291,20 +293,26 @@ const LessonModal = ({ lesson, onClose }) => {
   const opacity = 1 - (dragOffset / 500); 
 
   return (
-      <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${closing ? 'opacity-0' : 'opacity-100'}`} style={{ opacity: Math.max(0, opacity) }} onClick={handleClose} />
-          <div ref={modalRef} className={`relative w-full max-w-2xl bg-[#1e293b] rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[90vh] h-[85vh] sm:h-auto transition-transform duration-300 ring-1 ring-white/10 ${closing ? 'translate-y-full' : 'translate-y-0'}`} style={{ transform: `translateY(${closing ? '100%' : `${dragOffset}px`})`, transition: dragOffset > 0 ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-             <div className="w-full flex justify-center pt-3 pb-1 shrink-0 cursor-grab active:cursor-grabbing" onClick={handleClose}><div className="w-12 h-1.5 bg-gray-600 rounded-full"></div></div>
-             <div className="bg-[#1e293b] border-b border-gray-800 p-5 pt-2 flex items-center justify-between sticky top-0 z-10 shrink-0 rounded-t-3xl">
-                <div className="flex items-center gap-4"><div className="p-3 bg-blue-500/10 rounded-2xl text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-900/20">{lesson.icon}</div><h2 className="text-xl font-bold font-khmer text-white tracking-wide">{lesson.title}</h2></div>
-                <button onClick={handleClose} className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"><ChevronDown className="w-6 h-6" /></button>
+      <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6">
+          <div className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-500 ease-out ${closing ? 'opacity-0' : 'opacity-100'}`} style={{ opacity: Math.max(0, opacity) }} onClick={handleClose} />
+          <div ref={modalRef} className={`relative w-full max-w-3xl bg-[#1C1C1E] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] h-[85vh] sm:h-auto transition-transform duration-500 ease-spring ring-1 ring-white/10 ${closing ? 'translate-y-full' : 'translate-y-0'}`} style={{ transform: `translateY(${closing ? '100%' : `${dragOffset}px`})`, transition: dragOffset > 0 ? 'none' : 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+             <div className="w-full flex justify-center pt-3 pb-1 shrink-0 cursor-grab active:cursor-grabbing sm:hidden" onClick={handleClose}><div className="w-12 h-1.5 bg-[#3A3A3C] rounded-full"></div></div>
+             <div className="bg-[#1C1C1E] border-b border-white/5 p-6 flex items-center justify-between sticky top-0 z-10 shrink-0 rounded-t-3xl">
+                <div className="flex items-center gap-5">
+                    <div className="p-3.5 bg-blue-500/10 rounded-2xl text-blue-400 border border-blue-500/20">{lesson.icon}</div>
+                    <h2 className="text-2xl font-bold font-khmer text-white tracking-tight">{lesson.title}</h2>
+                </div>
+                <button onClick={handleClose} className="p-2.5 bg-[#2C2C2E] hover:bg-[#3A3A3C] rounded-full text-gray-400 hover:text-white transition-colors"><XCircle className="w-6 h-6" /></button>
              </div>
-             <div className="scroll-content flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain bg-[#0f172a]/50">
+             <div className="scroll-content flex-1 overflow-y-auto p-6 space-y-4 overscroll-contain bg-[#000000]">
                 {lesson.content.map((item, idx) => (
-                    <div key={idx} className="bg-[#1e293b] p-5 rounded-2xl border border-gray-700/50 shadow-sm hover:border-blue-500/30 transition-colors">
-                        <div className="flex justify-between items-center mb-3 gap-2"><span className="font-bold text-lg text-blue-400">{item.tool}</span><span className="text-xs font-bold bg-[#0f172a] text-gray-300 px-2.5 py-1 rounded-md font-khmer border border-gray-700 whitespace-nowrap shadow-inner">{item.khmer}</span></div>
-                        <p className="text-gray-300 text-sm font-khmer leading-relaxed">{item.desc}</p>
-                        {item.tip && <div className="mt-4 pt-3 border-t border-gray-700/50 flex items-start space-x-3"><span className="text-lg animate-pulse">💡</span><p className="text-yellow-400/90 text-sm font-khmer italic leading-relaxed"><span className="font-bold mr-1 opacity-80 uppercase text-xs tracking-wider not-italic text-yellow-500">Tip:</span>{item.tip}</p></div>}
+                    <div key={idx} className="bg-[#1C1C1E] p-6 rounded-3xl border border-white/5 shadow-sm hover:border-white/10 transition-colors group">
+                        <div className="flex justify-between items-center mb-3 gap-3">
+                            <span className="font-bold text-lg text-white group-hover:text-blue-400 transition-colors">{item.tool}</span>
+                            <span className="text-xs font-bold bg-[#2C2C2E] text-gray-300 px-3 py-1.5 rounded-lg font-khmer border border-white/5 whitespace-nowrap">{item.khmer}</span>
+                        </div>
+                        <p className="text-gray-400 text-base font-khmer leading-relaxed">{item.desc}</p>
+                        {item.tip && <div className="mt-4 pt-4 border-t border-white/5 flex items-start space-x-3"><span className="text-lg">💡</span><p className="text-yellow-500/90 text-sm font-khmer font-medium leading-relaxed">{item.tip}</p></div>}
                     </div>
                 ))}
              </div>
@@ -314,19 +322,19 @@ const LessonModal = ({ lesson, onClose }) => {
 };
 
 const LessonCard = ({ lesson, onClick }) => (
-    <button onClick={onClick} className="bg-[#1e293b] rounded-2xl overflow-hidden border border-gray-800 shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-95 hover:border-blue-500/40 cursor-pointer h-full flex flex-col group w-full text-left hover:shadow-xl hover:shadow-blue-900/10 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      <div className="p-6 flex items-center justify-between w-full relative z-10">
-        <div className="flex items-center gap-5">
-            <div className="bg-[#0f172a] p-3.5 rounded-2xl shadow-inner border border-gray-700/50 group-hover:bg-[#1e293b] group-hover:border-blue-500/30 transition-all text-gray-300 group-hover:text-white">
+    <button onClick={onClick} className="bg-[#1C1C1E] rounded-3xl overflow-hidden border border-white/5 transition-all duration-500 ease-spring hover:scale-[1.02] active:scale-95 cursor-pointer h-full flex flex-col group w-full text-left relative shadow-lg hover:shadow-2xl hover:shadow-black/50">
+      <div className="p-8 flex flex-col justify-between h-full relative z-10">
+        <div className="mb-6">
+            <div className="bg-[#2C2C2E] w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-white/5 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors text-gray-300">
                 {lesson.icon}
             </div>
-            <div>
-                <h3 className="font-bold text-white text-lg font-khmer group-hover:text-blue-200 transition-colors">{lesson.title}</h3>
-                <p className="text-gray-400 text-xs font-khmer mt-1 line-clamp-1 group-hover:text-gray-300">{lesson.description}</p>
-            </div>
+            <h3 className="font-bold text-white text-xl font-khmer mb-2 group-hover:text-blue-400 transition-colors tracking-tight">{lesson.title}</h3>
+            <p className="text-gray-500 text-sm font-khmer line-clamp-2 leading-relaxed">{lesson.description}</p>
         </div>
-        <div className="bg-[#0f172a] p-2 rounded-full text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all transform group-hover:translate-x-1 shadow-md"><ChevronRight className="w-5 h-5" /></div>
+        <div className="flex justify-between items-center mt-auto pt-4 border-t border-white/5">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-400 transition-colors">Start Lesson</span>
+            <div className="bg-[#2C2C2E] p-2 rounded-full text-gray-400 group-hover:bg-blue-500 group-hover:text-white transition-all transform group-hover:translate-x-1"><ChevronRight className="w-4 h-4" /></div>
+        </div>
       </div>
     </button>
 );
@@ -335,23 +343,30 @@ const TipsSection = ({ isExpanded, onToggle }) => {
   const [randomTip, setRandomTip] = useState(null);
   const getTip = () => setRandomTip(TIPS_LIST[Math.floor(Math.random() * TIPS_LIST.length)]);
   return (
-    <div className="mt-10">
-      <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#1e293b] p-5 rounded-2xl border border-gray-800 shadow-md hover:border-gray-600 hover:bg-[#253248] transition-all group active:scale-95">
-        <div className="flex items-center space-x-4"><div className="bg-blue-900/20 p-2.5 rounded-xl group-hover:bg-blue-900/40 transition-colors ring-1 ring-blue-500/10"><PlayCircle className="w-6 h-6 text-blue-400" /></div><h3 className="font-bold text-white text-lg font-khmer">គន្លឹះបន្ថែម (Tips)</h3></div>
-        <ChevronRight className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''}`} />
+    <div className="mt-12">
+      <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#1C1C1E] p-6 rounded-3xl border border-white/5 hover:bg-[#2C2C2E] transition-all duration-300 group active:scale-95">
+        <div className="flex items-center space-x-5">
+            <div className="bg-blue-500/10 p-3 rounded-2xl group-hover:bg-blue-500/20 transition-colors ring-1 ring-blue-500/20"><PlayCircle className="w-6 h-6 text-blue-400" /></div>
+            <h3 className="font-bold text-white text-xl font-khmer tracking-tight">គន្លឹះបន្ថែម (Tips)</h3>
+        </div>
+        <ChevronRight className={`w-6 h-6 text-gray-500 transition-transform duration-500 ease-spring ${isExpanded ? 'rotate-90' : ''}`} />
       </button>
       {isExpanded && (
-        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-5 animate-fade-in-down">
-          <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-2xl p-6 md:col-span-2 relative overflow-hidden backdrop-blur-sm shadow-xl">
-             <div className="flex justify-between items-start mb-4"><h4 className="font-bold text-white font-khmer flex items-center gap-2 z-10 text-lg"><Sparkles className="w-5 h-5 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4><button onClick={getTip} className="z-10 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-full font-khmer transition-all shadow-lg hover:shadow-indigo-500/50 font-bold tracking-wide">បង្ហាញគន្លឹះ</button></div>
-             <p className="text-gray-200 text-sm font-khmer leading-relaxed border-l-4 border-indigo-500 pl-4 py-1 mt-2 bg-indigo-900/20 rounded-r-lg">{randomTip || "ចុចប៊ូតុងខាងលើដើម្បីទទួលបានគន្លឹះកែរូប។"}</p>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
+          <div className="bg-gradient-to-br from-[#2C2C2E] to-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 relative overflow-hidden shadow-2xl">
+             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+             <div className="flex justify-between items-start mb-6 relative z-10">
+                 <h4 className="font-bold text-white font-khmer flex items-center gap-3 text-lg"><Sparkles className="w-5 h-5 text-yellow-400" /> គន្លឹះពិសេស (Pro Tip)</h4>
+                 <button onClick={getTip} className="bg-white/10 hover:bg-white/20 text-white text-xs px-5 py-2.5 rounded-full font-khmer transition-all font-bold tracking-wide border border-white/5">បង្ហាញគន្លឹះ</button>
+             </div>
+             <p className="text-gray-300 text-base font-khmer leading-relaxed border-l-4 border-blue-500 pl-6 py-2 relative z-10">{randomTip || "ចុចប៊ូតុងខាងលើដើម្បីទទួលបានគន្លឹះកែរូប។"}</p>
           </div>
-          <div className="bg-[#1e293b]/90 border border-gray-800 rounded-2xl p-6 md:col-span-2 shadow-lg">
-            <h4 className="font-bold text-white font-khmer mb-4 flex items-center text-lg"><Zap className="w-5 h-5 mr-2 text-yellow-400" /> គន្លឹះប្រើកម្មវិធី (Shortcut Tricks)</h4>
-            <ul className="space-y-4 text-sm text-gray-300 font-khmer">
-              <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0">1</span><span><span className="font-bold text-white">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before)។</span></li>
-              <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0">2</span><span><span className="font-bold text-white">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
-              <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-6 h-6 flex items-center justify-center rounded-full text-xs shrink-0">3</span><span><span className="font-bold text-white">ចុចចុងសងខាង (+/-)៖</span> បន្ថែមឬបន្ថយលេខម្ដង ១។</span></li>
+          <div className="bg-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 shadow-xl">
+            <h4 className="font-bold text-white font-khmer mb-6 flex items-center text-lg"><Zap className="w-5 h-5 mr-3 text-yellow-400" /> គន្លឹះប្រើកម្មវិធី (Shortcut Tricks)</h4>
+            <ul className="space-y-4 text-sm text-gray-400 font-khmer">
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">1</span><span><span className="font-bold text-white block mb-1">ចុចសង្កត់លើរូប៖</span> មើលរូបភាពដើម (Before) និងលទ្ធផល (After)។</span></li>
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">2</span><span><span className="font-bold text-white block mb-1">ចុចពីរដងលើ Slider៖</span> ត្រឡប់តម្លៃទៅ 0 (Reset) វិញភ្លាមៗ។</span></li>
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors"><span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">3</span><span><span className="font-bold text-white block mb-1">ចុចចុងសងខាង (+/-)៖</span> បន្ថែមឬបន្ថយលេខម្ដង ១ សម្រាប់ភាពជាក់លាក់។</span></li>
             </ul>
           </div>
         </div>
@@ -361,7 +376,30 @@ const TipsSection = ({ isExpanded, onToggle }) => {
 };
 
 const ContactSection = () => (
-  <div className="mt-12 mb-6 border-t border-gray-800 pt-8"><h3 className="text-center text-gray-500 text-xs font-khmer mb-6 tracking-widest uppercase">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3><div className="flex justify-center space-x-6"><a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-12 h-12 bg-[#1e293b] rounded-2xl flex items-center justify-center shadow-lg border border-gray-700 group-hover:border-blue-500/50 group-hover:bg-blue-600 group-hover:scale-110 transition-all"><Facebook className="w-5 h-5 text-gray-400 group-hover:text-white" /></div><span className="text-[10px] text-gray-500 font-khmer mt-2 group-hover:text-blue-400 transition-colors">Facebook</span></a><a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-12 h-12 bg-[#1e293b] rounded-2xl flex items-center justify-center shadow-lg border border-gray-700 group-hover:border-blue-400/50 group-hover:bg-blue-400 group-hover:scale-110 transition-all"><Send className="w-5 h-5 text-gray-400 group-hover:text-white" /></div><span className="text-[10px] text-gray-500 font-khmer mt-2 group-hover:text-blue-400 transition-colors">Telegram</span></a><a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center group"><div className="w-12 h-12 bg-[#1e293b] rounded-2xl flex items-center justify-center shadow-lg border border-gray-700 group-hover:border-gray-500/50 group-hover:bg-gray-700 group-hover:scale-110 transition-all"><Globe className="w-5 h-5 text-gray-400 group-hover:text-white" /></div><span className="text-[10px] text-gray-500 font-khmer mt-2 group-hover:text-gray-300 transition-colors">Website</span></a></div><p className="text-center text-gray-600 text-xs mt-8 font-khmer tracking-wide">© 2026 My Design. All Right Reserved.</p></div>
+  <div className="mt-16 mb-10 border-t border-white/10 pt-10">
+      <h3 className="text-center text-gray-500 text-xs font-khmer mb-8 tracking-[0.2em] uppercase font-bold">ទំនាក់ទំនង & ស្វែងយល់បន្ថែម</h3>
+      <div className="flex justify-center gap-8">
+          <a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-[#1C1C1E] rounded-2xl flex items-center justify-center shadow-lg border border-white/5 group-hover:border-blue-500/50 group-hover:bg-blue-600 transition-all duration-300 ease-spring group-hover:scale-110 group-hover:rotate-3">
+                  <Facebook className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-[10px] text-gray-500 font-khmer font-bold group-hover:text-blue-400 transition-colors">Facebook</span>
+          </a>
+          <a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-[#1C1C1E] rounded-2xl flex items-center justify-center shadow-lg border border-white/5 group-hover:border-sky-400/50 group-hover:bg-sky-500 transition-all duration-300 ease-spring group-hover:scale-110 group-hover:-rotate-3">
+                  <Send className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors ml-0.5 mt-0.5" />
+              </div>
+              <span className="text-[10px] text-gray-500 font-khmer font-bold group-hover:text-sky-400 transition-colors">Telegram</span>
+          </a>
+          <a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-[#1C1C1E] rounded-2xl flex items-center justify-center shadow-lg border border-white/5 group-hover:border-pink-500/50 group-hover:bg-pink-600 transition-all duration-300 ease-spring group-hover:scale-110 group-hover:rotate-3">
+                  <Globe className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-[10px] text-gray-500 font-khmer font-bold group-hover:text-pink-400 transition-colors">Website</span>
+          </a>
+      </div>
+      <p className="text-center text-gray-600 text-[10px] mt-12 font-khmer tracking-wider uppercase opacity-50">© 2026 My Design. Crafted with Passion.</p>
+  </div>
 );
 
 // --- 4. PHOTO LAB ---
@@ -430,7 +468,7 @@ const PhotoLab = () => {
   };
   const getVignetteStyle = () => { const v = settings.vignette; if (v < 0) return { background: `radial-gradient(circle, transparent ${60 + (v * 0.4)}%, rgba(0,0,0,${Math.abs(v)/100}))` }; return { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` }; };
 
-  useEffect(() => { const style = document.createElement('style'); style.innerHTML = `.drag-only-range { pointer-events: none; } .drag-only-range::-webkit-slider-thumb { pointer-events: auto; cursor: pointer; } .grad-hue { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red); } .grad-sat { background: linear-gradient(to right, #333, #ccc); } .grad-lum { background: linear-gradient(to right, black, white); } input[type=range] { -webkit-appearance: none; background: transparent; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #f1f5f9; border: 2px solid #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-top: -6px; cursor: pointer; transition: transform 0.1s; } input[type=range]::-webkit-slider-thumb:active { transform: scale(1.2); } input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }`; document.head.appendChild(style); return () => document.head.removeChild(style); }, []);
+  useEffect(() => { const style = document.createElement('style'); style.innerHTML = `.drag-only-range { pointer-events: none; } .drag-only-range::-webkit-slider-thumb { pointer-events: auto; cursor: pointer; } .grad-hue { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red); } .grad-sat { background: linear-gradient(to right, #333, #ccc); } .grad-lum { background: linear-gradient(to right, black, white); } input[type=range] { -webkit-appearance: none; background: transparent; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #ffffff; border: 1px solid #000000; box-shadow: 0 2px 5px rgba(0,0,0,0.4); margin-top: -7px; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); } input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #3A3A3C; border-radius: 10px; }`; document.head.appendChild(style); return () => document.head.removeChild(style); }, []);
   const toolsGroups = [ { group: 'Light', icon: <Sun size={18}/>, items: [{ id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1 }, { id: 'contrast', label: 'Contrast', min: -100, max: 100 }, { id: 'highlights', label: 'Highlights', min: -100, max: 100 }, { id: 'shadows', label: 'Shadows', min: -100, max: 100 }, { id: 'whites', label: 'Whites', min: -100, max: 100 }, { id: 'blacks', label: 'Blacks', min: -100, max: 100 }] }, { group: 'Color', icon: <Palette size={18}/>, items: [{ id: 'temp', label: 'Temp', min: -100, max: 100 }, { id: 'tint', label: 'Tint', min: -100, max: 100 }, { id: 'vibrance', label: 'Vibrance', min: -100, max: 100 }, { id: 'saturation', label: 'Saturation', min: -100, max: 100 }] }, { group: 'Effects', icon: <Aperture size={18}/>, items: [{ id: 'texture', label: 'Texture', min: -100, max: 100 }, { id: 'clarity', label: 'Clarity', min: -100, max: 100 }, { id: 'dehaze', label: 'Dehaze', min: -100, max: 100 }, { id: 'vignette', label: 'Vignette', min: -100, max: 100 }] } ];
   const colors = [ { name: 'Red', id: 'red', color: 'bg-red-500' }, { name: 'Orange', id: 'orange', color: 'bg-orange-500' }, { name: 'Yellow', id: 'yellow', color: 'bg-yellow-500' }, { name: 'Green', id: 'green', color: 'bg-green-500' }, { name: 'Aqua', id: 'aqua', color: 'bg-cyan-400' }, { name: 'Blue', id: 'blue', color: 'bg-blue-600' }, { name: 'Purple', id: 'purple', color: 'bg-purple-600' }, { name: 'Magenta', id: 'magenta', color: 'bg-pink-500' } ];
   const sampleImages = [ { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" }, { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" }, { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" }, { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" }, { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" } ];
@@ -441,48 +479,48 @@ const PhotoLab = () => {
   };
 
   return (
-    <div className="bg-[#1e293b] rounded-2xl border border-gray-800 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-6xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 fixed inset-0 z-0">
-        <div className="p-3 md:p-0 bg-[#1e293b] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
+    <div className="bg-[#000000] rounded-3xl border border-white/10 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 fixed inset-0 z-0">
+        <div className="p-3 md:p-0 bg-[#000000] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
             <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto justify-center md:justify-end ml-auto no-scrollbar">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-                <button onClick={() => fileInputRef.current.click()} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-blue-900/20"><Upload size={14} /> Upload</button>
-                <button onClick={handleDownload} className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-green-900/20"><ImageDown size={14} /> Download</button>
-                <button onClick={handlePresetExport} className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-xs transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-purple-900/20"><FileJson size={14} /> Export XMP</button>
+                <button onClick={() => fileInputRef.current.click()} className="px-5 py-2 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-full font-bold text-xs transition-all flex items-center gap-2 whitespace-nowrap"><Upload size={14} /> Upload</button>
+                <button onClick={handleDownload} className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold text-xs transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-blue-500/20"><ImageDown size={14} /> Download</button>
+                <button onClick={handlePresetExport} className="px-5 py-2 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-full font-bold text-xs transition-all flex items-center gap-2 whitespace-nowrap"><FileJson size={14} /> Export XMP</button>
             </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-0 lg:gap-6 h-full overflow-hidden relative">
-            <div className="h-[38%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-2 lg:p-0">
-                <div className="flex-1 bg-[#020617] rounded-xl lg:rounded-2xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-inner">
-                    <div className="relative w-full h-full"><img src={image} className="w-full h-full object-contain transition-all duration-75 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
+            <div className="h-[38%] lg:h-full lg:flex-1 flex flex-col gap-4 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-4 lg:p-0">
+                <div className="flex-1 bg-[#1C1C1E] rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-2xl">
+                    <div className="relative w-full h-full"><img src={image} className="w-full h-full object-contain transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
-                <div className="flex justify-center gap-2 lg:gap-4 bg-[#0f172a] p-3 rounded-2xl border border-white/5 overflow-x-auto shrink-0 shadow-lg no-scrollbar">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-14 h-14 lg:w-16 lg:h-16 rounded-xl border-2 ${image === item.src ? 'border-blue-500 ring-2 ring-blue-500/30 scale-105' : 'border-gray-600 hover:border-gray-400 opacity-70 hover:opacity-100'} overflow-hidden transition-all relative group shadow-md`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
+                <div className="flex justify-center gap-3 lg:gap-4 bg-[#1C1C1E] p-3 rounded-3xl border border-white/5 overflow-x-auto shrink-0 shadow-lg no-scrollbar">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-16 h-16 rounded-2xl border-2 ${image === item.src ? 'border-blue-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'} overflow-hidden transition-all duration-300 ease-spring relative group shadow-md`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
             </div>
 
-            <div className="flex-1 lg:w-80 xl:w-96 lg:flex-none flex flex-col h-full bg-[#0f172a] rounded-t-3xl lg:rounded-2xl border-t lg:border border-white/10 overflow-hidden shadow-[0_-5px_20px_rgba(0,0,0,0.5)] lg:shadow-xl">
-                 <div className="flex border-b border-white/10 shrink-0 bg-[#1e293b] lg:bg-transparent p-1">
-                    <button onClick={() => setMode('manual')} className={`flex-1 py-2.5 rounded-lg text-xs font-bold font-khmer transition-all ${mode === 'manual' ? 'bg-[#0f172a] text-blue-400 shadow-sm ring-1 ring-white/5' : 'text-gray-400 hover:text-white hover:bg-[#0f172a]/50'}`}>កែដោយដៃ</button>
-                    <button onClick={() => setMode('ai')} className={`flex-1 py-2.5 rounded-lg text-xs font-bold font-khmer transition-all ${mode === 'ai' ? 'bg-[#0f172a] text-purple-400 shadow-sm ring-1 ring-white/5' : 'text-gray-400 hover:text-white hover:bg-[#0f172a]/50'}`}>AI Preset</button>
-                    <button onClick={resetSettings} className="px-4 text-[10px] text-red-400 font-khmer hover:bg-red-500/10 rounded-lg flex items-center gap-1 transition-all active:scale-95 ml-1"><RotateCcw size={14}/></button>
+            <div className="flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full bg-[#1C1C1E] rounded-t-3xl lg:rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
+                 <div className="flex border-b border-white/10 shrink-0 bg-[#2C2C2E] p-1.5 m-2 rounded-2xl">
+                    <button onClick={() => setMode('manual')} className={`flex-1 py-2.5 rounded-xl text-xs font-bold font-khmer transition-all duration-300 ease-spring ${mode === 'manual' ? 'bg-[#3A3A3C] text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
+                    <button onClick={() => setMode('ai')} className={`flex-1 py-2.5 rounded-xl text-xs font-bold font-khmer transition-all duration-300 ease-spring ${mode === 'ai' ? 'bg-[#3A3A3C] text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>AI Preset</button>
+                    <button onClick={resetSettings} className="px-4 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-xl flex items-center gap-1 transition-all ml-1"><RotateCcw size={16}/></button>
                  </div>
                  
-                 <div className="flex-1 flex flex-col bg-[#0f172a] overflow-hidden">
+                 <div className="flex-1 flex flex-col bg-[#1C1C1E] overflow-hidden relative">
                     {mode === 'manual' ? (
-                        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-6 pb-20 lg:pb-10">
+                        <div className="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-8 pb-24 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-3 bg-[#1e293b]/50 p-4 rounded-xl border border-white/5">
-                                    <div className="flex items-center justify-between pb-1"><h4 className="text-xs font-bold text-blue-400 font-khmer uppercase flex items-center gap-2">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[9px] text-gray-500 hover:text-white transition-colors">Reset</button></div>
-                                    <div className="space-y-4 px-1">
+                                <div key={gIdx} className="space-y-4">
+                                    <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[10px] text-blue-500 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider">Reset</button></div>
+                                    <div className="space-y-5">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
-                                                <div className="flex justify-between mb-2 items-center">
-                                                    <label className="text-[10px] font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors select-none" onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
-                                                    <span className="text-[10px] text-blue-400 font-mono bg-gray-800 px-2 py-0.5 rounded-md min-w-[30px] text-center border border-white/5 shadow-sm">{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
+                                                <div className="flex justify-between mb-3 items-center">
+                                                    <label className="text-xs font-bold text-gray-300 font-khmer cursor-pointer hover:text-white transition-colors" onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
+                                                    <span className="text-xs text-blue-400 font-mono font-bold">{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
                                                 </div>
-                                                <div className="flex items-center gap-3">
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Minus size={12}/></button>
+                                                <div className="flex items-center gap-4">
+                                                    <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Minus size={14}/></button>
                                                     <input type="range" min={t.min} max={t.max} step={t.step || 1} value={settings[t.id]} onChange={(e) => updateSetting(t.id, Number(e.target.value))} className="flex-1" />
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Plus size={12}/></button>
+                                                    <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Plus size={14}/></button>
                                                 </div>
                                             </div>
                                         ))}
@@ -490,79 +528,66 @@ const PhotoLab = () => {
                                 </div>
                             ))}
 
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between pb-1 px-1"><h4 className="text-xs font-bold text-pink-400 font-khmer uppercase flex items-center gap-2"><Palette size={16}/> Color Mix</h4></div>
-                                <div className="flex justify-between gap-2 mb-2 px-1">
-                                    {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-7 h-7 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-lg ring-2 ring-white/10' : 'border-transparent opacity-50 hover:opacity-100'} transition-all`} />))}
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><Palette size={16}/> Color Mix</h4></div>
+                                <div className="flex justify-between gap-2 mb-4">
+                                    {colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-8 h-8 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-lg ring-2 ring-white/10' : 'border-transparent opacity-40 hover:opacity-100'} transition-all duration-300 ease-spring`} />))}
                                 </div>
-                                <div className="space-y-4 px-4 py-5 bg-[#1e293b]/50 rounded-xl border border-white/5">
+                                <div className="space-y-6 px-2">
                                     {['Hue', 'Sat', 'Lum'].map((type) => {
                                         const key = `${activeColor.toLowerCase()}${type}`;
                                         return (
-                                            <div key={key} className="flex items-center gap-3">
-                                                <label className="text-[10px] font-bold text-gray-400 font-khmer w-8">{type}</label>
-                                                <button onClick={() => updateSetting(key, settings[key] - 1)} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Minus size={12}/></button>
+                                            <div key={key} className="flex items-center gap-4">
+                                                <label className="text-[10px] font-bold text-gray-400 font-khmer w-8 uppercase tracking-wider">{type}</label>
                                                 <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer drag-only-range ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
-                                                <button onClick={() => updateSetting(key, settings[key] + 1)} className="text-gray-500 hover:text-white transition-colors active:scale-90"><Plus size={12}/></button>
-                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-700 rounded p-1 outline-none focus:border-blue-500" />
+                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" />
                                             </div>
                                         )
                                     })}
                                 </div>
                             </div>
 
-                            <div className="space-y-4 pb-4">
-                                <div className="flex items-center justify-between pb-1 px-1"><h4 className="text-xs font-bold text-purple-400 font-khmer uppercase flex items-center gap-2"><TrendingUp size={16}/> Grading</h4></div>
-                                <div className="flex justify-around mb-2 bg-[#1e293b] p-1 rounded-xl border border-white/5">
+                            <div className="space-y-6 pb-6">
+                                <div className="flex items-center justify-between pb-1 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><TrendingUp size={16}/> Grading</h4></div>
+                                <div className="flex justify-around mb-4 bg-[#2C2C2E] p-1.5 rounded-xl">
                                     {['Shadows', 'Midtones', 'Highlights'].map(t => (
-                                        <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${gradingTab === t ? 'bg-[#0f172a] text-purple-400 shadow-sm ring-1 ring-purple-500/20' : 'text-gray-500 hover:text-gray-300'}`}>{t}</button>
+                                        <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>{t}</button>
                                     ))}
                                 </div>
-                                <div className="bg-[#1e293b]/50 p-4 rounded-xl border border-white/5 space-y-5">
-                                    <div className="flex justify-center py-2">
+                                <div className="p-4 space-y-6">
+                                    <div className="flex justify-center py-4">
                                         <ColorWheel 
                                             hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}
                                             sat={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']}
                                             onChange={(h, s) => updateGrading(gradingTab, h, s)}
-                                            size={180}
+                                            size={200}
                                         />
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <label className="text-[10px] font-bold text-gray-400 w-8">Lum</label>
+                                    <div className="flex items-center gap-4 px-2">
+                                        <label className="text-[10px] font-bold text-gray-400 w-8 uppercase tracking-wider">Lum</label>
                                         <input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="flex-1"/>
-                                        <input type="number" className="w-10 bg-gray-800 text-[10px] text-center text-white border border-gray-700 rounded p-1 outline-none focus:border-purple-500" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} />
-                                    </div>
-                                </div>
-                                <div className="pt-4 border-t border-white/5 space-y-4 px-2">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex justify-between"><label className="text-[10px] text-gray-400">Blending</label><span className="text-[10px] text-purple-400">{settings.gradingBlending}</span></div>
-                                        <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex justify-between"><label className="text-[10px] text-gray-400">Balance</label><span className="text-[10px] text-purple-400">{settings.gradingBalance}</span></div>
-                                        <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/>
+                                        <input type="number" className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col h-full bg-[#0f172a]">
-                            <div className="p-4 border-b border-white/5 shrink-0 z-10">
-                                <div className="bg-[#1e293b] p-3 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/5">
-                                    <div className="flex gap-2 items-center">
-                                        <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="បង្កើតពណ៌ដោយ AI..." className="flex-1 bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none focus:border-purple-500 font-khmer transition-colors placeholder:text-gray-600" />
-                                        <button onClick={() => generateAIPreset()} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 rounded-xl font-bold font-khmer text-xs disabled:opacity-50 whitespace-nowrap active:scale-95 transition-transform shadow-lg shadow-purple-600/20">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'បង្កើត'}</button>
+                        <div className="flex flex-col h-full bg-[#1C1C1E]">
+                            <div className="p-6 border-b border-white/5 shrink-0 z-10">
+                                <div className="bg-[#2C2C2E] p-1 rounded-2xl border border-white/5 shadow-inner">
+                                    <div className="flex gap-2 items-center px-2">
+                                        <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="Describe a style (e.g. Moody Blue)..." className="flex-1 bg-transparent px-2 py-3 text-white text-sm outline-none font-khmer placeholder:text-gray-500" />
+                                        <button onClick={() => generateAIPreset()} disabled={aiLoading} className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl font-bold font-khmer text-xs disabled:opacity-50 whitespace-nowrap active:scale-95 transition-all shadow-lg">{aiLoading ? <Loader2 className="animate-spin" size={14}/> : 'Create'}</button>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                                <div className="space-y-4 pb-20">
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Presets</h4>
+                            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                                <div className="space-y-6 pb-20">
+                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">AI Presets</h4>
                                     <div className="grid grid-cols-2 gap-3">
                                         {Object.keys(PRESET_DB).map(s => (
-                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(s); }} className="px-3 py-4 bg-[#1e293b] hover:bg-[#334155] border border-gray-700 hover:border-gray-500 rounded-xl text-center flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group relative overflow-hidden shadow-sm">
-                                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"/>
-                                                <span className="capitalize text-[10px] font-bold text-gray-400 group-hover:text-white line-clamp-1 z-10">{s}</span>
+                                            <button key={s} onClick={() => { setAiPrompt(s); generateAIPreset(s); }} className="px-4 py-6 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/5 rounded-2xl text-center flex flex-col items-center justify-center gap-3 transition-all duration-300 ease-spring active:scale-95 group relative overflow-hidden shadow-sm hover:shadow-lg">
+                                                <span className="capitalize text-xs font-bold text-gray-300 group-hover:text-white z-10 tracking-wide">{s}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -606,61 +631,61 @@ const Quiz = ({ isOnline }) => {
   };
 
   if (gameState === 'menu') return (
-    <div className="bg-[#1e293b]/90 backdrop-blur-md p-8 sm:p-12 text-center rounded-3xl border border-gray-800 shadow-2xl max-w-lg mx-auto mt-8">
-        <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/5">
-          <Award className="w-12 h-12 text-blue-400 drop-shadow-md" />
+    <div className="bg-[#1C1C1E]/80 backdrop-blur-md p-10 sm:p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg mx-auto mt-12 animate-fade-in-up">
+        <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 w-28 h-28 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner ring-1 ring-white/5">
+          <Award className="w-14 h-14 text-blue-400 drop-shadow-lg" />
         </div>
-        <h2 className="text-3xl font-bold text-white font-khmer mb-3 tracking-tight">ការធ្វើតេស្តសមត្ថភាព</h2>
-        <p className="text-gray-400 text-sm font-khmer mb-8">វាស់ស្ទង់ចំណេះដឹងរបស់អ្នកអំពីការកែរូបភាព។</p>
-        <div className="space-y-6">
-            <div className="flex justify-center gap-2 bg-[#0f172a] p-1.5 rounded-2xl w-fit mx-auto border border-gray-800">
-              <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-medium transition-all ${quizConfig.level==='beginner'?'bg-[#1e293b] text-white shadow-md ring-1 ring-white/10':'text-gray-400 hover:text-white hover:bg-[#1e293b]/50'}`}>មូលដ្ឋាន</button>
-              <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-medium transition-all ${quizConfig.level==='advanced'?'bg-[#1e293b] text-white shadow-md ring-1 ring-white/10':'text-gray-400 hover:text-white hover:bg-[#1e293b]/50'}`}>កម្រិតខ្ពស់</button>
+        <h2 className="text-4xl font-extrabold text-white font-khmer mb-4 tracking-tight">ការធ្វើតេស្ត</h2>
+        <p className="text-gray-400 text-base font-khmer mb-10 leading-relaxed">វាស់ស្ទង់សមត្ថភាពរបស់អ្នក។</p>
+        <div className="space-y-8">
+            <div className="flex justify-center gap-3 bg-[#000000] p-1.5 rounded-2xl w-fit mx-auto border border-white/10">
+              <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
+              <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-8 py-3 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
             </div>
-            <div className="flex justify-center gap-3 items-center">
-              <span className="text-gray-500 text-xs font-khmer uppercase tracking-wider">ចំនួនសំណួរ</span>
-              {[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 scale-105' : 'bg-[#0f172a] text-gray-400 border border-gray-700 hover:border-gray-500'}`}>{num}</button>))}
+            <div className="flex justify-center gap-4 items-center">
+              <span className="text-gray-500 text-xs font-khmer uppercase tracking-widest font-bold">ចំនួន</span>
+              {[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-12 h-12 rounded-2xl font-bold text-sm transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/5 hover:bg-[#3A3A3C]'}`}>{num}</button>))}
             </div>
-            <button onClick={startQuiz} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-bold font-khmer shadow-xl shadow-blue-600/20 transition-all transform hover:-translate-y-1 active:scale-95">ចាប់ផ្ដើមសំណួរ</button>
+            <button onClick={startQuiz} className="w-full py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-base tracking-wide">ចាប់ផ្ដើម</button>
         </div>
     </div>
   );
   
   if (gameState === 'result') {
       const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-      return <div className="bg-[#1e293b] p-12 text-center rounded-3xl border border-gray-800 shadow-2xl max-w-lg mx-auto mt-10">
-        <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
+      return <div className="bg-[#1C1C1E] p-14 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg mx-auto mt-12 animate-fade-in-up">
+        <div className="relative w-48 h-48 mx-auto mb-10 flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90">
-            <circle cx="80" cy="80" r="70" stroke="#0f172a" strokeWidth="12" fill="none" />
-            <circle cx="80" cy="80" r="70" stroke={percentage > 70 ? "#22c55e" : percentage > 40 ? "#eab308" : "#ef4444"} strokeWidth="12" fill="none" strokeDasharray={440} strokeDashoffset={440 - (440 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
+            <circle cx="96" cy="96" r="80" stroke="#2C2C2E" strokeWidth="16" fill="none" />
+            <circle cx="96" cy="96" r="80" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={502} strokeDashoffset={502 - (502 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
           </svg>
-          <div className="absolute text-4xl font-bold text-white tracking-tighter">{percentage}%</div>
+          <div className="absolute text-5xl font-black text-white tracking-tighter">{percentage}%</div>
         </div>
-        <h2 className="text-3xl font-bold text-white font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
-        <p className="text-gray-400 font-khmer mb-10 text-lg">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p>
-        <button onClick={() => setGameState('menu')} className="px-10 py-3.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-bold font-khmer transition-all shadow-lg hover:shadow-xl w-full">សាកល្បងម្តងទៀត</button>
+        <h2 className="text-3xl font-bold text-white font-khmer mb-3">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
+        <p className="text-gray-400 font-khmer mb-12 text-lg">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p>
+        <button onClick={() => setGameState('menu')} className="px-12 py-4 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full">សាកល្បងម្តងទៀត</button>
       </div>;
   }
 
   const q = questions[currentQuestion];
   return (
-    <div className="bg-[#1e293b] p-8 sm:p-10 rounded-3xl border border-gray-800 shadow-2xl max-w-2xl mx-auto mt-4 sm:mt-8">
-      <div className="flex justify-between mb-8 items-center">
-        <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-1.5 rounded-full ring-1 ring-blue-500/20 shadow-sm">សំណួរ {currentQuestion + 1} នៃ {questions.length}</span>
-        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{q.level || 'General'}</span>
+    <div className="bg-[#1C1C1E] p-8 sm:p-12 rounded-[32px] border border-white/10 shadow-2xl max-w-3xl mx-auto mt-6 sm:mt-10 animate-fade-in-up">
+      <div className="flex justify-between mb-10 items-center">
+        <span className="text-xs font-bold text-blue-400 bg-blue-500/10 px-4 py-2 rounded-full ring-1 ring-blue-500/20">សំណួរ {currentQuestion + 1} / {questions.length}</span>
+        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{q.level || 'General'}</span>
       </div>
-      <h3 className="text-xl md:text-2xl font-bold text-white mb-10 font-khmer leading-relaxed tracking-tight">{q.question}</h3>
+      <h3 className="text-2xl md:text-3xl font-bold text-white mb-12 font-khmer leading-snug">{q.question}</h3>
       <div className="grid gap-4">
         {q.options.map((opt, i) => (
-          <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-5 text-left rounded-2xl border-2 transition-all duration-200 font-khmer text-sm relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-green-500/10 border-green-500 text-green-100' : (i === selectedOption ? 'bg-red-500/10 border-red-500 text-red-100' : 'bg-[#0f172a]/50 border-transparent text-gray-500 opacity-50')) : 'bg-[#0f172a] border-transparent text-gray-200 hover:border-blue-500/30 hover:bg-[#253248]'}`}>
-            <span className={`inline-block w-6 h-6 text-center rounded-full mr-3 text-xs font-bold pt-1 ${isAnswered && i === q.correct ? 'bg-green-500 text-black' : 'bg-gray-700 text-gray-300 group-hover:bg-blue-500 group-hover:text-white'}`}>{String.fromCharCode(65 + i)}</span>
+          <button key={i} onClick={() => handleAnswerOptionClick(i)} className={`p-6 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-base relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : 'bg-[#2C2C2E]/30 border-transparent text-gray-600 opacity-50')) : 'bg-[#2C2C2E]/50 border-transparent text-gray-200 hover:bg-[#3A3A3C]'}`}>
+            <span className={`inline-flex w-7 h-7 items-center justify-center rounded-full mr-4 text-xs font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-black' : 'bg-[#3A3A3C] text-gray-400 group-hover:bg-white group-hover:text-black transition-colors'}`}>{String.fromCharCode(65 + i)}</span>
             {opt}
           </button>
         ))}
       </div>
       {isAnswered && (
-        <div className="mt-10 flex justify-end animate-fade-in-down">
-          <button onClick={handleNextQuestion} className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold font-khmer shadow-xl shadow-blue-600/30 transition-all flex items-center gap-3 transform hover:translate-x-1">បន្ទាប់ <ChevronRight size={20}/></button>
+        <div className="mt-12 flex justify-end animate-fade-in-up">
+          <button onClick={handleNextQuestion} className="px-10 py-4 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-3 transform hover:translate-x-1">បន្ទាប់ <ChevronRight size={20}/></button>
         </div>
       )}
     </div>
@@ -693,91 +718,91 @@ const ChatBot = ({ isOnline, messages, setMessages }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
 
   return (
-    <div className="flex flex-col h-[100dvh] md:h-[600px] w-full bg-[#0f172a] md:rounded-3xl overflow-hidden shadow-2xl relative">
-      <div className="flex-none bg-[#1e293b]/80 backdrop-blur-md border-b border-gray-800 p-4 flex items-center gap-3 z-20">
-         <button className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white" onClick={() => window.history.back()}>
+    <div className="flex flex-col h-[100dvh] md:h-[700px] w-full bg-[#000000] md:rounded-[32px] overflow-hidden shadow-2xl relative md:border md:border-white/10">
+      <div className="flex-none bg-[#1C1C1E]/80 backdrop-blur-xl border-b border-white/5 p-4 flex items-center justify-center relative z-20">
+         <button className="md:hidden absolute left-4 p-2 text-blue-500 hover:text-white transition-colors" onClick={() => window.history.back()}>
             <ArrowLeft size={24} />
          </button>
          
-         <div className="relative">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <Bot size={20} className="text-white" />
-            </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#1e293b] rounded-full"></div>
-         </div>
-         
-         <div>
-            <h3 className="font-bold text-white font-khmer text-base leading-tight">គ្រូជំនួយ AI</h3>
-            <p className="text-xs text-blue-400 font-khmer">Online</p>
+         <div className="flex flex-col items-center">
+            <h3 className="font-bold text-white font-khmer text-sm tracking-wide">AI Assistant</h3>
+            <p className="text-[10px] text-gray-500 font-medium">Lightroom Expert</p>
          </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth bg-[#000000]">
+        <div className="flex justify-center py-4">
+            <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Today</span>
+        </div>
         {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
+            <div key={i} className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
                 {m.role === 'model' && (
-                    <div className="w-8 h-8 rounded-full bg-[#334155] flex-shrink-0 flex items-center justify-center mr-2 mt-auto">
-                        <Sparkles size={14} className="text-purple-400" />
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex-shrink-0 flex items-center justify-center mr-2 self-end shadow-md">
+                        <Bot size={14} className="text-white" />
                     </div>
                 )}
                 <div 
-                    className={`max-w-[80%] px-4 py-3 text-sm font-khmer leading-relaxed whitespace-pre-wrap shadow-sm 
+                    className={`max-w-[75%] px-5 py-3 text-[15px] font-khmer leading-relaxed whitespace-pre-wrap shadow-sm relative
                     ${m.role === 'user' 
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl rounded-tr-sm' 
-                        : 'bg-[#1e293b] text-gray-200 border border-gray-800 rounded-2xl rounded-tl-sm'}`}
+                        ? 'bg-[#0A84FF] text-white rounded-[20px] rounded-br-[4px]' 
+                        : 'bg-[#2C2C2E] text-gray-100 rounded-[20px] rounded-bl-[4px]'}`}
                 >
                     {m.text}
                 </div>
             </div>
         ))}
         {loading && (
-            <div className="flex justify-start">
-                 <div className="w-8 h-8 rounded-full bg-[#334155] flex-shrink-0 flex items-center justify-center mr-2 mt-auto">
-                        <Sparkles size={14} className="text-purple-400" />
+            <div className="flex justify-start w-full animate-fade-in-up">
+                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex-shrink-0 flex items-center justify-center mr-2 self-end">
+                        <Bot size={14} className="text-white" />
                  </div>
-                 <div className="px-4 py-3 bg-[#1e293b] border border-gray-800 rounded-2xl rounded-tl-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></span>
-                    <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></span>
+                 <div className="px-4 py-3 bg-[#2C2C2E] rounded-[20px] rounded-bl-[4px] flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
                  </div>
             </div>
         )}
-        <div ref={messagesEndRef} className="h-1" />
+        <div ref={messagesEndRef} className="h-2" />
       </div>
 
-      <div className="flex-none bg-[#1e293b] border-t border-gray-800 p-3 pb-safe md:pb-3 z-20">
-         <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar mask-gradient-right">
-            {suggestions.map((q, i) => (
-                <button 
-                    key={i} 
-                    onClick={() => handleSend(q)} 
-                    className="flex-shrink-0 px-4 py-1.5 bg-[#334155]/50 hover:bg-[#334155] text-gray-300 text-xs rounded-full border border-gray-700 transition-colors font-khmer whitespace-nowrap"
-                >
-                    {q}
+      <div className="flex-none bg-[#1C1C1E]/90 backdrop-blur-xl border-t border-white/5 p-4 pb-safe md:pb-4 z-20">
+         {suggestions.length > 0 && (
+             <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar mask-gradient-right">
+                {suggestions.map((q, i) => (
+                    <button 
+                        key={i} 
+                        onClick={() => handleSend(q)} 
+                        className="flex-shrink-0 px-4 py-2 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-gray-300 text-xs rounded-full border border-white/5 transition-all duration-300 ease-spring font-khmer whitespace-nowrap active:scale-95"
+                    >
+                        {q}
+                    </button>
+                ))}
+                <button onClick={randomizeSuggestions} className="flex-shrink-0 p-2 bg-[#2C2C2E] rounded-full text-gray-400 border border-white/5 hover:bg-[#3A3A3C] active:rotate-180 transition-all">
+                    <RefreshCw size={14} />
                 </button>
-            ))}
-            <button onClick={randomizeSuggestions} className="flex-shrink-0 p-1.5 bg-[#334155]/50 rounded-full text-gray-400 border border-gray-700">
-                <RefreshCw size={14} />
-            </button>
-         </div>
+             </div>
+         )}
 
-         <div className="flex items-end gap-2 bg-[#0f172a] rounded-[24px] p-1.5 border border-gray-700 transition-colors focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/20">
-            <input 
-                ref={inputRef}
-                value={input} 
-                onChange={e => setInput(e.target.value)} 
-                onKeyPress={e => e.key === 'Enter' && handleSend()} 
-                placeholder="សរសេរសំណួរ..." 
-                className="flex-1 bg-transparent text-white px-4 py-3 text-sm focus:outline-none font-khmer placeholder:text-gray-500 max-h-32 overflow-y-auto"
-                style={{ touchAction: 'manipulation' }}
-            />
+         <div className="flex items-end gap-3">
+            <div className="bg-[#2C2C2E] rounded-[20px] p-1 flex-1 border border-white/5 focus-within:border-gray-500 transition-colors flex items-center">
+                <input 
+                    ref={inputRef}
+                    value={input} 
+                    onChange={e => setInput(e.target.value)} 
+                    onKeyPress={e => e.key === 'Enter' && handleSend()} 
+                    placeholder="iMessage" 
+                    className="flex-1 bg-transparent text-white px-4 py-2.5 text-[15px] focus:outline-none font-khmer placeholder:text-gray-500 max-h-32 overflow-y-auto"
+                    style={{ touchAction: 'manipulation' }}
+                />
+            </div>
             <button 
                 onMouseDown={(e) => e.preventDefault()} 
                 onClick={() => handleSend()} 
                 disabled={loading || !input.trim()} 
-                className={`p-3 rounded-full flex-shrink-0 transition-all ${input.trim() ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20 hover:bg-blue-600' : 'bg-[#334155] text-gray-500'}`}
+                className={`p-3 rounded-full flex-shrink-0 transition-all duration-300 ease-spring ${input.trim() ? 'bg-[#0A84FF] text-white shadow-lg scale-100' : 'bg-[#2C2C2E] text-gray-500 scale-90'}`}
             >
-                <Send size={18} className={input.trim() ? "translate-x-0.5" : ""} />
+                <ArrowUpCircleIcon />
             </button>
          </div>
       </div>
@@ -785,7 +810,16 @@ const ChatBot = ({ isOnline, messages, setMessages }) => {
   );
 };
 
-const AIAssistant = ({ isOnline, messages, setMessages }) => { return <div className="h-full flex flex-col justify-center w-full"><ChatBot isOnline={isOnline} messages={messages} setMessages={setMessages} /></div>; };
+// Simple arrow up circle icon for send button replacement to look like iMessage
+const ArrowUpCircleIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform rotate-0">
+        <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 16V8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M8 12L12 8L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+const AIAssistant = ({ isOnline, messages, setMessages }) => { return <div className="h-full flex flex-col justify-center w-full p-0 md:p-6"><ChatBot isOnline={isOnline} messages={messages} setMessages={setMessages} /></div>; };
 
 // --- APP COMPONENT (LAST) ---
 export default function App() {
@@ -830,22 +864,22 @@ export default function App() {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full flex flex-col overflow-hidden bg-[#0f172a] text-gray-200 font-khmer selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; } @keyframes fade-in-down { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-down { animation: fade-in-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
+    <div className="fixed inset-0 w-full h-full flex flex-col overflow-hidden bg-[#000000] text-gray-100 font-khmer selection:bg-blue-500/30" style={{ touchAction: 'pan-x pan-y' }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&family=Inter:wght@400;500;600;700&display=swap'); .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } .custom-scrollbar::-webkit-scrollbar { width: 4px; } .custom-scrollbar::-webkit-scrollbar-track { background: transparent; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #3A3A3C; border-radius: 10px; } @keyframes fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }`}</style>
       
       <div className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block flex-none' : 'block flex-none'}`}><Header activeTab={activeTab} setActiveTab={setActiveTab} /></div>
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
       
       <main className={`flex-1 overflow-hidden max-w-7xl mx-auto w-full relative ${activeTab === 'lab' || activeTab === 'ai' ? 'p-0' : 'p-4 pt-6 md:p-8 overflow-y-auto custom-scrollbar'}`}>
-        <div className="animate-fade-in-down h-full">
+        <div className="animate-fade-in-up h-full">
           {activeTab === 'learn' && (
-            <div className="space-y-10 pb-12">
-              <div className="text-center mb-12 mt-4 relative">
-                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-                 <h2 className="text-2xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-purple-200 mb-4 font-khmer relative z-10 tracking-tight">វគ្គសិក្សា Lightroom</h2>
-                 <p className="text-gray-400 font-khmer max-w-xl mx-auto text-lg leading-relaxed relative z-10">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព ជាមួយឧបករណ៍ទំនើប។</p>
+            <div className="space-y-12 pb-12">
+              <div className="text-center mb-16 mt-8 relative">
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+                 <h2 className="text-3xl md:text-5xl font-black text-white mb-6 font-khmer relative z-10 tracking-tight leading-tight">វគ្គសិក្សា Lightroom</h2>
+                 <p className="text-gray-400 font-khmer max-w-xl mx-auto text-lg leading-relaxed relative z-10 font-medium">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់នៃការកែរូបភាព ជាមួយឧបករណ៍ទំនើប។</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">{lessonsData.map(lesson => <LessonCard key={lesson.id} lesson={lesson} onClick={() => setExpandedLesson(lesson.id)} />)}</div>
               <TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => toggleSection('tips')} /> 
               <ContactSection />
             </div>
@@ -856,21 +890,21 @@ export default function App() {
         </div>
       </main>
       
-      <div className={`flex-none md:hidden bg-[#0f172a]/90 backdrop-blur-xl border-t border-gray-800 pb-safe z-40 flex justify-around p-3 ${isInputFocused ? 'hidden' : ''}`}>
-         <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-2 rounded-xl transition-all duration-300 w-16 ${activeTab === 'learn' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}>
-            <div className={`mb-1 transition-transform ${activeTab === 'learn' ? '-translate-y-1' : ''}`}><BookOpen size={24} strokeWidth={activeTab === 'learn' ? 2.5 : 2} /></div>
+      <div className={`flex-none md:hidden bg-[#1C1C1E]/90 backdrop-blur-xl border-t border-white/10 pb-safe z-40 flex justify-around p-2 ${isInputFocused ? 'hidden' : ''}`}>
+         <button onClick={() => setActiveTab('learn')} className={`flex flex-col items-center p-3 rounded-2xl transition-all duration-300 w-16 ${activeTab === 'learn' ? 'text-blue-500' : 'text-gray-500 hover:text-gray-300'}`}>
+            <div className={`mb-1 transition-transform ${activeTab === 'learn' ? '-translate-y-1 scale-110' : ''}`}><BookOpen size={24} strokeWidth={activeTab === 'learn' ? 2.5 : 2} /></div>
             <span className={`text-[10px] font-khmer font-bold transition-opacity ${activeTab === 'learn' ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>មេរៀន</span>
          </button>
-         <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-2 rounded-xl transition-all duration-300 w-16 ${activeTab === 'quiz' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}>
-            <div className={`mb-1 transition-transform ${activeTab === 'quiz' ? '-translate-y-1' : ''}`}><Award size={24} strokeWidth={activeTab === 'quiz' ? 2.5 : 2} /></div>
+         <button onClick={() => setActiveTab('quiz')} className={`flex flex-col items-center p-3 rounded-2xl transition-all duration-300 w-16 ${activeTab === 'quiz' ? 'text-blue-500' : 'text-gray-500 hover:text-gray-300'}`}>
+            <div className={`mb-1 transition-transform ${activeTab === 'quiz' ? '-translate-y-1 scale-110' : ''}`}><Award size={24} strokeWidth={activeTab === 'quiz' ? 2.5 : 2} /></div>
             <span className={`text-[10px] font-khmer font-bold transition-opacity ${activeTab === 'quiz' ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>តេស្ត</span>
          </button>
-         <button onClick={() => setActiveTab('lab')} className={`flex flex-col items-center p-2 rounded-xl transition-all duration-300 w-16 ${activeTab === 'lab' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}>
-            <div className={`mb-1 transition-transform ${activeTab === 'lab' ? '-translate-y-1' : ''}`}><Sliders size={24} strokeWidth={activeTab === 'lab' ? 2.5 : 2} /></div>
+         <button onClick={() => setActiveTab('lab')} className={`flex flex-col items-center p-3 rounded-2xl transition-all duration-300 w-16 ${activeTab === 'lab' ? 'text-blue-500' : 'text-gray-500 hover:text-gray-300'}`}>
+            <div className={`mb-1 transition-transform ${activeTab === 'lab' ? '-translate-y-1 scale-110' : ''}`}><Sliders size={24} strokeWidth={activeTab === 'lab' ? 2.5 : 2} /></div>
             <span className={`text-[10px] font-khmer font-bold transition-opacity ${activeTab === 'lab' ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>Lab</span>
          </button>
-         <button onClick={() => setActiveTab('ai')} className={`flex flex-col items-center p-2 rounded-xl transition-all duration-300 w-16 ${activeTab === 'ai' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}>
-            <div className={`mb-1 transition-transform ${activeTab === 'ai' ? '-translate-y-1' : ''}`}><Sparkles size={24} strokeWidth={activeTab === 'ai' ? 2.5 : 2} /></div>
+         <button onClick={() => setActiveTab('ai')} className={`flex flex-col items-center p-3 rounded-2xl transition-all duration-300 w-16 ${activeTab === 'ai' ? 'text-blue-500' : 'text-gray-500 hover:text-gray-300'}`}>
+            <div className={`mb-1 transition-transform ${activeTab === 'ai' ? '-translate-y-1 scale-110' : ''}`}><Sparkles size={24} strokeWidth={activeTab === 'ai' ? 2.5 : 2} /></div>
             <span className={`text-[10px] font-khmer font-bold transition-opacity ${activeTab === 'ai' ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>គ្រូ AI</span>
          </button>
       </div>
