@@ -479,7 +479,7 @@ const PhotoLab = () => {
 
   return (
     <div className="bg-[#000000] rounded-3xl border border-white/10 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 fixed inset-0 z-0">
-        <div className="p-3 md:p-0 bg-[#000000] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
+        <div className="p-1 md:p-0 bg-[#000000] md:bg-transparent md:mb-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative shadow-md md:shadow-none">
             <div className="grid grid-cols-3 gap-2 w-full md:w-auto md:flex md:justify-end ml-auto px-2 md:px-0">
                 <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
                 <button onClick={() => fileInputRef.current.click()} className="px-3 py-1 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-xl font-bold text-[10px] transition-all flex flex-row items-center justify-center gap-2"><Upload size={14} /> Upload</button>
@@ -489,11 +489,11 @@ const PhotoLab = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
-            <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-4 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent p-4 lg:p-0">
+            <div className="h-[45%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-6 shrink-0 bg-black/40 lg:bg-transparent px-2 pb-2 pt-0 lg:p-0">
                 <div className="flex-1 bg-[#1C1C1E] rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-2xl">
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
-                <div className="flex justify-center gap-3 lg:gap-4 bg-[#1C1C1E] p-3 rounded-3xl border border-white/5 overflow-x-auto shrink-0 shadow-lg no-scrollbar">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-11 h-11 rounded-xl border-2 ${image === item.src ? 'border-blue-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'} overflow-hidden transition-all duration-300 ease-spring relative group shadow-md`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
+                <div className="flex justify-center gap-2 lg:gap-4 bg-[#1C1C1E] p-2 rounded-3xl border border-white/5 overflow-x-auto shrink-0 shadow-lg no-scrollbar">{sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 rounded-xl border-2 ${image === item.src ? 'border-blue-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'} overflow-hidden transition-all duration-300 ease-spring relative group shadow-md`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}</div>
             </div>
 
             <div className="flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full bg-[#1C1C1E] rounded-t-3xl lg:rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
