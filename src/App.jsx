@@ -26,6 +26,7 @@ try {
 
 const responseCache = {};
 
+// FIX: Updated Call Function to Single Model (v2.1)
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) return responseCache[cacheKey];
@@ -34,7 +35,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // Reverted to single model to prevent 429 Quota errors caused by rapid fallback loops
+  // Using standard gemini-1.5-flash for stability and to avoid 404/429 errors
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
   
   const payload = {
@@ -51,7 +52,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
         let cleanError = "មានបញ្ហាបច្ចេកទេស។";
         
         if (response.status === 400) cleanError = "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ។";
-        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions)។";
+        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions)។ សូមពិនិត្យមើល URL ក្នុង Google Cloud។";
         if (response.status === 404) cleanError = "⚠️ ERROR 404: Model រកមិនឃើញ។";
         if (response.status === 429) cleanError = "⚠️ ERROR 429: ការប្រើប្រាស់លើសកំណត់ (Quota)។ សូមរង់ចាំបន្តិច។";
         
