@@ -30,49 +30,68 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) return responseCache[cacheKey];
   
-  // DIAGNOSTIC 1: Check if API Key exists
   if (!apiKey) {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // Using standard gemini-1.5-flash for best compatibility
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-  
-  const payload = {
-    contents: [{ parts: [{ text: prompt }] }],
-    systemInstruction: { parts: [{ text: systemInstruction }] },
-    generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
-  };
+  // List of models to try in order. If one gives 404, we try the next.
+  const modelsToTry = [
+      "gemini-1.5-flash",
+      "gemini-1.5-flash-latest",
+      "gemini-1.5-pro",
+      "gemini-1.0-pro"
+  ];
 
-  try {
-    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    
-    // DIAGNOSTIC 2: Check for API Errors (Restrictions, Quotas, etc.)
-    if (!response.ok) {
+  for (const model of modelsToTry) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      
+      // Note: gemini-1.0-pro might behave differently with systemInstruction, 
+      // but v1beta usually handles it or ignores it gracefully.
+      const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
+      };
+
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        
+        if (response.ok) {
+            const data = await response.json();
+            let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            let result = text;
+            if (jsonMode && text) {
+                text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                result = JSON.parse(text);
+            }
+            responseCache[cacheKey] = result;
+            return result; // Success! Return immediately.
+        }
+        
+        // If 404 (Model Not Found), continue loop to try next model
+        if (response.status === 404) {
+            console.warn(`Model ${model} returned 404. Trying next model...`);
+            continue; 
+        }
+
+        // If other error (400, 403, 429), stop and report.
         const errorDetail = await response.text();
-        let cleanError = "មានបញ្ហាបច្ចេកទេស។";
+        let cleanError = `មានបញ្ហាបច្ចេកទេសជាមួយ ${model}។`;
+        if (response.status === 400) cleanError = "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ ឬការកំណត់ខុស។";
+        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions). សូមដក Website Restrictions ចេញសិនក្នុង Google Cloud។";
+        if (response.status === 429) cleanError = "⚠️ ERROR 429: ប្រើលើសកំណត់ (Quota Exceeded)។";
         
-        if (response.status === 400) cleanError = "⚠️ ERROR 400 (Bad Request): ការកំណត់ API មិនត្រឹមត្រូវ។";
-        if (response.status === 403) cleanError = "⚠️ ERROR 403 (Forbidden): Google បិទការតភ្ជាប់។ សូមត្រួតពិនិត្យ 'Website Restrictions' ក្នុង Google Cloud Console ម្តងទៀត។ សាកល្បងដក Restriction ចេញសិន។";
-        if (response.status === 429) cleanError = "⚠️ ERROR 429 (Quota): ប្រើលើសកំណត់។";
-        
-        console.error(`API Error: ${response.status} - ${errorDetail}`);
+        console.error(`API Error (${model}): ${response.status} - ${errorDetail}`);
         return `${cleanError} (Code: ${response.status})`;
-    }
 
-    const data = await response.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    let result = text;
-    if (jsonMode && text) {
-        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        result = JSON.parse(text);
-    }
-    responseCache[cacheKey] = result;
-    return result;
-  } catch (error) { 
-      console.error("Network Error:", error); 
-      return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
+      } catch (error) { 
+          console.error(`Network Error (${model}):`, error);
+          // If network error, probably offline, no need to retry other models
+          return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
+      }
   }
+
+  return "⚠️ ERROR: មិនអាចភ្ជាប់ទៅកាន់ AI Model ណាមួយបានទេ (All models 404). សូមពិនិត្យមើលថាអ្នកបាន Enable 'Generative Language API' ក្នុង Google Cloud ហើយឬនៅ។";
 };
 
 // ==========================================
@@ -531,7 +550,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
                 <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">4</span>
                 <span>
                     <span className="font-bold text-white block mb-1">Copy/Paste ពណ៌៖</span> 
-                    ចុចលើសញ្ញា (...) ជ្រុងលើស្តាំ &gt; "Copy Settings" រួចបើករូបថ្មីចុច (...) &gt; "Paste Settings" ដើម្បីចម្លងការកែទាំងអស់។
+                    ចុចលើសញ្ញា (...) ជ្រុងលើស្តាំ {'>'} "Copy Settings" រួចបើករូបថ្មីចុច (...) {'>'} "Paste Settings" ដើម្បីចម្លងការកែទាំងអស់។
                 </span>
               </li>
             </ul>
