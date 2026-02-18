@@ -60,7 +60,7 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
 const lessonsData = [
   { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-6 h-6 text-yellow-400" />, description: 'ការគ្រប់គ្រងពន្លឺនិងភាពផ្ទុយ', content: [
     { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាជាជំហានដំបូងក្នុងការកែ។', tip: 'ឧទាហរណ៍៖ រូបថតពេលល្ងាចងងឹតបន្តិច ដាក់ +0.50 ទៅ +1.00។' }, 
-    { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត។', tip: 'ឧទាហរណ៍៖ រូបសន្លប់ៗ ដាក់ +20។ កុំឱ្យលើស +50 ប្រយ័ត្នបែកពណ៌។' }, 
+    { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត។', tip: 'ឧទាហរណ៍៖ រូបស្លេកៗ ដាក់ +20។ កុំឱ្យលើស +50 ប្រយ័ត្នបែកពណ៌។' }, 
     { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ឬពន្លឺថ្ងៃ)។', tip: 'ឧទាហរណ៍៖ បើថតមេឃហើយបាត់ពពក ដាក់ -80 ដល់ -100 ដើម្បីសង្គ្រោះពពកមកវិញ។' }, 
     { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ដែលស្ថិតក្នុងម្លប់។', tip: 'ឧទាហរណ៍៖ បើថតបញ្ច្រាស់ថ្ងៃមុខខ្មៅ ដាក់ +40 ដល់ +60 ដើម្បីឱ្យមុខភ្លឺ។' }, 
     { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត (White Point) នៃរូបភាព។', tip: 'ចុច Alt+Drag (ឬប្រើម្រាមដៃពីរ) ដើម្បីមើលកន្លែងដែលភ្លឺពេក (Clipping)។' }, 
@@ -864,18 +864,49 @@ const ChatBot = ({ isOnline, messages, setMessages }) => {
   const suggestedQuestionsPool = [ "របៀបធ្វើអោយស្បែកស?", "របៀបកែរូប Portrait?", "របៀបដាក់ពណ៌ Teal & Orange?", "តើ Dehaze ប្រើសម្រាប់អ្វី?", "កែរូបថតពេលយប់?", "រូបមន្ត Vintage?", "ពន្យល់ពី Curves?", "តើ Grain ជួយអ្វី?", "រូបងងឹតពេកធ្វើម៉េច?", "របៀបធ្វើអោយមេឃដិត?", "របៀបកែរូបទេសភាព?", "តើ Vibrance ខុសពី Saturation ម៉េច?", "របៀបកែរូបថតអាហារ?", "របៀបកែរូបថត Street?", "របៀបកែរូបថតសមុទ្រ?" ];
   const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => { const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random()); setSuggestions(shuffled.slice(0, 3)); }, []);
+  useEffect(() => { 
+    // Initial shuffle
+    const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random()); 
+    setSuggestions(shuffled.slice(0, 3));
+
+    // Auto refresh every 30 seconds
+    const interval = setInterval(() => {
+        const nextShuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random());
+        setSuggestions(nextShuffled.slice(0, 3));
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const randomizeSuggestions = () => { const shuffled = [...suggestedQuestionsPool].sort(() => 0.5 - Math.random()); setSuggestions(shuffled.slice(0, 3)); };
 
   const handleSend = async (text = null) => {
     const msg = text || input;
-    if (!msg.trim()) return; setInput(''); setMessages(prev => [...prev, { role: 'user', text: msg }]); setLoading(true);
+    if (!msg.trim()) return; 
+    setInput(''); 
+    setMessages(prev => [...prev, { role: 'user', text: msg }]); 
+    setLoading(true);
+    
     const localReply = getLocalResponse(msg);
-    if (localReply) { setTimeout(() => { setMessages(prev => [...prev, { role: 'model', text: localReply }]); setLoading(false); }, 500); return; }
+    if (localReply) { 
+        setTimeout(() => { 
+            setMessages(prev => [...prev, { role: 'model', text: localReply }]); 
+            setLoading(false); 
+        }, 500); 
+        return; 
+    }
+
     const systemPrompt = "You are a friendly, expert Lightroom and photography assistant speaking Khmer. Your answers should be helpful, concise, and related to photo editing. When suggesting settings, format the response as a clean list with bullet points and provide specific numerical values (e.g., • Exposure: +0.20) for better readability.";
     let reply = await callGemini(msg, systemPrompt);
-    if (!reply) { if (!apiKey) { reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។"; } else { reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀត។"; } }
-    setMessages(prev => [...prev, { role: 'model', text: reply }]); setLoading(false);
+    if (!reply) { 
+        if (!apiKey) { 
+            reply = "⚠️ សូមបញ្ចូល Gemini API Key នៅក្នុង Vercel ដើម្បីឱ្យខ្ញុំអាចឆ្លើយតបបាន។"; 
+        } else { 
+            reply = "សុំទោស មានបញ្ហាបច្ចេកទេសក្នុងការភ្ជាប់ទៅកាន់ AI។ សូមព្យាយាមម្តងទៀត។"; 
+        } 
+    }
+    setMessages(prev => [...prev, { role: 'model', text: reply }]); 
+    setLoading(false);
   };
   
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
