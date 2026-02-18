@@ -34,60 +34,44 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // ប្រើម៉ូដែលផ្លូវការដែលមានស្ថេរភាព ដើម្បីចៀសវាងបញ្ហា 404
-  const modelsToTry = [
-      "gemini-1.5-flash",     // លឿន និងមិនសូវជាប់ Quota
-      "gemini-1.5-pro",       // ឆ្លាតជាង តែអាចជាប់ Quota លឿន
-      "gemini-1.0-pro"        // ម៉ូដែលចាស់ (Fallback)
-  ];
+  // Reverted to single model to prevent 429 Quota errors caused by rapid fallback loops
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  
+  const payload = {
+    contents: [{ parts: [{ text: prompt }] }],
+    systemInstruction: { parts: [{ text: systemInstruction }] },
+    generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
+  };
 
-  for (const model of modelsToTry) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
-      };
-
-      try {
-        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        
-        if (response.ok) {
-            const data = await response.json();
-            let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            let result = text;
-            if (jsonMode && text) {
-                text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-                result = JSON.parse(text);
-            }
-            responseCache[cacheKey] = result;
-            return result; // ជោគជ័យ!
-        }
-        
-        // បើមានបញ្ហា 404 (រកមិនឃើញ) ឬ 429 (ពេញ Quota) សូមសាកល្បងម៉ូដែលបន្ទាប់
-        if (response.status === 404 || response.status === 429 || response.status === 503) {
-            console.warn(`Model ${model} failed with ${response.status}. Trying next model...`);
-            continue; 
-        }
-
-        // បើជាកំហុសផ្សេងទៀត (ដូចជា Key ខុស)
+  try {
+    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    
+    if (!response.ok) {
         const errorDetail = await response.text();
-        let cleanError = `មានបញ្ហាបច្ចេកទេស។`;
-        if (response.status === 400) cleanError = "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ ឬការកំណត់ខុស។";
-        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions)។ សូមដក Website Restrictions ចេញសិន។";
+        let cleanError = "មានបញ្ហាបច្ចេកទេស។";
         
-        console.error(`API Error (${model}): ${response.status} - ${errorDetail}`);
+        if (response.status === 400) cleanError = "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ។";
+        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions)។";
+        if (response.status === 404) cleanError = "⚠️ ERROR 404: Model រកមិនឃើញ។";
+        if (response.status === 429) cleanError = "⚠️ ERROR 429: ការប្រើប្រាស់លើសកំណត់ (Quota)។ សូមរង់ចាំបន្តិច។";
+        
+        console.error(`API Error: ${response.status} - ${errorDetail}`);
         return `${cleanError} (Code: ${response.status})`;
+    }
 
-      } catch (error) { 
-          console.error(`Network Error (${model}):`, error);
-          // បើដាច់អ៊ីនធឺណិត មិនបាច់សាកម៉ូដែលផ្សេងទេ
-          return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
-      }
+    const data = await response.json();
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    let result = text;
+    if (jsonMode && text) {
+        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        result = JSON.parse(text);
+    }
+    responseCache[cacheKey] = result;
+    return result;
+  } catch (error) { 
+      console.error("Network Error:", error); 
+      return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
   }
-
-  return "⚠️ ERROR: ការប្រើប្រាស់លើសកំណត់ (Quota Exceeded) សម្រាប់គ្រប់ម៉ូដែល។ សូមរង់ចាំ ១-២ នាទី ហើយសាកល្បងម្តងទៀត។";
 };
 
 // ==========================================
