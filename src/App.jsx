@@ -1,4 +1,4 @@
-import * as React from 'react';
+ឮimport * as React from 'react';
 const { useState, useEffect, useRef } = React;
 import { 
   Sun, Aperture, Droplet, Sliders, ChevronRight, CheckCircle, XCircle, 
@@ -34,12 +34,11 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // Prioritize Gemini 2.5, fallback to 1.5 if 2.5 fails
+  // ប្រើម៉ូដែលផ្លូវការដែលមានស្ថេរភាព ដើម្បីចៀសវាងបញ្ហា 404
   const modelsToTry = [
-      "gemini-2.5-flash-preview-09-2025", // Try this first as requested
-      "gemini-1.5-flash",
-      "gemini-1.5-flash-latest",
-      "gemini-1.5-pro"
+      "gemini-1.5-flash",     // លឿន និងមិនសូវជាប់ Quota
+      "gemini-1.5-pro",       // ឆ្លាតជាង តែអាចជាប់ Quota លឿន
+      "gemini-1.0-pro"        // ម៉ូដែលចាស់ (Fallback)
   ];
 
   for (const model of modelsToTry) {
@@ -63,33 +62,32 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
                 result = JSON.parse(text);
             }
             responseCache[cacheKey] = result;
-            return result; // Success! Return immediately.
+            return result; // ជោគជ័យ!
         }
         
-        // If 404 (Model Not Found), continue loop to try next model
-        if (response.status === 404) {
-            console.warn(`Model ${model} returned 404. Trying next model...`);
+        // បើមានបញ្ហា 404 (រកមិនឃើញ) ឬ 429 (ពេញ Quota) សូមសាកល្បងម៉ូដែលបន្ទាប់
+        if (response.status === 404 || response.status === 429 || response.status === 503) {
+            console.warn(`Model ${model} failed with ${response.status}. Trying next model...`);
             continue; 
         }
 
-        // If other error (400, 403, 429), stop and report.
+        // បើជាកំហុសផ្សេងទៀត (ដូចជា Key ខុស)
         const errorDetail = await response.text();
-        let cleanError = `មានបញ្ហាបច្ចេកទេសជាមួយ ${model}។`;
+        let cleanError = `មានបញ្ហាបច្ចេកទេស។`;
         if (response.status === 400) cleanError = "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ ឬការកំណត់ខុស។";
-        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions). សូមដក Website Restrictions ចេញសិនក្នុង Google Cloud។";
-        if (response.status === 429) cleanError = "⚠️ ERROR 429: ប្រើលើសកំណត់ (Quota Exceeded)។";
+        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions)។ សូមដក Website Restrictions ចេញសិន។";
         
         console.error(`API Error (${model}): ${response.status} - ${errorDetail}`);
         return `${cleanError} (Code: ${response.status})`;
 
       } catch (error) { 
           console.error(`Network Error (${model}):`, error);
-          // If network error, probably offline, no need to retry other models
+          // បើដាច់អ៊ីនធឺណិត មិនបាច់សាកម៉ូដែលផ្សេងទេ
           return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
       }
   }
 
-  return "⚠️ ERROR: មិនអាចភ្ជាប់ទៅកាន់ AI Model ណាមួយបានទេ (All models 404). សូមពិនិត្យមើលថាអ្នកបាន Enable 'Generative Language API' ក្នុង Google Cloud ហើយឬនៅ។";
+  return "⚠️ ERROR: ការប្រើប្រាស់លើសកំណត់ (Quota Exceeded) សម្រាប់គ្រប់ម៉ូដែល។ សូមរង់ចាំ ១-២ នាទី ហើយសាកល្បងម្តងទៀត។";
 };
 
 // ==========================================
