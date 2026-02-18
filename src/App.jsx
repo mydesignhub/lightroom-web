@@ -26,7 +26,7 @@ try {
 
 const responseCache = {};
 
-// FIX: Updated Call Function with 404 Fallback
+// FIX: ប្រើតែ gemini-1.5-flash ដើម្បីស្ថេរភាព និងការពារបញ្ហា 404/429
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) return responseCache[cacheKey];
@@ -35,56 +35,43 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // Model list: Primary -> Backup
-  const models = ["gemini-1.5-flash", "gemini-pro"];
+  // Using standard gemini-1.5-flash
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
   
-  for (const model of models) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
-      };
+  const payload = {
+    contents: [{ parts: [{ text: prompt }] }],
+    systemInstruction: { parts: [{ text: systemInstruction }] },
+    generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
+  };
 
-      try {
-        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        
-        if (response.ok) {
-            const data = await response.json();
-            let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            let result = text;
-            if (jsonMode && text) {
-                text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-                result = JSON.parse(text);
-            }
-            responseCache[cacheKey] = result;
-            return result;
-        }
-
-        // Handle specific errors
-        if (response.status === 404) {
-             console.warn(`Model ${model} not found (404). Switching to backup...`);
-             continue; // Try next model
-        }
-
+  try {
+    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    
+    if (!response.ok) {
         const errorDetail = await response.text();
-        let cleanError = "មានបញ្ហាបច្ចេកទេស។";
+        console.error(`API Error Details: ${errorDetail}`);
         
-        if (response.status === 400) cleanError = "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ ឬការកំណត់ខុស។";
-        if (response.status === 403) cleanError = "⚠️ ERROR 403: Google Block (Restrictions)។";
-        if (response.status === 429) cleanError = "⚠️ ERROR 429: ការប្រើប្រាស់លើសកំណត់ (Quota)។ សូមរង់ចាំបន្តិច។";
+        if (response.status === 400) return "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ។ សូមពិនិត្យមើលក្នុង Vercel។";
+        if (response.status === 403) return "⚠️ ERROR 403: Google Block (Restrictions)។ សូមដក Website Restrictions ចេញសិនក្នុង Google Cloud។";
+        if (response.status === 404) return "⚠️ ERROR 404: Model រកមិនឃើញ។ (កំពុងប្រើ gemini-1.5-flash)";
+        if (response.status === 429) return "⚠️ ERROR 429: ប្រើលើសកំណត់ (Quota)។ សូមរង់ចាំ ១-២ នាទី។";
         
-        console.error(`API Error (${model}): ${response.status} - ${errorDetail}`);
-        return `${cleanError} (Code: ${response.status})`;
+        return `មានបញ្ហាបច្ចេកទេស (Code: ${response.status})`;
+    }
 
-      } catch (error) { 
-          console.error("Network Error:", error); 
-          return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
-      }
+    const data = await response.json();
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    let result = text;
+    if (jsonMode && text) {
+        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        result = JSON.parse(text);
+    }
+    responseCache[cacheKey] = result;
+    return result;
+  } catch (error) { 
+      console.error("Network Error:", error); 
+      return `⚠️ NETWORK ERROR: ${error.message}. សូមពិនិត្យមើលអ៊ីនធឺណិតរបស់អ្នក។`; 
   }
-  
-  return "⚠️ ERROR: មិនអាចភ្ជាប់ទៅកាន់ AI បានទេ។ (All models failed)";
 };
 
 // ==========================================
