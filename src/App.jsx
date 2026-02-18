@@ -34,19 +34,17 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // List of models to try in order. If one gives 404, we try the next.
+  // Prioritize Gemini 2.5, fallback to 1.5 if 2.5 fails
   const modelsToTry = [
+      "gemini-2.5-flash-preview-09-2025", // Try this first as requested
       "gemini-1.5-flash",
       "gemini-1.5-flash-latest",
-      "gemini-1.5-pro",
-      "gemini-1.0-pro"
+      "gemini-1.5-pro"
   ];
 
   for (const model of modelsToTry) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       
-      // Note: gemini-1.0-pro might behave differently with systemInstruction, 
-      // but v1beta usually handles it or ignores it gracefully.
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],
         systemInstruction: { parts: [{ text: systemInstruction }] },
@@ -857,7 +855,7 @@ const Quiz = ({ isOnline }) => {
             <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90">
                 <circle cx="80" cy="80" r="64" stroke="#2C2C2E" strokeWidth="12" fill="none" />
-                <circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="12" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
+                <circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
               </svg>
               <div className="absolute text-4xl font-black text-white tracking-tighter">{percentage}%</div>
             </div>
