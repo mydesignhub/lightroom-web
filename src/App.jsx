@@ -26,16 +26,16 @@ try {
 
 const responseCache = {};
 
-// FIX: ប្រើតែ gemini-1.5-flash ដើម្បីស្ថេរភាព និងការពារបញ្ហា 404/429
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) return responseCache[cacheKey];
   
+  // DIAGNOSTIC 1: Check if API Key exists
   if (!apiKey) {
       return "⚠️ SYSTEM ERROR: រកមិនឃើញ API Key ទេ។ សូមចូលទៅកាន់ Vercel > Settings > Environment Variables ហើយដាក់ឈ្មោះថា 'VITE_GEMINI_API_KEY' រួចធ្វើការ Redeploy ឡើងវិញ។";
   }
 
-  // Using standard gemini-1.5-flash
+  // Using standard gemini-1.5-flash for best compatibility
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
   
   const payload = {
@@ -47,16 +47,17 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   try {
     const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     
+    // DIAGNOSTIC 2: Check for API Errors (Restrictions, Quotas, etc.)
     if (!response.ok) {
         const errorDetail = await response.text();
-        console.error(`API Error Details: ${errorDetail}`);
+        let cleanError = "មានបញ្ហាបច្ចេកទេស។";
         
-        if (response.status === 400) return "⚠️ ERROR 400: API Key មិនត្រឹមត្រូវ។ សូមពិនិត្យមើលក្នុង Vercel។";
-        if (response.status === 403) return "⚠️ ERROR 403: Google Block (Restrictions)។ សូមដក Website Restrictions ចេញសិនក្នុង Google Cloud។";
-        if (response.status === 404) return "⚠️ ERROR 404: Model រកមិនឃើញ។ (កំពុងប្រើ gemini-1.5-flash)";
-        if (response.status === 429) return "⚠️ ERROR 429: ប្រើលើសកំណត់ (Quota)។ សូមរង់ចាំ ១-២ នាទី។";
+        if (response.status === 400) cleanError = "⚠️ ERROR 400 (Bad Request): ការកំណត់ API មិនត្រឹមត្រូវ។";
+        if (response.status === 403) cleanError = "⚠️ ERROR 403 (Forbidden): Google បិទការតភ្ជាប់។ សូមត្រួតពិនិត្យ 'Website Restrictions' ក្នុង Google Cloud Console ម្តងទៀត។ សាកល្បងដក Restriction ចេញសិន។";
+        if (response.status === 429) cleanError = "⚠️ ERROR 429 (Quota): ប្រើលើសកំណត់។";
         
-        return `មានបញ្ហាបច្ចេកទេស (Code: ${response.status})`;
+        console.error(`API Error: ${response.status} - ${errorDetail}`);
+        return `${cleanError} (Code: ${response.status})`;
     }
 
     const data = await response.json();
@@ -530,7 +531,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
                 <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">4</span>
                 <span>
                     <span className="font-bold text-white block mb-1">Copy/Paste ពណ៌៖</span> 
-                    ចុចលើសញ្ញា (...) ជ្រុងលើស្តាំ {'>'} "Copy Settings" រួចបើករូបថ្មីចុច (...) {'>'} "Paste Settings" ដើម្បីចម្លងការកែទាំងអស់។
+                    ចុចលើសញ្ញា (...) ជ្រុងលើស្តាំ &gt; "Copy Settings" រួចបើករូបថ្មីចុច (...) &gt; "Paste Settings" ដើម្បីចម្លងការកែទាំងអស់។
                 </span>
               </li>
             </ul>
@@ -837,7 +838,7 @@ const Quiz = ({ isOnline }) => {
             <div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90">
                 <circle cx="80" cy="80" r="64" stroke="#2C2C2E" strokeWidth="12" fill="none" />
-                <circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
+                <circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="12" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" />
               </svg>
               <div className="absolute text-4xl font-black text-white tracking-tighter">{percentage}%</div>
             </div>
