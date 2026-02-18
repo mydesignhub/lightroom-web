@@ -1,4 +1,4 @@
-ឮimport * as React from 'react';
+import * as React from 'react';
 const { useState, useEffect, useRef } = React;
 import { 
   Sun, Aperture, Droplet, Sliders, ChevronRight, CheckCircle, XCircle, 
