@@ -771,7 +771,7 @@ const PhotoLab = () => {
 
       // 2. ស្វែងរក Moods (Keyword Match)
       const matchedMoods = PRESET_MOODS.filter(m => 
-          m.keywords.some(k => searchTerms.some(term => term.includes(k) || k.includes(term))) || 
+          (m.keywords && m.keywords.some(k => searchTerms.some(term => term.includes(k) || k.includes(term)))) || 
           searchTerms.some(term => m.name.toLowerCase().includes(term))
       );
 
