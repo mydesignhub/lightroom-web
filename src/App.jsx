@@ -1474,13 +1474,16 @@ const ChatBot = ({ messages, setMessages }) => {
 
          <div className="p-3 flex gap-2 items-end">
             <div className="flex-1 bg-[#2C2C2E] rounded-[24px] border border-white/10 flex items-center px-1 focus-within:border-blue-500/50 transition-colors">
-                <input 
+                <input
                     value={input} 
                     onChange={e => setInput(e.target.value)} 
                     onKeyPress={e => e.key === 'Enter' && handleSend()} 
                     placeholder="សួរសំណួរ..." 
-                    className="flex-1 bg-transparent text-white px-3 py-2.5 text-sm outline-none placeholder:text-gray-500 h-full" 
-                    autoComplete="off" 
+                    className="flex-1 bg-transparent text-white px-3 py-2.5 text-sm outline-none placeholder:text-gray-500 h-full"
+                    autoComplete="off"
+                    name="chat_input_field_unique"  // បន្ថែមឈ្មោះឱ្យច្បាស់លាស់
+                    id="chat_input_field_unique"    // បន្ថែម ID
+                    spellCheck="false"              // (ជម្រើស) បិទការឆែកអក្ខរាវិរុទ្ធក្រហមៗ 
                 />
             </div>
             <button 
