@@ -473,27 +473,27 @@ const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
             onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={handleEnd}
         >
             <div className="absolute -inset-4 rounded-full bg-black/20 blur-xl"></div>
-            <div className="absolute -inset-3 rounded-full bg-[#1C1C1E] border border-white/5 shadow-2xl"></div>
+            <div className="absolute -inset-3 rounded-full bg-[#0A0A0A] border border-white/0.8 shadow-2xl"></div>
             <div className="absolute -inset-[2px] rounded-full bg-[#000000]/50 shadow-inner"></div>
             <div className="absolute inset-0 rounded-full overflow-hidden" style={{ background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)' }}>
                 <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(closest-side, white, transparent 100%)', pointerEvents: 'none' }}></div>
             </div>
-            <div className="absolute w-6 h-6 bg-white rounded-full border-[3px] border-[#1C1C1E] shadow-[0_2px_8px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 ease-out group-hover:scale-110 z-10" style={{ left: handleX, top: handleY }}></div>
+            <div className="absolute w-6 h-6 bg-white rounded-full border-[3px] border-[#0A0A0A] shadow-[0_2px_8px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 ease-out group-hover:scale-110 z-10" style={{ left: handleX, top: handleY }}></div>
         </div>
     );
 };
 
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-black/80 backdrop-blur-xl text-white sticky top-0 z-50 border-b border-white/10`}>
+    <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} bg-black/80 backdrop-blur-xl text-white sticky top-0 z-50 border-b border-white/0.8`}>
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('learn')}>
-          <div className="w-12 h-12 relative rounded-xl overflow-hidden shadow-lg flex-shrink-0 group-hover:shadow-blue-500/20 transition-all duration-500 ease-spring group-hover:scale-105 bg-white/5 p-1 border border-white/10">
+          <div className="w-12 h-12 relative rounded-xl overflow-hidden shadow-lg flex-shrink-0 group-hover:shadow-blue-500/20 transition-all duration-500 ease-spring group-hover:scale-105 bg-white/5 p-1 border border-white/0.8">
               <img src="/logo.svg" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-xl font-bold font-khmer text-white tracking-tight group-hover:opacity-80 transition-opacity">ម៉ាយឌីហ្សាញ</h1>
         </div>
-        <nav className="hidden md:flex space-x-1 bg-[#1C1C1E] p-1.5 rounded-full border border-white/10 shadow-lg">
+        <nav className="hidden md:flex space-x-1 bg-[#0A0A0A] p-1.5 rounded-full border border-white/0.8 shadow-lg">
           {['learn', 'quiz', 'lab', 'ai'].map(t => (
             <button key={t} onClick={() => setActiveTab(t)} className={`px-6 py-2 rounded-full transition-all duration-300 ease-spring flex items-center gap-2 whitespace-nowrap font-medium text-sm ${activeTab === t ? 'bg-[#2C2C2E] text-white shadow-md ring-1 ring-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                {t === 'learn' && <BookOpen size={16}/>}{t === 'quiz' && <Award size={16}/>}{t === 'lab' && <Sliders size={16}/>}{t === 'ai' && <Bot size={16}/>}
@@ -530,9 +530,9 @@ const LessonModal = ({ lesson, onClose }) => {
   return (
       <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6">
           <div className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-500 ease-out ${closing ? 'opacity-0' : 'opacity-100'}`} style={{ opacity: Math.max(0, opacity) }} onClick={handleClose} />
-          <div ref={modalRef} className={`relative w-full max-w-3xl bg-[#1C1C1E] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] h-[85vh] sm:h-auto transition-transform duration-500 ease-spring ring-1 ring-white/10 ${closing ? 'translate-y-full' : 'translate-y-0'}`} style={{ transform: `translateY(${closing ? '100%' : `${dragOffset}px`})`, transition: dragOffset > 0 ? 'none' : 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+          <div ref={modalRef} className={`relative w-full max-w-3xl bg-[#0A0A0A] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] h-[85vh] sm:h-auto transition-transform duration-500 ease-spring ring-1 ring-white/10 ${closing ? 'translate-y-full' : 'translate-y-0'}`} style={{ transform: `translateY(${closing ? '100%' : `${dragOffset}px`})`, transition: dragOffset > 0 ? 'none' : 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
              <div className="w-full flex justify-center pt-3 pb-1 shrink-0 cursor-grab active:cursor-grabbing sm:hidden" onClick={handleClose}><div className="w-12 h-1.5 bg-[#3A3A3C] rounded-full"></div></div>
-             <div className="bg-[#1C1C1E] border-b border-white/5 p-6 flex items-center justify-between sticky top-0 z-10 shrink-0 rounded-t-3xl">
+             <div className="bg-[#0A0A0A] border-b border-white/0.8 p-6 flex items-center justify-between sticky top-0 z-10 shrink-0 rounded-t-3xl">
                 <div className="flex items-center gap-5">
                     <div className="p-3.5 bg-blue-500/10 rounded-2xl text-blue-400 border border-blue-500/20">{lesson.icon}</div>
                     <h2 className="text-2xl font-bold font-khmer text-white tracking-tight">{lesson.title}</h2>
@@ -541,13 +541,13 @@ const LessonModal = ({ lesson, onClose }) => {
              </div>
              <div className="scroll-content flex-1 overflow-y-auto p-6 space-y-4 overscroll-contain bg-[#000000]">
                 {lesson.content.map((item, idx) => (
-                    <div key={idx} className="bg-[#1C1C1E] p-6 rounded-3xl border border-white/5 shadow-sm hover:border-white/10 transition-colors group">
+                    <div key={idx} className="bg-[#0A0A0A] p-6 rounded-3xl border border-white/0.8 shadow-sm hover:border-white/0.8 transition-colors group">
                         <div className="flex justify-between items-center mb-3 gap-3">
                             <span className="font-bold text-lg text-white group-hover:text-blue-400 transition-colors">{item.tool}</span>
-                            <span className="text-xs font-bold bg-[#2C2C2E] text-gray-300 px-3 py-1.5 rounded-lg font-khmer border border-white/5 whitespace-nowrap">{item.khmer}</span>
+                            <span className="text-xs font-bold bg-[#2C2C2E] text-gray-300 px-3 py-1.5 rounded-lg font-khmer border border-white/0.8 whitespace-nowrap">{item.khmer}</span>
                         </div>
                         <p className="text-gray-400 text-base font-khmer leading-relaxed">{item.desc}</p>
-                        {item.tip && <div className="mt-4 pt-4 border-t border-white/5 flex items-start space-x-3"><span className="text-lg">💡</span><p className="text-yellow-500/90 text-sm font-khmer font-medium leading-relaxed">{item.tip}</p></div>}
+                        {item.tip && <div className="mt-4 pt-4 border-t border-white/0.8 flex items-start space-x-3"><span className="text-lg">💡</span><p className="text-yellow-500/90 text-sm font-khmer font-medium leading-relaxed">{item.tip}</p></div>}
                     </div>
                 ))}
              </div>
@@ -557,10 +557,10 @@ const LessonModal = ({ lesson, onClose }) => {
 };
 
 const LessonCard = ({ lesson, onClick }) => (
-    <button onClick={onClick} className="bg-[#1C1C1E] rounded-3xl overflow-hidden border border-white/5 transition-all duration-500 ease-spring hover:scale-[1.02] active:scale-95 cursor-pointer w-full text-left relative shadow-lg hover:shadow-2xl hover:shadow-black/50 group">
+    <button onClick={onClick} className="bg-[#0A0A0A] rounded-3xl overflow-hidden border border-white/0.8 transition-all duration-500 ease-spring hover:scale-[1.02] active:scale-95 cursor-pointer w-full text-left relative shadow-lg hover:shadow-2xl hover:shadow-black/50 group">
       <div className="p-4 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-3.5">
-            <div className="bg-[#2C2C2E] w-12 h-12 rounded-2xl flex flex-shrink-0 items-center justify-center shadow-inner border border-white/5 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors text-gray-300">
+            <div className="bg-[#2C2C2E] w-12 h-12 rounded-2xl flex flex-shrink-0 items-center justify-center shadow-inner border border-white/0.8 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors text-gray-300">
                 {lesson.icon}
             </div>
             <div>
@@ -595,7 +595,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
 
   return (
     <div className="mt-12">
-      <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#1C1C1E] p-6 rounded-3xl border border-white/5 hover:bg-[#2C2C2E] transition-all group active:scale-95">
+      <button onClick={onToggle} className="w-full flex items-center justify-between bg-[#0A0A0A] p-6 rounded-3xl border border-white/0.8 hover:bg-[#2C2C2E] transition-all group active:scale-95">
         <div className="flex items-center space-x-5">
             <div className="bg-blue-500/10 p-3 rounded-2xl group-hover:bg-blue-500/20 transition-colors ring-1 ring-blue-500/20"><PlayCircle className="w-6 h-6 text-blue-400" /></div>
             <h3 className="font-bold text-white text-xl font-khmer tracking-tight">គន្លឹះបន្ថែម (Tips)</h3>
@@ -604,7 +604,7 @@ const TipsSection = ({ isExpanded, onToggle }) => {
       </button>
       {isExpanded && (
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
-          <div className="bg-gradient-to-br from-[#2C2C2E] to-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 relative overflow-hidden shadow-2xl flex flex-col justify-center min-h-[180px]">
+          <div className="bg-gradient-to-br from-[#2C2C2E] to-[#0A0A0A] border border-white/0.8 rounded-3xl p-8 md:col-span-2 relative overflow-hidden shadow-2xl flex flex-col justify-center min-h-[180px]">
              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
              <div className="flex justify-between items-center mb-6 relative z-10">
                  <h4 className="font-bold text-white font-khmer flex items-center gap-3 text-lg whitespace-nowrap">
@@ -616,22 +616,22 @@ const TipsSection = ({ isExpanded, onToggle }) => {
                  <p key={tipIndex} className="text-gray-300 text-base font-khmer leading-relaxed border-l-4 border-blue-500 pl-6 py-2 animate-fade-in-up">{TIPS_LIST[tipIndex]}</p>
              </div>
           </div>
-          <div className="bg-[#1C1C1E] border border-white/5 rounded-3xl p-8 md:col-span-2 shadow-xl">
+          <div className="bg-[#0A0A0A] border border-white/0.8 rounded-3xl p-8 md:col-span-2 shadow-xl">
             <h4 className="font-bold text-white font-khmer mb-6 flex items-center text-lg"><Zap className="w-5 h-5 mr-3 text-yellow-400" /> គន្លឹះប្រើកម្មវិធី (Shortcut Tricks)</h4>
             <ul className="space-y-4 text-sm text-gray-400 font-khmer">
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/0.8 hover:bg-[#2C2C2E] transition-colors">
                 <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">1</span>
                 <span><span className="font-bold text-white block mb-1">មើលរូបដើម (Before/After)៖</span> ចុចសង្កត់លើរូបភាពដើម្បីមើលរូបដើម (Before) ហើយដកដៃចេញដើម្បីមើលរូបដែលកែរួច (After)។</span>
               </li>
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/0.8 hover:bg-[#2C2C2E] transition-colors">
                 <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">2</span>
                 <span><span className="font-bold text-white block mb-1">Reset តម្លៃ Slider៖</span> ចុចពីរដងលើរង្វង់មូលនៃ Slider ណាមួយ ដើម្បីត្រឡប់តម្លៃនោះទៅ 0 វិញភ្លាមៗ។</span>
               </li>
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/0.8 hover:bg-[#2C2C2E] transition-colors">
                 <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">3</span>
                 <span><span className="font-bold text-white block mb-1">មើល Clipping (J Mode)៖</span> ពេលកំពុងអូស Slider (Whites/Blacks/Exposure) យកម្រាមដៃមួយទៀតចុចលើអេក្រង់ ដើម្បីមើលកន្លែងដែលដាច់ព័ត៌មាន។</span>
               </li>
-              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/5 hover:bg-[#2C2C2E] transition-colors">
+              <li className="flex items-start gap-4 p-4 rounded-2xl bg-[#2C2C2E]/50 border border-white/0.8 hover:bg-[#2C2C2E] transition-colors">
                 <span className="font-bold text-blue-400 bg-blue-500/10 w-8 h-8 flex items-center justify-center rounded-full text-sm shrink-0">4</span>
                 <span><span className="font-bold text-white block mb-1">Copy/Paste ពណ៌៖</span> ចុចលើសញ្ញា (...) ជ្រុងលើស្តាំ {'>'} "Copy Settings" រួចបើករូបថ្មីចុច (...) {'>'} "Paste Settings" ដើម្បីចម្លងការកែទាំងអស់។</span>
               </li>
@@ -644,18 +644,18 @@ const TipsSection = ({ isExpanded, onToggle }) => {
 };
 
 const ContactSection = () => (
-  <div className="mt-16 mb-10 border-t border-white/10 pt-10 text-center">
+  <div className="mt-16 mb-10 border-t border-white/0.8 pt-10 text-center">
       <div className="flex justify-center gap-10">
           <a href="https://web.facebook.com/mydesignpro" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="p-3 bg-[#1C1C1E] rounded-xl border border-white/10"><Facebook className="text-blue-500 w-5 h-5" /></div>
+              <div className="p-3 bg-[#0A0A0A] rounded-xl border border-white/0.8"><Facebook className="text-blue-500 w-5 h-5" /></div>
               <span className="text-[10px] text-gray-500 font-khmer">Facebook</span>
           </a>
           <a href="https://t.me/koymy" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="p-3 bg-[#1C1C1E] rounded-xl border border-white/10"><Send className="text-sky-400 w-5 h-5" /></div>
+              <div className="p-3 bg-[#0A0A0A] rounded-xl border border-white/0.8"><Send className="text-sky-400 w-5 h-5" /></div>
               <span className="text-[10px] text-gray-500 font-khmer">Telegram</span>
           </a>
           <a href="https://myaffinity.gumroad.com" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center gap-2 hover:opacity-80 transition-opacity">
-                <div className="p-3 bg-[#1C1C1E] rounded-xl border border-white/10"><Globe className="text-pink-500 w-5 h-5" /></div>
+                <div className="p-3 bg-[#0A0A0A] rounded-xl border border-white/0.8"><Globe className="text-pink-500 w-5 h-5" /></div>
               <span className="text-[10px] text-gray-500 font-khmer">Website</span>
           </a>
       </div>
@@ -732,13 +732,13 @@ const PhotoLab = () => {
   const sampleImages = [ { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" }, { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" }, { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" }, { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" }, { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" } ];
 
   return (
-    <div className="bg-[#000000] rounded-3xl border border-white/10 flex flex-col h-full max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 relative z-0">
+    <div className="bg-[#000000] rounded-3xl border border-white/0.8 flex flex-col h-full max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 relative z-0">
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
             <div className="h-[50%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 bg-black/40 lg:bg-transparent px-2 pb-2 pt-2 lg:p-0">
-                <div className="flex-1 bg-[#1C1C1E] rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-2xl">
+                <div className="flex-1 bg-[#0A0A0A] rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border border-white/5 group shadow-2xl">
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
-                <div className="flex items-center justify-between gap-2 bg-[#1C1C1E] p-2 rounded-2xl border border-white/5 shadow-lg shrink-0 overflow-x-auto no-scrollbar">
+                <div className="flex items-center justify-between gap-2 bg-[#0A0A0A] p-2 rounded-2xl border border-white/0.8 shadow-lg shrink-0 overflow-x-auto no-scrollbar">
                     <div className="flex gap-2 shrink-0">
                         {sampleImages.map((item, idx) => (<button key={idx} onClick={() => setImage(item.src)} className={`flex-shrink-0 w-10 h-10 rounded-xl border-2 ${image === item.src ? 'border-blue-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'} overflow-hidden transition-all duration-300 ease-spring relative group shadow-md`} title={item.label}><img src={item.src} className="w-full h-full object-cover" /></button>))}
                     </div>
@@ -751,20 +751,20 @@ const PhotoLab = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full bg-[#1C1C1E] rounded-t-3xl lg:rounded-3xl border border-white/5 overflow-hidden shadow-2xl relative z-10">
-                 <div className="w-full h-14 bg-[#2C2C2E] border-b border-white/10 flex items-center px-2 gap-2 shrink-0 z-20">
+            <div className="flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full bg-[#0A0A0A] rounded-t-3xl lg:rounded-3xl border border-white/0.8 overflow-hidden shadow-2xl relative z-10">
+                 <div className="w-full h-14 bg-[#2C2C2E] border-b border-white/0.8 flex items-center px-2 gap-2 shrink-0 z-20">
                     <div className="flex-1 flex bg-black/20 p-1 rounded-xl">
                         <button onClick={() => setMode('manual')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'manual' ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>កែដោយដៃ</button>
                         <button onClick={() => setMode('preset')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'preset' ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>Preset</button>
                     </div>
                     <button onClick={resetSettings} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all" title="Reset All"><RotateCcw size={16}/></button>
                  </div>
-                 <div className="flex-1 flex flex-col bg-[#1C1C1E] overflow-hidden relative">
+                 <div className="flex-1 flex flex-col bg-[#0A0A0A] overflow-hidden relative">
                     {mode === 'manual' ? (
                         <div className="flex-1 overflow-y-auto p-2 custom-scrollbar space-y-2 pb-24 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-1">
-                                    <div className="flex items-center justify-between pb-0 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[10px] text-blue-500 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider">Reset</button></div>
+                                    <div className="flex items-center justify-between pb-0 border-b border-white/0.8"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider">{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className="text-[10px] text-blue-500 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider">Reset</button></div>
                                     <div className="space-y-1">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
@@ -782,13 +782,13 @@ const PhotoLab = () => {
                                     </div>
                                 </div>
                             ))}
-                            <div className="space-y-2"><div className="flex items-center justify-between pb-0 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><Palette size={16}/> Color Mix</h4></div><div className="flex justify-between gap-2 mb-2">{colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-8 h-8 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-lg ring-2 ring-white/10' : 'border-transparent opacity-40 hover:opacity-100'} transition-all duration-300 ease-spring`} />))}</div><div className="space-y-2 px-2">{['Hue', 'Sat', 'Lum'].map((type) => { const key = `${activeColor.toLowerCase()}${type}`; return (<div key={key} className="flex items-center gap-2"><label className="text-[10px] font-bold text-gray-400 font-khmer w-8 uppercase tracking-wider">{type}</label><input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} /><input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" /></div>)})}</div></div>
-                            <div className="space-y-2 pb-4"><div className="flex items-center justify-between pb-0 border-b border-white/5"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><TrendingUp size={16}/> Grading</h4><button onClick={() => setGradingSync(!gradingSync)} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${gradingSync ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' : 'bg-[#2C2C2E] border-white/5 text-gray-500'}`}><span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span><div className={`w-2 h-2 rounded-full ${gradingSync ? 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'bg-gray-600'}`}></div></button></div><div className="flex justify-around mb-2 bg-[#2C2C2E] p-1.5 rounded-xl">{['Shadows', 'Midtones', 'Highlights'].map(t => (<button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>{t}</button>))}</div><div className="p-1 space-y-4"><div className="flex justify-center py-1"><ColorWheel hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']} sat={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={160}/></div><div className="bg-[#2C2C2E]/50 rounded-2xl p-3 border border-white/5 space-y-3"><div className="flex justify-between items-center px-1"><div className="flex flex-col"><span className="text-[9px] text-gray-500 uppercase tracking-wider font-bold">Selected</span><span className="text-xs font-bold text-white flex items-center gap-1.5"><div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}, ${settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']}%, 50%)`}}></div>{getColorName(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])}</span></div><div className="flex flex-col items-end"><span className="text-[9px] text-gray-500 uppercase tracking-wider font-bold">Complementary</span><span className="text-xs font-bold text-gray-400 flex items-center gap-1.5 flex-row-reverse"><div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'] + 180) % 360}, 60%, 50%)`}}></div>{getColorName((settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'] + 180) % 360)}</span></div></div><div className="space-y-1"><div className="flex justify-between"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hue</label></div><div className="flex items-center gap-2"><input type="range" min="0" max="360" value={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-hue flex-1" /><input type="number" value={Math.round(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'])} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} className="w-10 bg-transparent text-xs font-bold text-right text-blue-400 outline-none"/></div></div><div className="space-y-1"><div className="flex justify-between"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Saturation</label></div><div className="flex items-center gap-2"><input type="range" min="0" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']} onChange={(e) => updateGrading(gradingTab, settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], Number(e.target.value))} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-gray-700 to-white flex-1" /><input type="number" value={Math.round(settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} onChange={(e) => updateGrading(gradingTab, settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-blue-400 outline-none"/></div></div><div className="space-y-1"><div className="flex justify-between"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Luminance</label></div><div className="flex items-center gap-2"><input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-lum flex-1" /><input type="number" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-blue-400 outline-none"/></div></div><div className="pt-1 border-t border-white/5 space-y-1 px-1"><div className="flex flex-col gap-0.5"><div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Blending</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBlending}</span></div><input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/></div><div className="flex flex-col gap-0.5"><div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Balance</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBalance}</span></div><input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/></div></div></div></div></div>
+                            <div className="space-y-2"><div className="flex items-center justify-between pb-0 border-b border-white/0.8"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><Palette size={16}/> Color Mix</h4></div><div className="flex justify-between gap-2 mb-2">{colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} className={`w-8 h-8 rounded-full ${c.color} border-2 ${activeColor === c.name ? 'border-white scale-110 shadow-lg ring-2 ring-white/10' : 'border-transparent opacity-40 hover:opacity-100'} transition-all duration-300 ease-spring`} />))}</div><div className="space-y-2 px-2">{['Hue', 'Sat', 'Lum'].map((type) => { const key = `${activeColor.toLowerCase()}${type}`; return (<div key={key} className="flex items-center gap-2"><label className="text-[10px] font-bold text-gray-400 font-khmer w-8 uppercase tracking-wider">{type}</label><input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} /><input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-white outline-none" /></div>)})}</div></div>
+                            <div className="space-y-2 pb-4"><div className="flex items-center justify-between pb-0 border-b border-white/0.8"><h4 className="text-xs font-bold text-gray-400 font-khmer uppercase flex items-center gap-2 tracking-wider"><TrendingUp size={16}/> Grading</h4><button onClick={() => setGradingSync(!gradingSync)} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${gradingSync ? 'bg-blue-500/20 border-blue-500/50 text-blue-400' : 'bg-[#2C2C2E] border-white/0.8 text-gray-500'}`}><span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span><div className={`w-2 h-2 rounded-full ${gradingSync ? 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'bg-gray-600'}`}></div></button></div><div className="flex justify-around mb-2 bg-[#2C2C2E] p-1.5 rounded-xl">{['Shadows', 'Midtones', 'Highlights'].map(t => (<button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}>{t}</button>))}</div><div className="p-1 space-y-4"><div className="flex justify-center py-1"><ColorWheel hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']} sat={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={160}/></div><div className="bg-[#2C2C2E]/50 rounded-2xl p-3 border border-white/0.8 space-y-3"><div className="flex justify-between items-center px-1"><div className="flex flex-col"><span className="text-[9px] text-gray-500 uppercase tracking-wider font-bold">Selected</span><span className="text-xs font-bold text-white flex items-center gap-1.5"><div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}, ${settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']}%, 50%)`}}></div>{getColorName(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])}</span></div><div className="flex flex-col items-end"><span className="text-[9px] text-gray-500 uppercase tracking-wider font-bold">Complementary</span><span className="text-xs font-bold text-gray-400 flex items-center gap-1.5 flex-row-reverse"><div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'] + 180) % 360}, 60%, 50%)`}}></div>{getColorName((settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'] + 180) % 360)}</span></div></div><div className="space-y-1"><div className="flex justify-between"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hue</label></div><div className="flex items-center gap-2"><input type="range" min="0" max="360" value={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-hue flex-1" /><input type="number" value={Math.round(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'])} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} className="w-10 bg-transparent text-xs font-bold text-right text-blue-400 outline-none"/></div></div><div className="space-y-1"><div className="flex justify-between"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Saturation</label></div><div className="flex items-center gap-2"><input type="range" min="0" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']} onChange={(e) => updateGrading(gradingTab, settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], Number(e.target.value))} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-gray-700 to-white flex-1" /><input type="number" value={Math.round(settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} onChange={(e) => updateGrading(gradingTab, settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-blue-400 outline-none"/></div></div><div className="space-y-1"><div className="flex justify-between"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Luminance</label></div><div className="flex items-center gap-2"><input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-lum flex-1" /><input type="number" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="w-10 bg-transparent text-xs font-bold text-right text-blue-400 outline-none"/></div></div><div className="pt-1 border-t border-white/0.8 space-y-1 px-1"><div className="flex flex-col gap-0.5"><div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Blending</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBlending}</span></div><input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/></div><div className="flex flex-col gap-0.5"><div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Balance</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBalance}</span></div><input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/></div></div></div></div></div>
                         </div>
                     ) : (
-                        <div className="flex flex-col h-full bg-[#1C1C1E]">
-                            <div className="p-3 border-b border-white/5 shrink-0 z-10">
-                                <div className="bg-[#2C2C2E] p-1 rounded-2xl border border-white/5 shadow-inner">
+                        <div className="flex flex-col h-full bg-[#0A0A0A]">
+                            <div className="p-3 border-b border-white/0.8 shrink-0 z-10">
+                                <div className="bg-[#2C2C2E] p-1 rounded-2xl border border-white/0.8 shadow-inner">
                                     <div className="flex gap-2 items-center px-2">
                                         <Search size={16} className="text-gray-500" />
                                         <input 
@@ -823,9 +823,10 @@ const PhotoLab = () => {
                                         <div className="grid grid-cols-1 gap-2">
                                             {filteredPresets.length > 0 ? (
                                                 filteredPresets.map((preset, idx) => (
-                                                    <button key={preset.id || idx} onClick={() => applyPresetToSettings(preset)} className="flex items-center justify-between p-3 bg-[#2C2C2E]/50 hover:bg-[#3A3A3C] border border-white/5 rounded-2xl transition-all duration-200 group active:scale-[0.98] text-left">
+                                                    <button key={preset.id || idx} onClick={() => applyPresetToSettings(preset)} className="flex items-center justify-between p-3 bg-[#2C2C2E]/50 hover:bg-[#3A3A3C] border border-white/0.8
+                                                     rounded-2xl transition-all duration-200 group active:scale-[0.98] text-left">
                                                         <div className="flex flex-col"><span className="text-sm font-bold text-gray-200 group-hover:text-white capitalize font-khmer">{preset.name || preset.id.replace(/_/g, ' ')}</span><span className="text-[10px] text-gray-500 uppercase tracking-wide">{Object.keys(preset.grading || {}).length > 0 ? 'Color Grade' : 'Basic'}</span></div>
-                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 border border-white/10 flex items-center justify-center group-hover:border-blue-500/50 group-hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all"><div className="w-2 h-2 rounded-full bg-white opacity-20 group-hover:opacity-100 transition-opacity"></div></div>
+                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 border border-white/0.8 flex items-center justify-center group-hover:border-blue-500/50 group-hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all"><div className="w-2 h-2 rounded-full bg-white opacity-20 group-hover:opacity-100 transition-opacity"></div></div>
                                                     </button>
                                                 ))
                                             ) : (
@@ -856,15 +857,15 @@ const Quiz = () => {
 
   if (gameState === 'menu') return (
     <div className="flex h-full items-center justify-center p-4">
-      <div className="bg-[#1C1C1E]/80 backdrop-blur-md p-6 sm:p-8 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up">
+      <div className="bg-[#0A0A0A]/80 backdrop-blur-md p-6 sm:p-8 text-center rounded-[32px] border border-white/0.8 shadow-2xl max-w-lg w-full animate-fade-in-up">
           <div className="bg-gradient-to-br from-blue-500/20 to-indigo-500/20 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-white/5"><Award className="w-12 h-12 text-blue-400 drop-shadow-lg" /></div>
           <h2 className="text-3xl font-extrabold text-white font-khmer mb-3 tracking-tight">ការធ្វើតេស្ត</h2>
           <div className="space-y-6">
-              <div className="flex justify-center gap-3 bg-[#000000] p-1.5 rounded-2xl w-fit mx-auto border border-white/10">
-                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
-                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#1C1C1E] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
+              <div className="flex justify-center gap-3 bg-[#000000] p-1.5 rounded-2xl w-fit mx-auto border border-white/0.8">
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner'?'bg-[#0A0A0A] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>មូលដ្ឋាន</button>
+                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced'?'bg-[#0A0A0A] text-white shadow-lg ring-1 ring-white/10':'text-gray-500 hover:text-white'}`}>កម្រិតខ្ពស់</button>
               </div>
-              <div className="flex justify-center gap-3 items-center"><span className="text-gray-500 text-xs font-khmer uppercase tracking-widest font-bold">ចំនួន</span>{[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-2xl font-bold text-xs transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/5 hover:bg-[#3A3A3C]'}`}>{num}</button>))}</div>
+              <div className="flex justify-center gap-3 items-center"><span className="text-gray-500 text-xs font-khmer uppercase tracking-widest font-bold">ចំនួន</span>{[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-2xl font-bold text-xs transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-110' : 'bg-[#2C2C2E] text-gray-400 border border-white/0.8 hover:bg-[#3A3A3C]'}`}>{num}</button>))}</div>
               <button onClick={startQuiz} className="w-full py-3.5 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-sm tracking-wide">ចាប់ផ្ដើម</button>
           </div>
       </div>
@@ -875,7 +876,7 @@ const Quiz = () => {
       const percentage = Math.round((score / questions.length) * 100);
       return (
         <div className="flex h-full items-center justify-center p-4">
-          <div className="bg-[#1C1C1E] p-10 text-center rounded-[32px] border border-white/10 shadow-2xl max-w-lg w-full animate-fade-in-up"><div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="80" cy="80" r="64" stroke="#2C2C2E" strokeWidth="12" fill="none" /><circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" /></svg><div className="absolute text-4xl font-black text-white tracking-tighter">{percentage}%</div></div><h2 className="text-2xl font-bold text-white font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2><p className="text-gray-400 font-khmer mb-8 text-sm">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p><button onClick={() => setGameState('menu')} className="px-10 py-3 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full text-sm">សាកល្បងម្តងទៀត</button></div>
+          <div className="bg-[#0A0A0A] p-10 text-center rounded-[32px] border border-white/0.8 shadow-2xl max-w-lg w-full animate-fade-in-up"><div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="80" cy="80" r="64" stroke="#2C2C2E" strokeWidth="12" fill="none" /><circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" /></svg><div className="absolute text-4xl font-black text-white tracking-tighter">{percentage}%</div></div><h2 className="text-2xl font-bold text-white font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2><p className="text-gray-400 font-khmer mb-8 text-sm">ពិន្ទុរបស់អ្នក: <span className="text-white font-bold">{score}</span> / {questions.length}</p><button onClick={() => setGameState('menu')} className="px-10 py-3 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-white rounded-2xl font-bold font-khmer transition-all shadow-lg w-full text-sm">សាកល្បងម្តងទៀត</button></div>
         </div>
       );
   }
@@ -883,7 +884,7 @@ const Quiz = () => {
   const q = questions[currentQuestion];
   return (
     <div className="flex h-full items-center justify-center p-4">
-      <div className="bg-[#1C1C1E] p-6 sm:p-10 rounded-[32px] border border-white/10 shadow-2xl max-w-3xl w-full animate-fade-in-up">
+      <div className="bg-[#0A0A0A] p-6 sm:p-10 rounded-[32px] border border-white/0.8 shadow-2xl max-w-3xl w-full animate-fade-in-up">
         <div className="flex justify-between mb-8 items-center"><span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-3 py-1.5 rounded-full ring-1 ring-blue-500/20">{currentQuestion + 1} / {questions.length}</span><span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{q.level || 'General'}</span></div>
         <h3 className="text-xl md:text-2xl font-bold text-white mb-8 font-khmer leading-snug">{q.question}</h3>
         <div className="grid gap-3">
@@ -924,8 +925,8 @@ const ChatBot = ({ messages, setMessages }) => {
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#000000] md:rounded-[32px] overflow-hidden shadow-2xl relative md:border md:border-white/10 font-khmer">
-      <div className="absolute top-0 left-0 right-0 h-16 bg-[#1C1C1E]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 z-10">
+    <div className="flex flex-col h-full w-full bg-[#000000] md:rounded-[32px] overflow-hidden shadow-2xl relative md:border md:border-white/0.8 font-khmer">
+      <div className="absolute top-0 left-0 right-0 h-16 bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/0.8 flex items-center justify-between px-6 z-10">
           <div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center shadow-lg"><Bot size={18} className="text-white" /></div><div><h3 className="text-sm font-bold text-white leading-none">AI Assistant</h3><span className="text-[10px] text-green-400 font-medium">Online</span></div></div>
       </div>
       <div className="flex-1 overflow-y-auto p-4 pt-20 pb-4 space-y-4 bg-[#000000] no-scrollbar">
@@ -934,10 +935,10 @@ const ChatBot = ({ messages, setMessages }) => {
         {loading && (<div className="flex justify-start items-end"><div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center mr-2"><Bot size={12} className="text-white" /></div><div className="bg-[#2C2C2E] px-4 py-3 rounded-[18px] rounded-bl-none border border-white/5 flex gap-1"><div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div><div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div><div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div></div></div>)}
         <div ref={messagesEndRef} className="h-2" />
       </div>
-      <div className="bg-[#1C1C1E]/90 backdrop-blur-xl border-t border-white/5 pb-safe">
-         <div className="flex items-center border-b border-white/5 pl-2"><button onClick={() => { const shuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()); setCurrentSuggestions(shuffled.slice(0, 3)); }} className="p-2 text-blue-400 hover:text-white transition-colors active:scale-90"><RefreshCw size={14} /></button><div className="flex gap-2 overflow-x-auto pb-3 pt-3 px-2 no-scrollbar">{currentSuggestions.map((q, i) => (<button key={i} onClick={() => handleSend(q)} className="shrink-0 px-3 py-1.5 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-blue-400 text-[11px] rounded-full border border-blue-500/20 active:scale-95 transition-all whitespace-nowrap">{q}</button>))}</div></div>
+      <div className="bg-[#0A0A0A]/90 backdrop-blur-xl border-t border-white/0.8 pb-safe">
+         <div className="flex items-center border-b border-white/0.8 pl-2"><button onClick={() => { const shuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()); setCurrentSuggestions(shuffled.slice(0, 3)); }} className="p-2 text-blue-400 hover:text-white transition-colors active:scale-90"><RefreshCw size={14} /></button><div className="flex gap-2 overflow-x-auto pb-3 pt-3 px-2 no-scrollbar">{currentSuggestions.map((q, i) => (<button key={i} onClick={() => handleSend(q)} className="shrink-0 px-3 py-1.5 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-blue-400 text-[11px] rounded-full border border-blue-500/20 active:scale-95 transition-all whitespace-nowrap">{q}</button>))}</div></div>
          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 flex gap-2 items-end" autoComplete="off">
-            <div className="flex-1 bg-[#2C2C2E] rounded-[24px] border border-white/10 flex items-center px-1 focus-within:border-blue-500/50 transition-colors">
+            <div className="flex-1 bg-[#2C2C2E] rounded-[24px] border border-white/0.8 flex items-center px-1 focus-within:border-blue-500/50 transition-colors">
                 {/* កែត្រង់នេះ៖ ប្រើ text-base (16px) ដើម្បីកុំឱ្យ iOS Zoom */}
                 <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder="សួរសំណួរ..." className="flex-1 bg-transparent text-white px-3 py-2.5 text-base outline-none placeholder:text-gray-500 h-full [&::-webkit-search-cancel-button]:hidden" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
             </div>
@@ -990,7 +991,7 @@ export default function App() {
         {activeTab === 'ai' && <div className="h-full md:h-[650px] max-w-2xl mx-auto w-full relative"><ChatBot messages={chatMessages} setMessages={setChatMessages} /></div>}
       </main>
 
-      <nav className="md:hidden bg-[#1C1C1E]/90 backdrop-blur-xl border-t border-white/10 flex justify-around p-3 pb-safe z-50">
+      <nav className="md:hidden bg-[#0A0A0A]/90 backdrop-blur-xl border-t border-white/0.8 flex justify-around p-3 pb-safe z-50">
         {['learn', 'quiz', 'lab', 'ai'].map(t => (
             <button key={t} onClick={() => setActiveTab(t)} className={`flex flex-col items-center gap-1 transition-all ${activeTab === t ? 'text-blue-500 scale-110' : 'text-gray-500'}`}>{t === 'learn' && <BookOpen size={22}/>}{t === 'quiz' && <Award size={22}/>}{t === 'lab' && <Sliders size={22}/>}{t === 'ai' && <Bot size={22}/>}<span className="text-[10px] font-bold uppercase">{t === 'learn' ? 'មេរៀន' : t === 'quiz' ? 'តេស្ត' : t === 'lab' ? 'Lab' : 'AI'}</span></button>
         ))}
