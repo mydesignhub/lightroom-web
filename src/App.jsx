@@ -1495,7 +1495,8 @@ export default function App() {
       
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
       
-      <main className={`flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full ${activeTab === 'lab' || activeTab === 'ai' ? 'h-full overflow-hidden' : 'overflow-y-auto custom-scrollbar'}`}>
+      {/* កែត្រង់នេះ៖ បន្ថែម p-0 នៅពេលប្រើទូរស័ព្ទ (mobile) សម្រាប់ tab 'ai' និង 'lab' ដើម្បីឱ្យវាពេញអេក្រង់ */}
+<main className={`flex-1 max-w-7xl mx-auto w-full ${activeTab === 'ai' || activeTab === 'lab' ? 'h-full overflow-hidden p-0 md:p-8' : 'overflow-y-auto custom-scrollbar p-4 md:p-8'}`}>
         {activeTab === 'learn' && (
           <div className="space-y-12 pb-24">
             <div className="text-center py-10 mt-6 relative">
