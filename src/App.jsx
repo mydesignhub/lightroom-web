@@ -1472,28 +1472,34 @@ const ChatBot = ({ messages, setMessages }) => {
              </div>
          </div>
 
-         <div className="p-3 flex gap-2 items-end">
+         <form 
+            onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+            className="p-3 flex gap-2 items-end"
+            autoComplete="off"
+         >
             <div className="flex-1 bg-[#2C2C2E] rounded-[24px] border border-white/10 flex items-center px-1 focus-within:border-blue-500/50 transition-colors">
                 <input
+                    type="search"
                     value={input} 
                     onChange={e => setInput(e.target.value)} 
-                    onKeyPress={e => e.key === 'Enter' && handleSend()} 
                     placeholder="សួរសំណួរ..." 
-                    className="flex-1 bg-transparent text-white px-3 py-2.5 text-sm outline-none placeholder:text-gray-500 h-full"
+                    className="flex-1 bg-transparent text-white px-3 py-2.5 text-sm outline-none placeholder:text-gray-500 h-full [&::-webkit-search-cancel-button]:hidden"
                     autoComplete="off"
-                    name="chat_input_field_unique"  // បន្ថែមឈ្មោះឱ្យច្បាស់លាស់
-                    id="chat_input_field_unique"    // បន្ថែម ID
-                    spellCheck="false"              // (ជម្រើស) បិទការឆែកអក្ខរាវិរុទ្ធក្រហមៗ 
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    name="search_query_input_unique"
+                    id="search_query_input_unique"
                 />
             </div>
             <button 
-                onClick={() => handleSend()} 
+                type="submit"
                 disabled={!input.trim()}
                 className={`p-2.5 rounded-full transition-all active:scale-90 shadow-lg ${input.trim() ? 'bg-[#0A84FF] text-white' : 'bg-[#2C2C2E] text-gray-500'}`}
             >
                 <Send size={18} />
             </button>
-         </div>
+         </form>
       </div>
     </div>
   );
