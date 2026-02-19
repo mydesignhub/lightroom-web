@@ -42,60 +42,6 @@ const TIPS_LIST = [
 const SUGGESTED_QUESTIONS = [
     "តើកែស្បែកមុខឱ្យសម៉ត់យ៉ាងដូចម្តេច?", "របៀបធ្វើឱ្យមេឃពណ៌ខៀវដិត?", "តើ Vibrance ខុសពី Saturation យ៉ាងណា?", "ជួយណែនាំ Preset សម្រាប់ថតនៅហាងកាហ្វេ", "របៀបកែរូបថតពេលយប់កុំឱ្យមាន Noise?", "តើអ្វីទៅជា Golden Hour?", "របៀបបង្កើតពណ៌ Teal & Orange?", "តើ Dehaze ប្រើសម្រាប់ធ្វើអ្វី?", "ណែនាំ Preset សម្រាប់ថត Pre-wedding", "របៀបធ្វើឱ្យរូបភាពច្បាស់ (Sharp)?", "តើ Tone Curve ប្រើដូចម្តេច?", "របៀបកែរូបទេសភាពឱ្យស្រស់?", "តើ HSL គឺជាអ្វី?", "របៀបធ្វើឱ្យរូបមាន Mood សោកសៅ?", "តើ Calibration ប្រើសម្រាប់អ្វី?", "របៀបកែរូបឱ្យដូចកាមេរ៉ា Film", "តើគួរ Export រូបបែបណាសម្រាប់ Facebook?", "របៀបប្រើ Masking កែតែមេឃ", "ហេតុអ្វីរូបខ្ញុំថតមកងងឹតមុខ?", "របៀបកែរូបខ្មៅស (B&W) ឱ្យស្អាត", "តើធ្វើម៉េចអោយស្លឹកឈើពណ៌បៃតងខ្មៅ?", "របៀបកែរូបអោយភ្លឺ (Bright & Airy)", "តើ Grain ប្រើដើម្បីអ្វី?", "របៀបលុបអ័ព្ទចេញពីរូប?", "របៀបកែរូបថតអាហារអោយទំនង?", "តើ Vignette គឺអ្វី?", "របៀបកែរូប Street Photography?", "របៀបកែរូប Portrait ពេលយប់?", "តើ Contrast ជួយអ្វីខ្លះ?", "របៀបកែ White Balance?", "តើ Highlights និង Whites ខុសគ្នាម៉េច?", "របៀបកែរូបលេងពណ៌ Neon?", "របៀបធ្វើអោយរូបមានជម្រៅ (Depth)?", "តើ Clarity គួរប្រើពេលណា?", "របៀបកែរូបបែប Minimalist?", "តើ Split Toning ប្រើដូចម្តេច?", "របៀបកែរូបអោយដូចរដូវស្លឹកឈើជ្រុះ?", "តើ Shadows ប្រើសម្រាប់អ្វី?", "របៀបកែរូបថតថ្ងៃរះ?", "តើ Texture ខុសពី Clarity យ៉ាងណា?", "របៀបកែរូបបែប Cyberpunk?", "តើ Lens Correction សំខាន់ទេ?", "របៀបកែរូបក្នុងអគារ (Indoor)?", "តើអ្វីជា RAW file?", "របៀបកែរូបបែប Cinematic?", "តើ Color Grading គឺអ្វី?", "របៀបកែរូបអោយមានពណ៌កក់ក្តៅ?", "របៀបកែរូបអោយមានពណ៌ត្រជាក់?", "តើ Noise Reduction ធ្វើអោយរូបបាត់លម្អិតទេ?", "របៀប Copy ពណ៌ទៅរូបផ្សេង?", "របៀប Reset ការកែប្រែទាំងអស់?", "តើធ្វើម៉េចមើលរូបមុននិងក្រោយកែ?"
 ];
-const ADDITIONAL_SUGGESTED_QUESTIONS = [
-    // ... (សំណួរចាស់របស់អ្នកនៅទីនេះ) ...
-    
-    // --- 50+ សំណួរថ្មី ---
-    "របៀបធ្វើឱ្យស្បែកមុខកុំឱ្យក្រហម?",
-    "របៀបលុបថង់ក្រោមភ្នែក?",
-    "របៀបធ្វើឱ្យធ្មេញស?",
-    "របៀបធ្វើឱ្យភ្នែកភ្លឺ?",
-    "របៀបកែរូបកុំឱ្យបែកគ្រាប់ (Pixelated)?",
-    "របៀបកែរូបថតថ្ងៃត្រង់ (ពន្លឺខ្លាំង)?",
-    "របៀបបង្កើតពន្លឺថ្ងៃសិប្បនិម្មិត (Sun Flare)?",
-    "របៀបកែរូបឱ្យមើលទៅស្រទន់ (Soft Look)?",
-    "របៀបធ្វើឱ្យស្លឹកឈើពណ៌បៃតងស្រាល?",
-    "របៀបកែរូបពណ៌ Moody Brown?",
-    "របៀបកែរូបពណ៌ Pastel?",
-    "របៀបកែរូបពណ៌ High Contrast B&W?",
-    "តើធ្វើម៉េចអោយផ្ទៃក្រោយព្រិល (Blur Background)?",
-    "របៀបលុបមនុស្សចេញពីរូប?",
-    "របៀបតម្រង់អគារឱ្យត្រង់?",
-    "របៀបកែរូបកោង (Distortion)?",
-    "របៀបលុបស្នាមពណ៌ស្វាយតាមគែម (Fringing)?",
-    "តើ Point Curve ប្រើដូចម្តេច?",
-    "តើ Masking 'Luminance Range' ប្រើពេលណា?",
-    "តើ Masking 'Color Range' ប្រើពេលណា?",
-    "របៀបប្រើ Intersect Mask?",
-    "របៀប Copy ការកែទៅរូបច្រើន?",
-    "របៀបដាក់ Watermark (ឈ្មោះ) លើរូប?",
-    "តើ Smart Preview គឺជាអ្វី?",
-    "តើ Virtual Copy គឺជាអ្វី?",
-    "របៀបប្រើ Reference View?",
-    "របៀបមើលរូប Before/After លើ PC?",
-    "តើ Shortcut 'J' ប្រើធ្វើអ្វី?",
-    "តើ Shortcut 'L' ប្រើធ្វើអ្វី?",
-    "របៀប Filter រកតែរូបដែលបានដាក់ផ្កាយ?",
-    "តើ Profile 'Adobe Portrait' ល្អទេ?",
-    "តើអ្វីជាភាពខុសគ្នារវាង Flow និង Density ក្នុង Brush?",
-    "របៀបធ្វើឱ្យគែម Brush ទន់ (Feather)?",
-    "តើ Auto Mask ក្នុង Brush ជួយអ្វី?",
-    "របៀបកែភ្នែកក្រហម (Red Eye)?",
-    "តើ Calibration 'Blue Primary' ជួយអ្វី?",
-    "របៀបធ្វើឱ្យពណ៌ទឹកក្រូចដិត (Orange Pop)?",
-    "របៀបធ្វើឱ្យពណ៌ក្រហមដិត?",
-    "តើ DNG ខុសពី JPG យ៉ាងណា?",
-    "តើ XMP file គឺជាអ្វី?",
-    "របៀប Export រូបសម្រាប់បោះពុម្ព (Print)?",
-    "តើ Resolution 300ppi និង 72ppi ខុសគ្នាទេ?",
-    "របៀបកែរូបឱ្យដូចកាមេរ៉ា Film (Fujifilm/Kodak)?",
-    "របៀបបង្កើត Grain បែបធម្មជាតិ?",
-    "តើ Dehaze និង Contrast ខុសគ្នាម៉េច?",
-    "តើ Vibrance និង Saturation មួយណាល្អជាង?",
-    "របៀបកែរូបក្នុងម្លប់ឱ្យភ្លឺ?",
-    "របៀបកែរូបថតកាំជ្រួច?",
-    "របៀបកែរូបថតព្រះច័ន្ទ?"
-];
 
 // --- HELPER FUNCTIONS ---
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
@@ -212,7 +158,6 @@ const getColorName = (hue, sat = 100) => {
 // 2. DATASETS (AI Knowledge, Questions, Presets)
 // ==========================================
 
-// --- EXPANDED KNOWLEDGE BASE TO COVER ALL 50+ QUESTIONS ---
 const KNOWLEDGE_BASE = [
     // --- SPECIFIC SCENARIOS ---
     { keys: ['night portrait', 'portrait ពេលយប់', 'រូបមនុស្សពេលយប់'], answer: "Portrait ពេលយប់៖\n- ប្រើ Aperture ធំ (f/1.8)\n- ក្នុង Lightroom: បង្កើន Exposure និង Shadows, តែប្រយ័ត្ន Noise។" },
@@ -289,8 +234,8 @@ const KNOWLEDGE_BASE = [
     { keys: ['reset'], answer: "ចុចប៊ូតុង **Reset** នៅខាងក្រោម ឬចុចពីរដងលើ Slider នីមួយៗដើម្បីឱ្យវាត្រឡប់ទៅ 0។" },
     { keys: ['before', 'after', 'មុន', 'ក្រោយ'], answer: "👉 **ចុចសង្កត់** លើរូបភាពដើម្បីមើលរូបដើម (Before)។ ដកដៃចេញដើម្បីមើលរូបកែរួច (After)។" },
     { keys: ['raw'], answer: "📁 **RAW** រក្សាទុកព័ត៌មានរូបភាពទាំងស្រុង។ ពេលកែមិនងាយបែកគ្រាប់ដូច JPG ទេ។ គួរថត RAW បើអាច។" },
-        // --- GREETINGS ---
-{ keys: ['hello', 'hi', 'suesdey', 'សួស្តី', 'សួរ', 'bhat', 'jah', 'love'], answer: "សួស្ដីបាទ/ចាស!..." },
+    // --- GREETINGS ---
+    { keys: ['hello', 'hi', 'suesdey', 'សួស្តី', 'សួរ', 'bhat', 'jah', 'love'], answer: "សួស្ដីបាទ/ចាស!..." },
     { keys: ['thanks', 'orkun', 'អរគុណ'], answer: "រីករាយដែលបានជួយ!..." },
     { keys: ['help', 'ជួយ'], answer: "ខ្ញុំអាចជួយអ្នកបានច្រើនយ៉ាង..." }
 ];
@@ -319,7 +264,7 @@ const lessonsData = [
   ] },
   { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-6 h-6 text-pink-400" />, description: 'Sharpening & Noise', content: [
     { tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយគែមនៃវត្ថុក្នុងរូបកាន់តែច្បាស់។', tip: 'ប្រើជាមួយ Masking (Alt/Hold) ដើម្បីកុំឱ្យមុតពេញផ្ទៃមុខ។' }, 
-    { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise ដែលកើតឡើងពេលថតកន្លែងងងឹត (ISO ខ្ពស់)។', tip: 'ដាក់ +20 ដល់ +30 សម្រាប់រូបថតយប់។ កុំដាក់ច្រើនពេករូបនឹងក្លាយជាជ័រ។' }
+    { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise ដែលកើតឡើងដោយសារ ISO ខ្ពស់។', tip: 'ដាក់ +20 ដល់ +30 សម្រាប់រូបថតយប់។ កុំដាក់ច្រើនពេករូបនឹងក្លាយជាជ័រ។' }
   ] },
   { id: 'optics', title: 'Optics', icon: <Crop className="w-6 h-6 text-green-400" />, description: 'Lens Corrections', content: [
     { tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែតម្រូវការពត់កោង (Distortion) និង Vignette ដែលបង្កដោយកែវថត (Lens)។', tip: 'គួរតែបើកជានិច្ច (Enable) គ្រប់រូបភាព។' }, 
@@ -329,6 +274,15 @@ const lessonsData = [
     { tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលលឿន ឬ "Vertical" សម្រាប់ថតអគារ។' }
   ] }
   
+];
+
+const PRESET_MOODS = [
+    { id: 'mood_warm', name: 'Warm', color: 'from-orange-500 to-red-500', keywords: ['warm', 'summer', 'gold', 'sun'] },
+    { id: 'mood_cool', name: 'Cool', color: 'from-blue-500 to-cyan-500', keywords: ['cool', 'winter', 'blue', 'ice'] },
+    { id: 'mood_vintage', name: 'Vintage', color: 'from-yellow-600 to-orange-700', keywords: ['vintage', 'film', 'retro', 'old'] },
+    { id: 'mood_moody', name: 'Moody', color: 'from-gray-700 to-gray-900', keywords: ['moody', 'dark', 'sad', 'drama'] },
+    { id: 'mood_bright', name: 'Bright', color: 'from-white to-yellow-200', keywords: ['bright', 'airy', 'light', 'clean'] },
+    { id: 'mood_nature', name: 'Nature', color: 'from-green-500 to-emerald-700', keywords: ['nature', 'green', 'forest', 'tree'] },
 ];
 
 const generateVariations = (baseId, baseParams, count) => {
@@ -558,7 +512,6 @@ const Header = ({ activeTab, setActiveTab }) => {
   );
 };
 
-// ... (Other component definitions for LessonModal, LessonCard, TipsSection, ContactSection, Quiz, ChatBot are assumed to be here, using the same code structure as previous working versions but ensuring they are defined before App)
 const LessonModal = ({ lesson, onClose }) => {
   const [closing, setClosing] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
@@ -764,11 +717,11 @@ const PhotoLab = () => {
       const allPresets = Object.values(BASE_PRESETS_DATA);
       
       if (!query) {
-          // If no query, show base presets
-          setFilteredPresets(allPresets.filter(p => !p.id.includes('_'))); 
-          setSuggestedMoods([]);
-          return;
-      }
+    // បង្ហាញ Presets ទាំងអស់ ឬ បង្ហាញតែជំនាន់ទី ១ (ends with _1) ដើម្បីកុំឱ្យច្រើនពេក
+    setFilteredPresets(allPresets.filter(p => p.id.endsWith('_1'))); 
+    setSuggestedMoods([]);
+    return;
+}
 
       // 1. Direct Text Match
       const exactMatches = allPresets.filter(p => 
@@ -933,7 +886,7 @@ const PhotoLab = () => {
   const sampleImages = [ { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" }, { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" }, { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" }, { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" }, { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" } ];
 
   return (
-    <div className="bg-[#000000] rounded-3xl border border-white/10 flex flex-col h-[calc(100dvh-60px)] md:h-[calc(100dvh-130px)] max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 fixed inset-0 z-0">
+  <div className="bg-[#000000] rounded-3xl border border-white/10 flex flex-col h-full max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 relative z-0">
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
             
             {/* Left Column (Desktop) / Top Section (Mobile): Image & Actions */}
@@ -1132,16 +1085,16 @@ const PhotoLab = () => {
                                                 />
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="pt-1 border-t border-white/5 space-y-1 px-1">
-                                        <div className="flex flex-col gap-0.5">
-                                            <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Blending</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBlending}</span></div>
-                                            <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/>
-                                        </div>
-                                        <div className="flex flex-col gap-0.5">
-                                            <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Balance</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBalance}</span></div>
-                                            <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/>
+                                        <div className="pt-1 border-t border-white/5 space-y-1 px-1">
+                                            <div className="flex flex-col gap-0.5">
+                                                <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Blending</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBlending}</span></div>
+                                                <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/>
+                                            </div>
+                                            <div className="flex flex-col gap-0.5">
+                                                <div className="flex justify-between"><label className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Balance</label><span className="text-[10px] text-blue-400 font-mono font-bold">{settings.gradingBalance}</span></div>
+                                                <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1375,8 +1328,8 @@ const ChatBot = ({ messages, setMessages }) => {
 
      // Rotate every 15s (User request)
      const interval = setInterval(() => {
-        const nextShuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random());
-        setCurrentSuggestions(nextShuffled.slice(0, 3));
+       const nextShuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random());
+       setCurrentSuggestions(nextShuffled.slice(0, 3));
      }, 15000);
 
      return () => clearInterval(interval);
@@ -1535,7 +1488,7 @@ export default function App() {
       
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} />}
       
-      <main className={`flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 max-w-7xl mx-auto w-full ${activeTab === 'ai' || activeTab === 'lab' ? 'h-full' : ''}`}>
+      <main className={`flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full ${activeTab === 'lab' || activeTab === 'ai' ? 'h-full overflow-hidden' : 'overflow-y-auto custom-scrollbar'}`}>
         {activeTab === 'learn' && (
           <div className="space-y-12 pb-24">
             <div className="text-center py-10 mt-6 relative">
