@@ -714,39 +714,53 @@ const PhotoLab = () => {
   const [activeColor, setActiveColor] = useState('Orange'); 
 
   // --- PRESET FILTERING LOGIC ---
-  const [filteredPresets, setFilteredPresets] = useState([]);
-  const [suggestedMoods, setSuggestedMoods] = useState([]);
-  
-  useEffect(() => {
+useEffect(() => {
       if (mode !== 'preset') return;
       
       const query = aiPrompt.toLowerCase().trim();
       const allPresets = Object.values(BASE_PRESETS_DATA);
       
       if (!query) {
-    // បង្ហាញ Presets ទាំងអស់ ឬ បង្ហាញតែជំនាន់ទី ១ (ends with _1) ដើម្បីកុំឱ្យច្រើនពេក
-    setFilteredPresets(allPresets.filter(p => p.id.endsWith('_1'))); 
-    setSuggestedMoods([]);
-    return;
-}
+        // បង្ហាញ Presets ទាំងអស់ ឬ បង្ហាញតែជំនាន់ទី ១ (ends with _1) ដើម្បីកុំឱ្យច្រើនពេក
+        setFilteredPresets(allPresets.filter(p => p.id.endsWith('_1'))); 
+        setSuggestedMoods([]);
+        return;
+      }
 
-      // 1. Direct Text Match
+      // --- កូដដែលបានបន្ថែម៖ បញ្ជីបកប្រែភាសាខ្មែរទៅអង់គ្លេស (Khmer Mapping) ---
+      const khmerMap = {
+        'ក្រហម': 'red', 'ខៀវ': 'blue', 'បៃតង': 'green', 'លឿង': 'yellow', 'ទឹកក្រូច': 'orange', 
+        'ស្វាយ': 'purple', 'ផ្កាឈូក': 'pink', 'ស': 'white', 'ខ្មៅ': 'black', 'សោកសៅ': 'moody', 
+        'ស្រស់': 'fresh', 'ភ្លឺ': 'bright', 'ងងឹត': 'dark', 'អាហារ': 'food', 'យប់': 'night', 
+        'ថ្ងៃលិច': 'sunset', 'ធម្មជាតិ': 'nature', 'បុរាណ': 'vintage', 'ហ្វីល': 'film', 
+        'រោងការ': 'wedding', 'ការងារ': 'wedding', 'ទេសភាព': 'landscape', 'ផ្លូវ': 'street', 
+        'ភាពយន្ត': 'cinematic', 'សមុទ្រ': 'teal', 'មេឃ': 'blue', 'ព្រៃ': 'forest'
+      };
+
+      // បង្កើតបញ្ជីពាក្យស្វែងរក (រួមបញ្ចូលទាំងពាក្យខ្មែរ និងពាក្យអង់គ្លេសដែលបកបាន)
+      let searchTerms = [query];
+      Object.keys(khmerMap).forEach(k => {
+          if (query.includes(k)) searchTerms.push(khmerMap[k]);
+      });
+      // -----------------------------------------------------
+
+      // 1. ស្វែងរកដោយប្រើពាក្យទាំងអស់ (Direct Text Match)
       const exactMatches = allPresets.filter(p => 
-          p.name.toLowerCase().includes(query) || 
-          p.id.toLowerCase().includes(query)
+          searchTerms.some(term => 
+              p.name.toLowerCase().includes(term) || 
+              p.id.toLowerCase().includes(term)
+          )
       );
 
-      // 2. Keyword Match (Moods)
+      // 2. ស្វែងរក Moods (Keyword Match)
       const matchedMoods = PRESET_MOODS.filter(m => 
-          m.keywords.some(k => k.includes(query) || query.includes(k)) || 
-          m.name.toLowerCase().includes(query)
+          m.keywords.some(k => searchTerms.some(term => term.includes(k) || k.includes(term))) || 
+          searchTerms.some(term => m.name.toLowerCase().includes(term))
       );
 
       let relatedPresets = [];
       if (matchedMoods.length > 0) {
           matchedMoods.forEach(mood => {
-              // Try to find presets starting with the mood id prefix (e.g. 'color_teal' -> find 'teal_orange')
-              // Mapping logic: 
               let searchKey = "";
               if (mood.id.startsWith('color_')) searchKey = mood.id.replace('color_', '');
               else if (mood.id.startsWith('feeling_')) searchKey = mood.id.replace('feeling_', '');
@@ -754,21 +768,18 @@ const PhotoLab = () => {
               else if (mood.id.startsWith('subject_')) searchKey = mood.id.replace('subject_', '');
               else searchKey = mood.id;
 
-              // Scan keys in BASE_PRESETS_DATA
               const moodRelated = allPresets.filter(p => p.id.includes(searchKey) || p.name.toLowerCase().includes(searchKey));
               relatedPresets = [...relatedPresets, ...moodRelated];
           });
       }
 
-      // Combine results unique
       const combined = [...new Set([...exactMatches, ...relatedPresets])];
       
       setFilteredPresets(combined);
       setSuggestedMoods(matchedMoods);
 
   }, [aiPrompt, mode]);
-
-
+  
   const updateSetting = (key, value) => setSettings(prev => ({...prev, [key]: value}));
   const resetSettings = () => setSettings(defaultSettings);
   const handleImageUpload = (e) => { const file = e.target.files[0]; if (file) setImage(URL.createObjectURL(file)); };
