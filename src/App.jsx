@@ -112,6 +112,7 @@ const generateXMP = (recipe, title) => {
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
     crs:Version="14.5" crs:ProcessVersion="11.0"
     crs:Name="${escapeXML(title)}" crs:HasSettings="True" crs:CropConstrainToWarp="0" crs:WhiteBalance="As Shot"
     crs:IncrementalTemperature="${basic.Temp || 0}" crs:IncrementalTint="${basic.Tint || 0}"
@@ -130,6 +131,11 @@ const generateXMP = (recipe, title) => {
    <crs:ToneCurvePV2012Red><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Red>
    <crs:ToneCurvePV2012Green><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Green>
    <crs:ToneCurvePV2012Blue><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Blue>
+   <dc:rights>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">© 2026 My Design. Crafted with Passion. Email: koymy.mlk@gmail.com</rdf:li>
+    </rdf:Alt>
+   </dc:rights>
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>
@@ -300,26 +306,24 @@ const lessonsData = [
 ];
 
 const PRESET_MOODS = [
-    { id: 'bright_airy_1', name: 'Bright & Airy', color: 'from-blue-100 to-white' },
-    { id: 'teal_orange_1', name: 'Teal & Orange', color: 'from-teal-500 to-orange-500' },
-    { id: 'feeling_moody_1', name: 'Moody Dark', color: 'from-gray-700 to-gray-900' },
-    { id: 'vintage_film_1', name: 'Vintage Film', color: 'from-yellow-600 to-orange-700' },
-    { id: 'cyberpunk_1', name: 'Cyberpunk', color: 'from-pink-500 to-cyan-500' },
-    { id: 'cinematic_1', name: 'Cinematic', color: 'from-slate-700 to-slate-900' },
-    { id: 'wedding_classic_1', name: 'Wedding Classic', color: 'from-rose-100 to-white' },
-    { id: 'portrait_clean_1', name: 'Clean Portrait', color: 'from-orange-100 to-rose-100' },
+    { id: 'mood_happy_1', name: 'Happy & Joy', color: 'from-yellow-400 to-orange-500' },
+    { id: 'mood_sad_1', name: 'Sad & Lonely', color: 'from-slate-700 to-blue-900' },
+    { id: 'mood_dreamy_1', name: 'Dreamy Soft', color: 'from-pink-200 to-purple-200' },
+    { id: 'trend_cinematic_1', name: 'Cinematic', color: 'from-teal-600 to-orange-600' },
+    { id: 'trend_dark_moody_1', name: 'Dark & Moody', color: 'from-stone-800 to-stone-950' },
+    { id: 'trend_bright_airy_1', name: 'Bright & Airy', color: 'from-sky-200 to-white' },
+    { id: 'trend_cyberpunk_1', name: 'Cyberpunk', color: 'from-cyan-400 to-fuchsia-600' },
+    { id: 'era_vintage_1', name: 'Vintage 90s', color: 'from-amber-600 to-yellow-800' },
+    { id: 'era_retro_1', name: 'Retro 80s', color: 'from-pink-500 to-purple-600' },
+    { id: 'era_classic_bw_1', name: 'Classic B&W', color: 'from-gray-400 to-black' },
+    { id: 'time_golden_1', name: 'Golden Hour', color: 'from-orange-400 to-red-500' },
+    { id: 'time_night_1', name: 'Night City', color: 'from-blue-800 to-indigo-950' },
+    { id: 'time_morning_1', name: 'Fresh Morning', color: 'from-emerald-300 to-cyan-300' },
+    { id: 'wedding_classic_1', name: 'Wedding', color: 'from-rose-100 to-white' },
+    { id: 'portrait_glow_1', name: 'Portrait Glow', color: 'from-amber-200 to-orange-300' },
+    { id: 'food_tasty_1', name: 'Tasty Food', color: 'from-red-400 to-yellow-400' },
+    { id: 'nature_landscape_1', name: 'Nature Pop', color: 'from-green-500 to-emerald-800' },
     { id: 'urban_street_1', name: 'Urban Street', color: 'from-gray-600 to-slate-800' },
-    { id: 'golden_hour_1', name: 'Golden Hour', color: 'from-yellow-400 to-orange-500' },
-    { id: 'nature_landscape_1', name: 'Nature Pop', color: 'from-green-500 to-emerald-700' },
-    { id: 'food_tasty_1', name: 'Tasty Food', color: 'from-yellow-400 to-orange-400' },
-    { id: 'bw_noir_1', name: 'B&W Noir', color: 'from-black to-gray-500' },
-    { id: 'soft_pastel_1', name: 'Soft Pastel', color: 'from-pink-200 to-blue-200' },
-    { id: 'fashion_editorial_1', name: 'Fashion', color: 'from-purple-400 to-pink-400' },
-    { id: 'night_neon_1', name: 'Night Neon', color: 'from-blue-900 to-purple-900' },
-    { id: 'dark_moody_1', name: 'Dark Moody', color: 'from-stone-800 to-stone-950' },
-    { id: 'forest_green_1', name: 'Forest Green', color: 'from-green-800 to-emerald-900' },
-    { id: 'portrait_glow_1', name: 'Portrait Glow', color: 'from-amber-200 to-yellow-100' },
-    { id: 'matte_black_1', name: 'Matte Black', color: 'from-zinc-600 to-zinc-800' },
 ];
 
 const generateVariations = (baseId, baseParams, count) => {
@@ -339,52 +343,43 @@ const generateVariations = (baseId, baseParams, count) => {
 };
 
 const BASE_PRESETS_DATA = {
-    ...generateVariations("color_red", { basic: { Temp: 10, Tint: 20, Saturation: 10, Vibrance: 20 }, grading: { Shadows: { h: 350, s: 15, l: 0 }, Highlights: { h: 10, s: 10, l: 0 } } }, 15),
-    ...generateVariations("color_orange", { basic: { Temp: 15, Tint: 5, Saturation: 10 }, grading: { Shadows: { h: 25, s: 20, l: 0 }, Highlights: { h: 40, s: 10, l: 0 } } }, 15),
-    ...generateVariations("color_yellow", { basic: { Temp: 10, Tint: 0, Vibrance: 30 }, grading: { Shadows: { h: 50, s: 15, l: 0 }, Highlights: { h: 60, s: 20, l: 5 } } }, 15),
-    ...generateVariations("color_green", { basic: { Temp: -5, Tint: -20, Saturation: 10 }, grading: { Shadows: { h: 120, s: 20, l: -5 }, Highlights: { h: 90, s: 10, l: 0 } } }, 15),
-    ...generateVariations("color_cyan", { basic: { Temp: -10, Tint: -5, Saturation: 5 }, grading: { Shadows: { h: 180, s: 20, l: 0 }, Highlights: { h: 170, s: 10, l: 0 } } }, 15),
-    ...generateVariations("color_blue", { basic: { Temp: -20, Tint: 0, Saturation: 5 }, grading: { Shadows: { h: 220, s: 20, l: -5 }, Highlights: { h: 200, s: 10, l: 0 } } }, 15),
-    ...generateVariations("color_purple", { basic: { Temp: -5, Tint: 20, Vibrance: 15 }, grading: { Shadows: { h: 270, s: 20, l: -5 }, Highlights: { h: 280, s: 10, l: 0 } } }, 15),
-    ...generateVariations("color_pink", { basic: { Temp: 5, Tint: 25, Vibrance: 20 }, grading: { Shadows: { h: 320, s: 15, l: 0 }, Highlights: { h: 340, s: 10, l: 5 } } }, 15),
-    ...generateVariations("color_teal_orange", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -40, Shadows: 30, Temp: 5 }, grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 } } }, 20),
-    ...generateVariations("feeling_moody", { basic: { Exposure: -0.2, Contrast: 30, Highlights: -50, Shadows: -10, Vibrance: -20 }, grading: { Shadows: { h: 220, s: 10, l: -10 }, Highlights: { h: 40, s: 5, l: 0 } } }, 20),
-    ...generateVariations("feeling_bright", { basic: { Exposure: 0.3, Contrast: 5, Highlights: -30, Shadows: 40, Whites: 20, Vibrance: 20 }, grading: { Highlights: { h: 50, s: 5, l: 5 } } }, 15),
-    ...generateVariations("feeling_soft", { basic: { Exposure: 0.1, Contrast: -10, Highlights: -20, Shadows: 20, Clarity: -15, Texture: -10 }, grading: { Midtones: { h: 30, s: 10, l: 0 } } }, 15),
-    ...generateVariations("feeling_dramatic", { basic: { Exposure: 0.0, Contrast: 60, Highlights: -40, Shadows: 40, Clarity: 30, Dehaze: 10 }, grading: { Shadows: { h: 240, s: 10, l: -10 } } }, 15),
-    ...generateVariations("time_golden", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -20, Shadows: 20, Temp: 20, Tint: 5, Vibrance: 30 }, grading: { Shadows: { h: 40, s: 15, l: 0 }, Highlights: { h: 45, s: 20, l: 0 } } }, 15),
-    ...generateVariations("time_night", { basic: { Exposure: 0.2, Contrast: 20, Highlights: 10, Shadows: 10, Temp: -10, Tint: 10, Vibrance: 40 }, grading: { Shadows: { h: 260, s: 30, l: -5 }, Highlights: { h: 300, s: 20, l: 0 } } }, 15),
-    ...generateVariations("time_bluehour", { basic: { Exposure: 0.0, Contrast: 15, Temp: -25, Tint: 0, Vibrance: 20 }, grading: { Shadows: { h: 230, s: 30, l: -10 } } }, 10),
-    ...generateVariations("food_tasty", { basic: { Exposure: 0.2, Contrast: 25, Highlights: -10, Vibrance: 40, Saturation: 10, Clarity: 10 }, grading: { Midtones: { h: 20, s: 5, l: 0 } } }, 15),
-    ...generateVariations("nature_landscape", { basic: { Contrast: 20, Highlights: -60, Shadows: 60, Vibrance: 50, Clarity: 20, Dehaze: 10 }, grading: { Highlights: { h: 200, s: 10, l: 0 } } }, 20),
-    ...generateVariations("urban_street", { basic: { Exposure: 0.0, Contrast: 40, Highlights: -40, Shadows: 20, Clarity: 30, Saturation: -20 }, grading: { Shadows: { h: 200, s: 10, l: -5 } } }, 15),
-    ...generateVariations("vintage_film", { basic: { Exposure: 0.05, Contrast: 15, Highlights: -25, Shadows: 25, Temp: 10, Tint: -5, Grain: 40 }, grading: { Shadows: { h: 210, s: 10, l: 5 }, Highlights: { h: 45, s: 15, l: 0 } } }, 20),
-    ...generateVariations("bw_noir", { basic: { Contrast: 40, Highlights: -30, Shadows: 30, Whites: 20, Blacks: -30, Saturation: -100, Clarity: 20 }, grading: {} }, 15),
-    ...generateVariations("cinematic_teal", { basic: { Exposure: 0.0, Contrast: 20, Highlights: -40, Shadows: 20, Vibrance: 10 }, grading: { Shadows: { h: 210, s: 30, l: -10 }, Highlights: { h: 35, s: 20, l: 0 } } }, 10),
-    ...generateVariations("bright_airy", { basic: { Exposure: 0.4, Contrast: 10, Highlights: -30, Shadows: 50, Whites: 30, Blacks: 20, Temp: 5, Vibrance: 30, Saturation: 0, Clarity: -10 }, grading: { Highlights: { h: 50, s: 5, l: 0 } } }, 10),
-    ...generateVariations("wedding_classic", { basic: { Exposure: 0.15, Contrast: 15, Highlights: -30, Shadows: 30, Whites: 10, Vibrance: 15 }, grading: { Midtones: { h: 40, s: 8, l: 0 } } }, 10),
-    ...generateVariations("wedding_bright", { basic: { Exposure: 0.3, Contrast: 5, Highlights: -40, Shadows: 40, Whites: 25, Vibrance: 20 }, grading: { Highlights: { h: 50, s: 5, l: 5 } } }, 10),
-    ...generateVariations("portrait_clean", { basic: { Exposure: 0.1, Contrast: 10, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -5, Vibrance: 10, Saturation: -5, Clarity: -5 }, grading: { Midtones: { h: 30, s: 5, l: 0 } } }, 10),
-    ...generateVariations("portrait_smooth", { basic: { Exposure: 0.15, Contrast: 5, Highlights: -20, Shadows: 20, Clarity: -10, Texture: -10 }, grading: { Midtones: { h: 25, s: 10, l: 5 } } }, 10),
-    ...generateVariations("portrait_glow", { basic: { Exposure: 0.1, Contrast: 10, Highlights: -30, Shadows: 15, Temp: 10, Vibrance: 20 }, grading: { Highlights: { h: 45, s: 15, l: 5 } } }, 10),
-    ...generateVariations("cyberpunk", { basic: { Exposure: 0.1, Contrast: 20, Highlights: 10, Shadows: 10, Temp: -15, Tint: 20, Vibrance: 40, Dehaze: 15 }, grading: { Shadows: { h: 260, s: 30, l: -5 }, Highlights: { h: 320, s: 20, l: 0 } } }, 10),
-    ...generateVariations("forest_green", { basic: { Exposure: -0.1, Contrast: 20, Highlights: -40, Shadows: 20, Temp: 5, Tint: -15, Vibrance: 30 }, grading: { Shadows: { h: 120, s: 15, l: -5 }, Highlights: { h: 50, s: 10, l: 0 } } }, 10),
-    ...generateVariations("black_white", { basic: { Contrast: 30, Highlights: -20, Shadows: 20, Whites: 20, Blacks: -20, Saturation: -100, Clarity: 20, Vignette: -15 } }, 10),
-    ...generateVariations("cinematic", { basic: { Exposure: 0.05, Contrast: 10, Highlights: -30, Shadows: 20, Temp: 10, Vibrance: 15 }, grading: { Shadows: { h: 190, s: 15, l: -5 }, Highlights: { h: 40, s: 20, l: 0 } } }, 10),
-    ...generateVariations("food_vivid", { basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 20, Vibrance: 40, Saturation: 10, Clarity: 15 }, grading: { Midtones: { h: 0, s: 0, l: 0 } } }, 10),
-    ...generateVariations("fashion_editorial", { basic: { Exposure: 0.1, Contrast: 25, Clarity: 10, Vibrance: 10, Saturation: -5 }, grading: { Shadows: { h: 240, s: 5, l: 0 } } }, 10),
-    ...generateVariations("product_clean", { basic: { Exposure: 0.3, Contrast: 15, Whites: 30, Blacks: 10, Vibrance: 20 }, grading: {} }, 10),
-    ...generateVariations("matte_black", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 30, Saturation: -10, Vignette: -20 }, grading: { Shadows: { h: 210, s: 5, l: 0 } } }, 10),
-    ...generateVariations("high_contrast", { basic: { Contrast: 60, Highlights: -30, Shadows: 30, Whites: 30, Blacks: -30, Vibrance: 10, Clarity: 20 }, grading: { Midtones: { h: 0, s: 0, l: 0 } } }, 10),
-    ...generateVariations("cool_blue", { basic: { Contrast: 15, Highlights: 10, Shadows: 10, Temp: -20, Vibrance: 20, Clarity: 15 }, grading: { Shadows: { h: 220, s: 20, l: -5 }, Highlights: { h: 200, s: 10, l: 0 } } }, 10),
-    ...generateVariations("warm_sunset", { basic: { Exposure: 0.1, Contrast: 25, Highlights: -30, Shadows: 30, Temp: 20, Tint: 10, Vibrance: 40 }, grading: { Shadows: { h: 280, s: 20, l: 0 }, Highlights: { h: 45, s: 30, l: 0 } } }, 10),
-    ...generateVariations("hdr_landscape", { basic: { Contrast: 10, Highlights: -80, Shadows: 80, Whites: 20, Blacks: -20, Vibrance: 40, Clarity: 30, Dehaze: 20 }, grading: { Highlights: { h: 50, s: 10, l: 0 } } }, 10),
-    ...generateVariations("soft_pastel", { basic: { Exposure: 0.2, Contrast: -10, Highlights: -30, Shadows: 40, Temp: 0, Tint: 5, Vibrance: 30, Saturation: -5, Clarity: -15 }, grading: { Shadows: { h: 220, s: 10, l: 0 }, Highlights: { h: 40, s: 10, l: 0 } } }, 10),
-    ...generateVariations("night_neon", { basic: { Exposure: 0.1, Contrast: 30, Highlights: 10, Shadows: 10, Temp: -15, Tint: 20, Vibrance: 40, Dehaze: 15, Noise: 30 }, grading: { Shadows: { h: 260, s: 30, l: -5 } } }, 10),
-    ...generateVariations("urban_street", { basic: { Contrast: 25, Highlights: -30, Shadows: 20, Temp: -5, Vibrance: -20, Saturation: -30, Clarity: 25, Dehaze: 10, Vignette: -20 }, grading: { Shadows: { h: 210, s: 10, l: -5 } } }, 10),
-    ...generateVariations("teal_orange", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -40, Shadows: 30, Temp: 5 }, grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 } } }, 10),
-    ...generateVariations("dark_moody", { basic: { Exposure: -0.2, Contrast: 30, Highlights: -50, Shadows: -10, Vibrance: -20 }, grading: { Shadows: { h: 220, s: 10, l: -10 }, Highlights: { h: 40, s: 5, l: 0 } } }, 10),
-    ...generateVariations("golden_hour", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -20, Shadows: 20, Temp: 20, Tint: 5, Vibrance: 30 }, grading: { Shadows: { h: 40, s: 15, l: 0 }, Highlights: { h: 45, s: 20, l: 0 } } }, 10),
+    // Advanced Colors
+    ...generateVariations("color_red", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -20, Shadows: 10, Temp: 10, Tint: 15, Vibrance: 25, Saturation: 5 }, grading: { Shadows: { h: 350, s: 15, l: -5 }, Highlights: { h: 10, s: 15, l: 5 } } }, 10),
+    ...generateVariations("color_orange", { basic: { Exposure: 0.15, Contrast: 10, Highlights: -30, Shadows: 20, Temp: 15, Tint: 5, Vibrance: 30, Saturation: 10 }, grading: { Shadows: { h: 25, s: 20, l: 0 }, Highlights: { h: 40, s: 15, l: 5 } } }, 10),
+    ...generateVariations("color_yellow", { basic: { Exposure: 0.2, Contrast: 5, Highlights: -40, Shadows: 30, Temp: 15, Vibrance: 35, Saturation: 5 }, grading: { Shadows: { h: 45, s: 15, l: 0 }, Highlights: { h: 55, s: 25, l: 10 } } }, 10),
+    ...generateVariations("color_green", { basic: { Exposure: -0.1, Contrast: 20, Highlights: -50, Shadows: 40, Blacks: -10, Temp: -5, Tint: -25, Vibrance: 20 }, grading: { Shadows: { h: 140, s: 15, l: -10 }, Highlights: { h: 90, s: 10, l: 0 } } }, 10),
+    ...generateVariations("color_cyan", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -30, Shadows: 20, Temp: -15, Tint: -10, Vibrance: 25 }, grading: { Shadows: { h: 190, s: 20, l: -5 }, Highlights: { h: 175, s: 15, l: 5 } } }, 10),
+    ...generateVariations("color_blue", { basic: { Exposure: -0.1, Contrast: 25, Highlights: -40, Shadows: 30, Temp: -25, Tint: 5, Vibrance: 30 }, grading: { Shadows: { h: 220, s: 25, l: -10 }, Highlights: { h: 205, s: 15, l: 5 } } }, 10),
+    ...generateVariations("color_purple", { basic: { Exposure: 0.05, Contrast: 15, Highlights: -20, Shadows: 15, Temp: -10, Tint: 30, Vibrance: 25 }, grading: { Shadows: { h: 270, s: 20, l: -5 }, Highlights: { h: 290, s: 15, l: 5 } } }, 10),
+    ...generateVariations("color_pink", { basic: { Exposure: 0.15, Contrast: 10, Highlights: -25, Shadows: 25, Temp: 5, Tint: 35, Vibrance: 35 }, grading: { Shadows: { h: 320, s: 15, l: 0 }, Highlights: { h: 340, s: 20, l: 5 } } }, 10),
+    
+    // Moods & Emotions
+    ...generateVariations("mood_happy", { basic: { Exposure: 0.35, Contrast: 10, Highlights: -30, Shadows: 45, Whites: 15, Blacks: -5, Temp: 12, Tint: 5, Vibrance: 40, Saturation: 5, Clarity: 5 }, grading: { Highlights: { h: 45, s: 15, l: 5 }, Midtones: { h: 30, s: 5, l: 0 } } }, 10),
+    ...generateVariations("mood_sad", { basic: { Exposure: -0.25, Contrast: 15, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 25, Temp: -15, Tint: -5, Vibrance: -35, Saturation: -20, Clarity: 15, Vignette: -25 }, grading: { Shadows: { h: 220, s: 20, l: -10 } } }, 10),
+    ...generateVariations("mood_dreamy", { basic: { Exposure: 0.25, Contrast: -20, Highlights: -10, Shadows: 30, Whites: 20, Blacks: 20, Temp: 5, Tint: 15, Vibrance: 15, Clarity: -25, Texture: -15, Dehaze: -10 }, grading: { Highlights: { h: 330, s: 10, l: 5 }, Shadows: { h: 240, s: 10, l: 5 } } }, 10),
+    
+    // Modern Trends
+    ...generateVariations("trend_cinematic", { basic: { Exposure: -0.05, Contrast: 30, Highlights: -60, Shadows: 40, Whites: 10, Blacks: 20, Temp: 5, Tint: 0, Vibrance: 25, Clarity: 20, Dehaze: 10, Vignette: -20 }, grading: { Shadows: { h: 210, s: 30, l: -5 }, Highlights: { h: 35, s: 25, l: 5 }, Midtones: { h: 25, s: 10, l: 0 } } }, 10),
+    ...generateVariations("trend_dark_moody", { basic: { Exposure: -0.4, Contrast: 35, Highlights: -50, Shadows: -10, Whites: -20, Blacks: 15, Temp: -5, Tint: -10, Vibrance: -15, Saturation: -25, Clarity: 25, Vignette: -35 }, grading: { Shadows: { h: 200, s: 15, l: -10 } } }, 10),
+    ...generateVariations("trend_bright_airy", { basic: { Exposure: 0.45, Contrast: -5, Highlights: -40, Shadows: 60, Whites: 25, Blacks: 10, Temp: 5, Tint: 10, Vibrance: 30, Clarity: -10 }, grading: { Highlights: { h: 40, s: 10, l: 10 } } }, 10),
+    ...generateVariations("trend_cyberpunk", { basic: { Exposure: 0.1, Contrast: 40, Highlights: -30, Shadows: 20, Whites: 10, Blacks: -20, Temp: -25, Tint: 40, Vibrance: 50, Saturation: 10, Clarity: 30, Dehaze: 20 }, grading: { Shadows: { h: 240, s: 40, l: -10 }, Highlights: { h: 320, s: 30, l: 10 } } }, 10),
+    
+    // Eras & Styles
+    ...generateVariations("era_vintage", { basic: { Exposure: 0.15, Contrast: -15, Highlights: -30, Shadows: 40, Whites: -10, Blacks: 35, Temp: 18, Tint: 8, Vibrance: -15, Clarity: -15, Vignette: -15 }, grading: { Shadows: { h: 45, s: 20, l: 10 }, Highlights: { h: 55, s: 15, l: 5 } } }, 10),
+    ...generateVariations("era_retro", { basic: { Exposure: 0.05, Contrast: 25, Highlights: -20, Shadows: 20, Blacks: -10, Temp: 10, Tint: 20, Vibrance: 40, Saturation: 15, Clarity: 15 }, grading: { Shadows: { h: 280, s: 25, l: -5 }, Highlights: { h: 340, s: 20, l: 0 } } }, 10),
+    ...generateVariations("era_classic_bw", { basic: { Exposure: 0, Contrast: 45, Highlights: -40, Shadows: 30, Whites: 25, Blacks: -35, Saturation: -100, Clarity: 25, Texture: 15, Vignette: -25 }, grading: {} }, 10),
+    
+    // Times
+    ...generateVariations("time_golden", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -60, Shadows: 40, Whites: 15, Blacks: -10, Temp: 25, Tint: 10, Vibrance: 45, Clarity: 10 }, grading: { Shadows: { h: 30, s: 15, l: -5 }, Highlights: { h: 45, s: 30, l: 10 } } }, 10),
+    ...generateVariations("time_night", { basic: { Exposure: 0.3, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -20, Temp: -15, Tint: 15, Vibrance: 45, Clarity: 20, Dehaze: 15 }, grading: { Shadows: { h: 230, s: 35, l: -10 }, Highlights: { h: 310, s: 20, l: 5 } } }, 10),
+    ...generateVariations("time_morning", { basic: { Exposure: 0.2, Contrast: 5, Highlights: -30, Shadows: 35, Whites: 10, Blacks: 5, Temp: -10, Tint: 5, Vibrance: 25, Clarity: -5, Dehaze: -5 }, grading: { Shadows: { h: 210, s: 15, l: 5 }, Highlights: { h: 45, s: 10, l: 5 } } }, 10),
+
+    // Subjects
+    ...generateVariations("food_tasty", { basic: { Exposure: 0.25, Contrast: 25, Highlights: -20, Shadows: 20, Whites: 15, Blacks: -10, Temp: 10, Tint: 5, Vibrance: 45, Saturation: 10, Clarity: 15, Texture: 20 }, grading: { Midtones: { h: 25, s: 10, l: 0 } } }, 10),
+    ...generateVariations("nature_landscape", { basic: { Exposure: -0.05, Contrast: 25, Highlights: -70, Shadows: 60, Whites: 15, Blacks: -15, Temp: -5, Tint: -10, Vibrance: 50, Clarity: 25, Dehaze: 15 }, grading: { Shadows: { h: 120, s: 15, l: -5 }, Highlights: { h: 200, s: 15, l: 0 } } }, 10),
+    ...generateVariations("urban_street", { basic: { Exposure: -0.1, Contrast: 45, Highlights: -50, Shadows: 30, Whites: 10, Blacks: -20, Temp: -5, Tint: 5, Vibrance: -10, Saturation: -25, Clarity: 35, Dehaze: 15, Vignette: -25 }, grading: { Shadows: { h: 210, s: 20, l: -10 } } }, 10),
+    ...generateVariations("portrait_glow", { basic: { Exposure: 0.2, Contrast: 10, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -5, Temp: 8, Tint: 5, Vibrance: 25, Clarity: -10, Texture: -15, Vignette: -10 }, grading: { Highlights: { h: 40, s: 15, l: 5 } } }, 10),
+    ...generateVariations("wedding_classic", { basic: { Exposure: 0.35, Contrast: 5, Highlights: -50, Shadows: 50, Whites: 15, Blacks: 15, Temp: 5, Tint: 10, Vibrance: 20, Clarity: -5, Texture: -10 }, grading: { Highlights: { h: 45, s: 10, l: 5 }, Shadows: { h: 220, s: 5, l: 5 } } }, 10),
 };
 
 const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
@@ -706,13 +701,14 @@ const ContactSection = ({ isDarkMode }) => (
 );
 
 const PhotoLab = ({ isDarkMode }) => {
-  const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
+  const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=1920&q=100");
   const [imageName, setImageName] = useState("Portrait");
   const [mode, setMode] = useState('manual');
   const fileInputRef = useRef(null);
   const [aiPrompt, setAiPrompt] = useState('');
   const [gradingTab, setGradingTab] = useState('Shadows');
   const [gradingSync, setGradingSync] = useState(false);
+  const [showBefore, setShowBefore] = useState(false); // State សម្រាប់ត្រួតពិនិត្យការចុចសង្កត់មើលរូបដើម
   const defaultSettings = { exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0, temp: 0, tint: 0, vibrance: 0, saturation: 0, texture: 0, clarity: 0, dehaze: 0, vignette: 0, redHue: 0, redSat: 0, redLum: 0, orangeHue: 0, orangeSat: 0, orangeLum: 0, yellowHue: 0, yellowSat: 0, yellowLum: 0, greenHue: 0, greenSat: 0, greenLum: 0, aquaHue: 0, aquaSat: 0, aquaLum: 0, blueHue: 0, blueSat: 0, blueLum: 0, purpleHue: 0, purpleSat: 0, purpleLum: 0, magentaHue: 0, magentaSat: 0, magentaLum: 0, shadowHue: 0, shadowSat: 0, shadowLum: 0, midHue: 0, midSat: 0, midLum: 0, highlightHue: 0, highlightSat: 0, highlightLum: 0, gradingBlending: 50, gradingBalance: 0 };
   const [settings, setSettings] = useState(defaultSettings);
   const [activeColor, setActiveColor] = useState('Orange'); 
@@ -730,11 +726,14 @@ const PhotoLab = ({ isDarkMode }) => {
       }
       const khmerMap = {
         'ក្រហម': 'red', 'ខៀវ': 'blue', 'បៃតង': 'green', 'លឿង': 'yellow', 'ទឹកក្រូច': 'orange', 
-        'ស្វាយ': 'purple', 'ផ្កាឈូក': 'pink', 'ស': 'white', 'ខ្មៅ': 'black', 'សោកសៅ': 'moody', 
+        'ស្វាយ': 'purple', 'ផ្កាឈូក': 'pink', 'ស': 'white', 'ខ្មៅ': 'black', 'សោកសៅ': 'sad', 
+        'កំសត់': 'sad', 'ឯកា': 'sad', 'សប្បាយ': 'happy', 'ញញឹម': 'happy', 'ស្រស់ស្រាយ': 'happy',
         'ស្រស់': 'fresh', 'ភ្លឺ': 'bright', 'ងងឹត': 'dark', 'អាហារ': 'food', 'យប់': 'night', 
-        'ថ្ងៃលិច': 'sunset', 'ធម្មជាតិ': 'nature', 'បុរាណ': 'vintage', 'ហ្វីល': 'film', 
+        'ព្រឹក': 'morning', 'ព្រលឹម': 'morning', 'ថ្ងៃលិច': 'sunset', 'ធម្មជាតិ': 'nature', 
+        'បុរាណ': 'vintage', 'អតីតកាល': 'vintage', 'សម័យមុន': 'retro', 'ហ្វីល': 'film', 
         'រោងការ': 'wedding', 'ការងារ': 'wedding', 'ទេសភាព': 'landscape', 'ផ្លូវ': 'street', 
-        'ភាពយន្ត': 'cinematic', 'សមុទ្រ': 'teal', 'មេឃ': 'blue', 'ព្រៃ': 'forest'
+        'ភាពយន្ត': 'cinematic', 'សមុទ្រ': 'teal', 'មេឃ': 'blue', 'ព្រៃ': 'forest',
+        'សុបិន': 'dreamy', 'ទន់ភ្លន់': 'soft'
       };
       let searchTerms = [query];
       Object.keys(khmerMap).forEach(k => { if (query.includes(k)) searchTerms.push(khmerMap[k]); });
@@ -873,14 +872,27 @@ const PhotoLab = ({ isDarkMode }) => {
       { name: 'Magenta', id: 'magenta', hex: '#FF00FF' } 
   ];
   
-  const sampleImages = [ { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80", label: "Portrait" }, { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", label: "Golden Hour" }, { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80", label: "Night" }, { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", label: "Nature" }, { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80", label: "Food" } ];
+  const sampleImages = [ 
+      { src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=1920&q=100", label: "Portrait" }, 
+      { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1920&q=100", label: "Golden Hour" }, 
+      { src: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1920&q=100", label: "Night" }, 
+      { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=100", label: "Nature" }, 
+      { src: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=1920&q=100", label: "Food" } 
+  ];
 
   return (
     <div className={`rounded-3xl border flex flex-col h-full max-w-7xl mx-auto overflow-hidden shadow-2xl p-0 md:p-6 relative z-0 ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
             <div className={`h-[50%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 px-2 pb-2 pt-2 lg:p-0 ${isDarkMode ? 'bg-[#121212]/40 lg:bg-transparent' : 'bg-[#FFFFFF]/40 lg:bg-transparent'}`}>
-                <div className={`flex-1 rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border group ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-lg'}`}>
-                    <div className="relative w-full h-full">
+                <div 
+                    className={`flex-1 rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border group cursor-pointer touch-none select-none ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-lg'}`}
+                    onMouseDown={() => setShowBefore(true)}
+                    onMouseUp={() => setShowBefore(false)}
+                    onMouseLeave={() => setShowBefore(false)}
+                    onTouchStart={() => setShowBefore(true)}
+                    onTouchEnd={() => setShowBefore(false)}
+                >
+                    <div className="relative w-full h-full pointer-events-none">
                         {/* Perfect Highlights, Shadows, Temp, Tint recovery using SVG filter map */}
                         <svg width="0" height="0" className="absolute pointer-events-none">
                             <filter id="lr-adjustments">
@@ -892,9 +904,14 @@ const PhotoLab = ({ isDarkMode }) => {
                                 </feComponentTransfer>
                             </filter>
                         </svg>
-                        <img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} />
-                        <div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div>
+                        <img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" draggable="false" style={{ filter: showBefore ? 'none' : getFilterString() }} />
+                        <div className="absolute inset-0 pointer-events-none" style={showBefore ? {} : getVignetteStyle()}></div>
                     </div>
+                    {showBefore && (
+                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs font-bold px-4 py-1.5 rounded-full backdrop-blur-md pointer-events-none animate-fade-in-up font-khmer">
+                            រូបភាពដើម
+                        </div>
+                    )}
                 </div>
                 <div className={`flex items-center justify-between gap-2 p-2 rounded-2xl border shrink-0 overflow-x-auto no-scrollbar ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-lg' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-sm'}`}>
                     <div className="flex gap-2 shrink-0">
