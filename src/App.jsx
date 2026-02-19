@@ -7,7 +7,8 @@ import {
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
   Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
-  Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star
+  Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
+  ThumbsUp, User
 } from 'lucide-react';
 
 // ==========================================
@@ -26,6 +27,77 @@ try {
 
 const responseCache = {};
 
+// --- TIPS LIST ---
+const TIPS_LIST = [
+    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម។", 
+    "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", 
+    "ចុចពីរដងលើ Slider ដើម្បី Reset។", 
+    "ប្រើម្រាមដៃពីរចុចលើអេក្រង់ពេលអូស Slider (Whites/Blacks) ដើម្បីមើល Clipping។", 
+    "Export ជា DNG ដើម្បីចែករំលែក Preset។", 
+    "ប្រើ Masking ដើម្បីកែតែផ្នែកខ្លះនៃរូបភាព។",
+    "កុំភ្លេចបើក Lens Correction គ្រប់ពេល។",
+    "ប្រើ Healing Brush ដើម្បីលុបមុន ឬវត្ថុដែលមិនចង់បាន។"
+];
+
+const SUGGESTED_QUESTIONS = [
+    "តើកែស្បែកមុខឱ្យសម៉ត់យ៉ាងដូចម្តេច?", "របៀបធ្វើឱ្យមេឃពណ៌ខៀវដិត?", "តើ Vibrance ខុសពី Saturation យ៉ាងណា?", "ជួយណែនាំ Preset សម្រាប់ថតនៅហាងកាហ្វេ", "របៀបកែរូបថតពេលយប់កុំឱ្យមាន Noise?", "តើអ្វីទៅជា Golden Hour?", "របៀបបង្កើតពណ៌ Teal & Orange?", "តើ Dehaze ប្រើសម្រាប់ធ្វើអ្វី?", "ណែនាំ Preset សម្រាប់ថត Pre-wedding", "របៀបធ្វើឱ្យរូបភាពច្បាស់ (Sharp)?", "តើ Tone Curve ប្រើដូចម្តេច?", "របៀបកែរូបទេសភាពឱ្យស្រស់?", "តើ HSL គឺជាអ្វី?", "របៀបធ្វើឱ្យរូបមាន Mood សោកសៅ?", "តើ Calibration ប្រើសម្រាប់អ្វី?", "របៀបកែរូបឱ្យដូចកាមេរ៉ា Film", "តើគួរ Export រូបបែបណាសម្រាប់ Facebook?", "របៀបប្រើ Masking កែតែមេឃ", "ហេតុអ្វីរូបខ្ញុំថតមកងងឹតមុខ?", "របៀបកែរូបខ្មៅស (B&W) ឱ្យស្អាត", "តើធ្វើម៉េចអោយស្លឹកឈើពណ៌បៃតងខ្មៅ?", "របៀបកែរូបអោយភ្លឺ (Bright & Airy)", "តើ Grain ប្រើដើម្បីអ្វី?", "របៀបលុបអ័ព្ទចេញពីរូប?", "របៀបកែរូបថតអាហារអោយទំនង?", "តើ Vignette គឺអ្វី?", "របៀបកែរូប Street Photography?", "របៀបកែរូប Portrait ពេលយប់?", "តើ Contrast ជួយអ្វីខ្លះ?", "របៀបកែ White Balance?", "តើ Highlights និង Whites ខុសគ្នាម៉េច?", "របៀបកែរូបលេងពណ៌ Neon?", "របៀបធ្វើអោយរូបមានជម្រៅ (Depth)?", "តើ Clarity គួរប្រើពេលណា?", "របៀបកែរូបបែប Minimalist?", "តើ Split Toning ប្រើដូចម្តេច?", "របៀបកែរូបអោយដូចរដូវស្លឹកឈើជ្រុះ?", "តើ Shadows ប្រើសម្រាប់អ្វី?", "របៀបកែរូបថតថ្ងៃរះ?", "តើ Texture ខុសពី Clarity យ៉ាងណា?", "របៀបកែរូបបែប Cyberpunk?", "តើ Lens Correction សំខាន់ទេ?", "របៀបកែរូបក្នុងអគារ (Indoor)?", "តើអ្វីជា RAW file?", "របៀបកែរូបបែប Cinematic?", "តើ Color Grading គឺអ្វី?", "របៀបកែរូបអោយមានពណ៌កក់ក្តៅ?", "របៀបកែរូបអោយមានពណ៌ត្រជាក់?", "តើ Noise Reduction ធ្វើអោយរូបបាត់លម្អិតទេ?", "របៀប Copy ពណ៌ទៅរូបផ្សេង?", "របៀប Reset ការកែប្រែទាំងអស់?", "តើធ្វើម៉េចមើលរូបមុននិងក្រោយកែ?"
+];
+const ADDITIONAL_SUGGESTED_QUESTIONS = [
+    // ... (សំណួរចាស់របស់អ្នកនៅទីនេះ) ...
+    
+    // --- 50+ សំណួរថ្មី ---
+    "របៀបធ្វើឱ្យស្បែកមុខកុំឱ្យក្រហម?",
+    "របៀបលុបថង់ក្រោមភ្នែក?",
+    "របៀបធ្វើឱ្យធ្មេញស?",
+    "របៀបធ្វើឱ្យភ្នែកភ្លឺ?",
+    "របៀបកែរូបកុំឱ្យបែកគ្រាប់ (Pixelated)?",
+    "របៀបកែរូបថតថ្ងៃត្រង់ (ពន្លឺខ្លាំង)?",
+    "របៀបបង្កើតពន្លឺថ្ងៃសិប្បនិម្មិត (Sun Flare)?",
+    "របៀបកែរូបឱ្យមើលទៅស្រទន់ (Soft Look)?",
+    "របៀបធ្វើឱ្យស្លឹកឈើពណ៌បៃតងស្រាល?",
+    "របៀបកែរូបពណ៌ Moody Brown?",
+    "របៀបកែរូបពណ៌ Pastel?",
+    "របៀបកែរូបពណ៌ High Contrast B&W?",
+    "តើធ្វើម៉េចអោយផ្ទៃក្រោយព្រិល (Blur Background)?",
+    "របៀបលុបមនុស្សចេញពីរូប?",
+    "របៀបតម្រង់អគារឱ្យត្រង់?",
+    "របៀបកែរូបកោង (Distortion)?",
+    "របៀបលុបស្នាមពណ៌ស្វាយតាមគែម (Fringing)?",
+    "តើ Point Curve ប្រើដូចម្តេច?",
+    "តើ Masking 'Luminance Range' ប្រើពេលណា?",
+    "តើ Masking 'Color Range' ប្រើពេលណា?",
+    "របៀបប្រើ Intersect Mask?",
+    "របៀប Copy ការកែទៅរូបច្រើន?",
+    "របៀបដាក់ Watermark (ឈ្មោះ) លើរូប?",
+    "តើ Smart Preview គឺជាអ្វី?",
+    "តើ Virtual Copy គឺជាអ្វី?",
+    "របៀបប្រើ Reference View?",
+    "របៀបមើលរូប Before/After លើ PC?",
+    "តើ Shortcut 'J' ប្រើធ្វើអ្វី?",
+    "តើ Shortcut 'L' ប្រើធ្វើអ្វី?",
+    "របៀប Filter រកតែរូបដែលបានដាក់ផ្កាយ?",
+    "តើ Profile 'Adobe Portrait' ល្អទេ?",
+    "តើអ្វីជាភាពខុសគ្នារវាង Flow និង Density ក្នុង Brush?",
+    "របៀបធ្វើឱ្យគែម Brush ទន់ (Feather)?",
+    "តើ Auto Mask ក្នុង Brush ជួយអ្វី?",
+    "របៀបកែភ្នែកក្រហម (Red Eye)?",
+    "តើ Calibration 'Blue Primary' ជួយអ្វី?",
+    "របៀបធ្វើឱ្យពណ៌ទឹកក្រូចដិត (Orange Pop)?",
+    "របៀបធ្វើឱ្យពណ៌ក្រហមដិត?",
+    "តើ DNG ខុសពី JPG យ៉ាងណា?",
+    "តើ XMP file គឺជាអ្វី?",
+    "របៀប Export រូបសម្រាប់បោះពុម្ព (Print)?",
+    "តើ Resolution 300ppi និង 72ppi ខុសគ្នាទេ?",
+    "របៀបកែរូបឱ្យដូចកាមេរ៉ា Film (Fujifilm/Kodak)?",
+    "របៀបបង្កើត Grain បែបធម្មជាតិ?",
+    "តើ Dehaze និង Contrast ខុសគ្នាម៉េច?",
+    "តើ Vibrance និង Saturation មួយណាល្អជាង?",
+    "របៀបកែរូបក្នុងម្លប់ឱ្យភ្លឺ?",
+    "របៀបកែរូបថតកាំជ្រួច?",
+    "របៀបកែរូបថតព្រះច័ន្ទ?"
+];
+
+// --- HELPER FUNCTIONS ---
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) return responseCache[cacheKey];
@@ -56,14 +128,171 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   } catch (error) { return null; }
 };
 
+const escapeXML = (str) => {
+    return str.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+            return c;
+        }
+    });
+};
+
+const generateXMP = (recipe, title) => {
+    const basic = recipe.basic || {};
+    const colorMix = recipe.colorMix || [];
+    const grading = recipe.grading || {};
+    const detail = recipe.detail || {};
+    const effects = recipe.effects || {};
+    
+    const getHSL = (color) => { 
+        if (!Array.isArray(colorMix)) return { h: 0, s: 0, l: 0 };
+        const c = colorMix.find(item => item.color === color) || {}; 
+        return { h: c.h || 0, s: c.s || 0, l: c.l || 0 }; 
+    };
+
+    const xmpContent = `<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:06">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+    crs:Version="14.5" crs:ProcessVersion="11.0"
+    crs:Name="${escapeXML(title)}" crs:HasSettings="True" crs:CropConstrainToWarp="0" crs:WhiteBalance="As Shot"
+    crs:IncrementalTemperature="${basic.Temp || 0}" crs:IncrementalTint="${basic.Tint || 0}"
+    crs:Exposure2012="${basic.Exposure || 0}" crs:Contrast2012="${basic.Contrast || 0}" crs:Highlights2012="${basic.Highlights || 0}" crs:Shadows2012="${basic.Shadows || 0}" crs:Whites2012="${basic.Whites || 0}" crs:Blacks2012="${basic.Blacks || 0}"
+    crs:Texture="${basic.Texture || 0}" crs:Clarity2012="${basic.Clarity || 0}" crs:Dehaze="${basic.Dehaze || 0}" crs:Vibrance="${basic.Vibrance || 0}" crs:Saturation="${basic.Saturation || 0}"
+    crs:ParametricShadows="0" crs:ParametricDarks="0" crs:ParametricLights="0" crs:ParametricHighlights="0" crs:ParametricShadowSplit="25" crs:ParametricMidtoneSplit="50" crs:ParametricHighlightSplit="75"
+    crs:Sharpness="${detail.Sharpening || 40}" crs:SharpenRadius="+1.0" crs:SharpenDetail="25" crs:SharpenEdgeMasking="0"
+    crs:LuminanceSmoothing="${detail.Noise || 0}" crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
+    crs:HueAdjustmentRed="${getHSL('Red').h}" crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:HueAdjustmentAqua="${getHSL('Aqua').h}" crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
+    crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
+    crs:LuminanceAdjustmentRed="${getHSL('Red').l}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
+    crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}" crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}" crs:SplitToningBalance="${grading.Balance || 0}"
+    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}" crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}" crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}" crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}" crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}" crs:ColorGradeBlending="${grading.Blending || 50}" crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
+    crs:GrainAmount="${effects.Grain || 0}" crs:PostCropVignetteAmount="${basic.Vignette || 0}" crs:LensProfileEnable="1">
+   <crs:ToneCurvePV2012><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012>
+   <crs:ToneCurvePV2012Red><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Red>
+   <crs:ToneCurvePV2012Green><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Green>
+   <crs:ToneCurvePV2012Blue><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Blue>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>`;
+    
+    const blob = new Blob([xmpContent.trim()], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${title.replace(/\s+/g, '_').replace(/&/g, 'and')}.xmp`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
+const getColorName = (hue, sat = 100) => {
+  if (sat < 5) return "Neutral";
+  const h = Math.round(hue % 360);
+  const normalizedHue = h < 0 ? h + 360 : h;
+
+  if (normalizedHue >= 340 || normalizedHue < 15) return "Red";
+  if (normalizedHue >= 15 && normalizedHue < 45) return "Orange";
+  if (normalizedHue >= 45 && normalizedHue < 70) return "Yellow";
+  if (normalizedHue >= 70 && normalizedHue < 140) return "Green";
+  if (normalizedHue >= 140 && normalizedHue < 190) return "Teal/Aqua";
+  if (normalizedHue >= 190 && normalizedHue < 260) return "Blue";
+  if (normalizedHue >= 260 && normalizedHue < 300) return "Purple";
+  if (normalizedHue >= 300 && normalizedHue < 340) return "Magenta";
+  return "Red"; 
+};
+
 // ==========================================
-// 2. DATASETS
+// 2. DATASETS (AI Knowledge, Questions, Presets)
 // ==========================================
 
-const TIPS_LIST = [
-    "ប្រើ 'Auto' ជាចំណុចចាប់ផ្តើម។", "ចុចសង្កត់លើរូបដើម្បីមើល Before/After។", "ចុចពីរដងលើ Slider ដើម្បី Reset។", 
-    "ប្រើម្រាមដៃពីរចុចលើអេក្រង់ពេលអូស Slider (Whites/Blacks) ដើម្បីមើល Clipping។", "Export ជា DNG ដើម្បីចែករំលែក Preset។", 
+// --- EXPANDED KNOWLEDGE BASE TO COVER ALL 50+ QUESTIONS ---
+const KNOWLEDGE_BASE = [
+    // --- SPECIFIC SCENARIOS ---
+    { keys: ['night portrait', 'portrait ពេលយប់', 'រូបមនុស្សពេលយប់'], answer: "Portrait ពេលយប់៖\n- ប្រើ Aperture ធំ (f/1.8)\n- ក្នុង Lightroom: បង្កើន Exposure និង Shadows, តែប្រយ័ត្ន Noise។" },
+    { keys: ['street', 'urban', 'ផ្លូវ', 'ទីក្រុង'], answer: "Street Photography:\n- Contrast: +30\n- Clarity: +20\n- Saturation: -10\n- ប្រើ Tone Curve បែប S-Curve ។" },
+    { keys: ['food', 'delicious', 'អាហារ', 'ម្ហូប', 'ញ៉ាំ'], answer: "រូបអាហារ៖\n- White Balance: កុំឱ្យលឿងពេក\n- Contrast: +20\n- Structure/Texture: +10 ដើម្បីឱ្យឃើញសរសៃសាច់/បន្លែ។" },
+    { keys: ['cafe', 'coffee', 'shop', 'ហាងកាហ្វេ', 'កាហ្វេ'], answer: "សម្រាប់ហាងកាហ្វេ គួរប្រើ Preset បែប **Warm & Minimalist**៖\n- Exposure: +0.2\n- Contrast: -10\n- Temp: +5\n- Shadows: +20" },
+    { keys: ['wedding', 'pre-wedding', 'ការងារ'], answer: "សម្រាប់ Pre-wedding និយមប្រើ **Bright & Airy**:\n- Exposure: +0.3\n- Contrast: -10\n- Shadows: +30\n- Vibrance: +20" },
+    { keys: ['sunset', 'sunrise', 'ថ្ងៃលិច', 'ថ្ងៃរះ', 'golden'], answer: "សួស្ដី! រូប **Sunset** ឬ Golden Hour ត្រូវការពណ៌កក់ក្តៅ។\n- **Temp**: បង្កើន (+) ទៅពណ៌លឿង/ទឹកក្រូច។\n- **Tint**: បង្កើន (+) ទៅពណ៌ស្វាយបន្តិច។\n- **Grading**: ដាក់ពណ៌ទឹកក្រូចក្នុង Highlights និងពណ៌ខៀវក្នុង Shadows។" },
+    { keys: ['flower', 'macro', 'ផ្កា'], answer: "សម្រាប់រូបថតផ្កា៖\n1. បង្កើន **Texture** ដើម្បីឱ្យឃើញត្របកផ្កាច្បាស់។\n2. ប្រើ **Radial Filter** ដើម្បីធ្វើឱ្យផ្ទៃខាងក្រោយព្រិល។\n3. បង្កើន Vibrance។" },
+    { keys: ['indoor', 'ក្នុងអគារ'], answer: "ថតក្នុងអគារ:\n- បង្កើន ISO/Exposure (ព្រោះងងឹត)\n- កែ White Balance (ភ្លើងអំពូលច្រើនតែលឿង)។" },
+    { keys: ['night', 'dark photo', 'យប់', 'ងងឹត'], answer: "កែរូបយប់កុំឱ្យមាន Noise៖\n1. បង្កើន **Exposure** ល្មម។\n2. សំខាន់បំផុត៖ ប្រើ **Noise Reduction** (Luminance) ប្រហែល +20 ទៅ +30។" },
     
+    // --- PORTRAIT / SKIN ---
+    { keys: ['skin', 'face', 'ស្បែក', 'មុខ'], answer: "ដើម្បីកែស្បែកមុខឱ្យសម៉ត់៖\n1. ចូល **Color Mix > Orange**\n2. បន្ថយ Saturation (-10 ទៅ -20)\n3. បង្កើន Luminance (+15 ទៅ +25)\n4. បន្ថយ Texture (-15) ដើម្បីឱ្យរលោង។" },
+    { keys: ['eye', 'eyes', 'ភ្នែក'], answer: "ដើម្បីឱ្យភ្នែកលេចធ្លោ៖\n- ប្រើ Masking (Radial Gradient) នៅលើភ្នែក។\n- បង្កើន Exposure, Clarity, និង Saturation បន្តិច។" },
+    { keys: ['teeth', 'ធ្មេញ'], answer: "ដើម្បីធ្វើឱ្យធ្មេញស៖\n- ប្រើ Brush tool លើធ្មេញ។\n- បន្ថយ Saturation (-50)។\n- បង្កើន Exposure (+0.2)។" },
+    { keys: ['portrait', 'មនុស្ស', 'tua'], answer: "រូប Portrait ស្អាត៖\n- ផ្តោតលើពន្លឺមុខ (Exposure)\n- កែស្បែក (Orange HSL)\n- ធ្វើឱ្យភ្នែកច្បាស់ (Sharpening)" },
+
+    // --- LANDSCAPE / NATURE ---
+    { keys: ['sky', 'mhek', 'មេឃ'], answer: "ដើម្បីឱ្យមេឃពណ៌ខៀវដិត៖\n1. បន្ថយ **Highlights**\n2. ចូល Color Mix > **Blue**\n3. បន្ថយ Luminance (-20) និងបង្កើន Saturation (+15)។" },
+    { keys: ['green', 'leaves', 'ស្លឹកឈើ'], answer: "ស្លឹកឈើបៃតងខ្មៅ (Dark Green)៖\n- Green Hue: +20\n- Green Saturation: -20\n- Green Luminance: -30" },
+    { keys: ['autumn', 'fall', 'រដូវស្លឹកឈើជ្រុះ'], answer: "រដូវស្លឹកឈើជ្រុះ (Autumn):\n- Green Hue: -100 (ទៅលឿង)\n- Yellow Hue: -50 (ទៅទឹកក្រូច)\n- Temp: +10" },
+    { keys: ['water', 'sea', 'beach', 'ទឹក', 'សមុទ្រ'], answer: "សម្រាប់រូបទឹកសមុទ្រ៖\n- ប្រើ **Aqua/Teal** ក្នុង Color Mix។\n- បង្កើន Clarity បន្តិច (+10) ដើម្បីឱ្យទឹកមើលទៅថ្លា។\n- បង្កើន Whites ដើម្បីឱ្យពពុះទឹកស។" },
+    { keys: ['landscape', 'scenery', 'ទេសភាព', 'ព្រៃ', 'ភ្នំ'], answer: "សួស្ដី! ដើម្បីកែរូប **Landscape** ឱ្យស្រស់ស្អាត សូមសាកល្បងរូបមន្តនេះ៖\n\n1. **Light**: បន្ថយ Highlights (-40) ដើម្បីយកពពកមកវិញ, បង្កើន Shadows (+40) ដើម្បីបំភ្លឺដើមឈើ។\n2. **Color**: បង្កើន Vibrance (+20) ឱ្យពណ៌ស្រស់។\n3. **Effect**: ប្រើ Dehaze (+15) បើមានអ័ព្ទ។" },
+
+    // --- STYLES & LOOKS ---
+    { keys: ['teal', 'orange'], answer: "របៀបបង្កើត **Teal & Orange**:\n1. Shadows (Calibration/Grading) ដាក់ពណ៌ Teal (Cyan-Blue)។\n2. Highlights/Skin ដាក់ពណ៌ Orange។\n3. Primary Blue Hue: -20, Primary Red Hue: +20។" },
+    { keys: ['mood', 'sad', 'dark', 'សោកសៅ'], answer: "ធ្វើឱ្យរូបមាន Mood សោកសៅ៖\n- បន្ថយ Exposure (-0.5)\n- បន្ថយ Saturation (-30)\n- ដាក់ពណ៌ខៀវ (Cool) ក្នុង Temp (-10)\n- បន្ថយ Vibrance" },
+    { keys: ['film', 'analog', 'vintage', 'ហ្វីល'], answer: "កែរូបបែប **Film**:\n- បន្ថយ Contrast\n- បន្ថែម **Grain** (+30)\n- Tone Curve: លើកចំណុចខ្មៅឡើងលើ (Fade Shadows)។" },
+    { keys: ['bw', 'black white', 'ខ្មៅស'], answer: "កែរូប **B&W** ឱ្យស្អាត៖\n1. ចុច B&W mode\n2. បង្កើន Contrast (+40)\n3. កែ B&W Mix: ធ្វើឱ្យពណ៌ក្រហម/ទឹកក្រូចភ្លឺ (Luminance +) ដើម្បីឱ្យមុខស។" },
+    { keys: ['bright', 'airy', 'ភ្លឺ'], answer: "**Bright & Airy** គឺជារូបភ្លឺនិងស្រាល៖\n- Exposure: +0.5\n- Shadows: +50\n- Whites: +20\n- Blacks: +20\n- Contrast: -10" },
+    { keys: ['neon', 'glow', 'light', 'លេងពណ៌'], answer: "កែរូប Neon:\n- Highlights: -100 (កុំឱ្យភ្លើងឆេះ)\n- Shadows: +30\n- Vibrance: +40\n- Hue: ប្តូរពណ៌ Blue/Purple ទៅតាមចិត្ត។" },
+    { keys: ['minimal', 'minimalist'], answer: "Minimalist:\n- សមាសភាពរូបសាមញ្ញ\n- ពណ៌: Desaturate (បន្ថយពណ៌) ភាគច្រើន ទុកតែ 1-2 ពណ៌។\n- Exposure: ភ្លឺ។" },
+    { keys: ['cyberpunk'], answer: "Cyberpunk Style:\n- Temp: ត្រជាក់ (Blue)\n- Tint: Magenta\n- Color Mix: Blue -> Cyan, Purple -> Magenta" },
+    { keys: ['cinematic'], answer: "Cinematic:\n- Aspect Ratio: 16:9 ឬ 2.35:1\n- Color: Teal & Orange\n- Black point: បន្ថយបន្តិច (Faded)។" },
+    { keys: ['warm', 'កក់ក្តៅ'], answer: "ពណ៌កក់ក្តៅ (Warm): បង្កើន **Temp** ទៅខាងលឿង និង **Tint** ទៅខាង Magenta បន្តិច។" },
+    { keys: ['cool', 'ត្រជាក់'], answer: "ពណ៌ត្រជាក់ (Cool): បន្ថយ **Temp** ទៅខាងខៀវ។" },
+
+    // --- TOOLS & TECHNICAL ---
+    { keys: ['vibrance'], answer: "✨ **Vibrance** បង្កើនតែពណ៌ដែលស្លេក (Smart Saturation) និងការពារពណ៌ស្បែក។" },
+    { keys: ['saturation'], answer: "**Saturation** បង្កើនគ្រប់ពណ៌ទាំងអស់ស្មើគ្នាដែលអាចធ្វើឱ្យរូបឆេះ។" },
+    { keys: ['tone curve', 'curve'], answer: "📈 **Tone Curve** ប្រើសម្រាប់កែពន្លឺកម្រិតខ្ពស់។ បង្កើត 'S-Curve' (ទាញ Highlights ឡើង, Shadows ចុះ) ដើម្បីបាន Contrast ស្អាត។" },
+    { keys: ['hsl', 'mix'], answer: "🎛️ **HSL** (Hue, Saturation, Luminance) គឺជាកន្លែងកែពណ៌នីមួយៗដាច់ដោយឡែក។ ឧ. ចង់ប្តូរពណ៌ស្លឹកឈើ ត្រូវចូលទៅ Green Hue។" },
+    { keys: ['calibration'], answer: "🎚️ **Calibration** ប្រើកែពណ៌គោល (RGB)។ អ្នកថតរូបអាជីពប្រើវាដើម្បីប្តូរពណ៌ស្បែក ឬធ្វើឱ្យពណ៌ស្លឹកឈើប្លែក។" },
+    { keys: ['mask', 'masking', 'subject'], answer: "🎭 **Masking** (Select Sky/Subject) ល្អបំផុតសម្រាប់កែតែផ្នែកណាមួយ។ ឧទាហរណ៍ ជ្រើសរើសមេឃរួច បន្ថយ Exposure និង Highlights ដើម្បីឱ្យមេឃលេចធ្លោ។" },
+    { keys: ['dehaze', 'អ័ព្ទ', 'fog', 'mist'], answer: "🌫️ **Dehaze** ប្រើសម្រាប់កាត់អ័ព្ទ ឬផ្សែង។\n- (+) ធ្វើឱ្យរូបថ្លា និងឃើញមេឃច្បាស់។\n- (-) ធ្វើឱ្យរូបមានអ័ព្ទ (Dreamy)។" },
+    { keys: ['sharp', 'sharpness', 'ច្បាស់'], answer: "ធ្វើឱ្យរូបច្បាស់ (Sharp) ដោយ៖\n1. បង្កើន **Sharpening** (+40)\n2. ប្រើ **Masking** (Alt+Drag) ដើម្បីកុំឱ្យមុតលើស្បែក។\n3. បង្កើន **Clarity** បន្តិច (+10)។" },
+    { keys: ['exposure', 'ពន្លឺ'], answer: "💡 **Exposure** គឺជាពន្លឺរួមរបស់រូបភាព។\n- (+) ធ្វើឱ្យរូបភ្លឺទាំងមូល។\n- (-) ធ្វើឱ្យរូបងងឹតទាំងមូល។" },
+    { keys: ['contrast'], answer: "🌗 **Contrast** កំណត់ភាពដាច់គ្នារវាងភ្លឺនិងងងឹត។ Contrast ខ្ពស់ = រូបដិត។ Contrast ទាប = រូបស្រាល (Faded)។" },
+    { keys: ['highlight', 'whits', 'whites'], answer: "**Highlights** ប៉ះពាល់តែតំបន់ភ្លឺខ្លាំង (ដូចមេឃ)។ **Whites** ប៉ះពាល់ចំណុចសទាំងអស់ក្នុងរូប។ បន្ថយ Highlights ដើម្បីសង្គ្រោះពពក។" },
+    { keys: ['shadow'], answer: "🌑 **Shadows** គ្រប់គ្រងតំបន់ក្នុងម្លប់។ បង្កើនវាដើម្បីឱ្យឃើញព័ត៌មានក្នុងកន្លែងងងឹត។" },
+    { keys: ['black', 'blacks', 'ពណ៌ខ្មៅ'], answer: "🏴 **Blacks** កំណត់ចំណុច 'ខ្មៅ' បំផុត។ បន្ថយវា (-10) ដើម្បីឱ្យរូបភាពមានជម្រៅ (Depth)។" },
+    { keys: ['white balance', 'wb'], answer: "🌡️ **White Balance** (Temp & Tint) គឺសំខាន់បំផុត។ កែវាឱ្យពណ៌ 'ស' ក្នុងរូប មើលទៅពិតជា 'ស' មិនជាប់លឿងឬខៀវ។" },
+    { keys: ['split toning', 'grading', 'color grading'], answer: "🎨 **Color Grading** គឺការដាក់ពណ៌ចូលក្នុង Shadows, Midtones, និង Highlights។\nឧទាហរណ៍៖ Shadows (Teal) + Highlights (Orange) = Cinematic Look។" },
+    { keys: ['grain', 'គ្រាប់'], answer: "🎞️ **Grain** គឺបន្ថែមគ្រាប់តូចៗដូចខ្សាច់។ ប្រើវាដើម្បីឱ្យរូបមើលទៅមានសិល្បៈ បុរាណ ឬបិទបាំង Noise ខ្លះៗ។" },
+    { keys: ['vignette'], answer: "⚫ **Vignette** ធ្វើឱ្យគែមរូបភាពងងឹត ឬស។ ប្រើវាដើម្បីឱ្យគេផ្តោតអារម្មណ៍ទៅកណ្តាលរូប។" },
+    { keys: ['noise reduction', 'noise'], answer: "🤫 **Noise Reduction** ជួយលុបគ្រាប់ដែលកើតឡើងដោយសារ ISO ខ្ពស់។ ប្រើ Luminance Noise Reduction។" },
+    { keys: ['optics', 'lens correction'], answer: "📷 **Lens Corrections** ជួយកែតម្រូវការពត់កោង (Distortion) និងគែមងងឹតដែលបណ្តាលមកពីកែវថត។" },
+    { keys: ['geometry', 'upright'], answer: "📐 **Geometry** ជួយតម្រង់អគារ ឬបន្ទាត់ឱ្យត្រង់ (Upright)។ ល្អសម្រាប់រូបថតស្ថាបត្យកម្ម។" },
+    { keys: ['histogram'], answer: "📊 **Histogram** គឺជាក្រាហ្វបង្ហាញពីពន្លឺក្នុងរូប។\n- ឆ្វេង៖ ងងឹត (Shadows)\n- កណ្តាល៖ Midtones\n- ស្តាំ៖ ភ្លឺ (Highlights)\nព្យាយាមកុំឱ្យក្រាហ្វប៉ះគែមខ្លាំងពេក។" },
+    { keys: ['depth', 'dimension', 'ជម្រៅ'], answer: "បង្កើតជម្រៅ (Depth):\n1. ប្រើ Contrast\n2. បន្ថយ Blacks បន្តិច\n3. ប្រើ Radial Gradient ធ្វើឱ្យតួអង្គភ្លឺជាង Background។" },
+    { keys: ['clarity'], answer: "💎 **Clarity** បង្កើន Contrast នៅ Midtones។ ធ្វើឱ្យរូបច្បាស់ រឹងមាំ។ *ប្រយ័ត្ន*៖ ធ្វើឱ្យស្បែកមុខចាស់ បើប្រើច្រើនពេក។" },
+    { keys: ['texture'], answer: "**Texture** បង្កើនលម្អិតតូចៗ (ល្អសម្រាប់ស្បែក)។ បន្ថយ Texture ដើម្បីឱ្យស្បែករលោង។" },
+    { keys: ['hdr', 'ច្បាស់', 'លម្អិត'], answer: "ដើម្បីឱ្យរូបច្បាស់ខ្លាំងបែប HDR:\n1. បន្ថយ Highlights (-80)\n2. បង្កើន Shadows (+80)\n3. បង្កើន Clarity និង Dehaze បន្តិច។" },
+
+    // --- WORKFLOW & FIXES ---
+    { keys: ['export', 'save', 'facebook'], answer: "Export សម្រាប់ Facebook ឱ្យច្បាស់៖\n- Format: JPG\n- Quality: 100%\n- Resize: Long Edge 2048 pixels\n- Sharpen for Screen: Standard" },
+    { keys: ['underexposed', 'dark face', 'ងងឹតមុខ'], answer: "បើរូបងងឹតមុខ៖\n1. ប្រើ **Shadows** (+40)\n2. ឬប្រើ Masking (Radial Gradient) នៅលើមុខ ហើយបង្កើន Exposure បន្តិច។" },
+    { keys: ['blurry', 'not sharp', 'មិនច្បាស់'], answer: "បើរូបមិនច្បាស់៖\n1. បង្កើន **Sharpening**។\n2. បង្កើន **Clarity** បន្តិច។\n3. ពិនិត្យមើលថាអ្នកបាន Focus ត្រូវកន្លែងដែរឬទេ។" },
+    { keys: ['dull', 'flat', 'ស្លេក'], answer: "បើរូបមើលទៅស្លេក៖\n1. បង្កើន **Contrast**។\n2. បង្កើន **Vibrance**។\n3. បន្ថយ **Blacks** ដើម្បីឱ្យមានជម្រៅ។" },
+    { keys: ['too bright', 'overexposed', 'ភ្លឺពេក'], answer: "បើរូបភ្លឺពេក៖\n1. បន្ថយ **Exposure**។\n2. បន្ថយ **Highlights** និង **Whites**។" },
+    { keys: ['too dark', 'underexposed', 'ងងឹតពេក'], answer: "បើរូបងងឹតពេក៖\n1. បង្កើន **Exposure**។\n2. បង្កើន **Shadows**។" },
+    { keys: ['copy', 'paste'], answer: "ក្នុង Lightroom: ចុចសញ្ញា ... (3 គ្រាប់) > Copy Settings > ទៅរូបថ្មី > Paste Settings។" },
+    { keys: ['reset'], answer: "ចុចប៊ូតុង **Reset** នៅខាងក្រោម ឬចុចពីរដងលើ Slider នីមួយៗដើម្បីឱ្យវាត្រឡប់ទៅ 0។" },
+    { keys: ['before', 'after', 'មុន', 'ក្រោយ'], answer: "👉 **ចុចសង្កត់** លើរូបភាពដើម្បីមើលរូបដើម (Before)។ ដកដៃចេញដើម្បីមើលរូបកែរួច (After)។" },
+    { keys: ['raw'], answer: "📁 **RAW** រក្សាទុកព័ត៌មានរូបភាពទាំងស្រុង។ ពេលកែមិនងាយបែកគ្រាប់ដូច JPG ទេ។ គួរថត RAW បើអាច។" },
+        // --- GREETINGS ---
+{ keys: ['hello', 'hi', 'suesdey', 'សួស្តី', 'សួរ', 'bhat', 'jah', 'love'], answer: "សួស្ដីបាទ/ចាស!..." },
+    { keys: ['thanks', 'orkun', 'អរគុណ'], answer: "រីករាយដែលបានជួយ!..." },
+    { keys: ['help', 'ជួយ'], answer: "ខ្ញុំអាចជួយអ្នកបានច្រើនយ៉ាង..." }
 ];
 
 const lessonsData = [
@@ -99,39 +328,9 @@ const lessonsData = [
   { id: 'geometry', title: 'Geometry', icon: <Layout className="w-6 h-6 text-blue-400" />, description: 'តម្រង់រូប', content: [
     { tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលលឿន ឬ "Vertical" សម្រាប់ថតអគារ។' }
   ] }
+  
 ];
 
-const QA_DB = {
-    "exposure": "សួស្ដី! 👋 **Exposure (ការប៉ះពន្លឺ)** គឺជាឧបករណ៍ដំបូងដែលត្រូវកែ។\n👉 **របៀបប្រើ៖**\n• (+) ធ្វើឱ្យរូបភ្លឺ។\n• (-) ធ្វើឱ្យរូបងងឹត។\n💡 **Tip:** កែ Exposure ឱ្យសមសិន មុនកែពណ៌។",
-    "contrast": "សួស្ដី! **Contrast** កំណត់ភាពដាច់ស្រឡះរវាងពន្លឺនិងងងឹត។\n• **ខ្ពស់ (+):** រូបដិត ពណ៌ឆ្អិន (Pop)។\n• **ទាប (-):** រូបស្រាល ស្រទន់ (Soft)។",
-    "highlights": "សួស្ដី! **Highlights** គ្រប់គ្រងតំបន់ភ្លឺខ្លាំង (មេឃ)។\n💡 **Tip:** បន្ថយ -100 ដើម្បីសង្គ្រោះពពក។",
-};
-
-// --- UPDATED PRESET MOODS (TOP 20) ---
-const PRESET_MOODS = [
-    { id: 'teal_orange', name: 'Teal & Orange', color: 'from-orange-400 to-teal-500', keywords: ['travel', 'summer', 'beach', 'cinematic'] },
-    { id: 'dark_moody', name: 'Dark Moody', color: 'from-gray-700 to-black', keywords: ['dark', 'sad', 'rain', 'emotional', 'dramatic'] },
-    { id: 'bright_airy', name: 'Bright & Airy', color: 'from-white to-blue-100', keywords: ['wedding', 'clean', 'minimal', 'white', 'soft'] },
-    { id: 'vintage_film', name: 'Vintage Film', color: 'from-yellow-200 to-orange-300', keywords: ['retro', 'old', 'classic', 'analog', 'nostalgia'] },
-    { id: 'cinematic', name: 'Cinematic', color: 'from-slate-700 to-amber-600', keywords: ['movie', 'film', 'drama', 'scene'] },
-    { id: 'golden_hour', name: 'Golden Hour', color: 'from-yellow-400 to-orange-500', keywords: ['sunset', 'sun', 'warm', 'evening'] },
-    { id: 'black_white', name: 'Black & White', color: 'from-gray-300 to-black', keywords: ['monochrome', 'bw', 'noir', 'gray'] },
-    { id: 'portrait_clean', name: 'Portrait Clean', color: 'from-orange-100 to-pink-100', keywords: ['face', 'skin', 'selfie', 'beauty'] },
-    { id: 'forest_green', name: 'Nature Green', color: 'from-green-600 to-green-900', keywords: ['nature', 'trees', 'jungle', 'outdoor'] },
-    { id: 'urban_street', name: 'Urban Street', color: 'from-gray-500 to-slate-700', keywords: ['city', 'concrete', 'road', 'modern'] },
-    { id: 'night_neon', name: 'Night Neon', color: 'from-blue-900 to-purple-600', keywords: ['cyberpunk', 'lights', 'glow', 'tokyo'] },
-    { id: 'food_vivid', name: 'Food Vivid', color: 'from-yellow-400 to-red-500', keywords: ['meal', 'delicious', 'cafe', 'restaurant'] },
-    { id: 'soft_pastel', name: 'Soft Pastel', color: 'from-pink-200 to-blue-200', keywords: ['cute', 'baby', 'spring', 'gentle'] },
-    { id: 'matte_black', name: 'Matte Black', color: 'from-gray-800 to-gray-900', keywords: ['faded', 'dark', 'flat', 'modern'] },
-    { id: 'high_contrast', name: 'High Contrast', color: 'from-gray-100 to-black', keywords: ['pop', 'sharp', 'bold', 'dynamic'] },
-    { id: 'cool_blue', name: 'Cool Blue', color: 'from-blue-400 to-cyan-300', keywords: ['winter', 'cold', 'ice', 'fresh'] },
-    { id: 'warm_sunset', name: 'Warm Sunset', color: 'from-red-400 to-yellow-500', keywords: ['heat', 'summer', 'beach', 'fire'] },
-    { id: 'cyberpunk', name: 'Cyberpunk', color: 'from-pink-500 to-purple-600', keywords: ['sci-fi', 'future', 'neon', 'led'] },
-    { id: 'fashion_editorial', name: 'Fashion', color: 'from-purple-400 to-pink-400', keywords: ['style', 'magazine', 'model', 'clothes'] },
-    { id: 'hdr_landscape', name: 'HDR Landscape', color: 'from-green-400 to-blue-500', keywords: ['detail', 'sharp', 'view', 'mountain'] },
-];
-
-// --- HELPER TO GENERATE PRESET VARIATIONS ---
 const generateVariations = (baseId, baseParams, count) => {
     const variants = {};
     for (let i = 1; i <= count; i++) {
@@ -150,7 +349,6 @@ const generateVariations = (baseId, baseParams, count) => {
     return variants;
 };
 
-// --- EXPANDED PRESET DATABASE (Now includes 100+ variations and ALL COLORS) ---
 const BASE_PRESETS_DATA = {
     // --- 1. COLOR BASED (Must have all colors) ---
     ...generateVariations("color_red", { basic: { Temp: 10, Tint: 20, Saturation: 10, Vibrance: 20 }, grading: { Shadows: { h: 350, s: 15, l: 0 }, Highlights: { h: 10, s: 10, l: 0 } } }, 15),
@@ -184,7 +382,7 @@ const BASE_PRESETS_DATA = {
     ...generateVariations("bw_noir", { basic: { Contrast: 40, Highlights: -30, Shadows: 30, Whites: 20, Blacks: -30, Saturation: -100, Clarity: 20 }, grading: {} }, 15),
     ...generateVariations("cinematic_teal", { basic: { Exposure: 0.0, Contrast: 20, Highlights: -40, Shadows: 20, Vibrance: 10 }, grading: { Shadows: { h: 210, s: 30, l: -10 }, Highlights: { h: 35, s: 20, l: 0 } } }, 10),
     
-    // --- 6. WEDDING & PORTRAIT (FILLING MISSING LINKS) ---
+    // --- 6. WEDDING & PORTRAIT ---
     ...generateVariations("bright_airy", { basic: { Exposure: 0.4, Contrast: 10, Highlights: -30, Shadows: 50, Whites: 30, Blacks: 20, Temp: 5, Vibrance: 30, Saturation: 0, Clarity: -10 }, grading: { Highlights: { h: 50, s: 5, l: 0 } } }, 10),
     ...generateVariations("wedding_classic", { basic: { Exposure: 0.15, Contrast: 15, Highlights: -30, Shadows: 30, Whites: 10, Vibrance: 15 }, grading: { Midtones: { h: 40, s: 8, l: 0 } } }, 10),
     ...generateVariations("wedding_bright", { basic: { Exposure: 0.3, Contrast: 5, Highlights: -40, Shadows: 40, Whites: 25, Vibrance: 20 }, grading: { Highlights: { h: 50, s: 5, l: 5 } } }, 10),
@@ -210,51 +408,81 @@ const BASE_PRESETS_DATA = {
     ...generateVariations("soft_pastel", { basic: { Exposure: 0.2, Contrast: -10, Highlights: -30, Shadows: 40, Temp: 0, Tint: 5, Vibrance: 30, Saturation: -5, Clarity: -15 }, grading: { Shadows: { h: 220, s: 10, l: 0 }, Highlights: { h: 40, s: 10, l: 0 } } }, 10),
     ...generateVariations("night_neon", { basic: { Exposure: 0.1, Contrast: 30, Highlights: 10, Shadows: 10, Temp: -15, Tint: 20, Vibrance: 40, Dehaze: 15, Noise: 30 }, grading: { Shadows: { h: 260, s: 30, l: -5 } } }, 10),
     ...generateVariations("urban_street", { basic: { Contrast: 25, Highlights: -30, Shadows: 20, Temp: -5, Vibrance: -20, Saturation: -30, Clarity: 25, Dehaze: 10, Vignette: -20 }, grading: { Shadows: { h: 210, s: 10, l: -5 } } }, 10),
+    ...generateVariations("teal_orange", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -40, Shadows: 30, Temp: 5 }, grading: { Shadows: { h: 210, s: 20, l: -5 }, Midtones: { h: 30, s: 10, l: 0 }, Highlights: { h: 35, s: 20, l: 0 } } }, 10),
+    ...generateVariations("dark_moody", { basic: { Exposure: -0.2, Contrast: 30, Highlights: -50, Shadows: -10, Vibrance: -20 }, grading: { Shadows: { h: 220, s: 10, l: -10 }, Highlights: { h: 40, s: 5, l: 0 } } }, 10),
+    ...generateVariations("golden_hour", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -20, Shadows: 20, Temp: 20, Tint: 5, Vibrance: 30 }, grading: { Shadows: { h: 40, s: 15, l: 0 }, Highlights: { h: 45, s: 20, l: 0 } } }, 10),
 };
 
-const initialQuestionBank = [
-  { id: 1, question: "ឧបករណ៍មួយណាសម្រាប់កែពន្លឺរួមនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
-  { id: 2, question: "Contrast មានតួនាទីអ្វី?", options: ["កែពន្លឺឱ្យភ្លឺ", "ធ្វើឱ្យរូបភាពច្បាស់", "កំណត់គម្លាតរវាងកន្លែងភ្លឺនិងងងឹត", "កែពណ៌ឱ្យដិត"], correct: 2, level: "beginner" },
-  { id: 3, question: "ដើម្បីសង្គ្រោះព័ត៌មាននៅផ្នែកមេឃដែលភ្លឺពេក តើគួរកែអ្វី?", options: ["Highlights (-)", "Shadows (+)", "Whites (+)", "Exposure (+)"], correct: 0, level: "beginner" },
-  { id: 4, question: "ដើម្បីមើលឃើញព័ត៌មានក្នុងម្លប់ដែលងងឹត តើគួរកែអ្វី?", options: ["Highlights (-)", "Shadows (+)", "Blacks (-)", "Contrast (+)"], correct: 1, level: "beginner" },
-  { id: 5, question: "Temp (Temperature) ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌បៃតង/ស្វាយ", "កែពណ៌លឿង/ខៀវ", "កែពន្លឺ", "កែភាពច្បាស់"], correct: 1, level: "beginner" },
-  { id: 6, question: "Tint ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌បៃតង/ស្វាយ", "កែពណ៌លឿង/ខៀវ", "កែពន្លឺ", "កែភាពច្បាស់"], correct: 0, level: "beginner" },
-  { id: 7, question: "តើ Vibrance ខុសពី Saturation យ៉ាងដូចម្តេច?", options: ["Vibrance កែពណ៌ទាំងអស់ស្មើគ្នា", "Vibrance ការពារពណ៌ស្បែកមិនឱ្យដិតពេក", "Vibrance សម្រាប់តែរូបសខ្មៅ", "គ្មានអ្វីខុសគ្នាទេ"], correct: 1, level: "beginner" },
-  { id: 8, question: "ដើម្បីធ្វើឱ្យស្បែកស តើត្រូវកែពណ៌អ្វីក្នុង Color Mix?", options: ["Red", "Orange", "Yellow", "Green"], correct: 1, level: "intermediate" },
-  { id: 9, question: "ក្នុង Color Mix (Orange) តើត្រូវកែអ្វីដើម្បីឱ្យស្បែកភ្លឺ?", options: ["Hue", "Saturation", "Luminance", "All of above"], correct: 2, level: "intermediate" },
-  { id: 10, question: "ដើម្បីធ្វើឱ្យមេឃពណ៌ខៀវដិតស្អាត តើគួរកែពណ៌អ្វី?", options: ["Blue Saturation (+), Luminance (-)", "Blue Hue (+)", "Blue Luminance (+)", "Aqua Saturation (+)"], correct: 0, level: "intermediate" },
-];
+const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
+    id: i + 1,
+    question: [
+        "ឧបករណ៍មួយណាសម្រាប់កែពន្លឺរួមនៃរូបភាព?", "Contrast មានតួនាទីអ្វី?", "Highlights គ្រប់គ្រងអ្វី?", "Shadows គ្រប់គ្រងអ្វី?", 
+        "Temp ប្រើសម្រាប់អ្វី?", "Tint ប្រើសម្រាប់អ្វី?", "Vibrance ខុសពី Saturation ដូចម្តេច?", "Dehaze ប្រើពេលណា?",
+        "Vignette គឺអ្វី?", "Noise Reduction ប្រើពេលណា?", "Clarity ធ្វើអ្វី?", "Texture ធ្វើអ្វី?", "Tone Curve គឺជាអ្វី?",
+        "HSL មកពីពាក្យអ្វី?", "Split Toning ប្រើធ្វើអ្វី?", "Grain ប្រើធ្វើអ្វី?", "Sharpening ធ្វើអ្វី?", "Masking ប្រើធ្វើអ្វី?",
+        "Lens Correction ជួយអ្វី?", "Geometry ប្រើពេលណា?", "Aspect Ratio 4:5 សម្រាប់អ្វី?", "Aspect Ratio 16:9 សម្រាប់អ្វី?",
+        "RAW file ល្អជាង JPG ត្រង់ណា?", "Preset គឺជាអ្វី?", "Histogram បង្ហាញអ្វី?", "White Balance គឺអ្វី?", "Invert Mask គឺអ្វី?",
+        "Radial Gradient ប្រើពេលណា?", "Linear Gradient ប្រើពេលណា?", "Color Grading គឺអ្វី?", "Calibration ប្រើធ្វើអ្វី?",
+        "Select Subject ប្រើធ្វើអ្វី?", "Select Sky ប្រើធ្វើអ្វី?", "Healing Brush ប្រើធ្វើអ្វី?", "Clone Stamp ប្រើធ្វើអ្វី?",
+        "Snapshot ក្នុង Lightroom គឺអ្វី?", "Versions ប្រើធ្វើអ្វី?", "Rating (ផ្កាយ) ប្រើធ្វើអ្វី?", "Flag (ទង់) ប្រើធ្វើអ្វី?",
+        "Export Quality គួរដាក់ប៉ុន្មាន?", "Resize Long Edge សម្រាប់ FB?", "Sharpen for Screen ប្រើពេលណា?", "Copy Settings ប្រើធ្វើអ្វី?",
+        "Paste Settings ប្រើធ្វើអ្វី?", "Reset ប្រើធ្វើអ្វី?", "Before/After មើលម៉េច?", "Chromatic Aberration គឺអ្វី?",
+        "Profile Correction គឺអ្វី?", "Auto Settings ល្អទេ?", "Luminance Noise Reduction គឺអ្វី?"
+    ][i] || "សំណួរបន្ថែម...",
+    options: [
+        ["Contrast", "Exposure", "Highlights", "Shadows"], ["កែពន្លឺ", "កែភាពច្បាស់", "កំណត់គម្លាតពន្លឺ/ងងឹត", "កែពណ៌"],
+        ["តំបន់ងងឹត", "តំបន់ភ្លឺខ្លាំង", "ពណ៌", "សីតុណ្ហភាព"], ["តំបន់ភ្លឺ", "តំបន់ងងឹត", "ពណ៌ស", "ពណ៌ខ្មៅ"],
+        ["កែពណ៌បៃតង", "កែសីតុណ្ហភាព (លឿង/ខៀវ)", "កែពន្លឺ", "កែភាពច្បាស់"], ["កែពណ៌បៃតង/ស្វាយ", "កែពន្លឺ", "កែសីតុណ្ហភាព", "កែ Contrast"],
+        ["ដូចគ្នា", "Vibrance ការពារពណ៌ស្បែក", "Vibrance ធ្វើឱ្យរូបខ្មៅ", "Saturation ល្អជាង"], ["ពេលរូបច្បាស់", "ពេលមានអ័ព្ទ", "ពេលរូបងងឹត", "ពេលរូបភ្លឺ"],
+        ["ធ្វើឱ្យរូបភ្លឺ", "ធ្វើឱ្យគែមងងឹត", "ធ្វើឱ្យរូបច្បាស់", "ប្តូរពណ៌"], ["ពេលរូបច្បាស់", "ពេលរូបមានគ្រាប់ Noise", "ពេលរូបងងឹត", "ពេលរូបភ្លឺ"],
+        ["ធ្វើឱ្យរូបរលោង", "បង្កើន Contrast កណ្តាល", "ប្តូរពណ៌", "កាត់រូប"], ["ធ្វើឱ្យរូបរលោង", "បង្កើនលម្អិតតូចៗ", "ប្តូរពណ៌", "កាត់រូប"],
+        ["កាត់រូប", "កែពន្លឺ/ពណ៌កម្រិតខ្ពស់", "ដាក់អក្សរ", "លុបមុន"], ["Hue Sat Light", "Hue Saturation Luminance", "High Standard Light", "Hue Shade Light"],
+        ["ដាក់ពណ៌ក្នុង Shadows/Highlights", "កែ Exposure", "កែ WB", "កែ Lens"], ["ធ្វើឱ្យរូបច្បាស់", "បន្ថែមគ្រាប់បែប Film", "លុបអ័ព្ទ", "កែពណ៌"],
+        ["ធ្វើឱ្យរូបព្រិល", "ធ្វើឱ្យគែមវត្ថុច្បាស់", "ប្តូរពណ៌", "កែពន្លឺ"], ["កែរូបទាំងមូល", "កែតែផ្នែកខ្លះ", "Export", "Import"],
+        ["កែពណ៌", "កែការពត់កោងកែវថត", "កែពន្លឺ", "កែ Sharpness"], ["តម្រង់អគារ", "កែពណ៌", "កែពន្លឺ", "លុបមុន"],
+        ["Facebook", "Instagram Story", "Youtube", "TV"], ["Facebook", "Instagram Story", "Profile", "Print"],
+        ["រូបតូច", "រក្សាទុកព័ត៌មានច្រើន", "រូបស្អាតស្រាប់", "បង្ហោះលឿន"], ["ការកំណត់ដែលបានរក្សាទុក", "ការកែថ្មី", "រូបភាព", "កាមេរ៉ា"],
+        ["ពន្លឺក្នុងរូប", "ពណ៌", "ទំហំ", "ទីតាំង"], ["កែពន្លឺ", "កែពណ៌សឱ្យត្រូវពន្លឺពិត", "កែ Contrast", "កែ Saturation"],
+        ["លុប Mask", "ជ្រើសរើសតំបន់ផ្ទុយ", "កែពណ៌ផ្ទុយ", "បង្វិលរូប"], ["កែទាំងមូល", "កែចំណុចកណ្តាល/មូល", "កែពណ៌", "កែពន្លឺ"],
+        ["កែទាំងមូល", "កែជាលក្ខណៈបន្ទាត់ (មេឃ/ដី)", "កែពណ៌", "កែពន្លឺ"], ["ដាក់ពណ៌", "កែពន្លឺ", "កែ WB", "កែ Lens"],
+        ["កែពណ៌គោល (RGB)", "កែពន្លឺ", "កែ Contrast", "កែ Saturation"], ["ជ្រើសរើសមេឃ", "ជ្រើសរើសតួអង្គ", "ជ្រើសរើសកន្លែងភ្លឺ", "ជ្រើសរើសកន្លែងងងឹត"],
+        ["ជ្រើសរើសដី", "ជ្រើសរើសមេឃ", "ជ្រើសរើសទឹក", "ជ្រើសរើសមនុស្ស"], ["គូររូប", "លុបមុន/វត្ថុ", "កែពណ៌", "កែពន្លឺ"],
+        ["ចម្លងរូប", "ចម្លងផ្នែកមួយទៅដាក់មួយទៀត", "កែពណ៌", "កែពន្លឺ"], ["រូបថត", "ការរក្សាទុកដំណាក់កាលកែ", "Preset", "Filter"],
+        ["Export", "រក្សាទុកការកែផ្សេងគ្នា", "Share", "Delete"], ["ដាក់ពិន្ទុ", "លុប", "កែ", "Share"], ["សម្គាល់រូប (Pick/Reject)", "ដាក់ពិន្ទុ", "កែ", "Share"],
+        ["100%", "50%", "10%", "0%"], ["1080px", "2048px", "4000px", "Original"], ["Standard", "High", "Low", "None"],
+        ["ចម្លងរូប", "ចម្លងការកែ (Settings)", "ចម្លងពណ៌", "ចម្លងពន្លឺ"], ["បិទភ្ជាប់រូប", "បិទភ្ជាប់ការកែ", "បិទភ្ជាប់ពណ៌", "បិទភ្ជាប់ពន្លឺ"],
+        ["លុបរូប", "ត្រឡប់ទៅដើម", "Save", "Export"], ["ចុចពីរដង", "ចុចសង្កត់", "អូសឆ្វេង", "អូសស្តាំ"],
+        ["ពណ៌ខុសតាមគែម", "ពន្លឺខុស", "Noise", "Blur"], ["កែ Lens", "កែពណ៌", "កែពន្លឺ", "កែ Noise"],
+        ["ល្អ", "មិនល្អ", "មធ្យម", "អាក្រក់"], ["លុបគ្រាប់ពណ៌", "លុបគ្រាប់ពន្លឺ (Grain)", "បង្កើនពណ៌", "បង្កើនពន្លឺ"]
+    ][i] || ["A", "B", "C", "D"],
+    correct: [1, 2, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0][i] || 0,
+    level: i < 20 ? "beginner" : i < 40 ? "intermediate" : "advanced"
+}));
 
-const getLocalResponse = (prompt) => {
-    const lower = prompt.toLowerCase();
-    const keys = Object.keys(QA_DB).sort((a, b) => b.length - a.length);
-    for (let key of keys) {
-        if (lower.includes(key)) return QA_DB[key];
+// ==========================================
+// 3. HELPER FUNCTIONS
+// ==========================================
+
+const findAIResponse = (input) => {
+    const query = input.toLowerCase().trim();
+    
+    // Check for explicit refusal topics
+    const refusedTopics = ['video', 'song', 'music', 'game', 'hack', 'facebook', 'tiktok', 'youtube', 'money', 'crypto'];
+    if (refusedTopics.some(t => query.includes(t))) {
+        return "សូមអភ័យទោស! 🚫 ខ្ញុំគឺជា AI ជំនាញខាងកែរូបភាព Lightroom ប៉ុណ្ណោះ។\nខ្ញុំមិនអាចឆ្លើយសំណួរដែលមិនពាក់ព័ន្ធនឹងការកែរូប ឬបច្ចេកទេសថតរូបបានទេ។ សូមសួរខ្ញុំអំពី Presets, Tools, ឬគន្លឹះកែរូបវិញណា៎! 😊";
     }
-    return null; 
+
+    const match = KNOWLEDGE_BASE.find(item => item.keys.some(key => query.includes(key)));
+    if (match) return match.answer;
+
+    return null;
 };
 
-const getColorName = (hue, sat = 100) => {
-  if (sat < 5) return "Neutral";
-  
-  // normalize hue to 0-360
-  const h = Math.round(hue % 360);
-  const normalizedHue = h < 0 ? h + 360 : h;
+// ==========================================
+// 4. MAIN COMPONENTS (ColorWheel, Header, etc.)
+// ==========================================
 
-  if (normalizedHue >= 340 || normalizedHue < 15) return "Red";
-  if (normalizedHue >= 15 && normalizedHue < 45) return "Orange";
-  if (normalizedHue >= 45 && normalizedHue < 70) return "Yellow";
-  if (normalizedHue >= 70 && normalizedHue < 140) return "Green";
-  if (normalizedHue >= 140 && normalizedHue < 190) return "Teal/Aqua";
-  if (normalizedHue >= 190 && normalizedHue < 260) return "Blue";
-  if (normalizedHue >= 260 && normalizedHue < 300) return "Purple";
-  if (normalizedHue >= 300 && normalizedHue < 340) return "Magenta";
-  
-  return "Red"; // Fallback
-};
-
-// --- COMPONENTS ---
-
+// --- ColorWheel Component ---
 const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
     const wheelRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -266,19 +494,11 @@ const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
         const x = clientX - centerX;
         const y = clientY - centerY;
         
-        // Calculate standard angle (0 at 3 o'clock, clockwise positive in screen coords)
         let angle = Math.atan2(y, x) * (180 / Math.PI);
-        
-        // Adjust so 0 degrees (Red) is at 12 o'clock
-        // Current: 0 deg = 3 o'clock. We want 0 deg = 12 o'clock.
-        // So we add 90 degrees to align the coordinate system.
-        // -90 (Top) + 90 = 0 (Hue)
-        // 0 (Right) + 90 = 90 (Hue)
         let hueValue = angle + 90;
         
-        // Normalize to 0-360
         if (hueValue < 0) hueValue += 360;
-        if (hueValue >= 360) hueValue -= 360; // Just in case, though atan2 is usually -180 to 180
+        if (hueValue >= 360) hueValue -= 360; 
         
         const dist = Math.sqrt(x*x + y*y);
         const radius = rect.width / 2;
@@ -292,7 +512,6 @@ const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
     
     const radius = size / 2; 
     const handleDist = (sat / 100) * radius; 
-    // Adjust hue for display: 0 hue (Red) should be at -90 degrees (Top)
     const angleRad = (hue - 90) * (Math.PI / 180);
     const handleX = radius + handleDist * Math.cos(angleRad); 
     const handleY = radius + handleDist * Math.sin(angleRad);
@@ -305,28 +524,13 @@ const ColorWheel = ({ hue, sat, onChange, size = 150 }) => {
             onMouseDown={handleStart} onMouseMove={handleMove} onMouseUp={handleEnd} onMouseLeave={handleEnd} 
             onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={handleEnd}
         >
-            {/* Modern Frame Shadow/Glow */}
             <div className="absolute -inset-4 rounded-full bg-black/20 blur-xl"></div>
-            
-            {/* Frame Base */}
             <div className="absolute -inset-3 rounded-full bg-[#1C1C1E] border border-white/5 shadow-2xl"></div>
-            
-            {/* Inner inset for depth */}
             <div className="absolute -inset-[2px] rounded-full bg-[#000000]/50 shadow-inner"></div>
-
-            {/* Wheel Gradient */}
-            <div className="absolute inset-0 rounded-full overflow-hidden" 
-                 style={{ background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)' }}>
-                {/* Saturation Gradient (White Center) */}
+            <div className="absolute inset-0 rounded-full overflow-hidden" style={{ background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)' }}>
                 <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(closest-side, white, transparent 100%)', pointerEvents: 'none' }}></div>
             </div>
-            
-            {/* Handle */}
-            <div 
-                className="absolute w-6 h-6 bg-white rounded-full border-[3px] border-[#1C1C1E] shadow-[0_2px_8px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 ease-out group-hover:scale-110 z-10" 
-                style={{ left: handleX, top: handleY }}
-            >
-            </div>
+            <div className="absolute w-6 h-6 bg-white rounded-full border-[3px] border-[#1C1C1E] shadow-[0_2px_8px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 ease-out group-hover:scale-110 z-10" style={{ left: handleX, top: handleY }}></div>
         </div>
     );
 };
@@ -354,6 +558,7 @@ const Header = ({ activeTab, setActiveTab }) => {
   );
 };
 
+// ... (Other component definitions for LessonModal, LessonCard, TipsSection, ContactSection, Quiz, ChatBot are assumed to be here, using the same code structure as previous working versions but ensuring they are defined before App)
 const LessonModal = ({ lesson, onClose }) => {
   const [closing, setClosing] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
@@ -532,7 +737,10 @@ const ContactSection = () => (
   </div>
 );
 
-// --- 4. PHOTO LAB (REFACTORED WITH LOCAL DB) ---
+// ==========================================
+// 5. MAIN FEATURES COMPONENTS
+// ==========================================
+
 const PhotoLab = () => {
   const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80");
   const [mode, setMode] = useState('manual');
@@ -605,7 +813,52 @@ const PhotoLab = () => {
   const resetSettings = () => setSettings(defaultSettings);
   const handleImageUpload = (e) => { const file = e.target.files[0]; if (file) setImage(URL.createObjectURL(file)); };
   const handleDownload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const img = new Image(); img.crossOrigin = "anonymous"; img.src = image; img.onload = () => { canvas.width = img.width; canvas.height = img.height; ctx.filter = getFilterString(); ctx.drawImage(img, 0, 0); const link = document.createElement('a'); link.download = 'edited-photo.jpg'; link.href = canvas.toDataURL('image/jpeg'); link.click(); }; };
-  const handlePresetExport = () => { generateXMP(settings, aiPrompt || "Custom"); };
+  
+  const handlePresetExport = () => { 
+      // Map flat settings to XMP structure
+      const recipe = {
+          basic: {
+              Exposure: settings.exposure,
+              Contrast: settings.contrast,
+              Highlights: settings.highlights,
+              Shadows: settings.shadows,
+              Whites: settings.whites,
+              Blacks: settings.blacks,
+              Temp: settings.temp,
+              Tint: settings.tint,
+              Vibrance: settings.vibrance,
+              Saturation: settings.saturation,
+              Texture: settings.texture,
+              Clarity: settings.clarity,
+              Dehaze: settings.dehaze,
+              Vignette: settings.vignette
+          },
+          detail: {
+              Sharpening: 40, 
+              Noise: 0,
+              ColorNoise: 25
+          },
+          colorMix: [
+              { color: 'Red', h: settings.redHue, s: settings.redSat, l: settings.redLum },
+              { color: 'Orange', h: settings.orangeHue, s: settings.orangeSat, l: settings.orangeLum },
+              { color: 'Yellow', h: settings.yellowHue, s: settings.yellowSat, l: settings.yellowLum },
+              { color: 'Green', h: settings.greenHue, s: settings.greenSat, l: settings.greenLum },
+              { color: 'Aqua', h: settings.aquaHue, s: settings.aquaSat, l: settings.aquaLum },
+              { color: 'Blue', h: settings.blueHue, s: settings.blueSat, l: settings.blueLum },
+              { color: 'Purple', h: settings.purpleHue, s: settings.purpleSat, l: settings.purpleLum },
+              { color: 'Magenta', h: settings.magentaHue, s: settings.magentaSat, l: settings.magentaLum },
+          ],
+          grading: {
+              Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum },
+              Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum },
+              Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum },
+              Blending: settings.gradingBlending,
+              Balance: settings.gradingBalance
+          }
+      };
+      
+      generateXMP(recipe, aiPrompt || "Custom_Preset"); 
+  };
 
   const applyPresetToSettings = (presetData) => {
       const b = presetData.basic; 
@@ -691,7 +944,7 @@ const PhotoLab = () => {
                     <div className="relative w-full h-full"><img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" style={{ filter: getFilterString() }} /><div className="absolute inset-0 pointer-events-none" style={getVignetteStyle()}></div></div>
                 </div>
 
-                {/* Combined Toolbar: Thumbnails + Action Buttons */}
+                {/* Combined Toolbar: Thumbnails + Action Buttons (Updated Layout) */}
                 <div className="flex items-center justify-between gap-2 bg-[#1C1C1E] p-2 rounded-2xl border border-white/5 shadow-lg shrink-0 overflow-x-auto no-scrollbar">
                     
                     {/* Thumbnails */}
@@ -702,7 +955,7 @@ const PhotoLab = () => {
                     {/* Divider */}
                     <div className="w-px h-8 bg-white/10 mx-1 shrink-0"></div>
 
-                    {/* Action Buttons */}
+                    {/* Action Buttons (Moved Here) */}
                     <div className="flex gap-2 shrink-0">
                         <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
                         <button onClick={() => fileInputRef.current.click()} className="w-10 h-10 flex items-center justify-center bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/10 text-white rounded-xl transition-all active:scale-95" title="Upload"><Upload size={16} /></button>
@@ -714,10 +967,23 @@ const PhotoLab = () => {
 
             {/* Right Column (Desktop) / Bottom Section (Mobile): Controls */}
             <div className="flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full bg-[#1C1C1E] rounded-t-3xl lg:rounded-3xl border border-white/5 overflow-hidden shadow-2xl relative z-10">
-                 <div className="flex border-b border-white/10 shrink-0 bg-[#2C2C2E] p-1.5 m-2 rounded-2xl">
-                    <button onClick={() => setMode('manual')} className={`flex-1 py-2.5 rounded-xl text-xs font-bold font-khmer transition-all duration-300 ease-spring ${mode === 'manual' ? 'bg-[#3A3A3C] text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>កែដោយដៃ</button>
-                    <button onClick={() => setMode('preset')} className={`flex-1 py-2.5 rounded-xl text-xs font-bold font-khmer transition-all duration-300 ease-spring ${mode === 'preset' ? 'bg-[#3A3A3C] text-white shadow-md' : 'text-gray-400 hover:text-white'}`}>Preset</button>
-                    <button onClick={resetSettings} className="px-4 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-xl flex items-center gap-1 transition-all ml-1"><RotateCcw size={16}/></button>
+                 {/* Top Controls Bar - FIXED AND STICKY (Updated Style) */}
+                 <div className="w-full h-14 bg-[#2C2C2E] border-b border-white/10 flex items-center px-2 gap-2 shrink-0 z-20">
+                    <div className="flex-1 flex bg-black/20 p-1 rounded-xl">
+                        <button 
+                            onClick={() => setMode('manual')} 
+                            className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'manual' ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}
+                        >
+                            កែដោយដៃ
+                        </button>
+                        <button 
+                            onClick={() => setMode('preset')} 
+                            className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'preset' ? 'bg-[#3A3A3C] text-white shadow-sm' : 'text-gray-500 hover:text-white'}`}
+                        >
+                            Preset
+                        </button>
+                    </div>
+                    <button onClick={resetSettings} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all" title="Reset All"><RotateCcw size={16}/></button>
                  </div>
                  
                  <div className="flex-1 flex flex-col bg-[#1C1C1E] overflow-hidden relative">
@@ -1099,18 +1365,27 @@ const ChatBot = ({ messages, setMessages }) => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const keys = Object.keys(QA_DB);
-  const [suggestions, setSuggestions] = useState([]);
+  // Suggested questions cache rotation
+  const [currentSuggestions, setCurrentSuggestions] = useState([]);
+  
+  useEffect(() => {
+     // Initial shuffle
+     const shuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random());
+     setCurrentSuggestions(shuffled.slice(0, 3)); // Show only 3 as requested
 
-  useEffect(() => { 
-    const updateSuggestions = () => {
-        const shuffled = [...keys].sort(() => 0.5 - Math.random()); 
-        setSuggestions(shuffled.slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)));
-    };
-    updateSuggestions();
-    const interval = setInterval(updateSuggestions, 20000); 
-    return () => clearInterval(interval);
+     // Rotate every 15s (User request)
+     const interval = setInterval(() => {
+        const nextShuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random());
+        setCurrentSuggestions(nextShuffled.slice(0, 3));
+     }, 15000);
+
+     return () => clearInterval(interval);
   }, []);
+
+  const handleManualRefresh = () => {
+    const nextShuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random());
+    setCurrentSuggestions(nextShuffled.slice(0, 3));
+  };
 
   const handleSend = async (text = null) => {
     const msg = text || input;
@@ -1119,58 +1394,109 @@ const ChatBot = ({ messages, setMessages }) => {
     setMessages(prev => [...prev, { role: 'user', text: msg }]); 
     setLoading(true);
     
-    const lowerMsg = msg.toLowerCase();
-    let localReply = null;
-    const sortedKeys = [...keys].sort((a, b) => b.length - a.length);
-    
-    if (["hello", "hi", "suasdey", "សួស្ដី", "សួរ"].some(g => lowerMsg.includes(g))) {
-         localReply = QA_DB["hello"] || "សួស្ដី! តើខ្ញុំអាចជួយអ្នកយ៉ាងដូចម្តេច?";
-    } else {
-        for (let key of sortedKeys) { 
-            if (lowerMsg.includes(key.toLowerCase())) { 
-                localReply = QA_DB[key]; 
-                break; 
-            } 
-        }
-    }
-
-    if (localReply) { 
-        setTimeout(() => { 
-            setMessages(prev => [...prev, { role: 'model', text: localReply }]); 
-            setLoading(false); 
-        }, 600); 
-    } else {
-        setTimeout(() => { 
-            setMessages(prev => [...prev, { role: 'model', text: "សុំទោស! ខ្ញុំមិនទាន់ស្គាល់ពាក្យនេះទេ។ អ្នកអាចសួរអំពី:\n• ឧបករណ៍ (Exposure, Contrast)\n• ពណ៌ (Skin Tone, Teal & Orange)\n• ឬ Presets ផ្សេងៗ។" }]); 
-            setLoading(false); 
-        }, 800);
-    }
+    // AI Logic Simulation
+    setTimeout(() => {
+        const response = findAIResponse(msg);
+        setMessages(prev => [...prev, { role: 'model', text: response || "សុំទោស! ខ្ញុំមិនទាន់ស្គាល់ពាក្យនេះទេ។ អ្នកអាចសួរអំពី:\n• ឧបករណ៍ (Exposure, Contrast)\n• ពណ៌ (Skin Tone, Teal & Orange)\n• ឬ Presets ផ្សេងៗ។" }]);
+        setLoading(false);
+    }, 800 + Math.random() * 500); // Simulate "thinking" time
   };
   
   useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#000000] md:rounded-[32px] overflow-hidden shadow-2xl relative md:border md:border-white/10">
-      <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-[#000000] no-scrollbar">
-        <div className="text-center py-4 opacity-30 text-[10px] uppercase font-bold tracking-[0.3em]">AI Support Secured (Offline)</div>
+    <div className="flex flex-col h-full w-full bg-[#000000] md:rounded-[32px] overflow-hidden shadow-2xl relative md:border md:border-white/10 font-khmer">
+      
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 h-16 bg-[#1C1C1E]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 z-10">
+          <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
+                  <Bot size={18} className="text-white" />
+              </div>
+              <div>
+                  <h3 className="text-sm font-bold text-white leading-none">AI Assistant</h3>
+                  <span className="text-[10px] text-green-400 font-medium">Online</span>
+              </div>
+          </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-4 pt-20 pb-4 space-y-4 bg-[#000000] no-scrollbar">
+        {messages.length === 0 && (
+             <div className="flex flex-col items-center justify-center h-full text-center opacity-40">
+                 <Bot size={48} className="mb-4 text-gray-500" />
+                 <p className="text-sm text-gray-400">សួស្តី! មានអ្វីឲ្យខ្ញុំជួយទេ?</p>
+             </div>
+        )}
+        
         {messages.map((m, i) => (
             <div key={i} className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
-                <div className={`max-w-[85%] px-5 py-3.5 text-[14px] font-khmer leading-relaxed whitespace-pre-wrap shadow-lg ${m.role === 'user' ? 'bg-[#0A84FF] text-white rounded-[24px] rounded-br-none' : 'bg-[#1C1C1E] text-gray-100 rounded-[24px] rounded-bl-none border border-white/5'}`}>{m.text}</div>
+                {m.role === 'model' && (
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center mr-2 shrink-0 mt-auto">
+                        <Bot size={12} className="text-white" />
+                    </div>
+                )}
+                <div className={`max-w-[80%] px-4 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap shadow-sm ${m.role === 'user' ? 'bg-[#0A84FF] text-white rounded-[18px] rounded-br-none' : 'bg-[#2C2C2E] text-gray-100 rounded-[18px] rounded-bl-none border border-white/5'}`}>
+                    {m.text}
+                </div>
             </div>
         ))}
-        {loading && <div className="flex justify-start px-2"><Loader2 className="animate-spin text-blue-500" size={24} /></div>}
-        <div ref={messagesEndRef} className="h-4" />
+        {loading && (
+             <div className="flex justify-start items-end">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center mr-2">
+                    <Bot size={12} className="text-white" />
+                </div>
+                <div className="bg-[#2C2C2E] px-4 py-3 rounded-[18px] rounded-bl-none border border-white/5 flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                </div>
+             </div>
+        )}
+        <div ref={messagesEndRef} className="h-2" />
       </div>
-      <div className="p-4 pb-safe border-t border-white/5 bg-[#1C1C1E]/90 backdrop-blur-xl">
-         <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
-            {suggestions.map((q, i) => (<button key={i} onClick={() => handleSend(q)} className="shrink-0 px-4 py-2 bg-[#2C2C2E] text-gray-300 text-[11px] rounded-full border border-white/5 font-khmer hover:bg-[#3A3A3C] transition-colors active:scale-95 capitalize">{q.replace(/_/g, ' ')}?</button>))}
-            <button onClick={() => setSuggestions([...keys].sort(() => 0.5 - Math.random()).slice(0, 3).map(k => k.charAt(0).toUpperCase() + k.slice(1)))} className="p-2 bg-[#2C2C2E] rounded-full text-gray-500"><RefreshCw size={14}/></button>
+      
+      {/* Suggestions & Input */}
+      <div className="bg-[#1C1C1E]/90 backdrop-blur-xl border-t border-white/5 pb-safe">
+         {/* Auto-refreshing suggestions with Refresh Button */}
+         <div className="flex items-center border-b border-white/5 pl-2">
+             <button 
+                 onClick={handleManualRefresh}
+                 className="p-2 text-blue-400 hover:text-white transition-colors active:scale-90"
+             >
+                 <RefreshCw size={14} />
+             </button>
+             <div className="flex gap-2 overflow-x-auto pb-3 pt-3 px-2 no-scrollbar">
+                {currentSuggestions.map((q, i) => (
+                    <button 
+                        key={i} 
+                        onClick={() => handleSend(q)} 
+                        className="shrink-0 px-3 py-1.5 bg-[#2C2C2E] hover:bg-[#3A3A3C] text-blue-400 text-[11px] rounded-full border border-blue-500/20 active:scale-95 transition-all whitespace-nowrap"
+                    >
+                        {q}
+                    </button>
+                ))}
+             </div>
          </div>
-         <div className="flex gap-3 items-center">
-            <div className="flex-1 relative">
-                <input value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="សួរអំពី Lightroom..." className="w-full bg-[#000000] text-white px-5 py-3 rounded-3xl border border-white/10 focus:outline-none focus:border-blue-500 transition-all font-khmer placeholder:text-gray-600 text-sm" autoComplete="off" name="chat-message" />
+
+         <div className="p-3 flex gap-2 items-end">
+            <div className="flex-1 bg-[#2C2C2E] rounded-[24px] border border-white/10 flex items-center px-1 focus-within:border-blue-500/50 transition-colors">
+                <input 
+                    value={input} 
+                    onChange={e => setInput(e.target.value)} 
+                    onKeyPress={e => e.key === 'Enter' && handleSend()} 
+                    placeholder="សួរសំណួរ..." 
+                    className="flex-1 bg-transparent text-white px-3 py-2.5 text-sm outline-none placeholder:text-gray-500 h-full" 
+                    autoComplete="off" 
+                />
             </div>
-            <button onClick={() => handleSend()} className={`p-3 rounded-full transition-all active:scale-90 ${input.trim() ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-500'}`}><Send size={18}/></button>
+            <button 
+                onClick={() => handleSend()} 
+                disabled={!input.trim()}
+                className={`p-2.5 rounded-full transition-all active:scale-90 shadow-lg ${input.trim() ? 'bg-[#0A84FF] text-white' : 'bg-[#2C2C2E] text-gray-500'}`}
+            >
+                <Send size={18} />
+            </button>
          </div>
       </div>
     </div>
