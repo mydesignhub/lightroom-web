@@ -281,12 +281,26 @@ const lessonsData = [
 ];
 
 const PRESET_MOODS = [
-    { id: 'mood_warm', name: 'Warm', color: 'from-orange-500 to-red-500', keywords: ['warm', 'summer', 'gold', 'sun'] },
-    { id: 'mood_cool', name: 'Cool', color: 'from-blue-500 to-cyan-500', keywords: ['cool', 'winter', 'blue', 'ice'] },
-    { id: 'mood_vintage', name: 'Vintage', color: 'from-yellow-600 to-orange-700', keywords: ['vintage', 'film', 'retro', 'old'] },
-    { id: 'mood_moody', name: 'Moody', color: 'from-gray-700 to-gray-900', keywords: ['moody', 'dark', 'sad', 'drama'] },
-    { id: 'mood_bright', name: 'Bright', color: 'from-white to-yellow-200', keywords: ['bright', 'airy', 'light', 'clean'] },
-    { id: 'mood_nature', name: 'Nature', color: 'from-green-500 to-emerald-700', keywords: ['nature', 'green', 'forest', 'tree'] },
+    { id: 'bright_airy_1', name: 'Bright & Airy', color: 'from-blue-100 to-white' },
+    { id: 'teal_orange_1', name: 'Teal & Orange', color: 'from-teal-500 to-orange-500' },
+    { id: 'feeling_moody_1', name: 'Moody Dark', color: 'from-gray-700 to-gray-900' },
+    { id: 'vintage_film_1', name: 'Vintage Film', color: 'from-yellow-600 to-orange-700' },
+    { id: 'cyberpunk_1', name: 'Cyberpunk', color: 'from-pink-500 to-cyan-500' },
+    { id: 'cinematic_1', name: 'Cinematic', color: 'from-slate-700 to-slate-900' },
+    { id: 'wedding_classic_1', name: 'Wedding Classic', color: 'from-rose-100 to-white' },
+    { id: 'portrait_clean_1', name: 'Clean Portrait', color: 'from-orange-100 to-rose-100' },
+    { id: 'urban_street_1', name: 'Urban Street', color: 'from-gray-600 to-slate-800' },
+    { id: 'golden_hour_1', name: 'Golden Hour', color: 'from-yellow-400 to-orange-500' },
+    { id: 'nature_landscape_1', name: 'Nature Pop', color: 'from-green-500 to-emerald-700' },
+    { id: 'food_tasty_1', name: 'Tasty Food', color: 'from-yellow-400 to-orange-400' },
+    { id: 'bw_noir_1', name: 'B&W Noir', color: 'from-black to-gray-500' },
+    { id: 'soft_pastel_1', name: 'Soft Pastel', color: 'from-pink-200 to-blue-200' },
+    { id: 'fashion_editorial_1', name: 'Fashion', color: 'from-purple-400 to-pink-400' },
+    { id: 'night_neon_1', name: 'Night Neon', color: 'from-blue-900 to-purple-900' },
+    { id: 'dark_moody_1', name: 'Dark Moody', color: 'from-stone-800 to-stone-950' },
+    { id: 'forest_green_1', name: 'Forest Green', color: 'from-green-800 to-emerald-900' },
+    { id: 'portrait_glow_1', name: 'Portrait Glow', color: 'from-amber-200 to-yellow-100' },
+    { id: 'matte_black_1', name: 'Matte Black', color: 'from-zinc-600 to-zinc-800' },
 ];
 
 const generateVariations = (baseId, baseParams, count) => {
@@ -714,7 +728,10 @@ const PhotoLab = () => {
   const [activeColor, setActiveColor] = useState('Orange'); 
 
   // --- PRESET FILTERING LOGIC ---
-useEffect(() => {
+  const [filteredPresets, setFilteredPresets] = useState([]);
+  const [suggestedMoods, setSuggestedMoods] = useState([]);
+  
+  useEffect(() => {
       if (mode !== 'preset') return;
       
       const query = aiPrompt.toLowerCase().trim();
@@ -779,7 +796,8 @@ useEffect(() => {
       setSuggestedMoods(matchedMoods);
 
   }, [aiPrompt, mode]);
-  
+
+
   const updateSetting = (key, value) => setSettings(prev => ({...prev, [key]: value}));
   const resetSettings = () => setSettings(defaultSettings);
   const handleImageUpload = (e) => { const file = e.target.files[0]; if (file) setImage(URL.createObjectURL(file)); };
@@ -1171,7 +1189,11 @@ useEffect(() => {
                                                 {PRESET_MOODS.map(s => (
                                                     <button 
                                                         key={s.id} 
-                                                        onClick={() => setAiPrompt(s.name)} 
+                                                        onClick={() => {
+                                                            // កែត្រង់នេះ៖ ហៅទិន្នន័យ Preset មកប្រើភ្លាមៗតែម្តង មិនបាច់ស្វែងរកទេ
+                                                            const presetToApply = BASE_PRESETS_DATA[s.id];
+                                                            if (presetToApply) applyPresetToSettings(presetToApply);
+                                                        }}
                                                         className="relative h-16 bg-[#2C2C2E] hover:bg-[#3A3A3C] border border-white/5 rounded-2xl flex items-center justify-center overflow-hidden group transition-all duration-300 ease-spring active:scale-95 shadow-sm hover:shadow-lg"
                                                     >
                                                         <div className={`absolute inset-0 bg-gradient-to-br ${s.color} opacity-20 group-hover:opacity-30 transition-opacity`}></div>
