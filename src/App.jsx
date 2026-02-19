@@ -585,8 +585,8 @@ const LessonModal = ({ lesson, onClose }) => {
 
 const LessonCard = ({ lesson, onClick }) => (
     <button onClick={onClick} className="bg-[#1C1C1E] rounded-3xl overflow-hidden border border-white/5 transition-all duration-500 ease-spring hover:scale-[1.02] active:scale-95 cursor-pointer w-full text-left relative shadow-lg hover:shadow-2xl hover:shadow-black/50 group">
-      <div className="p-6 flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-5">
+      <div className="p-4 flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3.5">
             <div className="bg-[#2C2C2E] w-12 h-12 rounded-2xl flex flex-shrink-0 items-center justify-center shadow-inner border border-white/5 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors text-gray-300">
                 {lesson.icon}
             </div>
@@ -1534,13 +1534,13 @@ export default function App() {
       {/* កែត្រង់នេះ៖ បន្ថែម p-0 នៅពេលប្រើទូរស័ព្ទ (mobile) សម្រាប់ tab 'ai' និង 'lab' ដើម្បីឱ្យវាពេញអេក្រង់ */}
 <main className={`flex-1 max-w-7xl mx-auto w-full ${activeTab === 'ai' || activeTab === 'lab' ? 'h-full overflow-hidden p-0 md:p-8' : 'overflow-y-auto custom-scrollbar p-4 md:p-8'}`}>
         {activeTab === 'learn' && (
-          <div className="space-y-12 pb-24">
+          <div className="space-y-6 pb-24">
             <div className="text-center py-10 mt-6 relative">
                  <div className="absolute inset-0 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
                  <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Lightroom Master</h2>
                  <p className="text-gray-500 max-w-xl mx-auto text-sm md:text-base leading-relaxed">រៀនពីមូលដ្ឋានគ្រឹះដល់កម្រិតខ្ពស់ នៃការកែរូបភាពកំរិតស្ដង់ដា។</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {lessonsData.map(l => <LessonCard key={l.id} lesson={l} onClick={() => setExpandedLesson(l.id)} />)}
             </div>
             <TipsSection isExpanded={expandedSection === 'tips'} onToggle={() => setExpandedSection(expandedSection === 'tips' ? null : 'tips')} />
