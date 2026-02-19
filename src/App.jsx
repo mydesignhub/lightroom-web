@@ -502,7 +502,7 @@ const Header = ({ activeTab, setActiveTab }) => {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('learn')}>
           <div className="w-10 h-10 relative rounded-xl overflow-hidden shadow-lg flex-shrink-0 group-hover:shadow-blue-500/20 transition-all duration-500 ease-spring group-hover:scale-105 bg-white/5 p-1.5 border border-white/10">
-              <img src="/logo.svg" alt="Logo" className="w-full h-full object-contain p-1"/>
+              <img src="/logo.svg" alt="Logo" className="w-full h-full object-contain "/>
           </div>
           <h1 className="text-xl font-bold font-khmer text-white tracking-tight group-hover:opacity-80 transition-opacity">ម៉ាយឌីហ្សាញ</h1>
         </div>
