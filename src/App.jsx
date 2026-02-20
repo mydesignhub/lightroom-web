@@ -1322,7 +1322,7 @@ const handleDownload = () => {
                 onTouchEnd={handleCurvePointerUp}
             >
                 <div className="flex justify-between items-center mb-3">
-                    <p className={`text-[10px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម | ចុចពីរដងដើម្បីលុប</p>
+                    <p className={`text-[14px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម | ចុចពីរដងដើម្បីលុប</p>
                     <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-1.5 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={14}/></button>
                 </div>
                 <div className="flex gap-2 mb-4 justify-center relative z-20">
@@ -1339,7 +1339,7 @@ const handleDownload = () => {
                         </button>
                     ))}
                 </div>
-                <div className={`w-full aspect-square rounded-xl border relative overflow-visible touch-none ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                <div className={`w-[90%] mx-auto aspect-square rounded-xl border relative overflow-visible touch-none ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
                    <svg 
                        ref={curveSvgRef}
                        width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" 
