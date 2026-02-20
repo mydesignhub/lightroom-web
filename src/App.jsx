@@ -1266,11 +1266,70 @@ const handleDownload = () => {
                                             </div>
                                         ))}
                                         {group.group === 'Light' && (
-                                            <button onClick={() => setShowCurve(true)} className={`w-full py-2.5 mt-2 border rounded-xl text-xs font-bold font-khmer transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C] text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#1A1C1E] hover:bg-[#E0E0E0]/50'}`}>
-                                                <Activity size={14} className="text-[#C65102]" />
-                                                ខ្សែកោង (Tone Curve)
-                                            </button>
-                                        )}
+    <div className="flex flex-col gap-3 mt-4">
+        <button onClick={() => setShowCurve(!showCurve)} className={`w-full py-2.5 border rounded-xl text-xs font-bold font-khmer transition-all active:scale-95 flex items-center justify-between px-4 shadow-sm ${showCurve ? (isDarkMode ? 'bg-[#C65102]/20 border-[#C65102]/50 text-[#C65102]' : 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]') : (isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C] text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#1A1C1E] hover:bg-[#E0E0E0]/50')}`}>
+            <span className="flex items-center gap-2"><Activity size={14} className={showCurve ? "text-[#C65102]" : "text-[#C65102]"} /> ខ្សែកោង (Tone Curve)</span>
+            {showCurve ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+        
+        {showCurve && (
+            <div 
+                className={`p-4 rounded-2xl border shadow-sm animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}
+                onMouseMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
+                onMouseUp={handleCurvePointerUp}
+                onMouseLeave={handleCurvePointerUp}
+                onTouchMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
+                onTouchEnd={handleCurvePointerUp}
+            >
+                <div className="flex justify-between items-center mb-3">
+                    <p className={`text-[10px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម | ចុចពីរដងដើម្បីលុប</p>
+                    <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-1.5 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={14}/></button>
+                </div>
+                <div className="flex gap-2 mb-4 justify-center">
+                    {['Master', 'Red', 'Green', 'Blue'].map(ch => (
+                        <button 
+                            key={ch} 
+                            onClick={() => setActiveCurveChannel(ch)}
+                            className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${activeCurveChannel === ch ? 'bg-[#C65102] text-white shadow-md' : (isDarkMode ? 'bg-[#2C2C2E] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] border border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}
+                        >
+                            <span className="flex items-center gap-1.5">
+                                <div className={`w-2 h-2 rounded-full ${ch === 'Master' ? (isDarkMode ? 'bg-white' : 'bg-black') : (ch === 'Red' ? 'bg-[#EF4444]' : ch === 'Green' ? 'bg-[#22C55E]' : 'bg-[#3B82F6]')}`}></div>
+                                {ch}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+                <div className={`w-full aspect-square rounded-xl border relative overflow-visible touch-none ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                   <svg 
+                       ref={curveSvgRef}
+                       width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" 
+                       className="cursor-crosshair"
+                       style={{ overflow: 'visible' }}
+                       onPointerDown={handleCurvePointerDown}
+                       onDoubleClick={handleCurveDoubleClick}
+                   >
+                       <rect x="-20" y="-20" width="140" height="140" fill="transparent" />
+                       <line x1="25" y1="0" x2="25" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                       <line x1="50" y1="0" x2="50" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                       <line x1="75" y1="0" x2="75" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                       <line x1="0" y1="25" x2="100" y2="25" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                       <line x1="0" y1="50" x2="100" y2="50" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                       <line x1="0" y1="75" x2="100" y2="75" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                       <line x1="0" y1="100" x2="100" y2="0" stroke={isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'} strokeWidth="0.5" strokeDasharray="4" />
+                       <path d={renderSmoothCurve()} fill="none" stroke={getCurveColor()} strokeWidth="0.5" />
+                       {activePoints.map((p, idx) => (
+                           <circle 
+                                key={idx} cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "4.2" : "2.8"} 
+                                fill={getCurveColor()} stroke={isDarkMode ? '#121212' : '#FFFFFF'} strokeWidth="1.5"
+                                className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md" 
+                            />
+                       ))}
+                   </svg>
+                </div>
+            </div>
+        )}
+    </div>
+)}
                                     </div>
                                 </div>
                             ))}
