@@ -521,24 +521,34 @@ const evaluateSplineForFilter = (points, targetX) => {
     if (!points || points.length === 0) return targetX;
     if (targetX <= points[0].x) return points[0].y;
     if (targetX >= points[points.length - 1].x) return points[points.length - 1].y;
+    
     let i = 0;
     while (i < points.length - 2 && targetX >= points[i + 1].x) i++;
+    
     const p1 = points[i];
     const p2 = points[i + 1];
+    
+    // បង្កើតចំណុចស្រមោល ដើម្បីឱ្យខ្សែកោងអាចបត់បាន (Rotate naturally)
     const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : points[i - 1];
     const p3 = i + 1 === points.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : points[i + 2];
-    const m1 = (p2.y - p0.y) / Math.max(1, p2.x - p0.x);
-    const m2 = (p3.y - p1.y) / Math.max(1, p3.x - p1.x);
-    const h = p2.x - p1.x;
-    if (h === 0) return p1.y;
-    const t = (targetX - p1.x) / h;
+
+    // Catmull-Rom Spline Tangents (ជួយឱ្យចំណុចកណ្តាលវិលបាន)
+    const m1 = (p2.y - p0.y) / Math.max(1e-5, p2.x - p0.x);
+    const m2 = (p3.y - p1.y) / Math.max(1e-5, p3.x - p1.x);
+
+    const w = p2.x - p1.x;
+    if (w === 0) return p1.y;
+    
+    const t = (targetX - p1.x) / w;
     const t2 = t * t;
     const t3 = t2 * t;
+
     const h00 = 2 * t3 - 3 * t2 + 1;
     const h10 = t3 - 2 * t2 + t;
     const h01 = -2 * t3 + 3 * t2;
     const h11 = t3 - t2;
-    const y = h00 * p1.y + h10 * h * m1 + h01 * p2.y + h11 * h * m2;
+
+    const y = h00 * p1.y + h10 * w * m1 + h01 * p2.y + h11 * w * m2;
     return Math.max(0, Math.min(100, y));
 };
 
@@ -802,7 +812,7 @@ const PhotoLab = ({ isDarkMode }) => {
   const [activeCurveChannel, setActiveCurveChannel] = useState('Master');
   const [draggingPointIndex, setDraggingPointIndex] = useState(null);
   
-  const initialCurve = [{x:0, y:0}, {x:25, y:25}, {x:50, y:50}, {x:75, y:75}, {x:100, y:100}];
+  const initialCurve = [{x:0, y:0}, {x:100, y:100}];
   
   const defaultSettings = { 
       exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0, temp: 0, tint: 0, vibrance: 0, saturation: 0, texture: 0, clarity: 0, dehaze: 0, vignette: 0, 
@@ -1033,10 +1043,11 @@ const handleDownload = () => {
   const handleCurvePointerDown = (e) => {
       e.stopPropagation();
       const coords = getCurveCoords(e);
-      const points = [...activePoints];
+      const points = [...settings[`curve${activeCurveChannel}`]];
       
       let foundIndex = -1;
       let minDist = Infinity;
+      // ឆែកមើលថាតើចុចប៉ះចំណុច (Points) ចាស់ៗដែលមានស្រាប់ឬទេ
       for (let i = 0; i < points.length; i++) {
           const dist = Math.hypot(points[i].x - coords.x, points[i].y - coords.y);
           const hitRadius = (i === 0 || i === points.length - 1) ? 35 : 20; 
@@ -1047,12 +1058,22 @@ const handleDownload = () => {
       }
 
       if (foundIndex !== -1) {
+          // បើចុចប៉ះចំណុចចាស់ អនុញ្ញាតឱ្យអូសវា
           setDraggingPointIndex(foundIndex);
       } else {
-          if (coords.x > 2 && coords.x < 98 && coords.y >= 0 && coords.y <= 100) {
-              points.push({x: coords.x, y: coords.y});
+          // === នេះជាកន្លែងដែលកែប្រែថ្មី (Click on path only) ===
+          
+          // ១. គណនារកទីតាំងខ្សែ Y ពិតប្រាកដ នៅត្រង់អ័ក្ស X ដែលបងបានចុច
+          const curveY = evaluateSplineForFilter(points, coords.x);
+          
+          // ២. ឆែកមើលថាទីតាំងដែលចុច (coords.y) គឺស្ថិតនៅក្បែរខ្សែ (គម្លាតមិនលើសពី 8 ឯកតា ដើម្បីងាយស្រួលចុចប៉ះដោយម្រាមដៃ)
+          if (Math.abs(coords.y - curveY) <= 8 && coords.x > 2 && coords.x < 98) {
+              
+              // ៣. បន្ថែមចំណុចថ្មី ដោយបង្ខំវាឱ្យស្ថិតនៅចំកណ្តាលខ្សែ (curveY) ជានិច្ច
+              points.push({x: coords.x, y: curveY});
               points.sort((a, b) => a.x - b.x);
-              const newIndex = points.findIndex(p => p.x === coords.x && p.y === coords.y);
+              
+              const newIndex = points.findIndex(p => p.x === coords.x && p.y === curveY);
               updateSetting(`curve${activeCurveChannel}`, points);
               setDraggingPointIndex(newIndex);
           }
@@ -1063,7 +1084,7 @@ const handleDownload = () => {
       if (draggingPointIndex === null) return;
       e.stopPropagation();
       const coords = getCurveCoords(e);
-      const newPoints = [...activePoints];
+      const newPoints = [...settings[`curve${activeCurveChannel}`]];
       
       if (draggingPointIndex === 0) {
           if (coords.x > coords.y) {
@@ -1097,10 +1118,12 @@ const handleDownload = () => {
   const handleCurveDoubleClick = (e) => {
       e.stopPropagation();
       const coords = getCurveCoords(e);
-      for (let i = 1; i < activePoints.length - 1; i++) { 
-          const dist = Math.hypot(activePoints[i].x - coords.x, activePoints[i].y - coords.y);
+      const points = [...settings[`curve${activeCurveChannel}`]]; // ទាញយកចំណុចនៃ Channel ត្រឹមត្រូវ
+      
+      for (let i = 1; i < points.length - 1; i++) { 
+          const dist = Math.hypot(points[i].x - coords.x, points[i].y - coords.y);
           if (dist < 20) { 
-              const newPoints = activePoints.filter((_, idx) => idx !== i);
+              const newPoints = points.filter((_, idx) => idx !== i);
               updateSetting(`curve${activeCurveChannel}`, newPoints);
               break;
           }
@@ -1118,11 +1141,15 @@ const handleDownload = () => {
           const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : activePoints[i - 1];
           const p3 = i + 1 === activePoints.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : activePoints[i + 2];
 
-          const tension = 0.2;
-          const cp1x = p1.x + (p2.x - p0.x) * tension;
-          const cp1y = p1.y + (p2.y - p0.y) * tension;
-          const cp2x = p2.x - (p3.x - p1.x) * tension;
-          const cp2y = p2.y - (p3.y - p1.y) * tension;
+          // ប្រើប្រាស់ Catmull-Rom Tangents គ្មានការ Clamp
+          const m1 = (p2.y - p0.y) / Math.max(1e-5, p2.x - p0.x);
+          const m2 = (p3.y - p1.y) / Math.max(1e-5, p3.x - p1.x);
+
+          const w = p2.x - p1.x;
+          const cp1x = p1.x + w / 3;
+          const cp1y = p1.y + m1 * (w / 3);
+          const cp2x = p2.x - w / 3;
+          const cp2y = p2.y - m2 * (w / 3);
 
           d += ` C ${cp1x},${100 - cp1y} ${cp2x},${100 - cp2y} ${p2.x},${100 - p2.y}`;
       }
@@ -1285,7 +1312,7 @@ const handleDownload = () => {
                     <p className={`text-[10px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម | ចុចពីរដងដើម្បីលុប</p>
                     <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-1.5 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={14}/></button>
                 </div>
-                <div className="flex gap-2 mb-4 justify-center">
+                <div className="flex gap-2 mb-4 justify-center relative z-20">
                     {['Master', 'Red', 'Green', 'Blue'].map(ch => (
                         <button 
                             key={ch} 
@@ -1319,9 +1346,10 @@ const handleDownload = () => {
                        <path d={renderSmoothCurve()} fill="none" stroke={getCurveColor()} strokeWidth="0.5" />
                        {activePoints.map((p, idx) => (
                            <circle 
-                                key={idx} cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "4.2" : "2.8"} 
+                                key={idx} cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "3.5" : "2.8"}
                                 fill={getCurveColor()} stroke={isDarkMode ? '#121212' : '#FFFFFF'} strokeWidth="1.5"
-                                className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md" 
+                                className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md"
+               
                             />
                        ))}
                    </svg>
@@ -1418,91 +1446,7 @@ const handleDownload = () => {
             </div>
         </div>
         
-        {/* Real Interactive Tone Curve Pop-up Modal */}
-        {showCurve && (
-            <div 
-                className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/80" 
-                onMouseMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
-                onMouseUp={handleCurvePointerUp}
-                onTouchMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
-                onTouchEnd={handleCurvePointerUp}
-                onClick={(e) => { if(e.target === e.currentTarget) setShowCurve(false); }}
-            >
-                <div className={`w-full max-w-sm p-6 rounded-3xl border shadow-2xl animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`} onClick={e => e.stopPropagation()}>
-                    <div className="flex justify-between items-center mb-4 relative z-10">
-                        <div>
-                            <h3 className={`font-bold font-khmer flex items-center gap-2 text-lg ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}><Activity size={20} className="text-[#C65102]"/> Tone Curve</h3>
-                            <p className={`text-[10px] font-khmer mt-1 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម (Add) | ចុចពីរដងដើម្បីលុប (Double click)</p>
-                        </div>
-                        <div className="flex gap-2">
-                            <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={16}/></button>
-                            <button onClick={() => setShowCurve(false)} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`}><X size={16}/></button>
-                        </div>
-                    </div>
-                    
-                    {/* Channel Selector */}
-                    <div className="flex gap-2 mb-4 justify-center relative z-10">
-                        {['Master', 'Red', 'Green', 'Blue'].map(ch => (
-                            <button 
-                                key={ch} 
-                                onClick={() => setActiveCurveChannel(ch)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${activeCurveChannel === ch ? 'bg-[#C65102] text-white shadow-md' : (isDarkMode ? 'bg-[#2C2C2E] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] border border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}
-                            >
-                                <span className="flex items-center gap-1.5">
-                                    <div className={`w-2 h-2 rounded-full ${ch === 'Master' ? (isDarkMode ? 'bg-white' : 'bg-black') : (ch === 'Red' ? 'bg-[#EF4444]' : ch === 'Green' ? 'bg-[#22C55E]' : 'bg-[#3B82F6]')}`}></div>
-                                    {ch}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className={`w-full aspect-square rounded-2xl border relative overflow-visible touch-none ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                       <svg 
-                           ref={curveSvgRef}
-                           width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" 
-                           className="cursor-crosshair"
-                           style={{ overflow: 'visible' }}
-                           onPointerDown={handleCurvePointerDown}
-                           onDoubleClick={handleCurveDoubleClick}
-                       >
-                           {/* Invisible expanded hit area for outside clicking - Fixed size */}
-                           <rect x="-20" y="-20" width="140" height="140" fill="transparent" />
-
-                           {/* Grid Lines */}
-                           <line x1="25" y1="0" x2="25" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                           <line x1="50" y1="0" x2="50" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                           <line x1="75" y1="0" x2="75" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                           <line x1="0" y1="25" x2="100" y2="25" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                           <line x1="0" y1="50" x2="100" y2="50" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                           <line x1="0" y1="75" x2="100" y2="75" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                           
-                           {/* Diagonal Reference Line */}
-                           <line x1="0" y1="100" x2="100" y2="0" stroke={isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'} strokeWidth="0.5" strokeDasharray="4" />
-                           
-                           {/* The Real Smooth Spline Curve */}
-                           <path 
-                               d={renderSmoothCurve()} 
-                               fill="none" 
-                               stroke={getCurveColor()} 
-                               strokeWidth="0.5" 
-                           />
-                           
-                           {/* Interactive Points */}
-                           {activePoints.map((p, idx) => (
-                               <circle 
-                                    key={idx} 
-                                    cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "4.2" : "2.8"} 
-                                    fill={getCurveColor()} 
-                                    stroke={isDarkMode ? '#121212' : '#FFFFFF'}
-                                    strokeWidth="1.5"
-                                    className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md" 
-                                />
-                           ))}
-                       </svg>
-                    </div>
-                </div>
-            </div>
-        )}
+        
     </div>
   );
 };
