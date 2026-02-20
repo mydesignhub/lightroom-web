@@ -521,24 +521,46 @@ const evaluateSplineForFilter = (points, targetX) => {
     if (!points || points.length === 0) return targetX;
     if (targetX <= points[0].x) return points[0].y;
     if (targetX >= points[points.length - 1].x) return points[points.length - 1].y;
+    
     let i = 0;
     while (i < points.length - 2 && targetX >= points[i + 1].x) i++;
+    
     const p1 = points[i];
     const p2 = points[i + 1];
+    
     const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : points[i - 1];
     const p3 = i + 1 === points.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : points[i + 2];
-    const m1 = (p2.y - p0.y) / Math.max(1, p2.x - p0.x);
-    const m2 = (p3.y - p1.y) / Math.max(1, p3.x - p1.x);
-    const h = p2.x - p1.x;
-    if (h === 0) return p1.y;
-    const t = (targetX - p1.x) / h;
+
+    const d0 = (p1.y - p0.y) / Math.max(1e-5, p1.x - p0.x);
+    const d1 = (p2.y - p1.y) / Math.max(1e-5, p2.x - p1.x);
+    const d2 = (p3.y - p2.y) / Math.max(1e-5, p3.x - p2.x);
+
+    let m1 = (d0 + d1) / 2;
+    let m2 = (d1 + d2) / 2;
+
+    if (d1 === 0) {
+        m1 = 0;
+        m2 = 0;
+    } else {
+        if (Math.sign(m1) !== Math.sign(d1)) m1 = 0;
+        if (Math.sign(m2) !== Math.sign(d1)) m2 = 0;
+        m1 = Math.sign(m1) * Math.min(Math.abs(m1), 3 * Math.abs(d1));
+        m2 = Math.sign(m2) * Math.min(Math.abs(m2), 3 * Math.abs(d1));
+    }
+
+    const w = p2.x - p1.x;
+    if (w === 0) return p1.y;
+    
+    const t = (targetX - p1.x) / w;
     const t2 = t * t;
     const t3 = t2 * t;
+
     const h00 = 2 * t3 - 3 * t2 + 1;
     const h10 = t3 - 2 * t2 + t;
     const h01 = -2 * t3 + 3 * t2;
     const h11 = t3 - t2;
-    const y = h00 * p1.y + h10 * h * m1 + h01 * p2.y + h11 * h * m2;
+
+    const y = h00 * p1.y + h10 * w * m1 + h01 * p2.y + h11 * w * m2;
     return Math.max(0, Math.min(100, y));
 };
 
@@ -1073,11 +1095,34 @@ const handleDownload = () => {
           const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : activePoints[i - 1];
           const p3 = i + 1 === activePoints.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : activePoints[i + 2];
 
-          const tension = 0.2;
-          const cp1x = p1.x + (p2.x - p0.x) * tension;
-          const cp1y = p1.y + (p2.y - p0.y) * tension;
-          const cp2x = p2.x - (p3.x - p1.x) * tension;
-          const cp2y = p2.y - (p3.y - p1.y) * tension;
+          const d0 = (p1.y - p0.y) / Math.max(1e-5, p1.x - p0.x);
+          const d1 = (p2.y - p1.y) / Math.max(1e-5, p2.x - p1.x);
+          const d2 = (p3.y - p2.y) / Math.max(1e-5, p3.x - p2.x);
+
+          let m1 = (d0 + d1) / 2;
+          let m2 = (d1 + d2) / 2;
+
+          // Fritsch-Carlson Monotone Clamping for perfectly smooth professional curve
+          if (d1 === 0) {
+              m1 = 0;
+              m2 = 0;
+          } else {
+              if (Math.sign(m1) !== Math.sign(d1)) m1 = 0;
+              if (Math.sign(m2) !== Math.sign(d1)) m2 = 0;
+              m1 = Math.sign(m1) * Math.min(Math.abs(m1), 3 * Math.abs(d1));
+              m2 = Math.sign(m2) * Math.min(Math.abs(m2), 3 * Math.abs(d1));
+          }
+
+          const w = p2.x - p1.x;
+          const cp1x = p1.x + w / 3;
+          let cp1y = p1.y + m1 * (w / 3);
+          const cp2x = p2.x - w / 3;
+          let cp2y = p2.y - m2 * (w / 3);
+
+          const yMin = Math.min(p1.y, p2.y) - 15;
+          const yMax = Math.max(p1.y, p2.y) + 15;
+          cp1y = Math.max(yMin, Math.min(yMax, cp1y));
+          cp2y = Math.max(yMin, Math.min(yMax, cp2y));
 
           d += ` C ${cp1x},${100 - cp1y} ${cp2x},${100 - cp2y} ${p2.x},${100 - p2.y}`;
       }
@@ -1086,7 +1131,6 @@ const handleDownload = () => {
       if (activePoints[activePoints.length - 1].x < 100) d += ` L 100,${100 - activePoints[activePoints.length - 1].y}`;
       return d;
   };
-
   const getCurveColor = () => {
       if (activeCurveChannel === 'Red') return '#EF4444';
       if (activeCurveChannel === 'Green') return '#22C55E';
