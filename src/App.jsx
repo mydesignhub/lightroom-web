@@ -1242,8 +1242,11 @@ const handleDownload = () => {
                     <div className="relative w-full h-full pointer-events-none">
                         <svg width="0" height="0" className="absolute pointer-events-none">
                             <filter id="lr-adjustments" colorInterpolationFilters="sRGB">
-                                <feColorMatrix type="matrix" values={colorMatrixValue} />
-                                <feComponentTransfer>
+                                {/* 1. ដំបូង: អនុវត្តការកែពណ៌ពី Matrix សិន រួចរក្សាទុកលទ្ធផលចូលក្នុង in="matrixOut" */}
+                                <feColorMatrix type="matrix" values={colorMatrixValue} result="matrixOut" />
+
+                                {/* 2. បន្ទាប់មក: យកលទ្ធផលពី Matrix (in="matrixOut") មកគណនាជាមួយ Tone Curve បន្ត */}
+                                <feComponentTransfer in="matrixOut">
                                     <feFuncR type="table" tableValues={tableRed} />
                                     <feFuncG type="table" tableValues={tableGreen} />
                                     <feFuncB type="table" tableValues={tableBlue} />
