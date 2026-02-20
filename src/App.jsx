@@ -521,46 +521,24 @@ const evaluateSplineForFilter = (points, targetX) => {
     if (!points || points.length === 0) return targetX;
     if (targetX <= points[0].x) return points[0].y;
     if (targetX >= points[points.length - 1].x) return points[points.length - 1].y;
-    
     let i = 0;
     while (i < points.length - 2 && targetX >= points[i + 1].x) i++;
-    
     const p1 = points[i];
     const p2 = points[i + 1];
-    
     const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : points[i - 1];
     const p3 = i + 1 === points.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : points[i + 2];
-
-    const d0 = (p1.y - p0.y) / Math.max(1e-5, p1.x - p0.x);
-    const d1 = (p2.y - p1.y) / Math.max(1e-5, p2.x - p1.x);
-    const d2 = (p3.y - p2.y) / Math.max(1e-5, p3.x - p2.x);
-
-    let m1 = (d0 + d1) / 2;
-    let m2 = (d1 + d2) / 2;
-
-    if (d1 === 0) {
-        m1 = 0;
-        m2 = 0;
-    } else {
-        if (Math.sign(m1) !== Math.sign(d1)) m1 = 0;
-        if (Math.sign(m2) !== Math.sign(d1)) m2 = 0;
-        m1 = Math.sign(m1) * Math.min(Math.abs(m1), 3 * Math.abs(d1));
-        m2 = Math.sign(m2) * Math.min(Math.abs(m2), 3 * Math.abs(d1));
-    }
-
-    const w = p2.x - p1.x;
-    if (w === 0) return p1.y;
-    
-    const t = (targetX - p1.x) / w;
+    const m1 = (p2.y - p0.y) / Math.max(1, p2.x - p0.x);
+    const m2 = (p3.y - p1.y) / Math.max(1, p3.x - p1.x);
+    const h = p2.x - p1.x;
+    if (h === 0) return p1.y;
+    const t = (targetX - p1.x) / h;
     const t2 = t * t;
     const t3 = t2 * t;
-
     const h00 = 2 * t3 - 3 * t2 + 1;
     const h10 = t3 - 2 * t2 + t;
     const h01 = -2 * t3 + 3 * t2;
     const h11 = t3 - t2;
-
-    const y = h00 * p1.y + h10 * w * m1 + h01 * p2.y + h11 * w * m2;
+    const y = h00 * p1.y + h10 * h * m1 + h01 * p2.y + h11 * h * m2;
     return Math.max(0, Math.min(100, y));
 };
 
@@ -898,6 +876,14 @@ const PhotoLab = ({ isDarkMode }) => {
   };
   
   // PERFORMANCE OPTIMIZATION: Memoize filter and color matrix
+  // មុខងារជំនួយសម្រាប់បំប្លែង HSL ទៅជា RGB
+  const hslToRgb = (h, s, l) => {
+      s /= 100; l /= 100;
+      const k = n => (n + h / 30) % 12;
+      const a = s * Math.min(l, 1 - l);
+      const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+      return [f(0), f(8), f(4)];
+  };
   const filterString = useMemo(() => {
       const exp = 100 + (settings.exposure * 10) - (settings.dehaze > 0 ? settings.dehaze * 0.1 : 0);
       const con = 100 + settings.contrast + (settings.clarity * 0.1) + (settings.dehaze * 0.2);
@@ -908,12 +894,49 @@ const PhotoLab = ({ isDarkMode }) => {
   const colorMatrixValue = useMemo(() => {
       const temp = settings.temp / 100;
       const tint = settings.tint / 100;
-      const r = 1 + (temp * 0.2) + (tint * 0.1);
-      const g = 1 - (Math.abs(temp) * 0.05) - (tint * 0.15);
-      const b = 1 - (temp * 0.2) + (tint * 0.1);
-      return `${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`;
-  }, [settings.temp, settings.tint]);
+      
+      let r = 1 + (temp * 0.2) + (tint * 0.1);
+      let g = 1 - (Math.abs(temp) * 0.05) - (tint * 0.15);
+      let b = 1 - (temp * 0.2) + (tint * 0.1);
 
+      // 1. Color Grading Simulation (ជាមួយ Blending និង Balance)
+      // Balance: កំណត់ទម្ងន់រវាង Shadows និង Highlights (-100 ទៅ 100)
+      const bal = settings.gradingBalance / 100;
+      const shadowWeight = 1 - Math.max(0, bal);    // បើ Balance ទៅ + ឥទ្ធិពល Shadow ថយចុះ
+      const highlightWeight = 1 + Math.min(0, bal); // បើ Balance ទៅ - ឥទ្ធិពល Highlight ថយចុះ
+      
+      // Blending: កំណត់ភាពរលាយចូលគ្នា (0 ដល់ 100)
+      const blend = settings.gradingBlending / 100;
+      
+      if (settings.shadowSat > 0) {
+          const [sr, sg, sb] = hslToRgb(settings.shadowHue, 100, 50);
+          // គុណជាមួយ Weight និង Blending
+          r += (sr - 0.5) * (settings.shadowSat / 100) * 0.8 * shadowWeight * (0.5 + blend * 0.5);
+          g += (sg - 0.5) * (settings.shadowSat / 100) * 0.8 * shadowWeight * (0.5 + blend * 0.5);
+          b += (sb - 0.5) * (settings.shadowSat / 100) * 0.8 * shadowWeight * (0.5 + blend * 0.5);
+      }
+      
+      if (settings.highlightSat > 0) {
+          const [hr, hg, hb] = hslToRgb(settings.highlightHue, 100, 50);
+          // គុណជាមួយ Weight និង Blending
+          r += (hr - 0.5) * (settings.highlightSat / 100) * 0.6 * highlightWeight * (0.5 + blend * 0.5);
+          g += (hg - 0.5) * (settings.highlightSat / 100) * 0.6 * highlightWeight * (0.5 + blend * 0.5);
+          b += (hb - 0.5) * (settings.highlightSat / 100) * 0.6 * highlightWeight * (0.5 + blend * 0.5);
+      }
+
+      // 2. Color Mix Basic Simulation
+      let rOff = (settings.redSat + settings.orangeSat) * 0.001;
+      let gOff = (settings.greenSat) * 0.001;
+      let bOff = (settings.blueSat + settings.aquaSat) * 0.001;
+
+      return `${r} 0 0 0 ${rOff}  0 ${g} 0 0 ${gOff}  0 0 ${b} 0 ${bOff}  0 0 0 1 0`;
+  }, [
+      settings.temp, settings.tint, 
+      settings.shadowHue, settings.shadowSat, 
+      settings.highlightHue, settings.highlightSat,
+      settings.gradingBlending, settings.gradingBalance, // បន្ថែម Dependencies ថ្មី ២ នេះ
+      settings.redSat, settings.orangeSat, settings.blueSat, settings.aquaSat, settings.greenSat
+  ]);
   const tableRed = useMemo(() => getChannelTable('Red', settings), [settings.curveMaster, settings.curveRed, settings.blacks, settings.shadows, settings.highlights, settings.whites]);
   const tableGreen = useMemo(() => getChannelTable('Green', settings), [settings.curveMaster, settings.curveGreen, settings.blacks, settings.shadows, settings.highlights, settings.whites]);
   const tableBlue = useMemo(() => getChannelTable('Blue', settings), [settings.curveMaster, settings.curveBlue, settings.blacks, settings.shadows, settings.highlights, settings.whites]);
@@ -1095,34 +1118,11 @@ const handleDownload = () => {
           const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : activePoints[i - 1];
           const p3 = i + 1 === activePoints.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : activePoints[i + 2];
 
-          const d0 = (p1.y - p0.y) / Math.max(1e-5, p1.x - p0.x);
-          const d1 = (p2.y - p1.y) / Math.max(1e-5, p2.x - p1.x);
-          const d2 = (p3.y - p2.y) / Math.max(1e-5, p3.x - p2.x);
-
-          let m1 = (d0 + d1) / 2;
-          let m2 = (d1 + d2) / 2;
-
-          // Fritsch-Carlson Monotone Clamping for perfectly smooth professional curve
-          if (d1 === 0) {
-              m1 = 0;
-              m2 = 0;
-          } else {
-              if (Math.sign(m1) !== Math.sign(d1)) m1 = 0;
-              if (Math.sign(m2) !== Math.sign(d1)) m2 = 0;
-              m1 = Math.sign(m1) * Math.min(Math.abs(m1), 3 * Math.abs(d1));
-              m2 = Math.sign(m2) * Math.min(Math.abs(m2), 3 * Math.abs(d1));
-          }
-
-          const w = p2.x - p1.x;
-          const cp1x = p1.x + w / 3;
-          let cp1y = p1.y + m1 * (w / 3);
-          const cp2x = p2.x - w / 3;
-          let cp2y = p2.y - m2 * (w / 3);
-
-          const yMin = Math.min(p1.y, p2.y) - 15;
-          const yMax = Math.max(p1.y, p2.y) + 15;
-          cp1y = Math.max(yMin, Math.min(yMax, cp1y));
-          cp2y = Math.max(yMin, Math.min(yMax, cp2y));
+          const tension = 0.2;
+          const cp1x = p1.x + (p2.x - p0.x) * tension;
+          const cp1y = p1.y + (p2.y - p0.y) * tension;
+          const cp2x = p2.x - (p3.x - p1.x) * tension;
+          const cp2y = p2.y - (p3.y - p1.y) * tension;
 
           d += ` C ${cp1x},${100 - cp1y} ${cp2x},${100 - cp2y} ${p2.x},${100 - p2.y}`;
       }
@@ -1131,6 +1131,7 @@ const handleDownload = () => {
       if (activePoints[activePoints.length - 1].x < 100) d += ` L 100,${100 - activePoints[activePoints.length - 1].y}`;
       return d;
   };
+
   const getCurveColor = () => {
       if (activeCurveChannel === 'Red') return '#EF4444';
       if (activeCurveChannel === 'Green') return '#22C55E';
