@@ -8,7 +8,7 @@ import {
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
   Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
   Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
-  ThumbsUp, User
+  ThumbsUp, User, Activity
 } from 'lucide-react';
 
 // ==========================================
@@ -94,6 +94,11 @@ const escapeXML = (str) => {
     });
 };
 
+const formatCurveForXMP = (pts) => {
+    if (!pts || pts.length === 0) return `<rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li>`;
+    return pts.map(p => `<rdf:li>${Math.round((p.x/100)*255)}, ${Math.round((p.y/100)*255)}</rdf:li>`).join('');
+};
+
 const generateXMP = (recipe, title) => {
     const basic = recipe.basic || {};
     const colorMix = recipe.colorMix || [];
@@ -118,7 +123,6 @@ const generateXMP = (recipe, title) => {
     crs:IncrementalTemperature="${basic.Temp || 0}" crs:IncrementalTint="${basic.Tint || 0}"
     crs:Exposure2012="${basic.Exposure || 0}" crs:Contrast2012="${basic.Contrast || 0}" crs:Highlights2012="${basic.Highlights || 0}" crs:Shadows2012="${basic.Shadows || 0}" crs:Whites2012="${basic.Whites || 0}" crs:Blacks2012="${basic.Blacks || 0}"
     crs:Texture="${basic.Texture || 0}" crs:Clarity2012="${basic.Clarity || 0}" crs:Dehaze="${basic.Dehaze || 0}" crs:Vibrance="${basic.Vibrance || 0}" crs:Saturation="${basic.Saturation || 0}"
-    crs:ParametricShadows="0" crs:ParametricDarks="0" crs:ParametricLights="0" crs:ParametricHighlights="0" crs:ParametricShadowSplit="25" crs:ParametricMidtoneSplit="50" crs:ParametricHighlightSplit="75"
     crs:Sharpness="${detail.Sharpening || 40}" crs:SharprenRadius="+1.0" crs:SharpenDetail="25" crs:SharpenEdgeMasking="0"
     crs:LuminanceSmoothing="${detail.Noise || 0}" crs:ColorNoiseReduction="${detail.ColorNoise || 25}"
     crs:HueAdjustmentRed="${getHSL('Red').h}" crs:HueAdjustmentOrange="${getHSL('Orange').h}" crs:HueAdjustmentYellow="${getHSL('Yellow').h}" crs:HueAdjustmentGreen="${getHSL('Green').h}" crs:HueAdjustmentAqua="${getHSL('Aqua').h}" crs:HueAdjustmentBlue="${getHSL('Blue').h}" crs:HueAdjustmentPurple="${getHSL('Purple').h}" crs:HueAdjustmentMagenta="${getHSL('Magenta').h}"
@@ -127,10 +131,18 @@ const generateXMP = (recipe, title) => {
     crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}" crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}" crs:SplitToningBalance="${grading.Balance || 0}"
     crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}" crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}" crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}" crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}" crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}" crs:ColorGradeBlending="${grading.Blending || 50}" crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
     crs:GrainAmount="${effects.Grain || 0}" crs:PostCropVignetteAmount="${basic.Vignette || 0}" crs:LensProfileEnable="1">
-   <crs:ToneCurvePV2012><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012>
-   <crs:ToneCurvePV2012Red><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Red>
-   <crs:ToneCurvePV2012Green><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Green>
-   <crs:ToneCurvePV2012Blue><rdf:Seq><rdf:li>0, 0</rdf:li><rdf:li>255, 255</rdf:li></rdf:Seq></crs:ToneCurvePV2012Blue>
+   <crs:ToneCurvePV2012>
+    <rdf:Seq>${formatCurveForXMP(recipe.curveMaster)}</rdf:Seq>
+   </crs:ToneCurvePV2012>
+   <crs:ToneCurvePV2012Red>
+    <rdf:Seq>${formatCurveForXMP(recipe.curveRed)}</rdf:Seq>
+   </crs:ToneCurvePV2012Red>
+   <crs:ToneCurvePV2012Green>
+    <rdf:Seq>${formatCurveForXMP(recipe.curveGreen)}</rdf:Seq>
+   </crs:ToneCurvePV2012Green>
+   <crs:ToneCurvePV2012Blue>
+    <rdf:Seq>${formatCurveForXMP(recipe.curveBlue)}</rdf:Seq>
+   </crs:ToneCurvePV2012Blue>
    <dc:rights>
     <rdf:Alt>
      <rdf:li xml:lang="x-default">© 2026 My Design. Crafted with Passion. Email: koymy.mlk@gmail.com</rdf:li>
@@ -270,6 +282,106 @@ const KNOWLEDGE_BASE = [
     { keys: ['help', 'ជួយ', 'របៀបប្រើ', 'guide'], answer: "ជម្រាបសួរ! 🤝 ខ្ញុំនៅទីនេះរង់ចាំជួយបងជានិច្ច! បងអាចសួរខ្ញុំបានរាល់ចម្ងល់ទាំងអស់ទាក់ទងនឹងការកែរូប ដូចជា៖\n\n🎨 **សួរពីរូបមន្តពណ៌**: 'សុំ Preset ហាងកាហ្វេ' ឬ 'របៀបកែពណ៌ Cinematic'\n🛠️ **សួរពីឧបករណ៍កែរូប**: 'តើ Dehaze ប្រើសម្រាប់អ្វី?' ឬ 'ពន្យល់ពី Tone Curve'\n🧠 **សួរពីអត្ថន័យពណ៌**: 'តើពណ៌ខៀវមានន័យដូចម្តេចក្នុងរូបភាព?'\n📸 **សួរពីបញ្ហាក្នុងរូប**: 'ហេតុអីថតរូបមកងងឹតមុខ?' ឬ 'របៀបកែរូបកុំឱ្យមាន Noise'\n\nគ្រាន់តែសរសេរសំណួររបស់បងមក ខ្ញុំនឹងពន្យល់ប្រាប់យ៉ាងលម្អិត និងងាយយល់បំផុត! តោះ ចាប់ផ្តើមសួរមក! 🚀" }
 ];
 
+const PRESET_MOODS = [
+    { id: 'trend_bright_airy_1', name: 'Bright & Airy', color: 'from-sky-200 to-white' },
+    { id: 'time_golden_1', name: 'Golden Hour', color: 'from-orange-400 to-amber-500' },
+    { id: 'mood_happy_1', name: 'Happy & Joy', color: 'from-yellow-300 to-orange-400' },
+    { id: 'trend_teal_orange_1', name: 'Teal & Orange', color: 'from-teal-500 to-orange-500' },
+    { id: 'trend_cinematic_1', name: 'Cinematic Film', color: 'from-slate-700 to-slate-900' },
+    { id: 'trend_dark_moody_1', name: 'Dark & Moody', color: 'from-stone-800 to-stone-950' },
+    { id: 'era_vintage_90s_1', name: 'Vintage 90s', color: 'from-amber-600 to-yellow-800' },
+    { id: 'photo_portrait_1', name: 'Portrait Glow', color: 'from-rose-200 to-orange-200' },
+    { id: 'mood_soft_pastel_1', name: 'Soft Pastel', color: 'from-pink-200 to-purple-200' },
+    { id: 'photo_food_1', name: 'Tasty Food', color: 'from-red-400 to-orange-500' }
+];
+
+const generateVariations = (baseId, category, baseName, baseParams, count) => {
+    const variants = {};
+    for (let i = 1; i <= count; i++) {
+        // Subtle variations for professional touch
+        const adjExposure = (baseParams.basic?.Exposure || 0) + (i === 2 ? 0.15 : (i === 3 ? -0.15 : 0));
+        variants[`${baseId}_${i}`] = {
+            id: `${baseId}_${i}`,
+            category: category,
+            name: count === 1 ? baseName : `${baseName} V${i}`,
+            basic: { ...baseParams.basic, Exposure: Number(adjExposure.toFixed(2)) },
+            grading: baseParams.grading || {},
+            curveMaster: baseParams.curveMaster || [{x:0,y:0}, {x:25,y:25}, {x:50,y:50}, {x:75,y:75}, {x:100,y:100}],
+            curveRed: baseParams.curveRed || [{x:0,y:0}, {x:25,y:25}, {x:50,y:50}, {x:75,y:75}, {x:100,y:100}],
+            curveGreen: baseParams.curveGreen || [{x:0,y:0}, {x:25,y:25}, {x:50,y:50}, {x:75,y:75}, {x:100,y:100}],
+            curveBlue: baseParams.curveBlue || [{x:0,y:0}, {x:25,y:25}, {x:50,y:50}, {x:75,y:75}, {x:100,y:100}]
+        };
+    }
+    return variants;
+};
+
+// Professional Curve Templates
+const sCurve = [{x:0,y:0}, {x:25,y:20}, {x:50,y:50}, {x:75,y:80}, {x:100,y:100}];
+const popCurve = [{x:0,y:0}, {x:20,y:15}, {x:50,y:50}, {x:80,y:85}, {x:100,y:100}];
+const filmCurve = [{x:0,y:15}, {x:25,y:25}, {x:50,y:50}, {x:75,y:75}, {x:100,y:92}];
+const moodyCurve = [{x:0,y:8}, {x:25,y:20}, {x:50,y:45}, {x:75,y:75}, {x:100,y:95}];
+const matteCurve = [{x:0,y:15}, {x:25,y:30}, {x:50,y:50}, {x:75,y:75}, {x:100,y:90}];
+const fadedCurve = [{x:0,y:20}, {x:25,y:35}, {x:50,y:50}, {x:75,y:70}, {x:100,y:85}];
+
+const BASE_PRESETS_DATA = {
+    // -------------------------
+    // TRENDS & CINEMATIC
+    // -------------------------
+    ...generateVariations("trend_teal_orange", "Trends & Cinematic", "Teal & Orange", { basic: { Contrast: 20, Highlights: -40, Shadows: 30, Temp: 5, Vibrance: 25 }, grading: { Shadows: { h: 210, s: 25, l: -5 }, Highlights: { h: 35, s: 20, l: 5 } }, curveMaster: sCurve }, 3),
+    ...generateVariations("trend_cinematic", "Trends & Cinematic", "Cinematic Film", { basic: { Contrast: 15, Highlights: -30, Shadows: 25, Clarity: 10, Vibrance: -10 }, grading: { Shadows: { h: 200, s: 15, l: 0 }, Midtones: { h: 45, s: 10, l: 0 } }, curveMaster: filmCurve }, 3),
+    ...generateVariations("trend_bright_airy", "Trends & Cinematic", "Bright & Airy", { basic: { Exposure: 0.4, Contrast: -10, Highlights: -40, Shadows: 50, Whites: 20, Blacks: 15, Temp: 5, Vibrance: 30 }, curveMaster: [{x:0,y:5}, {x:25,y:30}, {x:50,y:55}, {x:75,y:80}, {x:100,y:100}] }, 3),
+    ...generateVariations("trend_dark_moody", "Trends & Cinematic", "Dark & Moody", { basic: { Exposure: -0.3, Contrast: 30, Highlights: -50, Shadows: -10, Blacks: 20, Vibrance: -20, Clarity: 20, Vignette: -30 }, curveMaster: moodyCurve }, 3),
+    ...generateVariations("trend_cyberpunk", "Trends & Cinematic", "Cyberpunk", { basic: { Exposure: 0.1, Contrast: 40, Highlights: -30, Shadows: 20, Whites: 10, Blacks: -20, Temp: -25, Tint: 40, Vibrance: 50, Saturation: 10, Clarity: 30, Dehaze: 20 }, curveMaster: popCurve, curveBlue: [{x:0,y:0}, {x:50,y:45}, {x:100,y:100}] }, 3),
+    ...generateVariations("trend_matte_black", "Trends & Cinematic", "Matte Black", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 30, Saturation: -10, Vignette: -20 }, curveMaster: matteCurve }, 3),
+    ...generateVariations("trend_orange_brown", "Trends & Cinematic", "Orange & Brown", { basic: { Exposure: -0.1, Contrast: 20, Highlights: -30, Shadows: 25, Temp: 15, Tint: 10, Vibrance: -15, Saturation: -10 }, grading: { Shadows: { h: 30, s: 20, l: -5 }, Highlights: { h: 40, s: 15, l: 5 } }, curveMaster: moodyCurve }, 3),
+    ...generateVariations("trend_hdr_crisp", "Trends & Cinematic", "HDR Crisp", { basic: { Contrast: 10, Highlights: -80, Shadows: 80, Whites: 20, Blacks: -20, Vibrance: 40, Clarity: 40, Dehaze: 15 }, curveMaster: sCurve }, 3),
+
+    // -------------------------
+    // MOODS & FEELINGS
+    // -------------------------
+    ...generateVariations("mood_happy", "Moods & Feelings", "Happy & Joy", { basic: { Exposure: 0.25, Contrast: 10, Highlights: -30, Shadows: 40, Vibrance: 40, Temp: 10, Tint: 5 }, curveMaster: sCurve }, 3),
+    ...generateVariations("mood_sad", "Moods & Feelings", "Sad & Lonely", { basic: { Exposure: -0.25, Contrast: 15, Shadows: 10, Blacks: 25, Temp: -15, Vibrance: -30, Saturation: -15, Vignette: -20 }, curveMaster: filmCurve, curveBlue: [{x:0,y:10}, {x:50,y:50}, {x:100,y:100}] }, 3),
+    ...generateVariations("mood_soft_pastel", "Moods & Feelings", "Soft Pastel", { basic: { Exposure: 0.2, Contrast: -15, Highlights: -20, Shadows: 30, Temp: 5, Tint: 15, Vibrance: 25, Clarity: -15 }, curveMaster: filmCurve }, 3),
+    ...generateVariations("mood_dreamy", "Moods & Feelings", "Dreamy Soft", { basic: { Exposure: 0.15, Contrast: -25, Highlights: -10, Shadows: 25, Temp: 0, Tint: 20, Clarity: -30, Dehaze: -15 }, curveMaster: fadedCurve }, 3),
+    ...generateVariations("mood_romantic", "Moods & Feelings", "Romantic Love", { basic: { Exposure: 0.1, Contrast: 5, Highlights: -25, Shadows: 35, Temp: 12, Tint: 10, Vibrance: 20, Clarity: -10 }, curveMaster: sCurve, curveRed: [{x:0,y:0}, {x:50,y:55}, {x:100,y:100}] }, 3),
+    ...generateVariations("mood_melancholic", "Moods & Feelings", "Melancholic", { basic: { Exposure: -0.3, Contrast: 20, Highlights: -40, Shadows: -10, Blacks: 15, Temp: -10, Tint: -5, Vibrance: -40 }, grading: { Shadows: { h: 220, s: 15, l: -10 } }, curveMaster: moodyCurve }, 3),
+    ...generateVariations("mood_energetic", "Moods & Feelings", "Energetic Vibe", { basic: { Exposure: 0.1, Contrast: 25, Highlights: -15, Shadows: 15, Temp: 5, Tint: 5, Vibrance: 50, Saturation: 10, Clarity: 15 }, curveMaster: popCurve }, 3),
+
+    // -------------------------
+    // ERAS & VINTAGE
+    // -------------------------
+    ...generateVariations("era_vintage_90s", "Eras & Vintage", "Vintage 90s", { basic: { Contrast: -10, Highlights: -30, Shadows: 40, Blacks: 30, Temp: 15, Tint: 10, Clarity: -10, Vignette: -20 }, curveMaster: [{x:0,y:18}, {x:30,y:35}, {x:70,y:70}, {x:100,y:85}], curveRed: [{x:0,y:5}, {x:50,y:50}, {x:100,y:100}] }, 3),
+    ...generateVariations("era_retro_80s", "Eras & Vintage", "Retro 80s", { basic: { Contrast: 20, Temp: -5, Tint: 25, Vibrance: 35 }, curveMaster: sCurve, curveBlue: [{x:0,y:15}, {x:50,y:50}, {x:100,y:90}] }, 3),
+    ...generateVariations("era_classic_bw", "Eras & Vintage", "Classic B&W", { basic: { Contrast: 40, Highlights: -30, Shadows: 25, Whites: 20, Blacks: -25, Saturation: -100, Clarity: 20 }, curveMaster: sCurve }, 3),
+    ...generateVariations("era_polaroid_70s", "Eras & Vintage", "70s Polaroid", { basic: { Contrast: -20, Highlights: -40, Shadows: 50, Blacks: 40, Temp: 20, Tint: 15, Vibrance: -10, Clarity: -20 }, curveMaster: fadedCurve, curveGreen: [{x:0,y:10}, {x:50,y:50}, {x:100,y:90}] }, 3),
+    ...generateVariations("era_y2k_disposable", "Eras & Vintage", "Y2K Disposable", { basic: { Exposure: 0.3, Contrast: 35, Highlights: -20, Shadows: -10, Whites: 25, Temp: -5, Tint: 10, Saturation: 15, Clarity: 10 }, curveMaster: popCurve, curveBlue: [{x:0,y:10}, {x:50,y:45}, {x:100,y:100}] }, 3),
+    ...generateVariations("era_sepia", "Eras & Vintage", "Sepia Antique", { basic: { Contrast: 15, Highlights: -20, Shadows: 20, Saturation: -100, Clarity: 15 }, grading: { Midtones: { h: 35, s: 30, l: 0 }, Shadows: { h: 30, s: 20, l: -5 } }, curveMaster: filmCurve }, 3),
+    ...generateVariations("era_cine_nostalgia", "Eras & Vintage", "Cine Nostalgia", { basic: { Exposure: -0.1, Contrast: -5, Highlights: -30, Shadows: 30, Blacks: 20, Temp: 10, Vibrance: -15 }, curveMaster: matteCurve, curveBlue: [{x:0,y:15}, {x:50,y:50}, {x:100,y:85}] }, 3),
+
+    // -------------------------
+    // TIME & SEASONS
+    // -------------------------
+    ...generateVariations("time_golden", "Time & Seasons", "Golden Hour", { basic: { Contrast: 15, Highlights: -50, Shadows: 30, Temp: 25, Tint: 5, Vibrance: 40 }, grading: { Highlights: { h: 45, s: 25, l: 5 } }, curveMaster: sCurve }, 3),
+    ...generateVariations("time_blue_hour", "Time & Seasons", "Blue Hour", { basic: { Contrast: 10, Shadows: 20, Temp: -25, Tint: -5, Vibrance: 25 }, grading: { Shadows: { h: 220, s: 20, l: 0 } } }, 3),
+    ...generateVariations("time_night_neon", "Time & Seasons", "Night Neon", { basic: { Contrast: 30, Highlights: -20, Shadows: 15, Temp: -15, Tint: 20, Vibrance: 45, Clarity: 15 }, curveMaster: moodyCurve }, 3),
+    ...generateVariations("time_dawn_mist", "Time & Seasons", "Dawn Mist", { basic: { Exposure: 0.15, Contrast: -10, Highlights: -20, Shadows: 35, Temp: -10, Tint: 5, Clarity: -15, Dehaze: -10 }, curveMaster: fadedCurve }, 3),
+    ...generateVariations("time_high_noon", "Time & Seasons", "High Noon", { basic: { Contrast: 5, Highlights: -60, Shadows: 50, Whites: -10, Blacks: -5, Temp: -5, Vibrance: 15 }, curveMaster: [{x:0,y:0}, {x:25,y:35}, {x:50,y:50}, {x:75,y:65}, {x:100,y:100}] }, 3),
+    ...generateVariations("time_autumn", "Time & Seasons", "Autumn Leaves", { basic: { Contrast: 15, Highlights: -30, Shadows: 25, Temp: 15, Tint: 5, Vibrance: 35 }, grading: { Highlights: { h: 35, s: 15, l: 0 } }, curveMaster: sCurve, curveGreen: [{x:0,y:0}, {x:50,y:40}, {x:100,y:100}] }, 3),
+    ...generateVariations("time_winter", "Time & Seasons", "Winter Cold", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -10, Shadows: 10, Whites: 15, Temp: -20, Tint: 5, Vibrance: 10, Saturation: -10 }, curveMaster: popCurve, curveBlue: [{x:0,y:0}, {x:50,y:55}, {x:100,y:100}] }, 3),
+
+    // -------------------------
+    // PHOTOGRAPHY & SUBJECTS
+    // -------------------------
+    ...generateVariations("photo_portrait", "Photography & Subjects", "Portrait Glow", { basic: { Exposure: 0.15, Contrast: 5, Highlights: -30, Shadows: 20, Temp: 8, Vibrance: 20, Clarity: -10, Texture: -10 }, curveMaster: [{x:0,y:5}, {x:25,y:28}, {x:50,y:50}, {x:75,y:75}, {x:100,y:95}] }, 3),
+    ...generateVariations("photo_landscape", "Photography & Subjects", "Vivid Landscape", { basic: { Contrast: 20, Highlights: -60, Shadows: 45, Whites: 15, Blacks: -10, Vibrance: 45, Clarity: 20, Dehaze: 10 }, curveMaster: sCurve }, 3),
+    ...generateVariations("photo_food", "Photography & Subjects", "Tasty Food", { basic: { Exposure: 0.2, Contrast: 25, Shadows: 15, Temp: 10, Vibrance: 35, Saturation: 5, Clarity: 15, Texture: 15 }, curveMaster: sCurve }, 3),
+    ...generateVariations("photo_street", "Photography & Subjects", "Urban Street", { basic: { Contrast: 35, Highlights: -40, Shadows: 25, Blacks: -15, Vibrance: -10, Clarity: 30, Dehaze: 15, Vignette: -25 }, curveMaster: moodyCurve }, 3),
+    ...generateVariations("photo_wedding", "Photography & Subjects", "Wedding Classic", { basic: { Exposure: 0.35, Contrast: 5, Highlights: -50, Shadows: 50, Temp: 5, Tint: 10, Vibrance: 20, Clarity: -5 }, curveMaster: [{x:0,y:10}, {x:30,y:35}, {x:70,y:75}, {x:100,y:95}] }, 3),
+    ...generateVariations("photo_architecture", "Photography & Subjects", "Architecture", { basic: { Contrast: 25, Highlights: -50, Shadows: 40, Whites: 10, Blacks: -20, Saturation: -15, Clarity: 40, Texture: 20, Dehaze: 10 }, curveMaster: sCurve }, 3),
+    ...generateVariations("photo_fashion", "Photography & Subjects", "Fashion Editorial", { basic: { Exposure: 0.1, Contrast: 30, Highlights: -20, Shadows: 10, Whites: 15, Blacks: -15, Vibrance: 15, Saturation: -10, Clarity: 10 }, grading: { Shadows: { h: 220, s: 10, l: 0 } }, curveMaster: popCurve }, 3),
+    ...generateVariations("photo_macro", "Photography & Subjects", "Macro Nature", { basic: { Contrast: 15, Highlights: -30, Shadows: 30, Vibrance: 30, Clarity: 15, Texture: 25 }, curveMaster: sCurve }, 3),
+};
+
 const lessonsData = [
   { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-6 h-6 text-yellow-400" />, description: 'ការគ្រប់គ្រងពន្លឺនិងភាពផ្ទុយ', content: [
     { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាជាជំហានដំបូងក្នុងការកែ។', tip: 'ឧទាហរណ៍៖ រូបថតពេលល្ងាចងងឹតបន្តិច ដាក់ +0.50 ទៅ +1.00។' }, 
@@ -304,83 +416,6 @@ const lessonsData = [
     { tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលលឿន ឬ "Vertical" សម្រាប់ថតអគារ។' }
   ] }
 ];
-
-const PRESET_MOODS = [
-    { id: 'mood_happy_1', name: 'Happy & Joy', color: 'from-yellow-400 to-orange-500' },
-    { id: 'mood_sad_1', name: 'Sad & Lonely', color: 'from-slate-700 to-blue-900' },
-    { id: 'mood_dreamy_1', name: 'Dreamy Soft', color: 'from-pink-200 to-purple-200' },
-    { id: 'trend_cinematic_1', name: 'Cinematic', color: 'from-teal-600 to-orange-600' },
-    { id: 'trend_dark_moody_1', name: 'Dark & Moody', color: 'from-stone-800 to-stone-950' },
-    { id: 'trend_bright_airy_1', name: 'Bright & Airy', color: 'from-sky-200 to-white' },
-    { id: 'trend_cyberpunk_1', name: 'Cyberpunk', color: 'from-cyan-400 to-fuchsia-600' },
-    { id: 'era_vintage_1', name: 'Vintage 90s', color: 'from-amber-600 to-yellow-800' },
-    { id: 'era_retro_1', name: 'Retro 80s', color: 'from-pink-500 to-purple-600' },
-    { id: 'era_classic_bw_1', name: 'Classic B&W', color: 'from-gray-400 to-black' },
-    { id: 'time_golden_1', name: 'Golden Hour', color: 'from-orange-400 to-red-500' },
-    { id: 'time_night_1', name: 'Night City', color: 'from-blue-800 to-indigo-950' },
-    { id: 'time_morning_1', name: 'Fresh Morning', color: 'from-emerald-300 to-cyan-300' },
-    { id: 'wedding_classic_1', name: 'Wedding', color: 'from-rose-100 to-white' },
-    { id: 'portrait_glow_1', name: 'Portrait Glow', color: 'from-amber-200 to-orange-300' },
-    { id: 'food_tasty_1', name: 'Tasty Food', color: 'from-red-400 to-yellow-400' },
-    { id: 'nature_landscape_1', name: 'Nature Pop', color: 'from-green-500 to-emerald-800' },
-    { id: 'urban_street_1', name: 'Urban Street', color: 'from-gray-600 to-slate-800' },
-];
-
-const generateVariations = (baseId, baseParams, count) => {
-    const variants = {};
-    for (let i = 1; i <= count; i++) {
-        const adjExposure = (baseParams.basic.Exposure || 0) + (i % 3 === 0 ? 0.05 * (i/3) : -0.05 * (i/3));
-        const adjTemp = (baseParams.basic.Temp || 0) + (i * 2 * (i % 2 === 0 ? 1 : -1));
-        const adjTint = (baseParams.basic.Tint || 0) + (i % 4 === 0 ? 5 : 0);
-        variants[`${baseId}_${i}`] = {
-            id: `${baseId}_${i}`,
-            name: `${baseId.replace(/_/g, ' ')} ${i}`,
-            basic: { ...baseParams.basic, Exposure: Number(adjExposure.toFixed(2)), Temp: adjTemp, Tint: adjTint },
-            grading: baseParams.grading || {}
-        };
-    }
-    return variants;
-};
-
-const BASE_PRESETS_DATA = {
-    // Advanced Colors
-    ...generateVariations("color_red", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -20, Shadows: 10, Temp: 10, Tint: 15, Vibrance: 25, Saturation: 5 }, grading: { Shadows: { h: 350, s: 15, l: -5 }, Highlights: { h: 10, s: 15, l: 5 } } }, 10),
-    ...generateVariations("color_orange", { basic: { Exposure: 0.15, Contrast: 10, Highlights: -30, Shadows: 20, Temp: 15, Tint: 5, Vibrance: 30, Saturation: 10 }, grading: { Shadows: { h: 25, s: 20, l: 0 }, Highlights: { h: 40, s: 15, l: 5 } } }, 10),
-    ...generateVariations("color_yellow", { basic: { Exposure: 0.2, Contrast: 5, Highlights: -40, Shadows: 30, Temp: 15, Vibrance: 35, Saturation: 5 }, grading: { Shadows: { h: 45, s: 15, l: 0 }, Highlights: { h: 55, s: 25, l: 10 } } }, 10),
-    ...generateVariations("color_green", { basic: { Exposure: -0.1, Contrast: 20, Highlights: -50, Shadows: 40, Blacks: -10, Temp: -5, Tint: -25, Vibrance: 20 }, grading: { Shadows: { h: 140, s: 15, l: -10 }, Highlights: { h: 90, s: 10, l: 0 } } }, 10),
-    ...generateVariations("color_cyan", { basic: { Exposure: 0.1, Contrast: 15, Highlights: -30, Shadows: 20, Temp: -15, Tint: -10, Vibrance: 25 }, grading: { Shadows: { h: 190, s: 20, l: -5 }, Highlights: { h: 175, s: 15, l: 5 } } }, 10),
-    ...generateVariations("color_blue", { basic: { Exposure: -0.1, Contrast: 25, Highlights: -40, Shadows: 30, Temp: -25, Tint: 5, Vibrance: 30 }, grading: { Shadows: { h: 220, s: 25, l: -10 }, Highlights: { h: 205, s: 15, l: 5 } } }, 10),
-    ...generateVariations("color_purple", { basic: { Exposure: 0.05, Contrast: 15, Highlights: -20, Shadows: 15, Temp: -10, Tint: 30, Vibrance: 25 }, grading: { Shadows: { h: 270, s: 20, l: -5 }, Highlights: { h: 290, s: 15, l: 5 } } }, 10),
-    ...generateVariations("color_pink", { basic: { Exposure: 0.15, Contrast: 10, Highlights: -25, Shadows: 25, Temp: 5, Tint: 35, Vibrance: 35 }, grading: { Shadows: { h: 320, s: 15, l: 0 }, Highlights: { h: 340, s: 20, l: 5 } } }, 10),
-    
-    // Moods & Emotions
-    ...generateVariations("mood_happy", { basic: { Exposure: 0.35, Contrast: 10, Highlights: -30, Shadows: 45, Whites: 15, Blacks: -5, Temp: 12, Tint: 5, Vibrance: 40, Saturation: 5, Clarity: 5 }, grading: { Highlights: { h: 45, s: 15, l: 5 }, Midtones: { h: 30, s: 5, l: 0 } } }, 10),
-    ...generateVariations("mood_sad", { basic: { Exposure: -0.25, Contrast: 15, Highlights: -20, Shadows: 10, Whites: -10, Blacks: 25, Temp: -15, Tint: -5, Vibrance: -35, Saturation: -20, Clarity: 15, Vignette: -25 }, grading: { Shadows: { h: 220, s: 20, l: -10 } } }, 10),
-    ...generateVariations("mood_dreamy", { basic: { Exposure: 0.25, Contrast: -20, Highlights: -10, Shadows: 30, Whites: 20, Blacks: 20, Temp: 5, Tint: 15, Vibrance: 15, Clarity: -25, Texture: -15, Dehaze: -10 }, grading: { Highlights: { h: 330, s: 10, l: 5 }, Shadows: { h: 240, s: 10, l: 5 } } }, 10),
-    
-    // Modern Trends
-    ...generateVariations("trend_cinematic", { basic: { Exposure: -0.05, Contrast: 30, Highlights: -60, Shadows: 40, Whites: 10, Blacks: 20, Temp: 5, Tint: 0, Vibrance: 25, Clarity: 20, Dehaze: 10, Vignette: -20 }, grading: { Shadows: { h: 210, s: 30, l: -5 }, Highlights: { h: 35, s: 25, l: 5 }, Midtones: { h: 25, s: 10, l: 0 } } }, 10),
-    ...generateVariations("trend_dark_moody", { basic: { Exposure: -0.4, Contrast: 35, Highlights: -50, Shadows: -10, Whites: -20, Blacks: 15, Temp: -5, Tint: -10, Vibrance: -15, Saturation: -25, Clarity: 25, Vignette: -35 }, grading: { Shadows: { h: 200, s: 15, l: -10 } } }, 10),
-    ...generateVariations("trend_bright_airy", { basic: { Exposure: 0.45, Contrast: -5, Highlights: -40, Shadows: 60, Whites: 25, Blacks: 10, Temp: 5, Tint: 10, Vibrance: 30, Clarity: -10 }, grading: { Highlights: { h: 40, s: 10, l: 10 } } }, 10),
-    ...generateVariations("trend_cyberpunk", { basic: { Exposure: 0.1, Contrast: 40, Highlights: -30, Shadows: 20, Whites: 10, Blacks: -20, Temp: -25, Tint: 40, Vibrance: 50, Saturation: 10, Clarity: 30, Dehaze: 20 }, grading: { Shadows: { h: 240, s: 40, l: -10 }, Highlights: { h: 320, s: 30, l: 10 } } }, 10),
-    
-    // Eras & Styles
-    ...generateVariations("era_vintage", { basic: { Exposure: 0.15, Contrast: -15, Highlights: -30, Shadows: 40, Whites: -10, Blacks: 35, Temp: 18, Tint: 8, Vibrance: -15, Clarity: -15, Vignette: -15 }, grading: { Shadows: { h: 45, s: 20, l: 10 }, Highlights: { h: 55, s: 15, l: 5 } } }, 10),
-    ...generateVariations("era_retro", { basic: { Exposure: 0.05, Contrast: 25, Highlights: -20, Shadows: 20, Blacks: -10, Temp: 10, Tint: 20, Vibrance: 40, Saturation: 15, Clarity: 15 }, grading: { Shadows: { h: 280, s: 25, l: -5 }, Highlights: { h: 340, s: 20, l: 0 } } }, 10),
-    ...generateVariations("era_classic_bw", { basic: { Exposure: 0, Contrast: 45, Highlights: -40, Shadows: 30, Whites: 25, Blacks: -35, Saturation: -100, Clarity: 25, Texture: 15, Vignette: -25 }, grading: {} }, 10),
-    
-    // Times
-    ...generateVariations("time_golden", { basic: { Exposure: 0.1, Contrast: 20, Highlights: -60, Shadows: 40, Whites: 15, Blacks: -10, Temp: 25, Tint: 10, Vibrance: 45, Clarity: 10 }, grading: { Shadows: { h: 30, s: 15, l: -5 }, Highlights: { h: 45, s: 30, l: 10 } } }, 10),
-    ...generateVariations("time_night", { basic: { Exposure: 0.3, Contrast: 30, Highlights: -20, Shadows: 20, Whites: 10, Blacks: -20, Temp: -15, Tint: 15, Vibrance: 45, Clarity: 20, Dehaze: 15 }, grading: { Shadows: { h: 230, s: 35, l: -10 }, Highlights: { h: 310, s: 20, l: 5 } } }, 10),
-    ...generateVariations("time_morning", { basic: { Exposure: 0.2, Contrast: 5, Highlights: -30, Shadows: 35, Whites: 10, Blacks: 5, Temp: -10, Tint: 5, Vibrance: 25, Clarity: -5, Dehaze: -5 }, grading: { Shadows: { h: 210, s: 15, l: 5 }, Highlights: { h: 45, s: 10, l: 5 } } }, 10),
-
-    // Subjects
-    ...generateVariations("food_tasty", { basic: { Exposure: 0.25, Contrast: 25, Highlights: -20, Shadows: 20, Whites: 15, Blacks: -10, Temp: 10, Tint: 5, Vibrance: 45, Saturation: 10, Clarity: 15, Texture: 20 }, grading: { Midtones: { h: 25, s: 10, l: 0 } } }, 10),
-    ...generateVariations("nature_landscape", { basic: { Exposure: -0.05, Contrast: 25, Highlights: -70, Shadows: 60, Whites: 15, Blacks: -15, Temp: -5, Tint: -10, Vibrance: 50, Clarity: 25, Dehaze: 15 }, grading: { Shadows: { h: 120, s: 15, l: -5 }, Highlights: { h: 200, s: 15, l: 0 } } }, 10),
-    ...generateVariations("urban_street", { basic: { Exposure: -0.1, Contrast: 45, Highlights: -50, Shadows: 30, Whites: 10, Blacks: -20, Temp: -5, Tint: 5, Vibrance: -10, Saturation: -25, Clarity: 35, Dehaze: 15, Vignette: -25 }, grading: { Shadows: { h: 210, s: 20, l: -10 } } }, 10),
-    ...generateVariations("portrait_glow", { basic: { Exposure: 0.2, Contrast: 10, Highlights: -40, Shadows: 30, Whites: 15, Blacks: -5, Temp: 8, Tint: 5, Vibrance: 25, Clarity: -10, Texture: -15, Vignette: -10 }, grading: { Highlights: { h: 40, s: 15, l: 5 } } }, 10),
-    ...generateVariations("wedding_classic", { basic: { Exposure: 0.35, Contrast: 5, Highlights: -50, Shadows: 50, Whites: 15, Blacks: 15, Temp: 5, Tint: 10, Vibrance: 20, Clarity: -5, Texture: -10 }, grading: { Highlights: { h: 45, s: 10, l: 5 }, Shadows: { h: 220, s: 5, l: 5 } } }, 10),
-};
 
 const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
     id: i + 1,
@@ -436,13 +471,10 @@ const findAIResponse = (input) => {
     const query = input.toLowerCase().trim();
     
     const match = KNOWLEDGE_BASE.find(item => item.keys.some(key => {
-        // បើ key ជាភាសាអង់គ្លេសសុទ្ធ (English words) យើងប្រើ Word Boundary Regex
-        // ដើម្បីកុំឱ្យពាក្យ "shop" ទៅរត់ចូលក្នុងពាក្យ "photoshop"
         if (/^[a-z0-9\s]+$/.test(key)) {
             const regex = new RegExp(`\\b${key}\\b`, 'i');
             return regex.test(query);
         }
-        // បើជាអក្សរខ្មែរ យើងប្រើ includes ធម្មតា ព្រោះខ្មែរអត់ប្រើ Space ទេ
         return query.includes(key);
     }));
     
@@ -458,7 +490,6 @@ const findAIResponse = (input) => {
         return "សូមអភ័យទោសបង! 🚫 ខ្ញុំគឺជា AI ដែលបណ្ដុះបណ្ដាលឡើងពិសេសសម្រាប់តែការកែរូបភាពក្នុងកម្មវិធី Lightroom ប៉ុណ្ណោះ។\nបើបងមានចម្ងល់ពីការទាញពណ៌ ប្រើប្រាស់ឧបករណ៍នានា ឬស្វែងរក Preset ស្អាតៗ បងអាចសួរខ្ញុំបានជានិច្ចណា៎! 😊";
     }
 
-    // Return a random funny fallback response
     const randomFallback = FALLBACK_RESPONSES[Math.floor(Math.random() * FALLBACK_RESPONSES.length)];
     return randomFallback;
 };
@@ -705,11 +736,23 @@ const PhotoLab = ({ isDarkMode }) => {
   const [imageName, setImageName] = useState("Portrait");
   const [mode, setMode] = useState('manual');
   const fileInputRef = useRef(null);
+  const curveSvgRef = useRef(null);
   const [aiPrompt, setAiPrompt] = useState('');
   const [gradingTab, setGradingTab] = useState('Shadows');
   const [gradingSync, setGradingSync] = useState(false);
-  const [showBefore, setShowBefore] = useState(false); // State សម្រាប់ត្រួតពិនិត្យការចុចសង្កត់មើលរូបដើម
-  const defaultSettings = { exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0, temp: 0, tint: 0, vibrance: 0, saturation: 0, texture: 0, clarity: 0, dehaze: 0, vignette: 0, redHue: 0, redSat: 0, redLum: 0, orangeHue: 0, orangeSat: 0, orangeLum: 0, yellowHue: 0, yellowSat: 0, yellowLum: 0, greenHue: 0, greenSat: 0, greenLum: 0, aquaHue: 0, aquaSat: 0, aquaLum: 0, blueHue: 0, blueSat: 0, blueLum: 0, purpleHue: 0, purpleSat: 0, purpleLum: 0, magentaHue: 0, magentaSat: 0, magentaLum: 0, shadowHue: 0, shadowSat: 0, shadowLum: 0, midHue: 0, midSat: 0, midLum: 0, highlightHue: 0, highlightSat: 0, highlightLum: 0, gradingBlending: 50, gradingBalance: 0 };
+  const [showBefore, setShowBefore] = useState(false); 
+  const [showCurve, setShowCurve] = useState(false);
+  const [activeCurveChannel, setActiveCurveChannel] = useState('Master');
+  const [draggingPointIndex, setDraggingPointIndex] = useState(null);
+  
+  const initialCurve = [{x:0, y:0}, {x:25, y:25}, {x:50, y:50}, {x:75, y:75}, {x:100, y:100}];
+  
+  const defaultSettings = { 
+      exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0, temp: 0, tint: 0, vibrance: 0, saturation: 0, texture: 0, clarity: 0, dehaze: 0, vignette: 0, 
+      redHue: 0, redSat: 0, redLum: 0, orangeHue: 0, orangeSat: 0, orangeLum: 0, yellowHue: 0, yellowSat: 0, yellowLum: 0, greenHue: 0, greenSat: 0, greenLum: 0, aquaHue: 0, aquaSat: 0, aquaLum: 0, blueHue: 0, blueSat: 0, blueLum: 0, purpleHue: 0, purpleSat: 0, purpleLum: 0, magentaHue: 0, magentaSat: 0, magentaLum: 0, 
+      shadowHue: 0, shadowSat: 0, shadowLum: 0, midHue: 0, midSat: 0, midLum: 0, highlightHue: 0, highlightSat: 0, highlightLum: 0, gradingBlending: 50, gradingBalance: 0, 
+      curveMaster: [...initialCurve], curveRed: [...initialCurve], curveGreen: [...initialCurve], curveBlue: [...initialCurve]
+  };
   const [settings, setSettings] = useState(defaultSettings);
   const [activeColor, setActiveColor] = useState('Orange'); 
   const [filteredPresets, setFilteredPresets] = useState([]);
@@ -733,7 +776,10 @@ const PhotoLab = ({ isDarkMode }) => {
         'បុរាណ': 'vintage', 'អតីតកាល': 'vintage', 'សម័យមុន': 'retro', 'ហ្វីល': 'film', 
         'រោងការ': 'wedding', 'ការងារ': 'wedding', 'ទេសភាព': 'landscape', 'ផ្លូវ': 'street', 
         'ភាពយន្ត': 'cinematic', 'សមុទ្រ': 'teal', 'មេឃ': 'blue', 'ព្រៃ': 'forest',
-        'សុបិន': 'dreamy', 'ទន់ភ្លន់': 'soft'
+        'សុបិន': 'dreamy', 'ទន់ភ្លន់': 'soft', 'អគារ': 'architecture', 'ឡាន': 'automotive', 
+        'ម៉ូតូ': 'automotive', 'រដូវស្លឹកឈើជ្រុះ': 'autumn', 'រដូវរងា': 'winter', 
+        'ត្រជាក់': 'winter', 'សិល្បៈ': 'art', 'រ៉ូមែនទិក': 'romantic', 'កក់ក្តៅ': 'warm',
+        'ពណ៌ត្នោត': 'brown', 'កាហ្វេ': 'brown', 'មនុស្ស': 'portrait', 'ម៉ូដ': 'fashion'
       };
       let searchTerms = [query];
       Object.keys(khmerMap).forEach(k => { if (query.includes(k)) searchTerms.push(khmerMap[k]); });
@@ -778,7 +824,6 @@ const PhotoLab = ({ isDarkMode }) => {
       img.onload = () => { 
           canvas.width = img.width; 
           canvas.height = img.height; 
-          // Extract purely CSS portion of filter for canvas (ignores SVG filter part due to canvas limits)
           const cssOnlyFilter = getFilterString().replace(/url\([^)]+\)\s*/, '');
           ctx.filter = cssOnlyFilter; 
           ctx.drawImage(img, 0, 0); 
@@ -790,12 +835,50 @@ const PhotoLab = ({ isDarkMode }) => {
   };
   
   const handlePresetExport = () => { 
-      const recipe = { basic: { Exposure: settings.exposure, Contrast: settings.contrast, Highlights: settings.highlights, Shadows: settings.shadows, Whites: settings.whites, Blacks: settings.blacks, Temp: settings.temp, Tint: settings.tint, Vibrance: settings.vibrance, Saturation: settings.saturation, Texture: settings.texture, Clarity: settings.clarity, Dehaze: settings.dehaze, Vignette: settings.vignette }, detail: { Sharpening: 40, Noise: 0, ColorNoise: 25 }, colorMix: [ { color: 'Red', h: settings.redHue, s: settings.redSat, l: settings.redLum }, { color: 'Orange', h: settings.orangeHue, s: settings.orangeSat, l: settings.orangeLum }, { color: 'Yellow', h: settings.yellowHue, s: settings.yellowSat, l: settings.yellowLum }, { color: 'Green', h: settings.greenHue, s: settings.greenSat, l: settings.greenLum }, { color: 'Aqua', h: settings.aquaHue, s: settings.aquaSat, l: settings.aquaLum }, { color: 'Blue', h: settings.blueHue, s: settings.blueSat, l: settings.blueLum }, { color: 'Purple', h: settings.purpleHue, s: settings.purpleSat, l: settings.purpleLum }, { color: 'Magenta', h: settings.magentaHue, s: settings.magentaSat, l: settings.magentaLum } ], grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance } }; 
+      const recipe = { 
+          basic: { Exposure: settings.exposure, Contrast: settings.contrast, Highlights: settings.highlights, Shadows: settings.shadows, Whites: settings.whites, Blacks: settings.blacks, Temp: settings.temp, Tint: settings.tint, Vibrance: settings.vibrance, Saturation: settings.saturation, Texture: settings.texture, Clarity: settings.clarity, Dehaze: settings.dehaze, Vignette: settings.vignette }, 
+          detail: { Sharpening: 40, Noise: 0, ColorNoise: 25 }, 
+          colorMix: [ { color: 'Red', h: settings.redHue, s: settings.redSat, l: settings.redLum }, { color: 'Orange', h: settings.orangeHue, s: settings.orangeSat, l: settings.orangeLum }, { color: 'Yellow', h: settings.yellowHue, s: settings.yellowSat, l: settings.yellowLum }, { color: 'Green', h: settings.greenHue, s: settings.greenSat, l: settings.greenLum }, { color: 'Aqua', h: settings.aquaHue, s: settings.aquaSat, l: settings.aquaLum }, { color: 'Blue', h: settings.blueHue, s: settings.blueSat, l: settings.blueLum }, { color: 'Purple', h: settings.purpleHue, s: settings.purpleSat, l: settings.purpleLum }, { color: 'Magenta', h: settings.magentaHue, s: settings.magentaSat, l: settings.magentaLum } ], 
+          grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance },
+          curveMaster: settings.curveMaster,
+          curveRed: settings.curveRed,
+          curveGreen: settings.curveGreen,
+          curveBlue: settings.curveBlue
+      }; 
       const presetName = aiPrompt.trim() ? aiPrompt.trim() : "Custom_Preset";
       generateXMP(recipe, `${presetName}_MD`); 
   };
   
-  const applyPresetToSettings = (presetData) => { const b = presetData.basic; const newSettings = { ...defaultSettings }; if (b) { if (b.Exposure) newSettings.exposure = b.Exposure * 10; if (b.Contrast) newSettings.contrast = b.Contrast; if (b.Highlights) newSettings.highlights = b.Highlights; if (b.Shadows) newSettings.shadows = b.Shadows; if (b.Whites) newSettings.whites = b.Whites; if (b.Blacks) newSettings.blacks = b.Blacks; if (b.Temp) newSettings.temp = b.Temp; if (b.Tint) newSettings.tint = b.Tint; if (b.Vibrance) newSettings.vibrance = b.Vibrance; if (b.Saturation) newSettings.saturation = b.Saturation; if (b.Clarity) newSettings.clarity = b.Clarity; if (b.Dehaze) newSettings.dehaze = b.Dehaze; if (b.Vignette) newSettings.vignette = b.Vignette; } if (presetData.grading) { if (presetData.grading.Shadows) { newSettings.shadowHue = presetData.grading.Shadows.h || 0; newSettings.shadowSat = presetData.grading.Shadows.s || 0; } if (presetData.grading.Highlights) { newSettings.highlightHue = presetData.grading.Highlights.h || 0; newSettings.highlightSat = presetData.grading.Highlights.s || 0; } } setSettings(newSettings); };
+  const applyPresetToSettings = (presetData) => { 
+      const b = presetData.basic; 
+      const newSettings = { ...defaultSettings }; 
+      if (b) { 
+          if (b.Exposure !== undefined) newSettings.exposure = b.Exposure * 10; 
+          if (b.Contrast !== undefined) newSettings.contrast = b.Contrast; 
+          if (b.Highlights !== undefined) newSettings.highlights = b.Highlights; 
+          if (b.Shadows !== undefined) newSettings.shadows = b.Shadows; 
+          if (b.Whites !== undefined) newSettings.whites = b.Whites; 
+          if (b.Blacks !== undefined) newSettings.blacks = b.Blacks; 
+          if (b.Temp !== undefined) newSettings.temp = b.Temp; 
+          if (b.Tint !== undefined) newSettings.tint = b.Tint; 
+          if (b.Vibrance !== undefined) newSettings.vibrance = b.Vibrance; 
+          if (b.Saturation !== undefined) newSettings.saturation = b.Saturation; 
+          if (b.Clarity !== undefined) newSettings.clarity = b.Clarity; 
+          if (b.Dehaze !== undefined) newSettings.dehaze = b.Dehaze; 
+          if (b.Vignette !== undefined) newSettings.vignette = b.Vignette; 
+      } 
+      if (presetData.grading) { 
+          if (presetData.grading.Shadows) { newSettings.shadowHue = presetData.grading.Shadows.h || 0; newSettings.shadowSat = presetData.grading.Shadows.s || 0; } 
+          if (presetData.grading.Highlights) { newSettings.highlightHue = presetData.grading.Highlights.h || 0; newSettings.highlightSat = presetData.grading.Highlights.s || 0; } 
+      }
+      
+      newSettings.curveMaster = presetData.curveMaster ? [...presetData.curveMaster] : [...initialCurve];
+      newSettings.curveRed = presetData.curveRed ? [...presetData.curveRed] : [...initialCurve];
+      newSettings.curveGreen = presetData.curveGreen ? [...presetData.curveGreen] : [...initialCurve];
+      newSettings.curveBlue = presetData.curveBlue ? [...presetData.curveBlue] : [...initialCurve];
+      
+      setSettings(newSettings); 
+  };
   const resetGroup = (items) => { const newSettings = { ...settings }; items.forEach(item => { newSettings[item.id] = 0; }); setSettings(newSettings); };
   
   // Real implementation for controlling light and color safely without breaking presets
@@ -805,24 +888,68 @@ const PhotoLab = ({ isDarkMode }) => {
       const con = 100 + settings.contrast + (settings.clarity * 0.1) + (settings.dehaze * 0.2);
       const sat = 100 + settings.saturation + (settings.vibrance * 0.4);
       
-      // Removed broken sepia/hue-rotate hack. Now uses SVG feColorMatrix for pure Temp/Tint blending!
       return `brightness(${exp}%) contrast(${con}%) saturate(${sat}%) url(#lr-adjustments)`;
   };
 
-  // Safe SVG mapping to mimic Lightroom tone curves without extreme color inversions
-  const getTonalTable = () => {
-      const b = settings.blacks / 400;     // -0.25 to 0.25
+  // Professional Elastic Spline (Catmull-Rom / Bezier Approximation)
+  const evaluateSpline = (points, targetX) => {
+      if (!points || points.length === 0) return targetX;
+      if (points.length === 1) return points[0].y;
+      if (targetX <= points[0].x) return points[0].y;
+      if (targetX >= points[points.length - 1].x) return points[points.length - 1].y;
+
+      let i = 0;
+      while (i < points.length - 2 && targetX >= points[i + 1].x) i++;
+
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const h = p2.x - p1.x;
+      if (h === 0) return p1.y;
+
+      const p0 = i === 0 ? { x: p1.x - (p2.x - p1.x), y: p1.y - (p2.y - p1.y) } : points[i - 1];
+      const p3 = i + 1 === points.length - 1 ? { x: p2.x + (p2.x - p1.x), y: p2.y + (p2.y - p1.y) } : points[i + 2];
+
+      const m1 = (p2.y - p0.y) / Math.max(1, p2.x - p0.x);
+      const m2 = (p3.y - p1.y) / Math.max(1, p3.x - p1.x);
+
+      const t = (targetX - p1.x) / h;
+      const t2 = t * t;
+      const t3 = t2 * t;
+
+      const h00 = 2 * t3 - 3 * t2 + 1;
+      const h10 = t3 - 2 * t2 + t;
+      const h01 = -2 * t3 + 3 * t2;
+      const h11 = t3 - t2;
+
+      const y = h00 * p1.y + h10 * h * m1 + h01 * p2.y + h11 * h * m2;
+      return Math.max(0, Math.min(100, y));
+  };
+
+  const evaluateBasic = (xNorm) => {
+      const b = settings.blacks / 400;     
       const s = settings.shadows / 400;    
       const h = settings.highlights / 400; 
       const w = settings.whites / 400;
 
-      const v0 = Math.max(0, Math.min(1, 0 + b));
-      const v1 = Math.max(0, Math.min(1, 0.25 + s + (b * 0.2)));
-      const v2 = 0.5; // Anchor midtones firmly
-      const v3 = Math.max(0, Math.min(1, 0.75 + h + (w * 0.2)));
-      const v4 = Math.max(0, Math.min(1, 1 + w));
+      let adjY = xNorm;
+      if (xNorm < 0.25) { adjY += b * (1 - xNorm/0.25); }
+      if (xNorm < 0.50) { adjY += s * Math.sin(xNorm * Math.PI); }
+      if (xNorm >= 0.50) { adjY += h * Math.sin((xNorm - 0.5) * Math.PI); }
+      if (xNorm > 0.75) { adjY += w * ((xNorm - 0.75) / 0.25); }
+      return Math.max(0, Math.min(1, adjY));
+  };
 
-      return `${v0} ${v1} ${v2} ${v3} ${v4}`;
+  const getChannelTable = (channelName) => {
+      const numSamples = 30; // High resolution sampling
+      const table = [];
+      for(let i = 0; i <= numSamples; i++) {
+          const x = i / numSamples;
+          const basicOut = evaluateBasic(x);
+          const masterOut = evaluateSpline(settings.curveMaster, basicOut * 100) / 100;
+          const finalOut = evaluateSpline(settings[`curve${channelName}`], masterOut * 100) / 100;
+          table.push(Math.max(0, Math.min(1, finalOut)).toFixed(3));
+      }
+      return table.join(' ');
   };
 
   // SVG matrix for clean Temperature and Tint manipulation
@@ -835,6 +962,123 @@ const PhotoLab = ({ isDarkMode }) => {
       const b = 1 - (temp * 0.2) + (tint * 0.1);
       
       return `${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`;
+  };
+  
+  const activePoints = settings[`curve${activeCurveChannel}`];
+
+  const getCurveCoords = (e) => {
+      if (!curveSvgRef.current) return {x:0, y:0};
+      const rect = curveSvgRef.current.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      // Allow values outside 0-100 to detect grabs outside the box
+      let x = ((clientX - rect.left) / rect.width) * 100;
+      let y = 100 - (((clientY - rect.top) / rect.height) * 100);
+      return { x, y };
+  };
+
+  const handleCurvePointerDown = (e) => {
+      e.stopPropagation();
+      const coords = getCurveCoords(e);
+      const points = [...activePoints];
+      
+      let foundIndex = -1;
+      let minDist = Infinity;
+      for (let i = 0; i < points.length; i++) {
+          const dist = Math.hypot(points[i].x - coords.x, points[i].y - coords.y);
+          // Massive hit area for endpoints (35) making them super easy to grab from outside
+          const hitRadius = (i === 0 || i === points.length - 1) ? 35 : 20; 
+          if (dist < hitRadius && dist < minDist) { 
+              foundIndex = i;
+              minDist = dist;
+          }
+      }
+
+      if (foundIndex !== -1) {
+          setDraggingPointIndex(foundIndex);
+      } else {
+          // Add new point only if clicked inside the valid box
+          if (coords.x > 2 && coords.x < 98 && coords.y >= 0 && coords.y <= 100) {
+              points.push({x: coords.x, y: coords.y});
+              points.sort((a, b) => a.x - b.x);
+              const newIndex = points.findIndex(p => p.x === coords.x && p.y === coords.y);
+              updateSetting(`curve${activeCurveChannel}`, points);
+              setDraggingPointIndex(newIndex);
+          }
+      }
+  };
+
+  const handleCurvePointerMove = (e) => {
+      if (draggingPointIndex === null) return;
+      e.stopPropagation();
+      const coords = getCurveCoords(e);
+      const newPoints = [...activePoints];
+      
+      if (draggingPointIndex === 0) {
+          // Bottom-Left Endpoint: Move on vertical left border (x=0) OR horizontal bottom border (y=0)
+          if (coords.x > Math.max(0, coords.y)) { 
+              // Snap to horizontal bottom border (y=0)
+              const maxX = newPoints[1].x - 2;
+              newPoints[0] = { x: Math.max(0, Math.min(maxX, coords.x)), y: 0 }; 
+          } else {
+              // Snap to vertical left border (x=0)
+              newPoints[0] = { x: 0, y: Math.max(0, Math.min(100, coords.y)) }; 
+          }
+      } else if (draggingPointIndex === newPoints.length - 1) {
+          // Top-Right Endpoint: Move on vertical right border (x=100) OR horizontal top border (y=100)
+          const distToRight = 100 - coords.x;
+          const distToTop = 100 - coords.y;
+          if (distToTop < distToRight) {
+              // Snap to horizontal top border (y=100)
+              const minX = newPoints[newPoints.length - 2].x + 2;
+              newPoints[newPoints.length - 1] = { x: Math.max(minX, Math.min(100, coords.x)), y: 100 }; 
+          } else {
+              // Snap to vertical right border (x=100)
+              newPoints[newPoints.length - 1] = { x: 100, y: Math.max(0, Math.min(100, coords.y)) }; 
+          }
+      } else {
+          // Internal points: Full movement constraint within bounds
+          const minX = newPoints[draggingPointIndex - 1].x + 2;
+          const maxX = newPoints[draggingPointIndex + 1].x - 2;
+          newPoints[draggingPointIndex] = { 
+              x: Math.max(minX, Math.min(maxX, coords.x)), 
+              y: Math.max(0, Math.min(100, coords.y)) 
+          };
+      }
+      updateSetting(`curve${activeCurveChannel}`, newPoints);
+  };
+
+  const handleCurvePointerUp = () => {
+      setDraggingPointIndex(null);
+  };
+
+  const handleCurveDoubleClick = (e) => {
+      e.stopPropagation();
+      const coords = getCurveCoords(e);
+      for (let i = 1; i < activePoints.length - 1; i++) { 
+          const dist = Math.hypot(activePoints[i].x - coords.x, activePoints[i].y - coords.y);
+          if (dist < 20) { 
+              const newPoints = activePoints.filter((_, idx) => idx !== i);
+              updateSetting(`curve${activeCurveChannel}`, newPoints);
+              break;
+          }
+      }
+  };
+
+  const renderSmoothCurve = () => {
+      const res = 100; 
+      let path = `M 0,${100 - evaluateSpline(activePoints, 0)}`;
+      for (let i = 1; i <= res; i++) {
+          path += ` L ${i},${100 - evaluateSpline(activePoints, i)}`;
+      }
+      return path;
+  };
+
+  const getCurveColor = () => {
+      if (activeCurveChannel === 'Red') return '#EF4444';
+      if (activeCurveChannel === 'Green') return '#22C55E';
+      if (activeCurveChannel === 'Blue') return '#3B82F6';
+      return isDarkMode ? '#E3E3E3' : '#1A1C1E'; 
   };
   
   const getVignetteStyle = () => { const v = settings.vignette; return v < 0 ? { background: `radial-gradient(circle, transparent ${60 + (v * 0.4)}%, rgba(0,0,0,${Math.abs(v)/100}))` } : { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` }; };
@@ -860,7 +1104,6 @@ const PhotoLab = ({ isDarkMode }) => {
 
   const toolsGroups = [ { group: 'Light', icon: <Sun size={18}/>, items: [{ id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1 }, { id: 'contrast', label: 'Contrast', min: -100, max: 100 }, { id: 'highlights', label: 'Highlights', min: -100, max: 100 }, { id: 'shadows', label: 'Shadows', min: -100, max: 100 }, { id: 'whites', label: 'Whites', min: -100, max: 100 }, { id: 'blacks', label: 'Blacks', min: -100, max: 100 }] }, { group: 'Color', icon: <Palette size={18}/>, items: [{ id: 'temp', label: 'Temp', min: -100, max: 100 }, { id: 'tint', label: 'Tint', min: -100, max: 100 }, { id: 'vibrance', label: 'Vibrance', min: -100, max: 100 }, { id: 'saturation', label: 'Saturation', min: -100, max: 100 }] }, { group: 'Effects', icon: <Aperture size={18}/>, items: [{ id: 'texture', label: 'Texture', min: -100, max: 100 }, { id: 'clarity', label: 'Clarity', min: -100, max: 100 }, { id: 'dehaze', label: 'Dehaze', min: -100, max: 100 }, { id: 'vignette', label: 'Vignette', min: -100, max: 100 }] } ];
   
-  // High saturation color selection for visually impaired / color blind users
   const colors = [ 
       { name: 'Red', id: 'red', hex: '#FF0000' }, 
       { name: 'Orange', id: 'orange', hex: '#FF6600' }, 
@@ -893,14 +1136,13 @@ const PhotoLab = ({ isDarkMode }) => {
                     onTouchEnd={() => setShowBefore(false)}
                 >
                     <div className="relative w-full h-full pointer-events-none">
-                        {/* Perfect Highlights, Shadows, Temp, Tint recovery using SVG filter map */}
                         <svg width="0" height="0" className="absolute pointer-events-none">
                             <filter id="lr-adjustments">
                                 <feColorMatrix type="matrix" values={getColorMatrix()} />
                                 <feComponentTransfer>
-                                    <feFuncR type="table" tableValues={getTonalTable()} />
-                                    <feFuncG type="table" tableValues={getTonalTable()} />
-                                    <feFuncB type="table" tableValues={getTonalTable()} />
+                                    <feFuncR type="table" tableValues={getChannelTable('Red')} />
+                                    <feFuncG type="table" tableValues={getChannelTable('Green')} />
+                                    <feFuncB type="table" tableValues={getChannelTable('Blue')} />
                                 </feComponentTransfer>
                             </filter>
                         </svg>
@@ -939,7 +1181,7 @@ const PhotoLab = ({ isDarkMode }) => {
                         <div className="flex-1 overflow-y-auto p-2 custom-scrollbar space-y-6 pb-24 lg:pb-10 pt-2">
                              {toolsGroups.map((group, gIdx) => (
                                 <div key={gIdx} className="space-y-4">
-                                    <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{group.icon} {group.group}</h4><button onClick={() => resetGroup(group.items)} className={`text-[10px] transition-colors font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#FF8C33] hover:text-[#C65102]' : 'text-[#C65102] hover:text-[#A84502]'}`}>Reset</button></div>
+                                    <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{group.icon} {group.group}</h4><button onClick={() => { if(group.group==='Light') { updateSetting('curveMaster', [...initialCurve]); updateSetting('curveRed', [...initialCurve]); updateSetting('curveGreen', [...initialCurve]); updateSetting('curveBlue', [...initialCurve]); } resetGroup(group.items); }} className={`text-[10px] transition-colors font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#FF8C33] hover:text-[#C65102]' : 'text-[#C65102] hover:text-[#A84502]'}`}>Reset</button></div>
                                     <div className="space-y-4">
                                         {group.items.map(t => (
                                             <div key={t.id} className="group/item">
@@ -959,6 +1201,12 @@ const PhotoLab = ({ isDarkMode }) => {
                                                 </div>
                                             </div>
                                         ))}
+                                        {group.group === 'Light' && (
+                                            <button onClick={() => setShowCurve(true)} className={`w-full py-2.5 mt-2 border rounded-xl text-xs font-bold font-khmer transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C] text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#1A1C1E] hover:bg-[#E0E0E0]/50'}`}>
+                                                <Activity size={14} className="text-[#C65102]" />
+                                                ខ្សែកោង (Tone Curve)
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -999,19 +1247,45 @@ const PhotoLab = ({ isDarkMode }) => {
                                         </div>
                                     )}
                                     <div className="space-y-3">
-                                        <div className="flex items-center justify-between px-1"><h4 className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}><ListIcon size={14} /> {aiPrompt ? 'Results' : 'All Presets'}{filteredPresets.length > 0 && <span className={`px-2 py-0.5 rounded-full text-[10px] ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6]' : 'bg-[#E0E0E0] text-[#5F6368]'}`}>{filteredPresets.length}</span>}</h4></div>
-                                        <div className="grid grid-cols-1 gap-2">
-                                            {filteredPresets.length > 0 ? (
-                                                filteredPresets.map((preset, idx) => (
-                                                    <button key={preset.id || idx} onClick={() => applyPresetToSettings(preset)} className={`flex items-center justify-between p-3 border rounded-2xl transition-all duration-200 group active:scale-[0.98] text-left ${isDarkMode ? 'bg-[#2C2C2C]/50 hover:bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0]/50 border-[#E0E0E0]'}`}>
-                                                        <div className="flex flex-col"><span className={`text-sm font-bold capitalize font-khmer ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{preset.name || preset.id.replace(/_/g, ' ')}</span><span className={`text-[10px] uppercase tracking-wide ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{Object.keys(preset.grading || {}).length > 0 ? 'Color Grade' : 'Basic'}</span></div>
-                                                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br border flex items-center justify-center group-hover:border-[#C65102]/50 group-hover:shadow-[0_0_10px_rgba(198,81,2,0.3)] transition-all ${isDarkMode ? 'from-[#2C2C2C] to-[#1E1E1E] border-[#2C2C2C]' : 'from-[#FAFAFA] to-[#E0E0E0] border-[#E0E0E0]'}`}><div className={`w-2 h-2 rounded-full opacity-20 group-hover:opacity-100 transition-opacity ${isDarkMode ? 'bg-[#E3E3E3]' : 'bg-[#1A1C1E]'}`}></div></div>
-                                                    </button>
-                                                ))
-                                            ) : (
-                                                <div className="text-center py-10 opacity-50"><Filter className={`w-8 h-8 mx-auto mb-2 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`} /><p className={`text-xs font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>រកមិនឃើញ Presets សម្រាប់ "{aiPrompt}" ទេ</p></div>
-                                            )}
-                                        </div>
+                                        <div className="flex items-center justify-between px-1"><h4 className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}><ListIcon size={14} /> {aiPrompt ? 'Results' : 'Preset Mood Style'}</h4></div>
+                                        
+                                        {aiPrompt ? (
+                                            <div className="grid grid-cols-1 gap-2">
+                                                {filteredPresets.length > 0 ? (
+                                                    filteredPresets.map((preset, idx) => (
+                                                        <button key={preset.id || idx} onClick={() => applyPresetToSettings(preset)} className={`flex items-center justify-between p-3 border rounded-2xl transition-all duration-200 group active:scale-[0.98] text-left ${isDarkMode ? 'bg-[#2C2C2C]/50 hover:bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0]/50 border-[#E0E0E0]'}`}>
+                                                            <div className="flex flex-col"><span className={`text-sm font-bold capitalize font-khmer ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{preset.name || preset.id.replace(/_/g, ' ')}</span><span className={`text-[10px] uppercase tracking-wide ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{Object.keys(preset.grading || {}).length > 0 || preset.curveMaster ? 'Pro Grade' : 'Basic'}</span></div>
+                                                            <div className={`w-8 h-8 rounded-full bg-gradient-to-br border flex items-center justify-center group-hover:border-[#C65102]/50 group-hover:shadow-[0_0_10px_rgba(198,81,2,0.3)] transition-all ${isDarkMode ? 'from-[#2C2C2C] to-[#1E1E1E] border-[#2C2C2C]' : 'from-[#FAFAFA] to-[#E0E0E0] border-[#E0E0E0]'}`}><div className={`w-2 h-2 rounded-full opacity-20 group-hover:opacity-100 transition-opacity ${isDarkMode ? 'bg-[#E3E3E3]' : 'bg-[#1A1C1E]'}`}></div></div>
+                                                        </button>
+                                                    ))
+                                                ) : (
+                                                    <div className="text-center py-10 opacity-50"><Filter className={`w-8 h-8 mx-auto mb-2 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`} /><p className={`text-xs font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>រកមិនឃើញ Presets សម្រាប់ "{aiPrompt}" ទេ</p></div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-6 pt-2">
+                                                {Object.entries(
+                                                    filteredPresets.reduce((acc, preset) => {
+                                                        const cat = preset.category || 'General';
+                                                        if (!acc[cat]) acc[cat] = [];
+                                                        acc[cat].push(preset);
+                                                        return acc;
+                                                    }, {})
+                                                ).map(([category, presets]) => (
+                                                    <div key={category} className="space-y-2">
+                                                        <h5 className={`text-[10px] font-bold uppercase tracking-widest pl-1 border-b pb-1 ${isDarkMode ? 'text-[#9AA0A6] border-[#2C2C2C]' : 'text-[#5F6368] border-[#E0E0E0]'}`}>{category}</h5>
+                                                        <div className="grid grid-cols-1 gap-2">
+                                                            {presets.map((preset, idx) => (
+                                                                <button key={preset.id || idx} onClick={() => applyPresetToSettings(preset)} className={`flex items-center justify-between p-3 border rounded-2xl transition-all duration-200 group active:scale-[0.98] text-left ${isDarkMode ? 'bg-[#2C2C2C]/50 hover:bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0]/50 border-[#E0E0E0]'}`}>
+                                                                    <div className="flex flex-col"><span className={`text-sm font-bold capitalize font-khmer ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{preset.name || preset.id.replace(/_/g, ' ')}</span><span className={`text-[10px] uppercase tracking-wide ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{Object.keys(preset.grading || {}).length > 0 || preset.curveMaster ? 'Pro Grade' : 'Basic'}</span></div>
+                                                                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br border flex items-center justify-center group-hover:border-[#C65102]/50 group-hover:shadow-[0_0_10px_rgba(198,81,2,0.3)] transition-all ${isDarkMode ? 'from-[#2C2C2C] to-[#1E1E1E] border-[#2C2C2C]' : 'from-[#FAFAFA] to-[#E0E0E0] border-[#E0E0E0]'}`}><div className={`w-2 h-2 rounded-full opacity-20 group-hover:opacity-100 transition-opacity ${isDarkMode ? 'bg-[#E3E3E3]' : 'bg-[#1A1C1E]'}`}></div></div>
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -1020,6 +1294,92 @@ const PhotoLab = ({ isDarkMode }) => {
                  </div>
             </div>
         </div>
+        
+        {/* Real Interactive Tone Curve Pop-up Modal */}
+        {showCurve && (
+            <div 
+                className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/80" 
+                onMouseMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
+                onMouseUp={handleCurvePointerUp}
+                onTouchMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
+                onTouchEnd={handleCurvePointerUp}
+                onClick={(e) => { if(e.target === e.currentTarget) setShowCurve(false); }}
+            >
+                <div className={`w-full max-w-sm p-6 rounded-3xl border shadow-2xl animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`} onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-center mb-4 relative z-10">
+                        <div>
+                            <h3 className={`font-bold font-khmer flex items-center gap-2 text-lg ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}><Activity size={20} className="text-[#C65102]"/> Tone Curve</h3>
+                            <p className={`text-[10px] font-khmer mt-1 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម (Add) | ចុចពីរដងដើម្បីលុប (Double click)</p>
+                        </div>
+                        <div className="flex gap-2">
+                            <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={16}/></button>
+                            <button onClick={() => setShowCurve(false)} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`}><X size={16}/></button>
+                        </div>
+                    </div>
+                    
+                    {/* Channel Selector */}
+                    <div className="flex gap-2 mb-4 justify-center relative z-10">
+                        {['Master', 'Red', 'Green', 'Blue'].map(ch => (
+                            <button 
+                                key={ch} 
+                                onClick={() => setActiveCurveChannel(ch)}
+                                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${activeCurveChannel === ch ? 'bg-[#C65102] text-white shadow-md' : (isDarkMode ? 'bg-[#2C2C2E] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] border border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}
+                            >
+                                <span className="flex items-center gap-1.5">
+                                    <div className={`w-2 h-2 rounded-full ${ch === 'Master' ? (isDarkMode ? 'bg-white' : 'bg-black') : (ch === 'Red' ? 'bg-[#EF4444]' : ch === 'Green' ? 'bg-[#22C55E]' : 'bg-[#3B82F6]')}`}></div>
+                                    {ch}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className={`w-full aspect-square rounded-2xl border relative overflow-visible touch-none ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                       <svg 
+                           ref={curveSvgRef}
+                           width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" 
+                           className="cursor-crosshair"
+                           style={{ overflow: 'visible' }}
+                           onPointerDown={handleCurvePointerDown}
+                           onDoubleClick={handleCurveDoubleClick}
+                       >
+                           {/* Invisible expanded hit area for outside clicking - Fixed size */}
+                           <rect x="-20" y="-20" width="140" height="140" fill="transparent" />
+
+                           {/* Grid Lines */}
+                           <line x1="25" y1="0" x2="25" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                           <line x1="50" y1="0" x2="50" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                           <line x1="75" y1="0" x2="75" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                           <line x1="0" y1="25" x2="100" y2="25" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                           <line x1="0" y1="50" x2="100" y2="50" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                           <line x1="0" y1="75" x2="100" y2="75" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                           
+                           {/* Diagonal Reference Line */}
+                           <line x1="0" y1="100" x2="100" y2="0" stroke={isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'} strokeWidth="0.5" strokeDasharray="4" />
+                           
+                           {/* The Real Smooth Spline Curve */}
+                           <path 
+                               d={renderSmoothCurve()} 
+                               fill="none" 
+                               stroke={getCurveColor()} 
+                               strokeWidth="0.4" 
+                           />
+                           
+                           {/* Interactive Points */}
+                           {activePoints.map((p, idx) => (
+                               <circle 
+                                    key={idx} 
+                                    cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "4.2" : "2.8"} 
+                                    fill={getCurveColor()} 
+                                    stroke={isDarkMode ? '#121212' : '#FFFFFF'}
+                                    strokeWidth="1.5"
+                                    className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md" 
+                                />
+                           ))}
+                       </svg>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
   );
 };
@@ -1118,7 +1478,7 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
          <div className={`flex items-center border-b pl-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><button onClick={() => { const shuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()); setCurrentSuggestions(shuffled.slice(0, 3)); }} className={`p-2 transition-colors active:scale-90 ${isDarkMode ? 'text-[#FF8C33] hover:text-[#E3E3E3]' : 'text-[#C65102] hover:text-[#E86A10]'}`}><RefreshCw size={14} /></button><div className="flex gap-2 overflow-x-auto pb-3 pt-3 px-2 no-scrollbar">{currentSuggestions.map((q, i) => (<button key={i} onClick={() => handleSend(q)} className={`shrink-0 px-3 py-1.5 text-[11px] rounded-full border active:scale-95 transition-all whitespace-nowrap ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] text-[#FF8C33] border-[#C65102]/20' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#C65102] border-[#C65102]/20'}`}>{q}</button>))}</div></div>
          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 flex gap-2 items-end" autoComplete="off">
             <div className={`flex-1 rounded-[24px] border flex items-center px-1 focus-within:border-[#C65102]/50 transition-colors ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder="សួរសំណួរ..." className={`flex-1 bg-transparent px-3 py-2.5 text-1g outline-none h-full [&::-webkit-search-cancel-button]:hidden ${isDarkMode ? 'text-[#E3E3E3] placeholder:text-[#9AA0A6]' : 'text-[#1A1C1E] placeholder:text-[#5F6368]'}`} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
+                <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder="សួរសំណួរ..." className={`flex-1 bg-transparent px-3 py-2.5 text-base outline-none h-full [&::-webkit-search-cancel-button]:hidden ${isDarkMode ? 'text-[#E3E3E3] placeholder:text-[#9AA0A6]' : 'text-[#1A1C1E] placeholder:text-[#5F6368]'}`} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
             </div>
             <button type="submit" disabled={!input.trim()} className={`p-2.5 rounded-full transition-all active:scale-90 shadow-lg ${input.trim() ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF]' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF]') : (isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6]' : 'bg-[#E0E0E0] text-[#5F6368]')}`}><Send size={18} /></button>
          </form>
