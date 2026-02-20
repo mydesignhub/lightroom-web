@@ -1351,7 +1351,7 @@ const handleDownload = () => {
                        onPointerDown={handleCurvePointerDown}
                        onDoubleClick={handleCurveDoubleClick}
                    >
-                       <rect x="-20" y="-20" width="140" height="140" fill="transparent" />
+                       <rect x="-3" y="-3" width="105" height="105" fill="transparent" />
                        <line x1="25" y1="0" x2="25" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
                        <line x1="50" y1="0" x2="50" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
                        <line x1="75" y1="0" x2="75" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
