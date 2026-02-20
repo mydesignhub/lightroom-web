@@ -506,8 +506,8 @@ const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
 
 const evaluateBasic = (xNorm, s) => {
     const b = s.blacks / 400;     
-    const sh = s.shadows / 400;    
-    const h = s.highlights / 400; 
+    const sh = s.shadows / 2000;    // <-- កែលេខ 400 ទៅ 800 នៅទីនេះ!
+    const h = s.highlights / 800; 
     const w = s.whites / 400;
     let adjY = xNorm;
     if (xNorm < 0.25) { adjY += b * (1 - xNorm/0.25); }
