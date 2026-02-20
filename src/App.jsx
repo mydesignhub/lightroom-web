@@ -896,10 +896,23 @@ const PhotoLab = ({ isDarkMode }) => {
   };
   const filterString = useMemo(() => {
       const exp = 100 + (settings.exposure * 10) - (settings.dehaze > 0 ? settings.dehaze * 0.1 : 0);
-      const con = 100 + settings.contrast + (settings.clarity * 0.1) + (settings.dehaze * 0.2);
+      
+      // ១. បន្ថែម Texture ទៅក្នុងការគណនា Contrast (Micro-contrast)
+      const con = 100 + settings.contrast + (settings.clarity * 0.15) + (settings.texture * 0.1) + (settings.dehaze * 0.2);
       const sat = 100 + settings.saturation + (settings.vibrance * 0.4);
-      return `brightness(${exp}%) contrast(${con}%) saturate(${sat}%) url(#lr-adjustments)`;
-  }, [settings.exposure, settings.dehaze, settings.contrast, settings.clarity, settings.saturation, settings.vibrance]);
+      
+      // ២. បង្កើត Effect រលោង (Skin Smoothing) ពេលទាញ Texture ចុះក្រោម (-)
+      const blurVal = settings.texture < 0 ? Math.abs(settings.texture) * 0.01 : 0;
+      
+      let filter = `brightness(${exp}%) contrast(${con}%) saturate(${sat}%)`;
+      if (blurVal > 0) {
+          filter += ` blur(${blurVal}px)`;
+      }
+      filter += ` url(#lr-adjustments)`;
+      
+      return filter;
+  }, [settings.exposure, settings.dehaze, settings.contrast, settings.clarity, settings.texture, settings.saturation, settings.vibrance]); 
+  // ^ កុំភ្លេចណា៎ ត្រង់នេះយើងបានបន្ថែម settings.texture ទៅក្នុង Dependency Array
 
   const colorMatrixValue = useMemo(() => {
       const temp = settings.temp / 100;
@@ -1050,7 +1063,7 @@ const handleDownload = () => {
       // ឆែកមើលថាតើចុចប៉ះចំណុច (Points) ចាស់ៗដែលមានស្រាប់ឬទេ
       for (let i = 0; i < points.length; i++) {
           const dist = Math.hypot(points[i].x - coords.x, points[i].y - coords.y);
-          const hitRadius = (i === 0 || i === points.length - 1) ? 35 : 20; 
+          const hitRadius = (i === 0 || i === points.length - 1) ? 10 : 5; 
           if (dist < hitRadius && dist < minDist) { 
               foundIndex = i;
               minDist = dist;
