@@ -1675,22 +1675,17 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
 
   if (gameState === 'menu') return (
     <div className="flex h-full items-center justify-center p-4">
-      <div className={`backdrop-blur-md p-6 sm:p-8 text-center rounded-[32px] border shadow-2xl max-w-lg w-full animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E]/80 border-[#2C2C2C]' : 'bg-[#FFFFFF]/80 border-[#E0E0E0]'}`}>
-          <div className={`w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ${isDarkMode ? 'bg-[#C65102]/20 ring-[#2C2C2C]' : 'bg-[#C65102]/10 ring-[#E0E0E0]'}`}><Award className="w-12 h-12 text-[#C65102] drop-shadow-sm" /></div>
-          <h2 className={`text-3xl font-extrabold font-khmer mb-3 tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>ការធ្វើតេស្ត</h2>
-          <p className={`font-khmer text-sm mb-4 font-bold ${isDarkMode ? 'text-yellow-500' : 'text-[#C65102]'}`}>ពិន្ទុខ្ពស់បំផុតរបស់អ្នក៖ {highScore}</p>
-          <div className="space-y-6">
-              <div className={`p-1.5 rounded-2xl w-fit mx-auto border flex justify-center gap-3 ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-md ring-1 ring-[#2C2C2C]' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-md ring-1 ring-[#E0E0E0]') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>មូលដ្ឋាន</button>
-                <button onClick={() => setQuizConfig({...quizConfig, level: 'advanced'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='advanced' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-md ring-1 ring-[#2C2C2C]' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-md ring-1 ring-[#E0E0E0]') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>កម្រិតខ្ពស់</button>
-              </div>
-              <div className="flex justify-center gap-3 items-center"><span className={`text-xs font-khmer uppercase tracking-widest font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចំនួន</span>{[5, 10, 15, 20].map(num => (<button key={num} onClick={() => setQuizConfig({...quizConfig, amount: num})} className={`w-10 h-10 rounded-2xl font-bold text-xs transition-all duration-300 ease-spring ${quizConfig.amount === num ? 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] shadow-lg shadow-[#C65102]/30 scale-110' : (isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] border border-[#2C2C2C] hover:bg-[#2C2C2C]/80' : 'bg-[#FFFFFF] text-[#5F6368] border border-[#E0E0E0] hover:bg-[#FAFAFA]')}`}>{num}</button>))}</div>
-              <button onClick={startQuiz} className={`w-full py-3.5 rounded-2xl font-bold font-khmer shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 text-sm tracking-wide ${isDarkMode ? 'bg-[#E3E3E3] hover:bg-[#FFFFFF] text-[#1A1C1E]' : 'bg-[#1A1C1E] hover:bg-[#5F6368] text-[#FFFFFF]'}`}>ចាប់ផ្ដើម</button>
+      <div className={`p-8 text-center rounded-[32px] border shadow-2xl max-w-lg w-full animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+          <div className="w-20 h-20 bg-[#C65102]/10 rounded-full flex items-center justify-center mx-auto mb-6"><Award className="text-[#C65102]" size={40} /></div>
+          <h2 className="text-2xl font-bold font-khmer mb-2">ការធ្វើតេស្ត</h2>
+          <p className="font-khmer text-sm mb-6 opacity-60">ពិន្ទុខ្ពស់បំផុត៖ {highScore}</p>
+          <div className="space-y-4">
+              <button onClick={startQuiz} className="w-full py-4 rounded-2xl bg-[#C65102] text-white font-bold font-khmer shadow-lg active:scale-95 transition-transform">ចាប់ផ្ដើម</button>
           </div>
       </div>
     </div>
   );
-  
+
   if (gameState === 'review') {
       return (
           <div className="flex h-full flex-col p-4 max-w-3xl mx-auto w-full animate-fade-in-up">
@@ -1699,17 +1694,14 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
                   <button onClick={() => setGameState('result')} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`}><XCircle size={20}/></button>
               </div>
               <div className="flex-1 overflow-y-auto space-y-4 custom-scrollbar pb-20 px-1">
-                  {/* កន្លែងបង្ហាញ ការណែនាំ (Recommendations) */}
                   <div className={`p-5 rounded-2xl border ${score/questions.length >= 0.8 ? (isDarkMode ? 'bg-[#34C759]/10 border-[#34C759]/20 text-[#34C759]' : 'bg-[#34C759]/10 border-[#34C759]/30 text-green-700') : (isDarkMode ? 'bg-[#FFD60A]/10 border-[#FFD60A]/20 text-[#FFD60A]' : 'bg-[#FFD60A]/10 border-[#FFD60A]/30 text-yellow-700')}`}>
                       <h3 className="font-bold mb-2 flex items-center gap-2"><Lightbulb size={18}/> ការណែនាំសម្រាប់អ្នក៖</h3>
                       <p className="text-sm font-khmer leading-relaxed">
                           {score/questions.length >= 0.8 
-                              ? "អ្នកយល់ដឹងពី Lightroom បានល្អខ្លាំងណាស់! 🎉 អ្នកមានគ្រឹះរឹងមាំក្នុងការគ្រប់គ្រងពន្លឺ និងពណ៌។ សូមសាកល្បងបង្កើត Preset ផ្ទាល់ខ្លួន ឬកែរូបភាពបែប Cinematic កម្រិតខ្ពស់នៅក្នុងផ្ទាំង Lab បន្ថែម។" 
-                              : "អ្នកគួរតែចំណាយពេលអាន 'មេរៀន' បន្ថែមបន្តិចទៀត ជាពិសេសទាក់ទងនឹងការគ្រប់គ្រងពន្លឺ (Tone Curve) និងពណ៌ (HSL) ដើម្បីឱ្យកាន់តែស្ទាត់ជំនាញ។ កុំបារម្ភ ការហាត់អនុវត្តញឹកញាប់នឹងធ្វើឱ្យអ្នកពូកែ! 💪"}
+                              ? "អ្នកយល់ដឹងពី Lightroom បានល្អខ្លាំងណាស់! 🎉 សូមសាកល្បងបង្កើត Preset ផ្ទាល់ខ្លួន ឬកែរូបភាពកម្រិតខ្ពស់នៅក្នុងផ្ទាំង Lab ។" 
+                              : "អ្នកគួរតែចំណាយពេលអាន 'មេរៀន' បន្ថែមបន្តិចទៀត ជាពិសេសទាក់ទងនឹងការគ្រប់គ្រងពន្លឺ និងពណ៌។ កុំបារម្ភ ការហាត់អនុវត្តញឹកញាប់នឹងធ្វើឱ្យអ្នកពូកែ! 💪"}
                       </p>
                   </div>
-                  
-                  {/* បង្ហាញចម្លើយដែលទើបតែឆ្លើយរួចទាំងអស់ */}
                   {userAnswers.map((ans, idx) => {
                       const qInfo = questions[ans.qId];
                       return (
@@ -1720,10 +1712,8 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
                                       let isUserChoice = ans.selected === i;
                                       let isCorrectChoice = qInfo.correct === i;
                                       let btnClass = isDarkMode ? 'bg-[#2C2C2C]/30 border-transparent text-[#9AA0A6]' : 'bg-[#FAFAFA]/50 border-transparent text-[#5F6368]';
-                                      
                                       if (isCorrectChoice) btnClass = 'bg-[#34C759]/10 border-[#34C759] text-[#34C759] font-bold';
                                       else if (isUserChoice && !isCorrectChoice) btnClass = 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A] line-through opacity-80';
-                                      
                                       return (
                                           <div key={i} className={`p-3.5 text-sm rounded-xl border flex items-center gap-3 font-khmer ${btnClass}`}>
                                               {(isCorrectChoice) ? <CheckCircle size={16}/> : (isUserChoice && !isCorrectChoice) ? <XCircle size={16}/> : <div className="w-4 h-4 rounded-full border border-current opacity-30"/>}
@@ -1744,7 +1734,17 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
       const percentage = Math.round((score / questions.length) * 100);
       return (
         <div className="flex h-full items-center justify-center p-4">
-          <div className={`p-10 text-center rounded-[32px] border shadow-2xl max-w-lg w-full animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}><div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="80" cy="80" r="64" stroke="currentColor" className={isDarkMode ? "text-[#2C2C2C]" : "text-[#E0E0E0]"} strokeWidth="12" fill="none" /><circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" /></svg><div className={`absolute text-4xl font-black tracking-tighter ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{percentage}%</div></div><h2 className={`text-2xl font-bold font-khmer mb-2 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>{isNewRecord && <div className="inline-block bg-[#C65102]/20 text-[#C65102] border border-[#C65102]/30 px-4 py-1.5 rounded-full text-xs font-bold mb-4 animate-bounce">🎉 កំណត់ត្រាថ្មី (New High Score)!</div>}<p className={`font-khmer mb-8 text-sm ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ពិន្ទុរបស់អ្នក: <span className={`font-bold ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{score}</span> / {questions.length}</p><div className="space-y-3"><button onClick={() => setGameState('review')} className={`w-full py-3 rounded-2xl font-bold font-khmer transition-all shadow-sm text-sm border flex items-center justify-center gap-2 ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] border-[#2C2C2C] text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] border-[#E0E0E0] text-[#1A1C1E]'}`}><ListIcon size={16}/> មើលចម្លើយ និង ការណែនាំ</button><button onClick={() => setGameState('menu')} className={`w-full py-3 rounded-2xl font-bold font-khmer transition-all shadow-md text-sm flex items-center justify-center gap-2 ${isDarkMode ? 'bg-[#E3E3E3] hover:bg-[#FFFFFF] text-[#1A1C1E]' : 'bg-[#1A1C1E] hover:bg-[#5F6368] text-[#FFFFFF]'}`}><RotateCcw size={16}/> សាកល្បងម្តងទៀត</button></div></div>
+          <div className={`p-10 text-center rounded-[32px] border shadow-2xl max-w-md w-full ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+              <div className="text-5xl font-black mb-4 tracking-tighter">{percentage}%</div>
+              <h2 className="text-xl font-bold font-khmer mb-2">{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>
+              {isNewRecord && <div className="text-[#C65102] text-xs font-bold mb-4 animate-bounce">🎉 កំណត់ត្រាថ្មី!</div>}
+              <p className="font-khmer mb-8 opacity-70">អ្នកឆ្លើយត្រូវ {score} / {questions.length}</p>
+              
+              <div className="space-y-3">
+                  <button onClick={() => setGameState('review')} className={`w-full py-3 rounded-2xl font-bold font-khmer transition-all shadow-sm text-sm border flex items-center justify-center gap-2 ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] border-[#2C2C2C] text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] border-[#E0E0E0] text-[#1A1C1E]'}`}><ListIcon size={16}/> មើលចម្លើយ និង ការណែនាំ</button>
+                  <button onClick={() => setGameState('menu')} className="w-full py-3 rounded-2xl bg-[#C65102] text-white font-bold font-khmer flex items-center justify-center gap-2"><RotateCcw size={16}/> សាកល្បងម្តងទៀត</button>
+              </div>
+          </div>
         </div>
       );
   }
