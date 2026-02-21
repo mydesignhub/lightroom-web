@@ -18,10 +18,9 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 // 1. CONFIGURATION & UTILS
 // ==========================================
 
-const APP_VERSION = "v1.1.0"; // <-- កំណត់ជំនាន់កម្មវិធីនៅទីនេះ
-
 let apiKey = ""; 
 try {
+  // @ts-ignore
   if (typeof import.meta !== 'undefined' && import.meta.env) {
     apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
   }
@@ -292,7 +291,6 @@ const KNOWLEDGE_BASE = [
     { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
     { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
     
-    // ដកពាក្យ 'light' ចេញពីទីនេះ ដើម្បីកុំឱ្យជាន់គ្នានឹងពាក្យ Lightroom
     { keys: ['exposure', 'ពន្លឺ', 'ពន្លឺរួម', 'ពន្លឺរូប', 'ភ្លឺ', 'brightness'], answer: "💡 **Exposure** គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រង **ពន្លឺរួម (Overall Light)** នៃរូបភាពទាំងមូលតែម្ដង។\n\n- បើទាញទៅស្ដាំ (+) រូបនឹងភ្លឺឡើង។\n- បើទាញទៅឆ្វេង (-) រូបនឹងងងឹត។\nវាជាជំហានទី ១ សំខាន់បំផុត ដែលបងត្រូវប៉ះមុនគេបង្អស់ ពេលចាប់ផ្តើមកែរូបមួយសន្លឹក! កុំភ្លេចសារ៉េវាឱ្យត្រូវពន្លឺសិនមុននឹងទៅលេងពណ៌ណា៎! ☀️" },
     { keys: ['contrast', 'ភាពផ្ទុយ', 'កម្រិតពណ៌ផ្ទុយ', 'ភាពដិត', 'ដិត'], answer: "🌗 **Contrast** គឺជាមេបញ្ជាការកំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n- បើបងដាក់ Contrast ខ្ពស់៖ កន្លែងងងឹតនឹងកាន់តែខ្មៅ កន្លែងភ្លឺកាន់តែភ្លឺ ធ្វើឱ្យរូបភាពមើលទៅរឹងមាំ (Punchy) និងដិតច្បាស់ល្អសម្រាប់ការថតទេសភាព។\n- បើបន្ថយវាទាប៖ រូបភាពនឹងមើលទៅស្រទន់បែបស្រអាប់ៗ (Faded/Vintage look) ដ៏សែនរ៉ូមែនទិក ល្អសម្រាប់ស្តាយកូរ៉េ។ បងចូលចិត្តបែបណាដែរថ្ងៃនេះ? 🤔" },
     { keys: ['highlight', 'highlights', 'whits', 'whites', 'ផ្នែកភ្លឺ', 'កន្លែងភ្លឺ', 'ពណ៌ស', 'ពន្លឺខ្លាំង', 'ពន្លឺថ្ងៃ', 'ឆេះ'], answer: "☁️ បងប្រាកដជាឆ្ងល់ហើយថា **Highlights** និង **Whites** ខុសគ្នាម៉េចមែនទេ?\n\n- **Highlights**: គ្រប់គ្រងតែតំបន់ដែលភ្លឺខ្លាំង (ដូចជាមេឃ ឬពន្លឺថ្ងៃជះលើមុខ)។ ភាគច្រើនអ្នកជំនាញចូលចិត្តបន្ថយវា (-) ដើម្បីសង្គ្រោះពពក ឬពន្លឺដែលឆេះឱ្យលេចចេញមកវិញ។\n- **Whites**: កំណត់ចំណុច 'សបំផុត' នៅក្នុងរូបភាពទាំងមូល។ គេទាញវាឡើងបន្តិច (+) ដើម្បីឱ្យរូបភាពទាំងមូលមើលទៅស្រឡះ (Pop) និងមិនស្លេកស្លាំង។ សាកសង្កេតពេលទាញវាទាំងពីរមើលបង នឹងឃើញភាពខុសគ្នា! ✨" },
@@ -375,12 +373,10 @@ const KNOWLEDGE_BASE = [
     { keys: ['shop', 'ហាង', 'cafe', 'ហាងកាហ្វេ', 'store'], answer: "សម្រាប់ការថតរូបក្នុងហាង (Shop/Cafe) បងគួរតែបន្ថយ Highlights កុំឱ្យឆេះភ្លើងអំពូល និងទាញ Temp ទៅរកពណ៌លឿងបន្តិចដើម្បីបង្កើតភាពកក់ក្តៅ (Cozy Vibe) គួរឱ្យចង់អង្គុយលេងបាទ!" },
     { keys: ['លឿង', 'yellow'], answer: "ពណ៌លឿងតំណាងឱ្យភាពរីករាយ និងភាពកក់ក្តៅ! បើចង់ឱ្យពណ៌លឿងលេចធ្លោ ចូលទៅ HSL បង្កើន Saturation និង Luminance នៃពណ៌ Yellow បន្តិចបាទ!" },
     { keys: ['ស', 'white', 'ពណ៌ស'], answer: "ដើម្បីធ្វើឱ្យផ្ទៃពណ៌ស (White) មើលទៅស្រឡះស្អាត សូមទាញ Whites ឡើងបន្តិច ប៉ុន្តែប្រយ័ត្នកុំឱ្យឆេះពន្លឺណា៎បាទ!" },
-    
-    // បន្ថែមចំណេះដឹងថ្មីៗ (New Knowledge Base) ខាងក្រោមនេះ
-    { keys: ['range mask', 'range masking'], answer: "🎭 **Range Masking** នៅក្នុង Lightroom អនុញ្ញាតឱ្យបងជ្រើសរើស (Select) ផ្នែកណាមួយនៃរូបភាពដោយផ្អែកលើ ពណ៌ (Color) ឬ ពន្លឺ (Luminance)។ \n\n- បងអាចកែតែមេឃពណ៌ខៀវ ដោយមិនប៉ះពាល់ពណ៌ផ្សេង។\n- ឬកែតែតំបន់ដែលភ្លឺបំផុតឱ្យងងឹតវិញ។ វាជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់អ្នកកែរូបអាជីព! 🪄" },
-    { keys: ['dark & moody', 'dark and moody', 'moody'], answer: "🖤 ដើម្បីកែរូបស្តាយ **Dark & Moody**:\n១. បន្ថយ Exposure និងបង្កើន Contrast ឱ្យខ្លាំង\n២. ទាញ Highlights និង Whites ចុះក្រោម (-)\n៣. ចូលទៅ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រអាប់ (Faded Look)\n៤. បន្ថយ Saturation ពណ៌ផ្សេងៗ ទុកតែពណ៌ទឹកក្រូច (ស្បែក) និងពណ៌ក្រហមបន្តិចបានហើយ! 📸" },
-    { keys: ['lens profile', 'lens correction', 'កែកែវថត'], answer: "🔍 **Lens Profile Correction** គឺជាមុខងារសម្រាប់កែតម្រូវកំហុសរបស់កែវថត (Lens) ដូចជាភាពកោង (Distortion) និងគែមងងឹត (Vignette) ដែលកាមេរ៉ាបង្កើតឡើងដោយអចេតនា។ បងគួរតែបើកវាជានិច្ច (Enable Profile Corrections) គ្រប់ពេលកែរូបបាទ!" },
-    { keys: ['color cast', 'ជាប់ពណ៌'], answer: "🤢 បើថតក្រោមដើមឈើហើយមុខមនុស្សជាប់ពណ៌បៃតង ហ្នឹងហើយគេហៅថា **Color Cast**!\n\nដើម្បីជួសជុល៖\n១. ប្រើប្រាស់ **Tint** ទាញទៅរកពណ៌ Magenta (+) បន្តិចដើម្បីស៊ីសងជាមួយពណ៌បៃតង។\n២. ចូល HSL > Green > បន្ថយ Saturation របស់វាចោលបន្តិចទៅ។ មុខនឹងត្រលប់មកពណ៌ធម្មតាវិញហើយ! 🧪" }
+    { keys: ['lens profile', 'lens correction', 'កែកែវថត', 'profile correction'], answer: "🔍 **Lens Profile Correction** គឺជាមុខងារសម្រាប់កែតម្រូវកំហុសរបស់កែវថត (Lens) ដូចជាភាពកោង (Distortion) និងគែមងងឹត (Vignette)។ បងគួរតែបើកវាជានិច្ច (Enable Profile Corrections) គ្រប់ពេលកែរូប!" },
+    { keys: ['landscape', 'ទេសភាព', 'ធម្មជាតិ', 'ព្រៃភ្នំ'], answer: "🏞️ សម្រាប់ការថតទេសភាព (Landscape) ឱ្យលេចធ្លោ៖\n១. ទាញ Highlights ចុះដើម្បីឃើញពពកច្បាស់\n២. ទាញ Shadows ឡើងដើម្បីឃើញព័ត៌មានលើដី\n៣. បង្កើន Clarity និង Dehaze (+15 ទៅ +30) ឱ្យរូបរឹងមាំ និងមុតស្រួច\n៤. ទាញ Vibrance បន្តិចដើម្បីឱ្យពណ៌ស្រស់ស្អាត!" },
+    { keys: ['dark & moody', 'dark and moody', 'dark academia', 'moody'], answer: "🖤 ដើម្បីកែរូបស្តាយ **Dark & Moody**:\n១. បន្ថយ Exposure បន្តិច\n២. បង្កើន Contrast ឱ្យខ្លាំង\n៣. ទាញ Highlights និង Whites ចុះក្រោម (-)\n៤. ចូលទៅ Tone Curve ទាញចំណុចខ្មៅឡើងលើបន្តិច (Faded Look)\n៥. បន្ថយ Saturation ពណ៌ផ្សេងៗ ទុកតែពណ៌ទឹកក្រូច (ស្បែក) និងក្រហមបន្តិចបានហើយ!" },
+    { keys: ['vibrance', 'saturation'], answer: "🎨 **Vibrance និង Saturation** គឺសម្រាប់បង្កើនពណ៌ទាំងពីរ តែខុសគ្នាត្រង់៖\n- **Saturation**: ទាញពណ៌ទាំងអស់ឡើងស្មើគ្នា (បើទាញខ្លាំង ស្បែកមនុស្សនឹងទៅជាលឿង/ក្រហមឆ្អៅ)។\n- **Vibrance**: ឆ្លាតជាង! វាទាញតែពណ៌ណាដែលស្លេកឱ្យដិតឡើង ហើយការពារពណ៌ស្បែកមនុស្សមិនឱ្យខូចទេ។ សម្រាប់រូប Portrait គួរប្រើ Vibrance ជានិច្ចបាទ!" }
 ];
 
 const findAIResponse = (input) => {
@@ -516,38 +512,289 @@ const BASE_PRESETS_DATA = {
 
 const lessonsData = [
   { id: 'light', title: 'ពន្លឺ (Light)', icon: <Sun className="w-6 h-6 text-yellow-400" />, description: 'ការគ្រប់គ្រងពន្លឺនិងភាពផ្ទុយ', content: [
-    { tool: 'Exposure', khmer: 'ការប៉ះពន្លឺ', desc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាជាជំហានដំបូងក្នុងការកែ។', tip: 'ឧទាហរណ៍៖ រូបថតពេលល្ងាចងងឹតបន្តិច ដាក់ +0.50 ទៅ +1.00។' }, 
-    { tool: 'Contrast', khmer: 'ភាពផ្ទុយ', desc: 'កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត។', tip: 'ឧទាហរណ៍៖ រូបស្លេកៗ ដាក់ +20។ កុំឱ្យលើស +50 ប្រយ័ត្នបែកពណ៌។' }, 
-    { tool: 'Highlights', khmer: 'ផ្នែកភ្លឺ', desc: 'គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ឬពន្លឺថ្ងៃ)។', tip: 'ឧទាហរណ៍៖ បើថតមេឃហើយបាត់ពពក ដាក់ -80 ដល់ -100 ដើម្បីសង្គ្រោះពពកមកវិញ។' }, 
-    { tool: 'Shadows', khmer: 'ផ្នែកងងឹត', desc: 'គ្រប់គ្រងតំបន់ដែលស្ថិតក្នុងម្លប់។', tip: 'ឧទាហរណ៍៖ បើថតបញ្ច្រាស់ថ្ងៃមុខខ្មៅ ដាក់ +40 ដល់ +60 ដើម្បីឱ្យមុខភ្លឺ។' }, 
-    { tool: 'Whites', khmer: 'ពណ៌ស', desc: 'កំណត់ចំណុចសបំផុត (White Point) នៃរូបភាព។', tip: 'ចុច Alt+Drag (ឬប្រើម្រាមដៃពីរ) ដើម្បីមើលកន្លែងដែលភ្លឺពេក (Clipping)។' }, 
-    { tool: 'Blacks', khmer: 'ពណ៌ខ្មៅ', desc: 'កំណត់ចំណុចខ្មៅបំផុត។ ធ្វើឱ្យរូបមានជម្រៅ។', tip: 'ឧទាហរណ៍៖ ដាក់ -10 ទៅ -20 ដើម្បីឱ្យរូបមើលទៅមានទម្ងន់ និងមិនស្លេក។' }
+    { 
+        tool: 'Exposure', 
+        khmer: 'ការប៉ះពន្លឺ', 
+        shortDesc: 'កំណត់ពន្លឺរួមនៃរូបភាពទាំងមូល។ វាជាជំហានដំបូងក្នុងការកែ។',
+        image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -5, max: 5, step: 0.1, default: 0, type: 'exposure', actionText: (v) => v > 0 ? `🌞 ភ្លឺឡើង (+${v.toFixed(1)})` : v < 0 ? `🌚 ងងឹតចុះ (${v.toFixed(1)})` : 'ចំនុចកណ្តាល 0' },
+        desc: 'Exposure គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រងពន្លឺរួម (Overall Light) នៃរូបភាពទាំងមូលតែម្ដង។\n\n⬅️ ទាញទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពទាំងមូលងងឹតចុះ (ល្អសម្រាប់រូបដែលថតមកភ្លឺឆេះពេក)\n➡️ ទាញទៅស្តាំ (+): ធ្វើឱ្យរូបភាពទាំងមូលភ្លឺឡើង (ល្អសម្រាប់រូបដែលថតមកងងឹត)', 
+        tip: 'ឧទាហរណ៍៖ រូបថតពេលល្ងាចងងឹតបន្តិច ដាក់ +0.50 ទៅ +1.00។' 
+    }, 
+    { 
+        tool: 'Contrast', 
+        khmer: 'ភាពផ្ទុយ', 
+        shortDesc: 'កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។ Contrast ខ្ពស់ធ្វើឱ្យរូបដិត។',
+        image: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'contrast', actionText: (v) => v > 0 ? `បង្កើនភាពផ្ទុយ៖ រូបដិតរឹងមាំ (+${v})` : v < 0 ? `បន្ថយភាពផ្ទុយ៖ រូបស្រទន់បែប Vintage (${v})` : '0 (ដើម)' },
+        desc: 'Contrast កំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n⬅️ ទាញទៅឆ្វេង (-): បន្ថយគម្លាតពន្លឺ ធ្វើឱ្យកន្លែងខ្មៅរាងប្រផេះ ហើយកន្លែងភ្លឺរាងស្រអាប់។ បង្កើតបានជាស្តាយស្រទន់បែបកូរ៉េ ឬ Vintage។\n➡️ ទាញទៅស្តាំ (+): បង្កើនគម្លាត ធ្វើឱ្យខ្មៅកាន់តែខ្មៅ ភ្លឺកាន់តែភ្លឺ។ ល្អសម្រាប់ការថតទេសភាពឱ្យមើលទៅរឹងមាំ (Punchy)។', 
+        tip: 'ឧទាហរណ៍៖ រូបស្លេកៗ ដាក់ +20។ កុំឱ្យលើស +50 ប្រយ័ត្នបែកពណ៌។' 
+    }, 
+    { 
+        tool: 'Highlights', 
+        khmer: 'ផ្នែកភ្លឺ', 
+        shortDesc: 'គ្រប់គ្រងតំបន់ដែលភ្លឺខ្លាំងបំផុត (ដូចជាមេឃ ឬពន្លឺថ្ងៃ)។',
+        image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'highlights', actionText: (v) => v > 0 ? `ភ្លឺចាំងខ្លាំង (+${v})` : v < 0 ? `សង្គ្រោះពពកមិនឱ្យឆេះ (${v})` : 'ដើម' },
+        desc: 'Highlights ផ្តោតទៅលើតែតំបន់ដែលមានពន្លឺភ្លឺខ្លាំងប៉ុណ្ណោះ ដោយមិនប៉ះពាល់ដល់តំបន់ងងឹតឡើយ។\n\n⬅️ ទាញទៅឆ្វេង (-): បន្ថយពន្លឺកន្លែងដែលឆេះ ជួយសង្គ្រោះព័ត៌មាន (ដូចជាពពក ឬពន្លឺជះលើមុខ) ឱ្យលេចចេញមកវិញ។\n➡️ ទាញទៅស្តាំ (+): ធ្វើឱ្យកន្លែងភ្លឺ កាន់តែភ្លឺខ្លាំងឡើង និងចាំងផ្លាត។', 
+        tip: 'ឧទាហរណ៍៖ បើថតមេឃហើយបាត់ពពក ដាក់ -80 ដល់ -100 ដើម្បីសង្គ្រោះពពកមកវិញ។' 
+    }, 
+    { 
+        tool: 'Shadows', 
+        khmer: 'ផ្នែកងងឹត', 
+        shortDesc: 'គ្រប់គ្រងតែតំបន់ដែលស្ថិតនៅក្នុងម្លប់ ឬកន្លែងងងឹតប៉ុណ្ណោះ។',
+        image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'shadows', actionText: (v) => v > 0 ? `បំភ្លឺស្រមោល/មុខ (+${v})` : v < 0 ? `បន្ថយស្រមោលឱ្យខ្មៅដិត (${v})` : 'ដើម' },
+        desc: 'Shadows គឺជាវីរបុរសសម្រាប់សង្គ្រោះរូបភាពដែលថតបញ្ច្រាសពន្លឺ!\n\n⬅️ ទាញទៅឆ្វេង (-): ធ្វើឱ្យតំបន់ស្រមោលកាន់តែខ្មៅងងឹត បង្កើតបានជាសិល្បៈបែប Silhouette ឬផ្តល់ភាពអាថ៌កំបាំង។\n➡️ ទាញទៅស្តាំ (+): ទាញតំបន់ងងឹតឱ្យភ្លឺច្បាស់មកវិញ (ល្អបំផុតសម្រាប់បំភ្លឺផ្ទៃមុខដែលងងឹត ព្រោះថតបញ្ច្រាសពន្លឺព្រះអាទិត្យ)។', 
+        tip: 'ពេលថតបញ្ច្រាសថ្ងៃហើយមុខតួអង្គខ្មៅ គ្រាន់តែទាញ Shadows ឡើងបូក (+) ប្រហែល 40 ទៅ 60 មុខនឹងភ្លឺមកវិញភ្លាមៗ!' 
+    }, 
+    { 
+        tool: 'Whites & Blacks', 
+        khmer: 'ពណ៌ស & ពណ៌ខ្មៅ', 
+        shortDesc: 'កំណត់ចំណុចសបំផុត និងខ្មៅបំផុតនៃរូបភាព ដើម្បីឱ្យមានជម្រៅ (Depth)។',
+        image: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'blacks', actionText: (v) => v > 0 ? `ខ្មៅស្លេក (Faded Black) (+${v})` : v < 0 ? `ខ្មៅដិតមានជម្រៅ (${v})` : 'ដើម' },
+        desc: 'Whites និង Blacks ប្រើសម្រាប់កំណត់ចំណុចចុងសងខាងនៃពន្លឺ៖\n\n⚪ Whites:\n- ទាញស្តាំ (+): ធ្វើឱ្យរូបភាពស្រឡះសក្បុស ប៉ុន្តែប្រយ័ត្នឆេះ (Clipping)។\n\n⚫ Blacks:\n- ទាញឆ្វេង (-): ធ្វើឱ្យចំណុចខ្មៅកាន់តែដិត ផ្តល់ឱ្យរូបភាពមានទម្ងន់ និងជម្រៅ (Depth) មិនហាក់ដូចជាអណ្តែត។', 
+        tip: 'ចុច Alt+Drag (នៅលើកុំព្យូទ័រ) ពេលអូស Whites/Blacks ដើម្បីមើលកន្លែងដែលភ្លឺពេក ឬខ្មៅពេក (Clipping)។' 
+    }
   ] },
-  { id: 'color', title: 'ពណ៌ (Color)', icon: <Droplet className="w-6 h-6 text-cyan-400" />, description: 'ការកែសម្រួលពណ៌ និង HSL', content: [
-    { tool: 'Temp', khmer: 'សីតុណ្ហភាព', desc: 'កែពណ៌អោយទៅជាលឿង (ក្តៅ) ឬ ខៀវ (ត្រជាក់)។', tip: 'ឧទាហរណ៍៖ រូបថត Golden Hour ដាក់ +10។ រូបថតក្នុងអគារភ្លើងលឿង ដាក់ -10។' }, 
-    { tool: 'Tint', khmer: 'ពណ៌លាំ', desc: 'កែពណ៌អោយទៅជាបៃតង ឬ ស្វាយ។ ប្រើសម្រាប់កែ White Balance។', tip: 'ឧទាហរណ៍៖ បើថតក្នុងព្រៃហើយស្បែកជាប់បៃតង ដាក់ +15 (ទៅរកស្វាយ)។' }, 
-    { tool: 'Vibrance', khmer: 'ភាពរស់រវើក', desc: 'បង្កើនពណ៌ដែលស្លេក ដោយមិនប៉ះពាល់ពណ៌ដែលដិតស្រាប់ (ការពារពណ៌ស្បែក)។', tip: 'ល្អសម្រាប់រូប Portrait។ ប្រើ +20 ជំនួស Saturation។' }, 
-    { tool: 'Saturation', khmer: 'កម្រិតពណ៌', desc: 'បង្កើនភាពដិតនៃពណ៌ទាំងអស់ស្មើៗគ្នា។', tip: 'ប្រើតិចៗ (-10 ទៅ +10)។ ប្រើខ្លាំងពេកធ្វើឱ្យស្បែកទៅជាពណ៌ទឹកក្រូចខ្លាំង។' }, 
-    { tool: 'Color Mix', khmer: 'លាយពណ៌', desc: 'ឧបករណ៍ HSL (Hue, Saturation, Luminance) សម្រាប់កែពណ៌នីមួយៗដាច់ដោយឡែក។', tip: 'ឧទាហរណ៍ (ស្បែកស)៖ Orange Luminance +20, Saturation -10។' }
-  ] },
+  { 
+    id: 'color', 
+    title: 'ពណ៌ (Color)', 
+    icon: <Droplet className="w-6 h-6 text-cyan-400" />, 
+    description: 'ការកែសម្រួលពណ៌កម្រិតខ្ពស់ Color Mix & Grading', 
+    content: [
+      { 
+          tool: 'Temp & Tint (White Balance)', 
+          khmer: 'សីតុណ្ហភាព & ពណ៌លាំ', 
+          shortDesc: 'កំណត់តុល្យភាពពណ៌នៃរូបភាពទាំងមូលឱ្យក្តៅ (លឿង) ឬត្រជាក់ (ខៀវ)។',
+          image: 'https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80',
+          slider: { min: -100, max: 100, step: 1, default: 0, type: 'temp', actionText: (v) => v > 0 ? `កក់ក្តៅ (លឿង) / +${v}` : v < 0 ? `ត្រជាក់ (ខៀវ) / ${v}` : 'ពណ៌ដើមធម្មតា' },
+          desc: 'ឧបករណ៍នេះប្រើសម្រាប់កំណត់តុល្យភាពពណ៌នៃរូបភាពទាំងមូល៖\n\n🌡️ Temp (Temperature): \n⬅️ ទាញទៅឆ្វេង (-): រូបភាពនឹងប្រែជាពណ៌ខៀវ ត្រជាក់ (ដូចពេលព្រឹកព្រលឹម ឬរដូវរងា)\n➡️ ទាញទៅស្តាំ (+): រូបភាពនឹងប្រែជាពណ៌លឿង កក់ក្តៅ (ដូចពេលថ្ងៃលិច ឬរដូវស្លឹកឈើជ្រុះ)\n\n🧪 Tint: \n- ទាញស្តាំ (+): បន្ថែមពណ៌ស្វាយ (Magenta) ភាគច្រើនប្រើកែបញ្ហាថតក្រោមពន្លឺភ្លើងនីអុង។\n- ទាញឆ្វេង (-): បន្ថែមពណ៌បៃតង (Green)។', 
+          tip: '💡 ឧទាហរណ៍៖ បើថតក្នុងហាងកាហ្វេហើយភ្លើងលឿងពេក សូមទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីតម្រឹមពណ៌អោយត្រូវវិញ។' 
+      }, 
+      { 
+          tool: 'Vibrance vs Saturation', 
+          khmer: 'ភាពរស់រវើក និង កម្រិតពណ៌', 
+          shortDesc: 'បង្កើនភាពស្រស់នៃពណ៌ ប៉ុន្តែ Vibrance ការពារស្បែកមនុស្សមិនឱ្យខូច។',
+          image: 'https://images.unsplash.com/photo-1534330207526-8e81f10ece37?auto=format&fit=crop&w=800&q=80',
+          slider: { min: -100, max: 100, step: 1, default: 0, type: 'vibrance', actionText: (v) => v > 0 ? `ពណ៌ស្រស់ឡើង តែការពារស្បែក (+${v})` : v < 0 ? `បន្ថយពណ៌ (${v})` : 'ដើម' },
+          desc: 'ឧបករណ៍ទាំងពីរនេះប្រើសម្រាប់បង្កើនភាពស្រស់នៃពណ៌ ប៉ុន្តែវាមានភាពខុសគ្នាខ្លាំង៖\n\n🎨 Saturation:\n⬅️ ទាញឆ្វេង (-): ធ្វើឱ្យរូបប្រែជាស-ខ្មៅ (Black & White) ទាំងស្រុង។\n➡️ ទាញស្តាំ (+): បង្កើនភាពដិតពណ៌ "ទាំងអស់" ស្មើៗគ្នា។ បើទាញវាខ្លាំងពេក ស្បែកមនុស្សនឹងទៅជាលឿង ឬក្រហមឆ្អៅ។\n\n✨ Vibrance (ឆ្លាតវៃជាង):\n➡️ ទាញស្តាំ (+): វាទាញបង្កើនភាពដិតតែពណ៌ណាដែល "ស្លេក" ប៉ុណ្ណោះ ហើយវាឆ្លាតវៃអាចការពាមិនឱ្យប៉ះពាល់ដល់ពណ៌ស្បែក (Skin tones) របស់មនុស្សឡើយ។', 
+          tip: '💡 សម្រាប់រូប Portrait នារីៗ គួរប្រើប្រាស់ Vibrance ជានិច្ច (+15 ទៅ +30) ហើយជៀសវាងការប្រើប្រាស់ Saturation បើមិនចាំបាច់។' 
+      }, 
+      { 
+          tool: 'Color Mix (HSL)', 
+          khmer: 'លាយពណ៌ (កែពណ៌ដាច់ដោយឡែក)', 
+          shortDesc: 'គ្រប់គ្រងពណ៌នីមួយៗដាច់ដោយឡែកពីគ្នា (Hue, Saturation, Luminance)។',
+          image: 'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80',
+          slider: { min: -180, max: 180, step: 1, default: 0, type: 'hue', actionText: (v) => v !== 0 ? `ប្តូរប្រភេទពណ៌ (Hue): ${v}°` : 'ពណ៌ដើម' },
+          desc: 'HSL គឺជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់អ្នកកែរូប ព្រោះវាអនុញ្ញាតឱ្យយើងជ្រើសរើសកែពណ៌នីមួយៗ (ក្នុងចំណោម ៨ពណ៌) ដាច់ដោយឡែកពីគ្នា ដោយមាន Slider ៣ សំខាន់ៗ៖\n\n⬅️ ទាញទៅឆ្វេង (-): ប្តូរពណ៌ទៅលាំពណ៌មួយទៀត (ឧទាហរណ៍៖ ទាញពណ៌បៃតងទៅឆ្វេង ឱ្យស្លឹកឈើទៅជាពណ៌លឿង)\n➡️ ទាញទៅស្តាំ (+): ប្តូរពណ៌ទៅលាំផ្ទុយគ្នា (ឧទាហរណ៍៖ ទាញពណ៌បៃតងទៅស្តាំ ឱ្យស្លឹកឈើទៅជាពណ៌ខៀវ)', 
+          tip: '💡 គន្លឹះធ្វើឱ្យស្បែកមុខតួអង្គភ្លឺសរលោង៖ សូមជ្រើសរើសពណ៌ Orange (ទឹកក្រូច) រួចទាញ Luminance ឡើងបូក (+) ឱ្យភ្លឺ និងបន្ថយ Saturation ដក (-) បន្តិចកុំឱ្យមុខលឿងពេក។' 
+      },
+      { 
+          tool: 'Color Grading', 
+          khmer: 'ចាក់ពណ៌ (ស្តាយកុន)', 
+          shortDesc: 'ចាក់ពណ៌ចូលរង្វង់ទាំង ៤ (Shadows, Midtones, Highlights, Global) និងកំណត់ Blending/Balance។',
+          image: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80',
+          slider: { 
+              min: -50, max: 50, step: 1, default: 0, type: 'grading_sim', 
+              actionText: (v) => v > 0 ? `កក់ក្តៅបែប Cinematic (+${v})` : v < 0 ? `ត្រជាក់បែប Dark (${v})` : 'ដើម' 
+          },
+          desc: 'Color Grading ក្នុង Lightroom Mobile មានរង្វង់ពណ៌ចំនួន ៤ និង Slider សំខាន់ៗចំនួន ៣ សម្រាប់បង្កើត Mood ភាពយន្ត៖\n\n' +
+                '🎯 រង្វង់ពណ៌ទាំង ៤ (Color Wheels)៖\n' +
+                '១. 🌑 Shadows (ស្រមោល): ចាក់ពណ៌ចូលតែតំបន់ងងឹត។ និយមប្រើពណ៌ Teal ឬ ខៀវទឹកប៊ិច ដើម្បីឱ្យរូបត្រជាក់។\n' +
+                '២. 🌗 Midtones (កណ្តាល): ចាក់ពណ៌ចូលតំបន់កណ្តាល (ប៉ះពាល់ដល់ពណ៌ស្បែកមនុស្សខ្លាំងជាងគេ)។ គួរប្រើពណ៌ទន់ៗ។\n' +
+                '៣. 🌕 Highlights (ផ្នែកភ្លឺ): ចាក់ពណ៌ចូលកន្លែងភ្លឺបំផុត។ និយមប្រើពណ៌ Orange (ទឹកក្រូច) ឬ លឿង។\n' +
+                '៤. 🌍 Global (រួម): ចាក់ពណ៌តែមួយស្រោបពីលើរូបភាពទាំងមូល។\n\n' +
+                '🎚️ ឧបករណ៍បញ្ជាបន្ថែម (Sliders)៖\n' +
+                '• 💡 Luminance: មាននៅក្រោមរង្វង់នីមួយៗ ប្រើសម្រាប់ទាញតំបន់នោះឱ្យភ្លឺឡើង (+) ឬងងឹតចុះ (-)\n' +
+                '• 🌫️ Blending: កំណត់ភាពរលាយចូលគ្នារវាងពណ៌រង្វង់ទាំង ៣។ លេខកាន់តែធំ ពណ៌កាន់តែរលាយចូលគ្នាទន់ល្អ (Smoother transition)\n' +
+                '• ⚖️ Balance: កំណត់ទម្ងន់ពណ៌។ អូសទៅឆ្វេង (-) រូបនឹងលម្អៀងទៅរកពណ៌ Shadows ច្រើនជាង។ អូសទៅស្តាំ (+) រូបនឹងលម្អៀងទៅពណ៌ Highlights។', 
+          tip: '🎬 រូបមន្ត Teal & Orange: ដាក់ពណ៌ Teal ក្នុងរង្វង់ Shadows, ពណ៌ Orange ក្នុង Highlights រួចទាញ Blending ទៅ 100 និងទាញ Balance ទៅឆ្វេងបន្តិច ដើម្បីឱ្យស៊ីពណ៌គ្នាឥតខ្ចោះ!' 
+      }
+    ] 
+  },
   { id: 'effects', title: 'បែបផែន (Effects)', icon: <Aperture className="w-6 h-6 text-purple-400" />, description: 'Texture, Clarity, Dehaze', content: [
-    { tool: 'Texture', khmer: 'វាយនភាព', desc: 'កែផ្ទៃអោយគ្រើម (ឃើញលម្អិត) ឬរលោង។', tip: 'ឧទាហរណ៍៖ ដាក់ -15 សម្រាប់ធ្វើឱ្យស្បែកមុខម៉ត់រលោង (Skin Smoothing)។' }, 
-    { tool: 'Clarity', khmer: 'ភាពច្បាស់', desc: 'បង្កើន Contrast នៅតំបន់កណ្តាល (Midtones) ធ្វើឱ្យរូបមើលទៅរឹងមាំ។', tip: 'កុំប្រើច្រើនលើមុខមនុស្ស។ ល្អសម្រាប់រូបថត Street ឬ Landscape (+30)។' }, 
-    { tool: 'Dehaze', khmer: 'កាត់អ័ព្ទ', desc: 'លុបអ័ព្ទធ្វើឱ្យរូបថ្លា ឬបន្ថែមអ័ព្ទ។', tip: 'ឧទាហរណ៍៖ ថតទេសភាពមេឃស្រអាប់ ដាក់ +20 ធ្វើឱ្យមេឃដិតនិងស្រឡះ។' }, 
-    { tool: 'Vignette', khmer: 'គែមងងឹត', desc: 'ធ្វើអោយគែមរូបងងឹត ឬភ្លឺ ដើម្បីផ្តោតអារម្មណ៍ទៅកណ្តាល។', tip: 'ដាក់ -20 សម្រាប់រូប Portrait ដើម្បីឱ្យគេមើលតែតួអង្គ។' }
+    { 
+        tool: 'Texture', 
+        khmer: 'វាយនភាព', 
+        shortDesc: 'កែផ្ទៃអោយគ្រើម (ឃើញលម្អិត) ឬរលោង។ ល្អសម្រាប់កែស្បែកមុខ។',
+        image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'texture', actionText: (v) => v > 0 ? `លម្អិតច្បាស់គ្រើម (+${v})` : v < 0 ? `ស្បែកម៉ត់រលោង (${v})` : 'ដើម' },
+        desc: 'Texture ផ្តោតលើភាពលម្អិតតូចៗ (Micro-details) នៃរូបភាព។\n\n⬅️ ទាញទៅឆ្វេង (-): ធ្វើឱ្យផ្ទៃរូបភាពរលោង។ ល្អបំផុតសម្រាប់ធ្វើឱ្យស្បែកមុខម៉ត់រលោង (Skin Smoothing) ដោយមិនធ្វើឱ្យភ្នែកឬសក់ព្រិលឡើយ។\n➡️ ទាញទៅស្តាំ (+): បង្កើនភាពច្បាស់ និងភាពគ្រើមនៃសាច់រូប ល្អសម្រាប់រូបថតទេសភាព ឬសម្លៀកបំពាក់។', 
+        tip: 'ឧទាហរណ៍៖ ដាក់ -15 ទៅ -25 សម្រាប់ធ្វើឱ្យស្បែកមុខម៉ត់រលោង។' 
+    }, 
+    { 
+        tool: 'Clarity', 
+        khmer: 'ភាពច្បាស់', 
+        shortDesc: 'បង្កើន Contrast នៅតំបន់កណ្តាល (Midtones) ធ្វើឱ្យរូបមើលទៅរឹងមាំ។',
+        image: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'clarity', actionText: (v) => v > 0 ? `រឹងមាំ មុតស្រួច (+${v})` : v < 0 ? `ស្រទន់ យល់សប្តិ (${v})` : 'ដើម' },
+        desc: 'Clarity បង្កើនភាពផ្ទុយ (Contrast) តែនៅត្រង់តំបន់កណ្តាលៗ (Midtones) ប៉ុណ្ណោះ។\n\n⬅️ ទាញទៅឆ្វេង (-): ធ្វើឱ្យរូបភាពស្រទន់ មើលទៅដូចសុបិន (Dreamy/Glow effect)។\n➡️ ទាញទៅស្តាំ (+): ធ្វើឱ្យរូបភាពមើលទៅរឹងមាំ មុតស្រួច និងដិតខ្លាំង។', 
+        tip: 'ប្រយ័ត្ន៖ កុំប្រើ Clarity បូកច្រើនលើមុខមនុស្សស្រី ព្រោះវាធ្វើឱ្យឃើញស្នាមជ្រីវជ្រួញច្បាស់ និងមើលទៅចាស់! ល្អសម្រាប់រូបថត Street ឬ Landscape (+20 ទៅ +30)។' 
+    }, 
+    { 
+        tool: 'Dehaze', 
+        khmer: 'កាត់អ័ព្ទ', 
+        shortDesc: 'លុបអ័ព្ទ ឬផ្សែងដើម្បីធ្វើឱ្យរូបថ្លា ឬបន្ថែមអ័ព្ទសម្រាប់អារម្មណ៍ Cinematic។',
+        image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80',
+        slider: { min: -100, max: 100, step: 1, default: 0, type: 'dehaze', actionText: (v) => v > 0 ? `លុបអ័ព្ទ ថ្លាឆ្វង់ (+${v})` : v < 0 ? `បន្ថែមអ័ព្ទ (${v})` : 'ដើម' },
+        desc: 'Dehaze គឺជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់រូបថតទេសភាព!\n\n⬅️ ទាញទៅឆ្វេង (-): បន្ថែមអ័ព្ទពណ៌សចូលទៅក្នុងរូបភាព បង្កើតជាបរិយាកាសអាថ៌កំបាំង ឬរដូវរងា។\n➡️ ទាញទៅស្តាំ (+): លុបអ័ព្ទ ផ្សែង ឬធូលី ធ្វើឱ្យមេឃដែលស្រអាប់ ក្លាយជាថ្លាឆ្វង់ និងដិតពណ៌មកវិញភ្លាមៗ។', 
+        tip: 'ឧទាហរណ៍៖ ថតទេសភាពមេឃស្រអាប់នៅពេលថ្ងៃ ដាក់ Dehaze +15 ទៅ +25 ធ្វើឱ្យមេឃដិតនិងស្រឡះ។' 
+    }
   ] },
   { id: 'detail', title: 'ភាពលម្អិត (Detail)', icon: <Triangle className="w-6 h-6 text-pink-400" />, description: 'Sharpening & Noise', content: [
-    { tool: 'Sharpening', khmer: 'ភាពមុត', desc: 'ធ្វើអោយគែមនៃវត្ថុក្នុងរូបកាន់តែច្បាស់។', tip: 'ប្រើជាមួយ Masking (Alt/Hold) ដើម្បីកុំឱ្យមុតពេញផ្ទៃមុខ។' }, 
-    { tool: 'Noise Reduction', khmer: 'កាត់បន្ថយគ្រាប់', desc: 'លុបគ្រាប់ Noise ដែលកើតឡើងដោយសារ ISO ខ្ពស់។', tip: 'ដាក់ +20 ដល់ +30 សម្រាប់រូបថតយប់។ កុំដាក់ច្រើនពេករូបនឹងក្លាយជាជ័រ។' }
+    { 
+        tool: 'Sharpening', 
+        khmer: 'ភាពមុត', 
+        shortDesc: 'ធ្វើអោយគែមនៃវត្ថុក្នុងរូបកាន់តែច្បាស់ និងមុតស្រួច។',
+        image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
+        desc: 'Sharpening បង្កើនភាពច្បាស់ (Sharpness) ដោយស្វែងរកគែមនៃវត្ថុ ហើយបង្កើនពន្លឺរបស់វា។\n\n➡️ ទាញទៅស្តាំ (+): ធ្វើឱ្យរូបភាពកាន់តែមុតស្រួច (Sharp)។\n\n💡 អ្វីដែលសំខាន់បំផុតគឺមុខងារ Masking ដែលនៅពីក្រោមវា៖\n- បើបងអូស Masking ទៅស្តាំ (ចុច Alt ជាប់ដើម្បីមើល) វានឹងធ្វើឱ្យច្បាស់តែត្រង់គែមវត្ថុ (សក់ ភ្នែក) ប៉ុណ្ណោះ ដោយរក្សាផ្ទៃស្បែកឱ្យនៅរលោងដដែល។', 
+        tip: 'តែងតែប្រើ Sharpening អមជាមួយ Masking កម្រិត 50 ទៅ 70 ដើម្បីកុំឱ្យស្បែកមុខមនុស្សឡើងគ្រើម!' 
+    }, 
+    { 
+        tool: 'Noise Reduction', 
+        khmer: 'កាត់បន្ថយគ្រាប់', 
+        shortDesc: 'លុបគ្រាប់ Noise ដែលកើតឡើងដោយសារថតយប់ ឬប្រើ ISO ខ្ពស់។',
+        desc: 'ពេលបងថតរូបនៅកន្លែងងងឹតដោយប្រើ ISO ខ្ពស់ រូបភាពនឹងលេចចេញនូវគ្រាប់អុចៗ (Noise)។\n\n➡️ ទាញ Luminance Noise Reduction ទៅស្តាំ (+): វានឹងធ្វើការលុបបំបាត់គ្រាប់ទាំងនោះ ធ្វើឱ្យរូបភាពត្រលប់មកម៉ត់វិញ។\n\n⚠️ ការព្រមាន៖ បើទាញវាកាន់តែខ្លាំង រូបភាពនឹងបាត់បង់ភាពច្បាស់ ហើយមើលទៅព្រិលៗដូចជ័រ។ ដូច្នេះគួរទាញត្រឹម +20 ទៅ +40 បានហើយ។', 
+        tip: 'បច្ចុប្បន្ន Lightroom មានមុខងារ AI Denoise ដែលអាចលុប Noise បាន 100% ដោយមិនព្រិលរូប ប៉ុន្តែវាស៊ីកម្លាំងកុំព្យូទ័រខ្លាំង។' 
+    }
   ] },
-  { id: 'optics', title: 'Optics', icon: <Crop className="w-6 h-6 text-green-400" />, description: 'Lens Corrections', content: [
-    { tool: 'Lens Profile', khmer: 'កែកែវថត', desc: 'កែតម្រូវការពត់កោង (Distortion) និង Vignette ដែលបង្កដោយកែវថត (Lens)។', tip: 'គួរតែបើកជានិច្ច (Enable) គ្រប់រូបភាព។' }, 
-    { tool: 'Chromatic', khmer: 'ពណ៌តាមគែម', desc: 'លុបពណ៌ស្វាយ ឬបៃតងដែលមិនចង់បាននៅតាមគែមវត្ថុ (Fringing)។', tip: 'ប្រើលើរូបដែលមាន Contrast ខ្ពស់ ដូចជាថតដើមឈើទល់នឹងមេឃ។' }
+  { id: 'crop', title: 'កាត់រូប (Crop)', icon: <Crop className="w-6 h-6 text-green-500" />, description: 'កាត់ទំហំ និងតម្រង់រូបភាព', content: [
+      { 
+          tool: 'Aspect Ratio', 
+          khmer: 'ទំហំរូប', 
+          shortDesc: 'កាត់រូបភាពឱ្យត្រូវនឹងខ្នាតស្តង់ដារបណ្តាញសង្គម។',
+          image: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=80',
+          desc: 'ការកាត់ទំហំរូបភាពគឺជារឿងសំខាន់បំផុតមុននឹងផុសរូប! \n\n- ទំហំ 4:5 (Portrait): ល្អបំផុតសម្រាប់ Instagram Feed ព្រោះវាបង្ហាញពេញអេក្រង់ទូរស័ព្ទ។\n- ទំហំ 16:9 (Landscape): សម្រាប់ YouTube ទូរទស្សន៍ ឬ Facebook ផ្តេក។\n- 1:1 (Square): សម្រាប់ Profile Picture។', 
+          tip: '💡 ប្រើខ្នាត 4:5 ជានិច្ចពេលផុស IG ដើម្បីកុំឱ្យគេកាត់រូបបងចោល!' 
+      },
+      { 
+          tool: 'Straighten (តម្រង់ប្លង់)', 
+          khmer: 'តម្រង់រូប', 
+          shortDesc: 'បង្វិលរូបភាពដែលថតមកវៀច ឱ្យត្រង់ស្អាតវិញ។',
+          image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80',
+          slider: { min: -45, max: 45, step: 1, default: 0, type: 'rotate', actionText: (v) => v > 0 ? `បង្វិលស្តាំ ${v}°` : v < 0 ? `បង្វិលឆ្វេង ${Math.abs(v)}°` : '0° (ដើម)' },
+          desc: 'គ្មានអ្នកណាចង់មើលរូបភាពដែលថតវៀចទឹករលក ឬវៀចជើងមេឃនោះទេ!\n\n⬅️ អូសឆ្វេង (-): បង្វិលទម្លាក់ខាងឆ្វេងចុះក្រោម\n➡️ អូសស្តាំ (+): បង្វិលទម្លាក់ខាងស្តាំចុះក្រោម\n(អូសដើម្បីឱ្យខ្សែជើងមេឃ ឬសសរអគារត្រង់ភ្លឹង ៩០ដឺក្រេ)', 
+          tip: '💡 នៅក្នុង Lightroom បងអាចចុចប៊ូតុង "Auto" ក្នុងប្រអប់ Crop ដើម្បីឱ្យ AI ជួយតម្រង់រូបដោយស្វ័យប្រវត្តិ។' 
+      }
   ] },
-  { id: 'geometry', title: 'Geometry', icon: <Layout className="w-6 h-6 text-blue-400" />, description: 'តម្រង់រូប', content: [
-    { tool: 'Upright', khmer: 'តម្រង់', desc: 'ធ្វើអោយអគារ ឬបន្ទាត់ក្នុងរូបត្រង់ដោយស្វ័យប្រវត្តិ។', tip: 'ប្រើ "Auto" សម្រាប់លទ្ធផលលឿន ឬ "Vertical" សម្រាប់ថតអគារ។' }
+  { id: 'optics', title: 'កែវថត (Optics)', icon: <Aperture className="w-6 h-6 text-blue-400" />, description: 'កែតម្រូវកំហុសកែវថត', content: [
+      { 
+          tool: 'Lens Profile Correction', 
+          khmer: 'កែកែវថត', 
+          shortDesc: 'លុបភាពកោង (Distortion) និងគែមខ្មៅ (Vignette) ពីកាមេរ៉ា។',
+          image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
+          slider: { min: 0, max: 100, step: 1, default: 0, type: 'lens_sim', actionText: (v) => v > 0 ? `កែតម្រូវកែវថតបាន ${v}%` : 'មិនទាន់កែ' },
+          desc: 'កែវថត (Lens) ភាគច្រើន ពិសេស Lens Wide-angle តែងតែធ្វើឱ្យរូបភាពមានសភាពកោងប៉ោង និងមានគែមងងឹត (Vignette) ដោយអចេតនា។\n\n➡️ ទាញទៅស្តាំ ឬធីកយកពាក្យ "Enable Profile Corrections": កម្មវិធីនឹងស្គាល់ម៉ាកកាមេរ៉ារបស់បង ហើយទាញរូបឱ្យត្រង់ និងភ្លឺគែមមកវិញភ្លាមៗ។', 
+          tip: '💡 នេះជាជំហានដែល Pro Retoucher តែងតែបើកវាជានិច្ច (១០០%) មុននឹងចាប់ផ្តើមកែពណ៌អ្វីទាំងអស់!' 
+      },
+      { 
+          tool: 'Chromatic Aberration', 
+          khmer: 'លុបពណ៌តាមគែម', 
+          shortDesc: 'លុបពណ៌ស្វាយ ឬបៃតងដែលហៀរចេញនៅតាមគែមវត្ថុ។',
+          image: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80',
+          desc: 'នៅពេលថតរូបដែលមានពន្លឺកាត់គ្នាខ្លាំង (ឧទាហរណ៍ ថតស្លឹកឈើទល់នឹងមេឃស) វានឹងមានហៀរពណ៌ស្វាយ (Purple fringing) ឬបៃតង នៅតាមគែមវត្ថុ។\n\nគ្រាន់តែធីកយកពាក្យ "Remove Chromatic Aberration" ពណ៌ដែលរំខានទាំងនោះនឹងបាត់រលីង។', 
+          tip: '💡 បើកវាជានិច្ច ដើម្បីឱ្យរូបភាពបងមើលទៅម៉ត់ និងមានគុណភាពខ្ពស់ដូចថតនឹងកែវថតថ្លៃៗ។' 
+      }
   ] }
 ];
+
+const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
+    const [sliderValue, setSliderValue] = useState(item.slider ? item.slider.default : 0);
+
+    const getFilterStyle = () => {
+        if (!item.slider) return 'none';
+        let val = sliderValue;
+        switch(item.slider.type) {
+            case 'exposure': return `brightness(${100 + (val * 20)}%)`;
+            case 'contrast': return `contrast(${100 + val}%)`;
+            case 'highlights': return `brightness(${100 + (val * 0.4)}%) contrast(${100 + (val * 0.2)}%)`;
+            case 'shadows': return `brightness(${100 + (val * 0.5)}%) contrast(${100 - (val * 0.2)}%)`;
+            case 'blacks': return `brightness(${100 + (val * 0.4)}%) contrast(${100 + (val * 0.3)}%)`;
+            case 'saturation': return `saturate(${100 + val}%)`;
+            case 'vibrance': return `saturate(${100 + (val * 0.8)}%)`;
+            case 'temp': return `sepia(50%) hue-rotate(${val > 0 ? -30 : 180}deg) saturate(${100 + Math.abs(val)}%)`;
+            case 'texture': return val < 0 ? `blur(${Math.abs(val) * 0.04}px)` : `contrast(${100 + val * 0.4}%)`;
+            case 'clarity': return `contrast(${100 + val * 0.8}%)`;
+            case 'dehaze': return `contrast(${100 + val}) saturate(${100 + val * 0.5}%)`;
+            case 'hue': return `hue-rotate(${val}deg)`;
+            case 'grading_sim': return `sepia(${Math.abs(val)}%) hue-rotate(${val > 0 ? -30 : 180}deg)`;
+            case 'rotate': return `rotate(${val}deg) scale(1.4)`;
+            case 'lens_sim': return `contrast(${100 - (val * 0.2)}%) brightness(${100 + (val * 0.2)}%)`;
+            default: return 'none';
+        }
+    };
+
+    return (
+        <div onClick={onToggle} className={`p-6 rounded-3xl border shadow-sm transition-all duration-300 ease-spring group cursor-pointer ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] hover:border-[#C65102]/50' : 'bg-[#FFFFFF] border-[#E0E0E0] hover:border-[#C65102]/50'}`}>
+            <div className="flex justify-between items-center mb-3 gap-3">
+                <div className="flex items-center gap-2 flex-1">
+                    <span className={`font-bold text-lg group-hover:text-[#C65102] transition-colors ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{item.tool}</span>
+                    <span className={`text-xs font-bold px-3 py-1.5 rounded-lg font-khmer border whitespace-nowrap ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] border-[#2C2C2C]' : 'bg-[#FAFAFA] text-[#5F6368] border-[#E0E0E0]'}`}>{item.khmer}</span>
+                </div>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 flex-shrink-0 ${isExpanded ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
+            </div>
+            
+            {/* Short Description */}
+            <p className={`text-sm font-khmer leading-relaxed line-clamp-2 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                {item.shortDesc || item.desc.split('\n')[0]}
+            </p>
+            
+            {/* 💡 រើ Tip មកខាងក្រៅ ដើម្បីឱ្យឃើញជានិច្ច 💡 */}
+            {item.tip && (
+                <div className={`mt-4 pt-3 border-t flex items-start space-x-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
+                    <span className="text-[13px] mt-0.5">💡</span>
+                    <p className={`text-xs font-khmer font-medium leading-relaxed ${isDarkMode ? 'text-yellow-500/90' : 'text-[#C65102]'}`}>
+                        {item.tip}
+                    </p>
+                </div>
+            )}
+            
+            {/* Expanded Content (Images, Sliders, Full Description) */}
+            {isExpanded && (
+                <div className="mt-5 pt-5 border-t border-[#C65102]/10 animate-fade-in-up cursor-default" onClick={(e) => e.stopPropagation()}>
+                    
+                    {/* បង្ហាញ Image + Slider */}
+                    {item.slider && item.image && (
+                        <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                            <div className="w-full h-48 sm:h-64 overflow-hidden rounded-xl mb-4 relative">
+                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                                <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">
+                                    {sliderValue > 0 ? `+${sliderValue.toFixed(item.slider.step < 1 ? 1 : 0)}` : sliderValue.toFixed(item.slider.step < 1 ? 1 : 0)}
+                                </div>
+                            </div>
+                            
+                            <input 
+                                type="range" 
+                                min={item.slider.min} max={item.slider.max} step={item.slider.step} 
+                                value={sliderValue} 
+                                onChange={(e) => setSliderValue(Number(e.target.value))} 
+                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-[#C65102]/30 outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full"
+                            />
+                            
+                            {item.slider.actionText && (
+                                <p className={`mt-3 text-sm font-khmer font-bold text-center ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>
+                                    {item.slider.actionText(sliderValue)}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                    
+                    {/* បង្ហាញតែ Image ធម្មតា បើអត់ Slider */}
+                    {!item.slider && item.image && (
+                        <div className={`mb-6 w-full overflow-hidden rounded-2xl border shadow-sm ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
+                            <img src={item.image} alt={item.tool} className="w-full h-auto object-cover max-h-[250px]" loading="lazy" />
+                        </div>
+                    )}
+                    
+                    {/* ការពន្យល់លម្អិតមានចុះបន្ទាត់ (Full Description) */}
+                    <p className={`text-[15px] font-khmer leading-relaxed whitespace-pre-wrap ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{item.desc}</p>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
     id: i + 1,
@@ -743,6 +990,7 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode, isSynced, 
 const LessonModal = ({ lesson, onClose, isDarkMode }) => {
   const [closing, setClosing] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
+  const [expandedItem, setExpandedItem] = useState(null);
   const modalRef = useRef(null);
   const dragStartY = useRef(null);
 
@@ -775,14 +1023,13 @@ const LessonModal = ({ lesson, onClose, isDarkMode }) => {
              </div>
              <div className={`scroll-content flex-1 overflow-y-auto p-6 space-y-4 overscroll-contain ${isDarkMode ? 'bg-[#121212]' : 'bg-[#FAFAFA]'}`}>
                 {lesson.content.map((item, idx) => (
-                    <div key={idx} className={`p-6 rounded-3xl border shadow-sm transition-colors group ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] hover:border-[#C65102]/50' : 'bg-[#FFFFFF] border-[#E0E0E0] hover:border-[#C65102]/50'}`}>
-                        <div className="flex justify-between items-center mb-3 gap-3">
-                            <span className={`font-bold text-lg group-hover:text-[#C65102] transition-colors ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{item.tool}</span>
-                            <span className={`text-xs font-bold px-3 py-1.5 rounded-lg font-khmer border whitespace-nowrap ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] border-[#2C2C2C]' : 'bg-[#FAFAFA] text-[#5F6368] border-[#E0E0E0]'}`}>{item.khmer}</span>
-                        </div>
-                        <p className={`text-base font-khmer leading-relaxed ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{item.desc}</p>
-                        {item.tip && <div className={`mt-4 pt-4 border-t flex items-start space-x-3 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><span className="text-lg">💡</span><p className={`text-sm font-khmer font-medium leading-relaxed ${isDarkMode ? 'text-yellow-500/90' : 'text-[#C65102]'}`}>{item.tip}</p></div>}
-                    </div>
+                    <LessonItem 
+                        key={idx} 
+                        item={item} 
+                        isExpanded={expandedItem === idx} 
+                        onToggle={() => { setExpandedItem(expandedItem === idx ? null : idx); triggerHaptic(); }} 
+                        isDarkMode={isDarkMode} 
+                    />
                 ))}
              </div>
           </div>
@@ -893,7 +1140,7 @@ const ContactSection = ({ isDarkMode }) => (
               <span className={`text-[10px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Website</span>
           </a>
       </div>
-      <p className={`text-center text-[10px] mt-8 font-khmer uppercase opacity-50 tracking-widest ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>© 2026 My Design. Crafted with Passion. | ទម្រង់ {APP_VERSION}</p>
+      <p className={`text-center text-[10px] mt-8 font-khmer uppercase opacity-50 tracking-widest ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>© 2026 My Design. Crafted with Passion.</p>
   </div>
 );
 
@@ -1820,32 +2067,25 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
       setLoading(true);
       
       try {
-          await new Promise(resolve => setTimeout(resolve, 600)); // Delay បន្តិចឱ្យសមរម្យ
+          // Add slight natural delay
+          await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
           
-          let localResponse = findAIResponse(msg);
-          const isFallback = SHORT_FALLBACK_RESPONSES.includes(localResponse) || LONG_FALLBACK_RESPONSES.includes(localResponse);
+          let response = findAIResponse(msg);
+          const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
           
           if (isFallback && apiKey) {
               try {
-                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI របស់ My Design ជំនាញខាងកែរូប។ ឆ្លើយតបជាភាសាខ្មែរឱ្យខ្លី ងាយយល់ និងរួសរាយ។");
-                  if (apiResponse) {
-                      setMessages(prev => [...prev, { role: 'model', text: apiResponse }]);
-                      setLoading(false);
-                      return;
-                  }
+                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
+                  if (apiResponse) response = apiResponse;
               } catch (apiErr) {
                   console.warn("API Error:", apiErr);
+                  response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
               }
+          } else if (isFallback && !apiKey) {
+              response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
           }
           
-          // កែប្រែប្រព័ន្ធ Fallback ថ្មី ពេលគ្មានអ៊ីនធឺណិត ឬ API មានបញ្ហា
-          if (isFallback) {
-              const friendlyError = "សុំទោសបងបាទ! ពេលនេះប្រព័ន្ធ AI (Online) កំពុងមានភាពរអាក់រអួល។ 🌐\n\nប៉ុន្តែបងនៅតែអាចសួរខ្ញុំពីគន្លឹះមានស្រាប់ (Offline) ដូចជា៖\n- តើអ្វីទៅជា Range Masking?\n- របៀបកែរូបបែប Dark & Moody\n- តើ Tone Curve ប្រើសម្រាប់អ្វី?\nសាកល្បងចុចលើសំណួរណែនាំខាងក្រោមបានណា៎បាទ! 👇";
-              setMessages(prev => [...prev, { role: 'model', text: friendlyError }]);
-          } else {
-              setMessages(prev => [...prev, { role: 'model', text: localResponse }]);
-          }
-          
+          setMessages(prev => [...prev, { role: 'model', text: response }]);
       } catch (error) {
           setMessages(prev => [...prev, { role: 'model', text: "សុំទោសបងបាទ! មានបញ្ហាបច្ចេកទេសបន្តិចបន្តួច។ សូមសាកល្បងម្ដងទៀត! 🛠️" }]);
       } finally {
@@ -1887,7 +2127,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('learn');
   const [expandedLesson, setExpandedLesson] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
   
   // Cloud Sync States
   const [user, setUser] = useState(null);
@@ -1966,26 +2205,6 @@ export default function App() {
       localStorage.setItem('myDesignChatHistory', JSON.stringify(chatMessages));
   }, [chatMessages]);
   const [isDarkMode, setIsDarkMode] = useState(true);
-
-  // --- ឆែកមើលជំនាន់ថ្មី (Version Checker) ---
-  useEffect(() => {
-      const savedVersion = localStorage.getItem('myDesignAppVersion');
-      if (savedVersion !== APP_VERSION) {
-          setShowUpdateModal(true);
-      }
-  }, []);
-
-  const handleUpdateApp = () => {
-      localStorage.setItem('myDesignAppVersion', APP_VERSION);
-      setShowUpdateModal(false);
-      // សម្អាត Cache របស់ PWA និង Refresh 
-      if ('caches' in window) {
-          caches.keys().then((names) => {
-              names.forEach(name => caches.delete(name));
-          });
-      }
-      window.location.reload(true);
-  };
 
   useEffect(() => {
     const meta = document.createElement('meta');
@@ -2093,36 +2312,6 @@ export default function App() {
                           </button>
                       </div>
                   )}
-              </div>
-          </div>
-      )}
-
-      {/* Update Version Modal */}
-      {showUpdateModal && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 backdrop-blur-md bg-black/60 transition-all">
-              <div className={`w-full max-w-sm p-8 rounded-[32px] border shadow-2xl animate-fade-in-up text-center ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
-                  <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-gradient-to-tr from-[#C65102] to-[#E86A10] shadow-lg">
-                      <Zap size={36} className="text-white" />
-                  </div>
-                  <h3 className={`text-2xl font-bold font-khmer mb-3 tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>
-                      មានកំណែអាប់ដេតថ្មី!
-                  </h3>
-                  <p className={`text-sm font-khmer leading-relaxed mb-4 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
-                      ជំនាន់ថ្មី <span className="font-bold text-[#C65102]">{APP_VERSION}</span> ត្រូវបានដាក់ឱ្យដំណើរការហើយបាទ!
-                  </p>
-                  <div className={`p-4 rounded-2xl text-left mb-8 space-y-2 text-xs font-khmer ${isDarkMode ? 'bg-[#2C2C2C]/50 text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368]'}`}>
-                      <p>✨ មានអ្វីថ្មីខ្លះ?</p>
-                      <ul className="list-disc pl-4 space-y-1 opacity-80">
-                          <li>បន្ថែមផ្ទាំងមើលចម្លើយ Quiz</li>
-                          <li>ជួសជុលបញ្ហាប៊ូតុង "បន្ទាប់" លើទូរស័ព្ទ</li>
-                          <li>អាប់ដេតទិន្នន័យ AI កាន់តែឆ្លាតវៃ</li>
-                          <li>បង្កើនល្បឿនដំណើរការកម្មវិធី (PWA)</li>
-                      </ul>
-                  </div>
-                  
-                  <button onClick={handleUpdateApp} className="w-full py-4 rounded-2xl font-bold font-khmer bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] shadow-lg active:scale-95 transition-all text-sm flex justify-center items-center gap-2">
-                      <RefreshCw size={18} /> អាប់ដេតឥឡូវនេះ
-                  </button>
               </div>
           </div>
       )}
