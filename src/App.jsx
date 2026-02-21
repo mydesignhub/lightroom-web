@@ -8,7 +8,7 @@ import {
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
   Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
   Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
-  ThumbsUp, User, Activity, Cloud
+  ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
@@ -38,6 +38,13 @@ try {
 } catch (error) {
     console.warn("Firebase config not found, running local only.");
 }
+
+// Haptic Feedback Helper Function (Pro Feature)
+const triggerHaptic = () => {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(10); // ញ័រតិចៗ 10ms
+    }
+};
 
 const responseCache = {};
 
@@ -895,6 +902,9 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const [showCurve, setShowCurve] = useState(false);
   const [activeCurveChannel, setActiveCurveChannel] = useState('Master');
   const [draggingPointIndex, setDraggingPointIndex] = useState(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [splitMode, setSplitMode] = useState(false);
+  const [splitPos, setSplitPos] = useState(50);
   
   
   const initialCurve = [{x:0, y:0}, {x:100, y:100}];
@@ -964,8 +974,28 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
       setSuggestedMoods(matchedMoods);
   }, [aiPrompt, mode, userPresets]);
 
-  const updateSetting = (key, value) => setSettings(prev => ({...prev, [key]: value}));
-  const resetSettings = () => setSettings(defaultSettings);
+  const updateSetting = (key, value) => {
+      setSettings(prev => ({...prev, [key]: value}));
+      triggerHaptic();
+  };
+  
+  const resetSettings = () => {
+      setSettings(defaultSettings);
+      triggerHaptic();
+  };
+
+  const handleCopySettings = () => {
+      localStorage.setItem('myDesignCopiedSettings', JSON.stringify(settings));
+      triggerHaptic();
+  };
+
+  const handlePasteSettings = () => {
+      const copied = localStorage.getItem('myDesignCopiedSettings');
+      if (copied) {
+          setSettings(JSON.parse(copied));
+          triggerHaptic();
+      }
+  };
   
   const handleImageUpload = (e) => { 
       const file = e.target.files[0]; 
@@ -1349,11 +1379,11 @@ const handleDownload = () => {
             <div className={`h-[50%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 px-2 pb-2 pt-2 lg:p-0 ${isDarkMode ? 'bg-[#121212]/40 lg:bg-transparent' : 'bg-[#FFFFFF]/40 lg:bg-transparent'}`}>
                 <div 
                     className={`flex-1 rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border group cursor-pointer touch-none select-none ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-lg'}`}
-                    onMouseDown={() => setShowBefore(true)}
-                    onMouseUp={() => setShowBefore(false)}
-                    onMouseLeave={() => setShowBefore(false)}
-                    onTouchStart={() => setShowBefore(true)}
-                    onTouchEnd={() => setShowBefore(false)}
+                    onMouseDown={() => !splitMode && setShowBefore(true)}
+                    onMouseUp={() => !splitMode && setShowBefore(false)}
+                    onMouseLeave={() => !splitMode && setShowBefore(false)}
+                    onTouchStart={() => !splitMode && setShowBefore(true)}
+                    onTouchEnd={() => !splitMode && setShowBefore(false)}
                 >
                     <div className="relative w-full h-full pointer-events-none">
                         <svg width="0" height="0" className="absolute pointer-events-none">
@@ -1369,10 +1399,32 @@ const handleDownload = () => {
                                 </feComponentTransfer>
                             </filter>
                         </svg>
-                        <img src={image} className="w-full h-full object-cover scale-110 transition-all duration-100 ease-linear" draggable="false" style={{ filter: showBefore ? 'none' : filterString }} />
+                        <img 
+                            src={image} 
+                            onDoubleClick={(e) => { e.stopPropagation(); setIsZoomed(!isZoomed); triggerHaptic(); }}
+                            className={`w-full h-full object-cover transition-transform duration-300 ease-spring ${isZoomed ? 'scale-[2.5] cursor-zoom-out' : 'scale-110 cursor-zoom-in'}`} 
+                            draggable="false" 
+                            style={{ filter: showBefore ? 'none' : filterString }} 
+                        />
+                        {splitMode && (
+                            <div 
+                                className="absolute inset-0 z-10 pointer-events-none border-r-2 border-white/50 shadow-[2px_0_10px_rgba(0,0,0,0.5)]"
+                                style={{ clipPath: `inset(0 ${100 - splitPos}% 0 0)` }}
+                            >
+                                <img src={image} className={`w-full h-full object-cover transition-transform duration-300 ease-spring ${isZoomed ? 'scale-[2.5]' : 'scale-110'}`} style={{ filter: 'none' }} />
+                            </div>
+                        )}
                         <div className="absolute inset-0 pointer-events-none" style={showBefore ? {} : vignetteStyle}></div>
                     </div>
-                    {showBefore && (
+                    {splitMode && (
+                        <input 
+                            type="range" min="0" max="100" value={splitPos} 
+                            onChange={(e) => setSplitPos(e.target.value)}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 touch-pan-y" 
+                            style={{ pointerEvents: 'auto' }}
+                        />
+                    )}
+                    {showBefore && !splitMode && (
                         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs font-bold px-4 py-1.5 rounded-full backdrop-blur-md pointer-events-none animate-fade-in-up font-khmer">
                             រូបភាពដើម
                         </div>
@@ -1397,6 +1449,13 @@ const handleDownload = () => {
                         <button onClick={() => setMode('manual')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'manual' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>កែដោយដៃ</button>
                         <button onClick={() => setMode('preset')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'preset' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>Preset</button>
                     </div>
+                    {mode === 'manual' && (
+                        <>
+                            <button onClick={handleCopySettings} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3] hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-[#1A1C1E] hover:bg-[#E0E0E0]'}`} title="Copy Settings"><Copy size={16}/></button>
+                            <button onClick={handlePasteSettings} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3] hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-[#1A1C1E] hover:bg-[#E0E0E0]'}`} title="Paste Settings"><ClipboardPaste size={16}/></button>
+                            <button onClick={() => { setSplitMode(!splitMode); setSplitPos(50); triggerHaptic(); }} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${splitMode ? 'bg-[#C65102]/20 text-[#C65102]' : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3] hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-[#1A1C1E] hover:bg-[#E0E0E0]')}`} title="Split View"><SplitSquareHorizontal size={16}/></button>
+                        </>
+                    )}
                     <button onClick={handleSaveCustomPreset} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${isDarkMode ? 'text-[#9AA0A6] hover:text-green-400 hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-green-500 hover:bg-[#E0E0E0]'}`} title="Save Custom Preset"><Save size={16}/></button>
                     <button onClick={resetSettings} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${isDarkMode ? 'text-[#9AA0A6] hover:text-red-400 hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-red-500 hover:bg-[#E0E0E0]'}`} title="Reset All"><RotateCcw size={16}/></button>
                  </div>
@@ -1881,7 +1940,7 @@ export default function App() {
       if (savedChat) {
           return JSON.parse(savedChat);
       }
-      return [{ role: 'model', text: 'សួស្ដីបងបាទ! 👋 ខ្ញុំជាគ្រូជំនួយ AI ផ្ទាល់ខ្លួនរបស់បង。\n\nតើបងចង់ដឹងពីក្បួនកែរូបអ្វីខ្លះនៅថ្ងៃនេះ? បងអាចសួរខ្ញុំបានពីអត្ថន័យនៃពណ៌ របៀបប្រើប្រាស់មុខងារផ្សេងៗ ឬឱ្យខ្ញុំណែនាំ Preset ស្អាតៗក៏បានដែរណា៎! ធានាថារៀនជាមួយខ្ញុំមិនធុញទេបាទ! 😊✨' }];
+      return [{ role: 'model', text: 'សួស្ដីបាទ! 👋 ខ្ញុំជាគ្រូជំនួយ AI ផ្ទាល់ខ្លួនរបស់បង。\n\nតើបងចង់ដឹងពីក្បួនកែរូបអ្វីខ្លះនៅថ្ងៃនេះ? បងអាចសួរខ្ញុំបានពីអត្ថន័យនៃពណ៌ របៀបប្រើប្រាស់មុខងារផ្សេងៗ ឬឱ្យខ្ញុំណែនាំ Preset ស្អាតៗក៏បានដែរណា៎! ធានាថារៀនជាមួយខ្ញុំមិនធុញទេបាទ! 😊✨' }];
   });
 
   // ២. រក្សាទុកប្រវត្តិឆាតទៅក្នុង LocalStorage ដោយស្វ័យប្រវត្តិ រាល់ពេលមានការសួរឆ្លើយថ្មីៗ
