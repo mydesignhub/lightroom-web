@@ -6,9 +6,9 @@ import {
   AlertTriangle, RotateCcw, Globe, RefreshCw, Layout, Image as ImageIcon, 
   Lightbulb, Palette, X, WifiOff, Download, TrendingUp, Share2, Clipboard, Camera,
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
-  Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
-  Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
-  ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal
+      Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
+      Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
+      ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal, Maximize
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
@@ -1442,6 +1442,8 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [splitMode, setSplitMode] = useState(false);
   const [splitPos, setSplitPos] = useState(50);
+  const [expandedGroup, setExpandedGroup] = useState('Light'); // បន្ថែម State សម្រាប់ Accordion
+  const [isFullscreen, setIsFullscreen] = useState(false); // បន្ថែម State សម្រាប់ Fullscreen
   
   
   const initialCurve = [{x:0, y:0}, {x:100, y:100}];
@@ -1952,6 +1954,13 @@ const handleDownload = () => {
                             style={{ pointerEvents: 'auto' }}
                         />
                     )}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setIsFullscreen(true); triggerHaptic(); }}
+                        className="absolute top-3 right-3 p-2.5 rounded-xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white z-30 transition-all active:scale-95 shadow-lg border border-white/10"
+                        title="Full Screen View"
+                    >
+                        <Maximize size={16} />
+                    </button>
                     {showBefore && !splitMode && (
                         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs font-bold px-4 py-1.5 rounded-full backdrop-blur-md pointer-events-none animate-fade-in-up font-khmer">
                             រូបភាពដើម
@@ -1989,213 +1998,236 @@ const handleDownload = () => {
                  </div>
                  <div className={`flex-1 flex flex-col overflow-hidden relative ${isDarkMode ? 'bg-[#1E1E1E]' : 'bg-[#FFFFFF]'}`}>
                     {mode === 'manual' ? (
-                        <div className="flex-1 overflow-y-auto p-2 custom-scrollbar space-y-6 pb-24 lg:pb-10 pt-2">
+                        <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-3 pb-24 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className="space-y-4">
-                                    <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{group.icon} {group.group}</h4><button onClick={() => { if(group.group==='Light') { updateSetting('curveMaster', [...initialCurve]); updateSetting('curveRed', [...initialCurve]); updateSetting('curveGreen', [...initialCurve]); updateSetting('curveBlue', [...initialCurve]); } resetGroup(group.items); }} className={`text-[10px] transition-colors font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#FF8C33] hover:text-[#C65102]' : 'text-[#C65102] hover:text-[#A84502]'}`}>Reset</button></div>
-                                    <div className="space-y-4">
-                                        {group.items.map(t => (
-                                            <div key={t.id} className="group/item">
-                                                <div className="flex justify-between mb-3 items-center">
-                                                    <label className={`text-xs font-bold font-khmer cursor-pointer transition-colors ${isDarkMode ? 'text-[#E3E3E3] hover:text-[#C65102]/90' : 'text-[#1A1C1E] hover:text-[#C65102]'}`} onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
-                                                    <span className={`text-xs font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
+                                <div key={gIdx} className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
+                                    <button onClick={() => { setExpandedGroup(expandedGroup === group.group ? null : group.group); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
+                                        <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === group.group ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === group.group ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
+                                            {group.icon} {group.group}
+                                        </h4>
+                                        <div className="flex items-center gap-4">
+                                            <span onClick={(e) => { e.stopPropagation(); if(group.group==='Light') { updateSetting('curveMaster', [...initialCurve]); updateSetting('curveRed', [...initialCurve]); updateSetting('curveGreen', [...initialCurve]); updateSetting('curveBlue', [...initialCurve]); } resetGroup(group.items); triggerHaptic(); }} className={`text-[9px] font-bold uppercase tracking-wider px-2.5 py-1.5 border rounded-lg transition-colors active:scale-95 ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FFFFFF] border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]'}`}>Reset</span>
+                                            <ChevronDown size={18} className={`transition-transform duration-300 ${expandedGroup === group.group ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
+                                        </div>
+                                    </button>
+                                    
+                                    {expandedGroup === group.group && (
+                                        <div className="px-4 pb-5 pt-2 space-y-5 animate-fade-in-up border-t border-transparent">
+                                            {group.items.map(t => (
+                                                <div key={t.id} className="group/item">
+                                                    <div className="flex justify-between mb-3 items-center">
+                                                        <label className={`text-xs font-bold font-khmer cursor-pointer transition-colors ${isDarkMode ? 'text-[#E3E3E3] hover:text-[#C65102]/90' : 'text-[#1A1C1E] hover:text-[#C65102]'}`} onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
+                                                        <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className={`p-1 rounded-full transition-colors active:scale-90 ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3] hover:bg-[#1E1E1E]' : 'text-[#5F6368] hover:text-[#1A1C1E] hover:bg-[#FFFFFF]'}`}><Minus size={14}/></button>
+                                                        <input 
+                                                            type="range" min={t.min} max={t.max} step={t.step || 1} 
+                                                            value={settings[t.id]} 
+                                                            onChange={(e) => updateSetting(t.id, Number(e.target.value))} 
+                                                            className={`flex-1 appearance-none cursor-pointer outline-none ${t.id === 'temp' ? 'grad-temp' : ''} ${t.id === 'tint' ? 'grad-tint' : ''}`} 
+                                                        />
+                                                        <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className={`p-1 rounded-full transition-colors active:scale-90 ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3] hover:bg-[#1E1E1E]' : 'text-[#5F6368] hover:text-[#1A1C1E] hover:bg-[#FFFFFF]'}`}><Plus size={14}/></button>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center gap-3">
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className={`transition-colors active:scale-90 ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]'}`}><Minus size={14}/></button>
-                                                    <input 
-                                                        type="range" min={t.min} max={t.max} step={t.step || 1} 
-                                                        value={settings[t.id]} 
-                                                        onChange={(e) => updateSetting(t.id, Number(e.target.value))} 
-                                                        className={`flex-1 appearance-none cursor-pointer outline-none ${t.id === 'temp' ? 'grad-temp' : ''} ${t.id === 'tint' ? 'grad-tint' : ''}`} 
-                                                    />
-                                                    <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className={`transition-colors active:scale-90 ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]'}`}><Plus size={14}/></button>
+                                            ))}
+                                            {group.group === 'Light' && (
+                                                <div className="flex flex-col gap-3 mt-6 pt-4 border-t border-[#C65102]/10">
+                                                    <button onClick={() => setShowCurve(!showCurve)} className={`w-full py-3 border rounded-xl text-[11px] uppercase tracking-wider font-bold font-khmer transition-all active:scale-95 flex items-center justify-between px-4 shadow-sm ${showCurve ? (isDarkMode ? 'bg-[#C65102]/20 border-[#C65102]/50 text-[#C65102]' : 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]') : (isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] text-[#E3E3E3] hover:bg-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0] text-[#1A1C1E] hover:bg-[#FAFAFA]')}`}>
+                                                        <span className="flex items-center gap-2"><Activity size={16} className={showCurve ? "text-[#C65102]" : "text-[#C65102]"} /> ខ្សែកោង (Tone Curve)</span>
+                                                        {showCurve ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                                    </button>
+                                                    
+                                                    {showCurve && (
+                                                        <div 
+                                                            className={`p-4 rounded-2xl border shadow-inner animate-fade-in-up ${isDarkMode ? 'bg-[#1A1C1E] border-[#2C2C2C]' : 'bg-[#F5F5F5] border-[#E0E0E0]'}`}
+                                                            onMouseMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
+                                                            onMouseUp={handleCurvePointerUp}
+                                                            onMouseLeave={handleCurvePointerUp}
+                                                            onTouchMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
+                                                            onTouchEnd={handleCurvePointerUp}
+                                                        >
+                                                            <div className="flex justify-between items-center mb-4">
+                                                                <p className={`text-xs font-khmer opacity-70 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម | ២ដងដើម្បីលុប</p>
+                                                                <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-2 rounded-full border shadow-sm transition-colors active:scale-90 ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FFFFFF] border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={14}/></button>
+                                                            </div>
+                                                            <div className="flex gap-2 mb-5 justify-center relative z-20">
+                                                                {['Master', 'Red', 'Green', 'Blue'].map(ch => (
+                                                                    <button 
+                                                                        key={ch} 
+                                                                        onClick={() => setActiveCurveChannel(ch)}
+                                                                        className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm ${activeCurveChannel === ch ? 'bg-[#C65102] text-white' : (isDarkMode ? 'bg-[#2C2C2E] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FFFFFF] border border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}
+                                                                    >
+                                                                        <span className="flex items-center gap-2">
+                                                                            <div className={`w-2 h-2 rounded-full shadow-inner ${ch === 'Master' ? (isDarkMode ? 'bg-white' : 'bg-black') : (ch === 'Red' ? 'bg-[#EF4444]' : ch === 'Green' ? 'bg-[#22C55E]' : 'bg-[#3B82F6]')}`}></div>
+                                                                            {ch}
+                                                                        </span>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                            <div className={`w-[90%] sm:w-[80%] mx-auto aspect-square rounded-xl border relative overflow-visible touch-none shadow-md ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+                                                               <svg 
+                                                                   ref={curveSvgRef}
+                                                                   width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" 
+                                                                   className="cursor-crosshair"
+                                                                   style={{ overflow: 'visible' }}
+                                                                   onPointerDown={handleCurvePointerDown}
+                                                                   onDoubleClick={handleCurveDoubleClick}
+                                                               >
+                                                                   <rect x="-3" y="-3" width="105" height="105" fill="transparent" />
+                                                                   <line x1="25" y1="0" x2="25" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                                                                   <line x1="50" y1="0" x2="50" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                                                                   <line x1="75" y1="0" x2="75" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                                                                   <line x1="0" y1="25" x2="100" y2="25" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                                                                   <line x1="0" y1="50" x2="100" y2="50" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                                                                   <line x1="0" y1="75" x2="100" y2="75" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
+                                                                   <line x1="0" y1="100" x2="100" y2="0" stroke={isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'} strokeWidth="0.5" strokeDasharray="4" />
+                                                                   <path d={renderSmoothCurve()} fill="none" stroke={getCurveColor()} strokeWidth="0.5" />
+                                                                   {activePoints.map((p, idx) => (
+                                                                       <circle 
+                                                                            key={idx} cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "3.5" : "2.8"}
+                                                                            fill={getCurveColor()} stroke={isDarkMode ? '#121212' : '#FFFFFF'} strokeWidth="1.5"
+                                                                            className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md"
+                                                                        />
+                                                                   ))}
+                                                               </svg>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            </div>
-                                        ))}
-                                        {group.group === 'Light' && (
-    <div className="flex flex-col gap-3 mt-4">
-        <button onClick={() => setShowCurve(!showCurve)} className={`w-full py-2.5 border rounded-xl text-xs font-bold font-khmer transition-all active:scale-95 flex items-center justify-between px-4 shadow-sm ${showCurve ? (isDarkMode ? 'bg-[#C65102]/20 border-[#C65102]/50 text-[#C65102]' : 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]') : (isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C] text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#1A1C1E] hover:bg-[#E0E0E0]/50')}`}>
-            <span className="flex items-center gap-2"><Activity size={14} className={showCurve ? "text-[#C65102]" : "text-[#C65102]"} /> ខ្សែកោង (Tone Curve)</span>
-            {showCurve ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-        
-        {showCurve && (
-            <div 
-                className={`p-4 rounded-2xl border shadow-sm animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}
-                onMouseMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
-                onMouseUp={handleCurvePointerUp}
-                onMouseLeave={handleCurvePointerUp}
-                onTouchMove={draggingPointIndex !== null ? handleCurvePointerMove : undefined}
-                onTouchEnd={handleCurvePointerUp}
-            >
-                <div className="flex justify-between items-center mb-3">
-                    <p className={`text-[14px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ចុចលើខ្សែដើម្បីបន្ថែម | ចុចពីរដងដើម្បីលុប</p>
-                    <button onClick={() => updateSetting(`curve${activeCurveChannel}`, [...initialCurve])} className={`p-1.5 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`} title="Reset Curve"><RotateCcw size={14}/></button>
-                </div>
-                <div className="flex gap-2 mb-4 justify-center relative z-20">
-                    {['Master', 'Red', 'Green', 'Blue'].map(ch => (
-                        <button 
-                            key={ch} 
-                            onClick={() => setActiveCurveChannel(ch)}
-                            className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${activeCurveChannel === ch ? 'bg-[#C65102] text-white shadow-md' : (isDarkMode ? 'bg-[#2C2C2E] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] border border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}
-                        >
-                            <span className="flex items-center gap-1.5">
-                                <div className={`w-2 h-2 rounded-full ${ch === 'Master' ? (isDarkMode ? 'bg-white' : 'bg-black') : (ch === 'Red' ? 'bg-[#EF4444]' : ch === 'Green' ? 'bg-[#22C55E]' : 'bg-[#3B82F6]')}`}></div>
-                                {ch}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-                <div className={`w-[90%] mx-auto aspect-square rounded-xl border relative overflow-visible touch-none ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                   <svg 
-                       ref={curveSvgRef}
-                       width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" 
-                       className="cursor-crosshair"
-                       style={{ overflow: 'visible' }}
-                       onPointerDown={handleCurvePointerDown}
-                       onDoubleClick={handleCurveDoubleClick}
-                   >
-                       <rect x="-3" y="-3" width="105" height="105" fill="transparent" />
-                       <line x1="25" y1="0" x2="25" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                       <line x1="50" y1="0" x2="50" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                       <line x1="75" y1="0" x2="75" y2="100" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                       <line x1="0" y1="25" x2="100" y2="25" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                       <line x1="0" y1="50" x2="100" y2="50" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                       <line x1="0" y1="75" x2="100" y2="75" stroke={isDarkMode ? '#2C2C2E' : '#E0E0E0'} strokeWidth="0.5" />
-                       <line x1="0" y1="100" x2="100" y2="0" stroke={isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'} strokeWidth="0.5" strokeDasharray="4" />
-                       <path d={renderSmoothCurve()} fill="none" stroke={getCurveColor()} strokeWidth="0.5" />
-                       {activePoints.map((p, idx) => (
-                           <circle 
-                                key={idx} cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "3.5" : "2.8"}
-                                fill={getCurveColor()} stroke={isDarkMode ? '#121212' : '#FFFFFF'} strokeWidth="1.5"
-                                className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md"
-                            />
-                       ))}
-                   </svg>
-                </div>
-            </div>
-        )}
-    </div>
-        )}
-                                    </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                             
-                            <div className="space-y-4">
-                                <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
-                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                            <div className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
+                                <button onClick={() => { setExpandedGroup(expandedGroup === 'Color Mix' ? null : 'Color Mix'); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
+                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === 'Color Mix' ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === 'Color Mix' ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
                                         <Palette size={16}/> Color Mix
                                     </h4>
-                                </div>
-                                <div className="flex justify-between gap-3 mb-4 px-1">
-                                    {colors.map(c => (
-                                        <button key={c.id} onClick={() => setActiveColor(c.name)} style={{ backgroundColor: c.hex }} className={`w-8 h-8 rounded-full border-2 ${activeColor === c.name ? (isDarkMode ? 'border-[#E3E3E3] scale-110 shadow-lg ring-2 ring-[#2C2C2C]' : 'border-[#1A1C1E] scale-110 shadow-lg ring-2 ring-[#E0E0E0]') : 'border-transparent opacity-80 hover:opacity-100'} transition-all duration-300 ease-spring`} />
-                                    ))}
-                                </div>
-                                <div className="space-y-4 px-2">
-                                    {['Hue', 'Sat', 'Lum'].map((type) => { 
-                                        const key = `${activeColor.toLowerCase()}${type}`; 
-                                        return (
-                                            <div key={key} className="flex items-center gap-3">
-                                                <label className={`text-[10px] font-bold font-khmer w-8 uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{type}</label>
-                                                <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 appearance-none cursor-pointer outline-none ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
-                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`} />
-                                            </div>
-                                        )
-                                    })}
-                                </div>
+                                    <ChevronDown size={18} className={`transition-transform duration-300 ${expandedGroup === 'Color Mix' ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
+                                </button>
+                                {expandedGroup === 'Color Mix' && (
+                                    <div className="px-4 pb-5 pt-2 space-y-5 animate-fade-in-up border-t border-transparent">
+                                        <div className="flex justify-between gap-2 mb-4 px-1">
+                                            {colors.map(c => (
+                                                <button key={c.id} onClick={() => setActiveColor(c.name)} style={{ backgroundColor: c.hex }} className={`w-8 h-8 rounded-full border-2 ${activeColor === c.name ? (isDarkMode ? 'border-[#E3E3E3] scale-110 shadow-lg ring-2 ring-[#2C2C2C]' : 'border-[#1A1C1E] scale-110 shadow-lg ring-2 ring-[#E0E0E0]') : 'border-transparent opacity-80 hover:opacity-100'} transition-all duration-300 ease-spring`} />
+                                            ))}
+                                        </div>
+                                        <div className="space-y-5 px-2">
+                                            {['Hue', 'Sat', 'Lum'].map((type) => { 
+                                                const key = `${activeColor.toLowerCase()}${type}`; 
+                                                return (
+                                                    <div key={key} className="flex items-center gap-4">
+                                                        <label className={`text-[10px] font-bold font-khmer w-8 uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{type}</label>
+                                                        <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 appearance-none cursor-pointer outline-none ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
+                                                        <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[key]}</span>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             
-                            <div className="space-y-4 pb-4">
-                                <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
-                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                            <div className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
+                                <button onClick={() => { setExpandedGroup(expandedGroup === 'Grading' ? null : 'Grading'); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
+                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === 'Grading' ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === 'Grading' ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
                                         <TrendingUp size={16}/> Grading
                                     </h4>
-                                    <button onClick={() => setGradingSync(!gradingSync)} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${gradingSync ? 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]' : (isDarkMode ? 'bg-[#2C2C2E] border-[#2C2C2C] text-[#5F6368]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#5F6368]')}`}>
-                                        <span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span>
-                                        <div className={`w-2 h-2 rounded-full ${gradingSync ? 'bg-[#C65102] shadow-[0_0_8px_rgba(198,81,2,0.5)]' : (isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]')}`}></div>
-                                    </button>
-                                </div>
-                                <div className={`flex justify-around mb-2 p-1.5 rounded-xl ${isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#FAFAFA]'}`}>
-                                    {['Shadows', 'Midtones', 'Highlights', 'Global'].map(t => (
-                                        <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? (isDarkMode ? 'bg-[#1E1E1E] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>{t}</button>
-                                    ))}
-                                </div>
-                                {(() => {
-                                    const hKey = gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : gradingTab === 'Highlights' ? 'highlightHue' : 'globalHue';
-                                    const sKey = gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : gradingTab === 'Highlights' ? 'highlightSat' : 'globalSat';
-                                    const lKey = gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : gradingTab === 'Highlights' ? 'highlightLum' : 'globalLum';
-                                    return (
-                                        <div className="p-1 space-y-4">
-                                            <div className="flex justify-center py-1">
-                                                <ColorWheel hue={settings[hKey]} sat={settings[sKey]} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={160} isDarkMode={isDarkMode} />
-                                            </div>
-                                            <div className={`rounded-2xl p-3 border space-y-3 ${isDarkMode ? 'bg-[#2C2C2C]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                                                <div className="flex justify-between items-center px-1">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold">Selected</span>
-                                                        <span className={`text-xs font-bold flex items-center gap-1.5 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>
-                                                            <div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${settings[hKey]}, ${settings[sKey]}%, 50%)`}}></div>
-                                                            {getColorName(settings[hKey], settings[sKey])}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col items-end">
-                                                        <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold">Complementary</span>
-                                                        <span className={`text-xs font-bold flex items-center gap-1.5 flex-row-reverse ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
-                                                            <div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${(settings[hKey] + 180) % 360}, 60%, 50%)`}}></div>
-                                                            {getColorName((settings[hKey] + 180) % 360)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <div className="flex justify-between">
-                                                        <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Hue</label>
-                                                    </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <input type="range" min="0" max="360" value={settings[hKey]} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[sKey])} className="flex-1 appearance-none cursor-pointer outline-none grad-hue" />
-                                                        <input type="number" value={Math.round(settings[hKey])} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[sKey])} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/>
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <div className="flex justify-between">
-                                                        <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Saturation</label>
-                                                    </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <input type="range" min="0" max="100" value={settings[sKey]} onChange={(e) => updateGrading(gradingTab, settings[hKey], Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-sat" />
-                                                        <input type="number" value={Math.round(settings[sKey])} onChange={(e) => updateGrading(gradingTab, settings[hKey], Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/>
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <div className="flex justify-between">
-                                                        <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Luminance</label>
-                                                    </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <input type="range" min="-100" max="100" value={settings[lKey]} onChange={(e) => updateSetting(lKey, Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-lum" />
-                                                        <input type="number" value={settings[lKey]} onChange={(e) => updateSetting(lKey, Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/>
-                                                    </div>
-                                                </div>
-                                                {gradingTab !== 'Global' && (
-                                                <div className={`pt-2 border-t space-y-2 px-1 mt-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
-                                                    <div className="flex flex-col gap-1.5">
-                                                        <div className="flex justify-between">
-                                                            <label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Blending</label>
-                                                            <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBlending}</span>
-                                                        </div>
-                                                        <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none" />
-                                                    </div>
-                                                    <div className="flex flex-col gap-1.5">
-                                                        <div className="flex justify-between">
-                                                            <label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Balance</label>
-                                                            <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBalance}</span>
-                                                        </div>
-                                                        <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none" />
-                                                    </div>
-                                                </div>
-                                                )}
-                                            </div>
+                                    <div className="flex items-center gap-4">
+                                        <span onClick={(e) => { e.stopPropagation(); setGradingSync(!gradingSync); triggerHaptic(); }} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-all active:scale-95 ${gradingSync ? 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]' : (isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FFFFFF] border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}>
+                                            <span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span>
+                                            <div className={`w-2 h-2 rounded-full shadow-inner ${gradingSync ? 'bg-[#C65102] shadow-[0_0_8px_rgba(198,81,2,0.5)]' : (isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]')}`}></div>
+                                        </span>
+                                        <ChevronDown size={18} className={`transition-transform duration-300 ${expandedGroup === 'Grading' ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
+                                    </div>
+                                </button>
+                                {expandedGroup === 'Grading' && (
+                                    <div className="px-3 pb-5 pt-2 animate-fade-in-up border-t border-transparent">
+                                        <div className={`flex justify-around mb-4 p-1.5 rounded-xl border shadow-inner ${isDarkMode ? 'bg-[#1A1C1E] border-[#2C2C2C]' : 'bg-[#F5F5F5] border-[#E0E0E0]'}`}>
+                                            {['Shadows', 'Midtones', 'Highlights', 'Global'].map(t => (
+                                                <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ease-spring ${gradingTab === t ? (isDarkMode ? 'bg-[#2C2C2E] text-[#E3E3E3] shadow-md' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-md') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>{t}</button>
+                                            ))}
                                         </div>
-                                    );
-                                })()}
+                                        {(() => {
+                                            const hKey = gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : gradingTab === 'Highlights' ? 'highlightHue' : 'globalHue';
+                                            const sKey = gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : gradingTab === 'Highlights' ? 'highlightSat' : 'globalSat';
+                                            const lKey = gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : gradingTab === 'Highlights' ? 'highlightLum' : 'globalLum';
+                                            return (
+                                                <div className="p-1 space-y-5">
+                                                    <div className="flex justify-center py-2 relative z-10">
+                                                        <ColorWheel hue={settings[hKey]} sat={settings[sKey]} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={180} isDarkMode={isDarkMode} />
+                                                    </div>
+                                                    <div className={`rounded-2xl p-4 border shadow-sm space-y-4 ${isDarkMode ? 'bg-[#1A1C1E] border-[#2C2C2C]' : 'bg-[#F5F5F5] border-[#E0E0E0]'}`}>
+                                                        <div className="flex justify-between items-center px-1 mb-2">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold mb-1">Selected</span>
+                                                                <span className={`text-xs font-bold flex items-center gap-2 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>
+                                                                    <div className="w-3 h-3 rounded-full border shadow-inner" style={{backgroundColor: `hsl(${settings[hKey]}, ${settings[sKey]}%, 50%)`, borderColor: isDarkMode ? '#2C2C2C' : '#E0E0E0'}}></div>
+                                                                    {getColorName(settings[hKey], settings[sKey])}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col items-end">
+                                                                <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold mb-1">Complementary</span>
+                                                                <span className={`text-xs font-bold flex items-center gap-2 flex-row-reverse ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                                                                    <div className="w-3 h-3 rounded-full border shadow-inner opacity-80" style={{backgroundColor: `hsl(${(settings[hKey] + 180) % 360}, 60%, 50%)`, borderColor: isDarkMode ? '#2C2C2C' : '#E0E0E0'}}></div>
+                                                                    {getColorName((settings[hKey] + 180) % 360)}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <div className="flex justify-between">
+                                                                <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Hue</label>
+                                                            </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <input type="range" min="0" max="360" value={settings[hKey]} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[sKey])} className="flex-1 appearance-none cursor-pointer outline-none grad-hue" />
+                                                                <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{Math.round(settings[hKey])}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <div className="flex justify-between">
+                                                                <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Saturation</label>
+                                                            </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <input type="range" min="0" max="100" value={settings[sKey]} onChange={(e) => updateGrading(gradingTab, settings[hKey], Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-sat" />
+                                                                <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{Math.round(settings[sKey])}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <div className="flex justify-between">
+                                                                <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Luminance</label>
+                                                            </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <input type="range" min="-100" max="100" value={settings[lKey]} onChange={(e) => updateSetting(lKey, Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-lum" />
+                                                                <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[lKey]}</span>
+                                                            </div>
+                                                        </div>
+                                                        {gradingTab !== 'Global' && (
+                                                        <div className={`pt-4 border-t space-y-4 px-1 mt-4 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
+                                                            <div className="flex flex-col gap-2">
+                                                                <div className="flex justify-between">
+                                                                    <label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Blending</label>
+                                                                    <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBlending}</span>
+                                                                </div>
+                                                                <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none" />
+                                                            </div>
+                                                            <div className="flex flex-col gap-2">
+                                                                <div className="flex justify-between">
+                                                                    <label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Balance</label>
+                                                                    <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBalance}</span>
+                                                                </div>
+                                                                <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none" />
+                                                            </div>
+                                                        </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ) : (
@@ -2294,6 +2326,43 @@ const handleDownload = () => {
                         <button onClick={() => setShowSaveModal(false)} className={`px-5 py-2.5 rounded-xl font-khmer font-bold text-sm transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:bg-[#3A3A3C]' : 'bg-[#E0E0E0] text-[#5F6368] hover:bg-[#D1D5DB]'}`}>បោះបង់</button>
                         <button onClick={confirmSavePreset} className="px-5 py-2.5 rounded-xl font-khmer font-bold text-sm bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] shadow-lg shadow-[#C65102]/20 active:scale-95 transition-all">រក្សាទុក</button>
                     </div>
+                </div>
+            </div>
+        )}
+
+        {/* Fullscreen Image View Modal */}
+        {isFullscreen && (
+            <div className="fixed inset-0 z-[300] bg-[#000000] flex items-center justify-center transition-all animate-fade-in-up touch-none">
+                <button 
+                    onClick={() => setIsFullscreen(false)} 
+                    className="absolute top-6 right-6 md:top-8 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white z-50 transition-colors active:scale-95 shadow-lg border border-white/10"
+                >
+                    <X size={24} />
+                </button>
+                <div 
+                    className="relative w-full h-full flex items-center justify-center p-0 md:p-12 cursor-pointer select-none"
+                    onMouseDown={() => setShowBefore(true)}
+                    onMouseUp={() => setShowBefore(false)}
+                    onMouseLeave={() => setShowBefore(false)}
+                    onTouchStart={() => setShowBefore(true)}
+                    onTouchEnd={() => setShowBefore(false)}
+                >
+                    <img 
+                        src={image} 
+                        className="w-full h-full object-contain drop-shadow-2xl" 
+                        style={{ filter: showBefore ? 'none' : filterString }} 
+                        draggable="false"
+                        alt="Full Screen Edit"
+                    />
+                    {showBefore ? (
+                        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-white/20 text-white text-sm font-bold px-6 py-2 rounded-full backdrop-blur-md pointer-events-none font-khmer shadow-2xl border border-white/30">
+                            រូបភាពដើម (Before)
+                        </div>
+                    ) : (
+                         <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-black/40 text-white/80 text-[11px] px-5 py-2 rounded-full backdrop-blur-md pointer-events-none font-khmer border border-white/10 animate-pulse">
+                            ចុចសង្កត់ដើម្បីមើលរូបដើម
+                        </div>
+                    )}
                 </div>
             </div>
         )}
