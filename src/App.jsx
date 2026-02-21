@@ -537,7 +537,7 @@ const lessonsData = [
           khmer: 'លាយពណ៌ (កែពណ៌ដាច់ដោយឡែក)', 
           shortDesc: 'គ្រប់គ្រងពណ៌នីមួយៗដាច់ដោយឡែកពីគ្នា (Hue, Saturation, Luminance)។',
           image: 'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&w=800&q=80',
-          slider: { min: -180, max: 180, step: 1, default: 0, type: 'hue', actionText: (v) => v !== 0 ? `ប្តូរប្រភេទពណ៌ (Hue): ${v}°` : 'ពណ៌ដើម' },
+          advancedUI: 'hsl',
           desc: 'HSL គឺជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់អ្នកកែរូប ព្រោះវាអនុញ្ញាតឱ្យយើងជ្រើសរើសកែពណ៌នីមួយៗ (ក្នុងចំណោម ៨ពណ៌) ដាច់ដោយឡែកពីគ្នា ដោយមាន Slider ៣ សំខាន់ៗ៖\n\n⬅️ ទាញទៅឆ្វេង (-): ប្តូរពណ៌ទៅលាំពណ៌មួយទៀត (ឧទាហរណ៍៖ ទាញពណ៌បៃតងទៅឆ្វេង ឱ្យស្លឹកឈើទៅជាពណ៌លឿង)\n➡️ ទាញទៅស្តាំ (+): ប្តូរពណ៌ទៅលាំផ្ទុយគ្នា (ឧទាហរណ៍៖ ទាញពណ៌បៃតងទៅស្តាំ ឱ្យស្លឹកឈើទៅជាពណ៌ខៀវ)', 
           tip: '💡 គន្លឹះធ្វើឱ្យស្បែកមុខតួអង្គភ្លឺសរលោង៖ សូមជ្រើសរើសពណ៌ Orange (ទឹកក្រូច) រួចទាញ Luminance ឡើងបូក (+) ឱ្យភ្លឺ និងបន្ថយ Saturation ដក (-) បន្តិចកុំឱ្យមុខលឿងពេក។' 
       },
@@ -546,10 +546,7 @@ const lessonsData = [
           khmer: 'ចាក់ពណ៌ (ស្តាយកុន)', 
           shortDesc: 'ចាក់ពណ៌ចូលរង្វង់ទាំង ៤ (Shadows, Midtones, Highlights, Global) និងកំណត់ Blending/Balance។',
           image: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80',
-          slider: { 
-              min: -50, max: 50, step: 1, default: 0, type: 'grading_sim', 
-              actionText: (v) => v > 0 ? `កក់ក្តៅបែប Cinematic (+${v})` : v < 0 ? `ត្រជាក់បែប Dark (${v})` : 'ដើម' 
-          },
+          advancedUI: 'grading',
           desc: 'Color Grading ក្នុង Lightroom Mobile មានរង្វង់ពណ៌ចំនួន ៤ និង Slider សំខាន់ៗចំនួន ៣ សម្រាប់បង្កើត Mood ភាពយន្ត៖\n\n' +
                 '🎯 រង្វង់ពណ៌ទាំង ៤ (Color Wheels)៖\n' +
                 '១. 🌑 Shadows (ស្រមោល): ចាក់ពណ៌ចូលតែតំបន់ងងឹត។ និយមប្រើពណ៌ Teal ឬ ខៀវទឹកប៊ិច ដើម្បីឱ្យរូបត្រជាក់។\n' +
@@ -652,8 +649,13 @@ const lessonsData = [
 
 const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
     const [sliderValue, setSliderValue] = useState(item.slider ? item.slider.default : 0);
+    const [hslValues, setHslValues] = useState({ h: 0, s: 0, l: 0 });
+    const [wheel, setWheel] = useState({ h: 220, s: 0 });
 
     const getFilterStyle = () => {
+        if (item.advancedUI === 'hsl') return `hue-rotate(${hslValues.h}deg) saturate(${100 + hslValues.s}%) brightness(${100 + (hslValues.l * 0.5)}%)`;
+        if (item.advancedUI === 'grading') return `sepia(${wheel.s}%) hue-rotate(${wheel.h > 0 ? wheel.h - 50 : 0}deg)`;
+
         if (!item.slider) return 'none';
         let val = sliderValue;
         switch(item.slider.type) {
@@ -701,12 +703,10 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                 </div>
             )}
             
-            {/* Expanded Content (Images, Sliders, Full Description) */}
             {isExpanded && (
                 <div className="mt-5 pt-5 border-t border-[#C65102]/10 animate-fade-in-up cursor-default" onClick={(e) => e.stopPropagation()}>
                     
-                    {/* បង្ហាញ Image + Slider */}
-                    {item.slider && item.image && (
+                    {item.slider && item.image && !item.advancedUI && (
                         <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
                             <div className="w-full h-48 sm:h-64 overflow-hidden rounded-xl mb-4 relative">
                                 <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
@@ -730,15 +730,49 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                             )}
                         </div>
                     )}
-                    
-                    {/* បង្ហាញតែ Image ធម្មតា បើអត់ Slider */}
-                    {!item.slider && item.image && (
+
+                    {item.advancedUI === 'hsl' && item.image && (
+                        <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                            <div className="w-full h-48 sm:h-64 overflow-hidden rounded-xl mb-6 relative">
+                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                            </div>
+                            <div className="space-y-4 px-2">
+                                <p className={`text-xs font-bold text-center font-khmer mb-2 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>សាកល្បងអូស Slider ដើម្បីប្តូរពណ៌ស្លឹកឈើ</p>
+                                <div className="flex items-center gap-3">
+                                    <label className={`text-[10px] font-bold uppercase w-8 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Hue</label>
+                                    <input type="range" min="-180" max="180" value={hslValues.h} onChange={(e)=>setHslValues({...hslValues, h: Number(e.target.value)})} className="flex-1 h-2 rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md" style={{ background: 'linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)' }} />
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <label className={`text-[10px] font-bold uppercase w-8 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Sat</label>
+                                    <input type="range" min="-100" max="100" value={hslValues.s} onChange={(e)=>setHslValues({...hslValues, s: Number(e.target.value)})} className="flex-1 h-2 rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full" style={{ background: isDarkMode ? 'linear-gradient(to right, #2C2C2C, #E3E3E3)' : 'linear-gradient(to right, #5F6368, #E0E0E0)' }} />
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <label className={`text-[10px] font-bold uppercase w-8 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Lum</label>
+                                    <input type="range" min="-100" max="100" value={hslValues.l} onChange={(e)=>setHslValues({...hslValues, l: Number(e.target.value)})} className="flex-1 h-2 rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full" style={{ background: isDarkMode ? 'linear-gradient(to right, #121212, #E3E3E3)' : 'linear-gradient(to right, #1A1C1E, #FFFFFF)' }} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {item.advancedUI === 'grading' && item.image && (
+                        <div className={`mb-6 p-4 rounded-2xl border shadow-inner flex flex-col items-center ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                            <div className="w-full h-48 sm:h-64 overflow-hidden rounded-xl mb-6 relative">
+                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                            </div>
+                            <p className={`text-xs font-bold mb-6 font-khmer text-center ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>អូសចំណុចក្នុងរង្វង់ដើម្បីចាក់ពណ៌ (Shadows)</p>
+                            <div className="pointer-events-auto">
+                                <ColorWheel hue={wheel.h} sat={wheel.s} onChange={(h, s) => setWheel({h, s})} size={160} isDarkMode={isDarkMode} />
+                            </div>
+                            <p className={`mt-6 text-sm font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>Hue: {Math.round(wheel.h)}° | Saturation: {Math.round(wheel.s)}%</p>
+                        </div>
+                    )}
+
+                    {!item.slider && !item.advancedUI && item.image && (
                         <div className={`mb-6 w-full overflow-hidden rounded-2xl border shadow-sm ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
                             <img src={item.image} alt={item.tool} className="w-full h-auto object-cover max-h-[250px]" loading="lazy" />
                         </div>
                     )}
                     
-                    {/* ការពន្យល់លម្អិតមានចុះបន្ទាត់ (Full Description) */}
                     <p className={`text-[15px] font-khmer leading-relaxed whitespace-pre-wrap ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{item.desc}</p>
                 </div>
             )}
@@ -746,51 +780,60 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
     );
 };
 
-const initialQuestionBank = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    question: [
-        "ឧបករណ៍មួយណាសម្រាប់កែពន្លឺរួមនៃរូបភាព?", "Contrast មានតួនាទីអ្វី?", "Highlights គ្រប់គ្រងអ្វី?", "Shadows គ្រប់គ្រងអ្វី?", 
-        "Temp ប្រើសម្រាប់អ្វី?", "Tint ប្រើសម្រាប់អ្វី?", "Vibrance ខុសពី Saturation ដូចម្តេច?", "Dehaze ប្រើពេលណា?",
-        "Vignette គឺអ្វី?", "Noise Reduction ប្រើពេលណា?", "Clarity ធ្វើអ្វី?", "Texture ធ្វើអ្វី?", "Tone Curve គឺជាអ្វី?",
-        "HSL មកពីពាក្យអ្វី?", "Split Toning ប្រើធ្វើអ្វី?", "Grain ប្រើធ្វើអ្វី?", "Sharpening ធ្វើអ្វី?", "Masking ប្រើធ្វើអ្វី?",
-        "Lens Correction ជួយអ្វី?", "Geometry ប្រើពេលណា?", "Aspect Ratio 4:5 សម្រាប់អ្វី?", "Aspect Ratio 16:9 សម្រាប់អ្វី?",
-        "RAW file ល្អជាង JPG ត្រង់ណា?", "Preset គឺជាអ្វី?", "Histogram បង្ហាញអ្វី?", "White Balance គឺអ្វី?", "Invert Mask គឺអ្វី?",
-        "Radial Gradient ប្រើពេលណា?", "Linear Gradient ប្រើពេលណា?", "Color Grading គឺអ្វី?", "Calibration ប្រើធ្វើអ្វី?",
-        "Select Subject ប្រើធ្វើអ្វី?", "Select Sky ប្រើធ្វើអ្វី?", "Healing Brush ប្រើធ្វើអ្វី?", "Clone Stamp ប្រើធ្វើអ្វី?",
-        "Snapshot ក្នុង Lightroom គឺអ្វី?", "Versions ប្រើធ្វើអ្វី?", "Rating (ផ្កាយ) ប្រើធ្វើអ្វី?", "Flag (ទង់) ប្រើធ្វើអ្វី?",
-        "Export Quality គួរដាក់ប៉ុន្មាន?", "Resize Long Edge សម្រាប់ FB?", "Sharpen for Screen ប្រើពេលណា?", "Copy Settings ប្រើធ្វើអ្វី?",
-        "Paste Settings ប្រើធ្វើអ្វី?", "Reset ប្រើធ្វើអ្វី?", "Before/After មើលម៉េច?", "Chromatic Aberration គឺអ្វី?",
-        "Profile Correction គឺអ្វី?", "Auto Settings ល្អទេ?", "Luminance Noise Reduction គឺអ្វី?"
-    ][i] || "សំណួរបន្ថែម...",
-    options: [
-        ["Contrast", "Exposure", "Highlights", "Shadows"], ["កែពន្លឺ", "កែភាពច្បាស់", "កំណត់គម្លាតពន្លឺ/ងងឹត", "កែពណ៌"],
-        ["តំបន់ងងឹត", "តំបន់ភ្លឺខ្លាំង", "ពណ៌", "សីតុណ្ហភាព"], ["តំបន់ភ្លឺ", "តំបន់ងងឹត", "ពណ៌ស", "ពណ៌ខ្មៅ"],
-        ["កែពណ៌បៃតង", "កែសីតុណ្ហភាព (លឿង/ខៀវ)", "កែពន្លឺ", "កែភាពច្បាស់"], ["កែពណ៌បៃតង/ស្វាយ", "កែពន្លឺ", "កែសីតុណ្ហភាព", "កែ Contrast"],
-        ["ដូចគ្នា", "Vibrance ការពារពណ៌ស្បែក", "Vibrance ធ្វើឱ្យរូបខ្មៅ", "Saturation ល្អជាង"], ["ពេលរូបច្បាស់", "ពេលមានអ័ព្ទ", "ពេលរូបងងឹត", "ពេលរូបភ្លឺ"],
-        ["ធ្វើឱ្យរូបភ្លឺ", "ធ្វើឱ្យគែមងងឹត", "ធ្វើឱ្យរូបច្បាស់", "ប្តូរពណ៌"], ["ពេលរូបច្បាស់", "ពេលរូបមានគ្រាប់ Noise", "ពេលរូបងងឹត", "ពេលរូបភ្លឺ"],
-        ["ធ្វើឱ្យរូបរលោង", "បង្កើន Contrast កណ្តាល", "ប្តូរពណ៌", "កាត់រូប"], ["ធ្វើឱ្យរូបរលោង", "បង្កើនលម្អិតតូចៗ", "ប្តូរពណ៌", "កាត់រូប"],
-        ["កាត់រូប", "កែពន្លឺ/ពណ៌កម្រិតខ្ពស់", "ដាក់អក្សរ", "លុបមុន"], ["Hue Sat Light", "Hue Saturation Luminance", "High Standard Light", "Hue Shade Light"],
-        ["ដាក់ពណ៌ក្នុង Shadows/Highlights", "កែ Exposure", "កែ WB", "កែ Lens"], ["ធ្វើឱ្យរូបច្បាស់", "បន្ថែមគ្រាប់បែប Film", "លុបអ័ព្ទ", "កែពណ៌"],
-        ["ធ្វើឱ្យរូបព្រិល", "ធ្វើឱ្យគែមវត្ថុច្បាស់", "ប្តូរពណ៌", "កែពន្លឺ"], ["កែរូបទាំងមូល", "កែតែផ្នែកខ្លះ", "Export", "Import"],
-        ["កែពណ៌", "កែការពត់កោងកែវថត", "កែពន្លឺ", "កែ Sharpness"], ["តម្រង់អគារ", "កែពណ៌", "កែពន្លឺ", "លុបមុន"],
-        ["Facebook", "Instagram Story", "Youtube", "TV"], ["Facebook", "Instagram Story", "Profile", "Print"],
-        ["រូបតូច", "រក្សាទុកព័ត៌មានច្រើន", "រូបស្អាតស្រាប់", "បង្ហោះលឿន"], ["ការកំណត់ដែលបានរក្សាទុក", "ការកែថ្មី", "រូបភាព", "កាមេរ៉ា"],
-        ["ពន្លឺក្នុងរូប", "ពណ៌", "ទំហំ", "ទីតាំង"], ["កែពន្លឺ", "កែពណ៌សឱ្យត្រូវពន្លឺពិត", "កែ Contrast", "កែ Saturation"],
-        ["លុប Mask", "ជ្រើសរើសតំបន់ផ្ទុយ", "កែពណ៌ផ្ទុយ", "បង្វិលរូប"], ["កែទាំងមូល", "កែចំណុចកណ្តាល/មូល", "កែពណ៌", "កែពន្លឺ"],
-        ["កែទាំងមូល", "កែជាលក្ខណៈបន្ទាត់ (មេឃ/ដី)", "កែពណ៌", "កែពន្លឺ"], ["ដាក់ពណ៌", "កែពន្លឺ", "កែ WB", "កែ Lens"],
-        ["កែពណ៌គោល (RGB)", "កែពន្លឺ", "កែ Contrast", "កែ Saturation"], ["ជ្រើសរើសមេឃ", "ជ្រើសរើសតួអង្គ", "ជ្រើសរើសកន្លែងភ្លឺ", "ជ្រើសរើសកន្លែងងងឹត"],
-        ["ជ្រើសរើសដី", "ជ្រើសរើសមេឃ", "ជ្រើសរើសទឹក", "ជ្រើសរើសមនុស្ស"], ["គូររូប", "លុបមុន/វត្ថុ", "កែពណ៌", "កែពន្លឺ"],
-        ["ចម្លងរូប", "ចម្លងផ្នែកមួយទៅដាក់មួយទៀត", "កែពណ៌", "កែពន្លឺ"], ["រូបថត", "ការរក្សាទុកដំណាក់កាលកែ", "Preset", "Filter"],
-        ["Export", "រក្សាទុកការកែផ្សេងគ្នា", "Share", "Delete"], ["ដាក់ពិន្ទុ", "លុប", "កែ", "Share"], ["សម្គាល់រូប (Pick/Reject)", "ដាក់ពិន្ទុ", "កែ", "Share"],
-        ["100%", "50%", "10%", "0%"], ["1080px", "2048px", "4000px", "Original"], ["Standard", "High", "Low", "None"],
-        ["ចម្លងរូប", "ចម្លងការកែ (Settings)", "ចម្លងពណ៌", "ចម្លងពន្លឺ"], ["បិទភ្ជាប់រូប", "បិទភ្ជាប់ការកែ", "បិទភ្ជាប់ពណ៌", "បិទភ្ជាប់ពន្លឺ"],
-        ["លុបរូប", "ត្រឡប់ទៅដើម", "Save", "Export"], ["ចុចពីរដង", "ចុចសង្កត់", "អូសឆ្វេង", "អូសស្តាំ"],
-        ["ពណ៌ខុសតាមគែម", "ពន្លឺខុស", "Noise", "Blur"], ["កែ Lens", "កែពណ៌", "កែពន្លឺ", "កែ Noise"],
-        ["ល្អ", "មិនល្អ", "មធ្យម", "អាក្រក់"], ["លុបគ្រាប់ពណ៌", "លុបគ្រាប់ពន្លឺ (Grain)", "បង្កើនពណ៌", "បង្កើនពន្លឺ"]
-    ][i] || ["A", "B", "C", "D"],
+const initialQuestionBank = [
+    { id: 1, question: "ឧបករណ៍មួយណាសម្រាប់កែពន្លឺរួមនៃរូបភាព?", options: ["Contrast", "Exposure", "Highlights", "Shadows"], correct: 1, level: "beginner" },
+    { id: 2, question: "Contrast មានតួនាទីអ្វី?", options: ["កែពន្លឺ", "កែភាពច្បាស់", "កំណត់គម្លាតពន្លឺ/ងងឹត", "កែពណ៌"], correct: 2, level: "beginner" },
+    { id: 3, question: "Highlights គ្រប់គ្រងអ្វី?", options: ["តំបន់ងងឹត", "តំបន់ភ្លឺខ្លាំង", "ពណ៌", "សីតុណ្ហភាព"], correct: 1, level: "beginner" },
+    { id: 4, question: "Shadows គ្រប់គ្រងអ្វី?", options: ["តំបន់ភ្លឺ", "តំបន់ងងឹត", "ពណ៌ស", "ពណ៌ខ្មៅ"], correct: 1, level: "beginner" },
+    { id: 5, question: "Temp ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌បៃតង", "កែសីតុណ្ហភាព (លឿង/ខៀវ)", "កែពន្លឺ", "កែភាពច្បាស់"], correct: 1, level: "beginner" },
+    { id: 6, question: "Tint ប្រើសម្រាប់អ្វី?", options: ["កែពណ៌បៃតង/ស្វាយ", "កែពន្លឺ", "កែសីតុណ្ហភាព", "កែ Contrast"], correct: 0, level: "beginner" },
+    { id: 7, question: "Vibrance ខុសពី Saturation ដូចម្តេច?", options: ["ដូចគ្នា", "Vibrance ការពារពណ៌ស្បែក", "Vibrance ធ្វើឱ្យរូបខ្មៅ", "Saturation ល្អជាង"], correct: 1, level: "beginner" },
+    { id: 8, question: "Dehaze ប្រើពេលណា?", options: ["ពេលរូបច្បាស់", "ពេលមានអ័ព្ទ", "ពេលរូបងងឹត", "ពេលរូបភ្លឺ"], correct: 1, level: "beginner" },
+    { id: 9, question: "Vignette គឺអ្វី?", options: ["ធ្វើឱ្យរូបភ្លឺ", "ធ្វើឱ្យគែមងងឹត", "ធ្វើឱ្យរូបច្បាស់", "ប្តូរពណ៌"], correct: 1, level: "beginner" },
+    { id: 10, question: "Noise Reduction ប្រើពេលណា?", options: ["ពេលរូបច្បាស់", "ពេលរូបមានគ្រាប់ Noise", "ពេលរូបងងឹត", "ពេលរូបភ្លឺ"], correct: 1, level: "beginner" },
+    { id: 11, question: "Clarity ធ្វើអ្វី?", options: ["ធ្វើឱ្យរូបរលោង", "បង្កើន Contrast កណ្តាល", "ប្តូរពណ៌", "កាត់រូប"], correct: 1, level: "beginner" },
+    { id: 12, question: "Texture ធ្វើអ្វី?", options: ["ធ្វើឱ្យរូបរលោង", "បង្កើនលម្អិតតូចៗ", "ប្តូរពណ៌", "កាត់រូប"], correct: 1, level: "beginner" },
+    { id: 13, question: "Tone Curve គឺជាអ្វី?", options: ["កាត់រូប", "កែពន្លឺ/ពណ៌កម្រិតខ្ពស់", "ដាក់អក្សរ", "លុបមុន"], correct: 1, level: "beginner" },
+    { id: 14, question: "HSL មកពីពាក្យអ្វី?", options: ["Hue Sat Light", "Hue Saturation Luminance", "High Standard Light", "Hue Shade Light"], correct: 1, level: "beginner" },
+    { id: 15, question: "Split Toning ប្រើធ្វើអ្វី?", options: ["ដាក់ពណ៌ក្នុង Shadows/Highlights", "កែ Exposure", "កែ WB", "កែ Lens"], correct: 0, level: "beginner" },
+    { id: 16, question: "Grain ប្រើធ្វើអ្វី?", options: ["ធ្វើឱ្យរូបច្បាស់", "បន្ថែមគ្រាប់បែប Film", "លុបអ័ព្ទ", "កែពណ៌"], correct: 1, level: "beginner" },
+    { id: 17, question: "Sharpening ធ្វើអ្វី?", options: ["ធ្វើឱ្យរូបព្រិល", "ធ្វើឱ្យគែមវត្ថុច្បាស់", "ប្តូរពណ៌", "កែពន្លឺ"], correct: 1, level: "beginner" },
+    { id: 18, question: "Masking ប្រើធ្វើអ្វី?", options: ["កែរូបទាំងមូល", "កែតែផ្នែកខ្លះ", "Export", "Import"], correct: 1, level: "beginner" },
+    { id: 19, question: "Lens Correction ជួយអ្វី?", options: ["កែពណ៌", "កែការពត់កោងកែវថត", "កែពន្លឺ", "កែ Sharpness"], correct: 1, level: "beginner" },
+    { id: 20, question: "Geometry ប្រើពេលណា?", options: ["តម្រង់អគារ", "កែពណ៌", "កែពន្លឺ", "លុបមុន"], correct: 0, level: "beginner" },
     
-    level: i < 20 ? "beginner" : i < 40 ? "intermediate" : "advanced"
-}));
+    { id: 21, question: "Aspect Ratio 4:5 សម្រាប់អ្វី?", options: ["Facebook", "Instagram Feed", "Youtube", "TV"], correct: 1, level: "intermediate" },
+    { id: 22, question: "Aspect Ratio 16:9 សម្រាប់អ្វី?", options: ["Instagram Story", "Profile", "YouTube/TV", "Print"], correct: 2, level: "intermediate" },
+    { id: 23, question: "RAW file ល្អជាង JPG ត្រង់ណា?", options: ["រូបតូច", "រក្សាទុកព័ត៌មានច្រើន", "រូបស្អាតស្រាប់", "បង្ហោះលឿន"], correct: 1, level: "intermediate" },
+    { id: 24, question: "Preset គឺជាអ្វី?", options: ["ការកំណត់ដែលបានរក្សាទុក", "ការកែថ្មី", "រូបភាព", "កាមេរ៉ា"], correct: 0, level: "intermediate" },
+    { id: 25, question: "Histogram បង្ហាញអ្វី?", options: ["ពន្លឺក្នុងរូប", "ពណ៌", "ទំហំ", "ទីតាំង"], correct: 0, level: "intermediate" },
+    { id: 26, question: "White Balance គឺអ្វី?", options: ["កែពន្លឺ", "កែពណ៌សឱ្យត្រូវពន្លឺពិត", "កែ Contrast", "កែ Saturation"], correct: 1, level: "intermediate" },
+    { id: 27, question: "Invert Mask គឺអ្វី?", options: ["លុប Mask", "ជ្រើសរើសតំបន់ផ្ទុយ", "កែពណ៌ផ្ទុយ", "បង្វិលរូប"], correct: 1, level: "intermediate" },
+    { id: 28, question: "Radial Gradient ប្រើពេលណា?", options: ["កែទាំងមូល", "កែចំណុចកណ្តាល/មូល", "កែពណ៌", "កែពន្លឺ"], correct: 1, level: "intermediate" },
+    { id: 29, question: "Linear Gradient ប្រើពេលណា?", options: ["កែទាំងមូល", "កែជាលក្ខណៈបន្ទាត់ (មេឃ/ដី)", "កែពណ៌", "កែពន្លឺ"], correct: 1, level: "intermediate" },
+    { id: 30, question: "Color Grading គឺអ្វី?", options: ["ដាក់ពណ៌", "កែពន្លឺ", "កែ WB", "កែ Lens"], correct: 0, level: "intermediate" },
+    { id: 31, question: "Calibration ប្រើធ្វើអ្វី?", options: ["កែពណ៌គោល (RGB)", "កែពន្លឺ", "កែ Contrast", "កែ Saturation"], correct: 0, level: "intermediate" },
+    { id: 32, question: "Select Subject ប្រើធ្វើអ្វី?", options: ["ជ្រើសរើសមេឃ", "ជ្រើសរើសតួអង្គ", "ជ្រើសរើសកន្លែងភ្លឺ", "ជ្រើសរើសកន្លែងងងឹត"], correct: 1, level: "intermediate" },
+    { id: 33, question: "Select Sky ប្រើធ្វើអ្វី?", options: ["ជ្រើសរើសដី", "ជ្រើសរើសមេឃ", "ជ្រើសរើសទឹក", "ជ្រើសរើសមនុស្ស"], correct: 1, level: "intermediate" },
+    { id: 34, question: "Healing Brush ប្រើធ្វើអ្វី?", options: ["គូររូប", "លុបមុន/វត្ថុ", "កែពណ៌", "កែពន្លឺ"], correct: 1, level: "intermediate" },
+    { id: 35, question: "Clone Stamp ប្រើធ្វើអ្វី?", options: ["ចម្លងរូប", "ចម្លងផ្នែកមួយទៅដាក់មួយទៀត", "កែពណ៌", "កែពន្លឺ"], correct: 1, level: "intermediate" },
+    { id: 36, question: "Snapshot ក្នុង Lightroom គឺអ្វី?", options: ["រូបថត", "ការរក្សាទុកដំណាក់កាលកែ", "Preset", "Filter"], correct: 1, level: "intermediate" },
+    { id: 37, question: "Versions ប្រើធ្វើអ្វី?", options: ["Export", "រក្សាទុកការកែផ្សេងគ្នា", "Share", "Delete"], correct: 1, level: "intermediate" },
+    { id: 38, question: "Rating (ផ្កាយ) ប្រើធ្វើអ្វី?", options: ["ដាក់ពិន្ទុ", "លុប", "កែ", "Share"], correct: 0, level: "intermediate" },
+    { id: 39, question: "Flag (ទង់) ប្រើធ្វើអ្វី?", options: ["សម្គាល់រូប (Pick/Reject)", "ដាក់ពិន្ទុ", "កែ", "Share"], correct: 0, level: "intermediate" },
+    { id: 40, question: "Export Quality គួរដាក់ប៉ុន្មាន?", options: ["100%", "50%", "10%", "0%"], correct: 0, level: "intermediate" },
+    
+    { id: 41, question: "Resize Long Edge សម្រាប់ FB?", options: ["1080px", "2048px", "4000px", "Original"], correct: 1, level: "advanced" },
+    { id: 42, question: "Sharpen for Screen ប្រើពេលណា?", options: ["ពេលផុស Facebook/IG", "ពេលព្រីនខ្នាតធំ", "ពេលរក្សាទុក", "មិនប្រើទាល់តែសោះ"], correct: 0, level: "advanced" },
+    { id: 43, question: "Copy Settings ប្រើធ្វើអ្វី?", options: ["ចម្លងរូប", "ចម្លងការកែ (Settings)", "ចម្លងពណ៌", "ចម្លងពន្លឺ"], correct: 1, level: "advanced" },
+    { id: 44, question: "Paste Settings ប្រើធ្វើអ្វី?", options: ["បិទភ្ជាប់រូប", "បិទភ្ជាប់ការកែ", "បិទភ្ជាប់ពណ៌", "បិទភ្ជាប់ពន្លឺ"], correct: 1, level: "advanced" },
+    { id: 45, question: "Reset ប្រើធ្វើអ្វី?", options: ["លុបរូប", "ត្រឡប់ទៅដើម", "Save", "Export"], correct: 1, level: "advanced" },
+    { id: 46, question: "Before/After មើលម៉េច?", options: ["ចុចពីរដង", "ចុចសង្កត់", "អូសឆ្វេង", "អូសស្តាំ"], correct: 1, level: "advanced" },
+    { id: 47, question: "Chromatic Aberration គឺអ្វី?", options: ["ពណ៌ខុសតាមគែម", "ពន្លឺខុស", "Noise", "Blur"], correct: 0, level: "advanced" },
+    { id: 48, question: "Profile Correction គឺអ្វី?", options: ["កែ Lens", "កែពណ៌", "កែពន្លឺ", "កែ Noise"], correct: 0, level: "advanced" },
+    { id: 49, question: "Auto Settings ល្អទេ?", options: ["ល្អ", "មិនល្អ", "មធ្យម", "អាក្រក់"], correct: 0, level: "advanced" },
+    { id: 50, question: "Luminance Noise Reduction គឺអ្វី?", options: ["លុបគ្រាប់ពណ៌", "លុបគ្រាប់ពន្លឺ (Grain)", "បង្កើនពណ៌", "បង្កើនពន្លឺ"], correct: 1, level: "advanced" }
+];
 
 // ==========================================
 // 4. MAIN COMPONENTS
