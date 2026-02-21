@@ -263,25 +263,28 @@ const KNOWLEDGE_BASE = [
     { keys: ['កំប្លែង', 'joke', 'សើច', 'funny', 'funny story'], answer: "បងចង់ស្ដាប់រឿងកំប្លែងមែន? ហេតុអ្វីបានជាជាងថតរូបមិនសូវចេះខឹងគេ? ...ព្រោះគាត់ចេះប្រើ 'Exposure' និង 'White Balance' ដើម្បីគ្រប់គ្រងពន្លឺ និងតុល្យភាពអារម្មណ៍គាត់! 😅 ហិហិ សើចតិចៗទៅបង!" },
     { keys: ['ឆ្លាត', 'ពូកែ', 'smart', 'clever', 'genius', 'អស្ចារ្យ', 'ល្អណាស់', 'good job'], answer: "អរគុណច្រើនបង! ការសរសើររបស់បងគឺជាកម្លាំងចិត្តដ៏ធំធេងសម្រាប់ខ្ញុំ! 💡 បើខ្ញុំពូកែ បងក៏ជាជាងថត និងអ្នកកែរូបដ៏អស្ចារ្យម្នាក់ដែរ! តោះ យើងបន្តបង្កើតស្នាដៃសិល្បៈទាំងអស់គ្នា! 🎨" },
     { keys: ['លាហើយ', 'bye', 'goodbye', 'ជម្រាបលា'], answer: "លាហើយបង! 👋 អរគុណសម្រាប់ការប្រើប្រាស់ My Design AI។ សូមអោយបងមានថ្ងៃដ៏ល្អ និងថតបានរូបស្អាតៗច្រើនណា៎! ជួបគ្នាពេលក្រោយ! ✨" },
-    { keys: ['hello', 'hi', 'suesdey', 'សួស្តី', 'សួរ', 'bhat', 'jah', 'love', 'ញុំា'], answer: "សួស្ដីបងបាទ! 👋 ស្វាគមន៍មកកាន់ 'ម៉ាយឌីហ្សាញ' ។ ខ្ញុំជាជំនួយការ AI ដ៏ឆ្លាតវៃ និងរួសរាយរបស់អ្នក ដែលមានជំនាញពិសេសខាងកែរូបភាពបែបអាជីពជាមួយ Lightroom។ \n\nតើថ្ងៃនេះបងចង់ឱ្យខ្ញុំជួយពន្យល់ពីឧបករណ៍ណា (ឧទាហរណ៍ Tone Curve, HSL) អត្ថន័យនៃពណ៌ ឬ ចង់បានរូបមន្ត Preset ស្តាយអីដែរ (ឧទាហរណ៍ Cinematic, កាហ្វេ, Pre-wedding)? ប្រាប់ខ្ញុំមកបានតាមសប្បាយណា៎ មិនបាច់ក្រែងចិត្តទេ! 😊✨" },
+    { keys: ['hello', 'hi', 'suesdey', 'សួស្តី', 'សួរ', 'bhat', 'jah', 'love', 'ញុំា'], answer: "សួស្ដីបាទ! 👋 ស្វាគមន៍មកកាន់ 'ម៉ាយឌីហ្សាញ' ។ ខ្ញុំជាជំនួយការ AI ដ៏ឆ្លាតវៃ និងរួសរាយរបស់អ្នក ដែលមានជំនាញពិសេសខាងកែរូបភាពបែបអាជីពជាមួយ Lightroom។ \n\nតើថ្ងៃនេះបងចង់ឱ្យខ្ញុំជួយពន្យល់ពីឧបករណ៍ណា (ឧទាហរណ៍ Tone Curve, HSL) អត្ថន័យនៃពណ៌ ឬ ចង់បានរូបមន្ត Preset ស្តាយអីដែរ (ឧទាហរណ៍ Cinematic, កាហ្វេ, Pre-wedding)? ប្រាប់ខ្ញុំមកបានតាមសប្បាយណា៎ មិនបាច់ក្រែងចិត្តទេ! 😊✨" },
+    { keys: ['how to learn', 'how to study', 'learn', 'where to learn','ចាប់រៀនពីណាទៅ','ចាប់ផ្ដើមពីណា','គួររៀនបែបណា','រៀនម៉េច','ខ្ញុំមិនចេះ', 'មិនចេះទេ', 'ខ្ញុំគួររៀនរបៀបណា', 'ខ្ញុំចាប់ផ្ដើមតាមណា', 'ចាប់ផ្ដើមតាមណា', 'រៀនម៉េចឆាប់ចេះ', 'គួររៀនពីចំណុចណាមុន', 'ជួយពន្យល់ផង', 'តើអ្នកទំនេរទេ', 'អ្នកទំនេរទេ', 'ទំនេរទេ', 'ចាប់ផ្តើម', 'start', 'beginner'], answer: "ខ្ញុំទំនេរចាំជួយបងជានិច្ចបាទ! 💡 សម្រាប់អ្នកទើបចាប់ផ្ដើម ខ្ញុំសូមណែនាំឱ្យរៀនតាមជំហានងាយៗទាំងនេះជាមុនសិន៖\n\n១. **ពន្លឺ (Light):** ចាប់ផ្ដើមរៀនពី Exposure, Contrast, Highlights, និង Shadows ព្រោះវាជាគ្រឹះនៃការកែរូបទាំងអស់។\n២. **ពណ៌ (Color):** ស្វែងយល់ពីឧបករណ៍ White Balance (Temp/Tint) និងមុខងារ HSL / Color Mix សម្រាប់កែពណ៌ដាច់ដោយឡែក។\n៣. **Tone Curve:** ពេលយល់ពីពន្លឺហើយ សាករៀនអូស Tone Curve រាងអក្សរ S ដើម្បីទទួលបានរូបភាពមានភាពទាក់ទាញ (Cinematic)។\n\nបងអាចអានបន្ថែមក្នុងផ្ទាំង 'មេរៀន' ឬសាកល្បងទាញពណ៌លេងក្នុងផ្ទាំង 'Lab' ផ្ទាល់បានណា៎។ តើបងចង់ឱ្យខ្ញុំពន្យល់ពីឧបករណ៍ណាមួយមុនគេទេបាទ? 😊" },
     { keys: ['thanks', 'orkun', 'អរគុណ'], answer: "មិនអីទេបង! ខ្ញុំជួយបានដោយក្ដីរំភើប! ❤️ ខ្ញុំសប្បាយចិត្តណាស់ដែលបានជួយចែករំលែកចំណេះដឹងនេះដល់បង។ \n\nកុំភ្លេចណា៎ ការកែរូបកាន់តែស្អាត គឺអាស្រ័យលើការហាត់អនុវត្តញឹកញាប់ (Practice makes perfect!) លេងជាមួយពណ៌ឱ្យច្រើន។ បើពេលកំពុងកែមានចម្ងល់អី ឬចង់សួរពីបច្ចេកទេសថ្មីៗ បងអាចឆាតសួរខ្ញុំបានរហូតណា៎! សំណាងល្អក្នុងការកែរូបបង! 📸🔥" },
     { keys: ['help', 'ជួយ', 'របៀបប្រើ', 'guide'], answer: "ជម្រាបសួរ! 🤝 ខ្ញុំនៅទីនេះរង់ចាំជួយបងជានិច្ច! បងអាចសួរខ្ញុំបានរាល់ចម្ងល់ទាំងអស់ទាក់ទងនឹងការកែរូប ដូចជា៖\n\n🎨 **សួរពីរូបមន្តពណ៌**: 'សុំ Preset ហាងកាហ្វេ' ឬ 'របៀបកែពណ៌ Cinematic'\n🛠️ **សួរពីឧបករណ៍កែរូប**: 'តើ Dehaze ប្រើសម្រាប់អ្វី?' ឬ 'ពន្យល់ពី Tone Curve'\n🧠 **សួរពីអត្ថន័យពណ៌**: 'តើពណ៌ខៀវមានន័យដូចម្តេចក្នុងរូបភាព?'\n📸 **សួរពីបញ្ហាក្នុងរូប**: 'ហេតុអីថតរូបមកងងឹតមុខ?' ឬ 'របៀបកែរូបកុំឱ្យមាន Noise'\n\nគ្រាន់តែសរសេរសំណួររបស់បងមក ខ្ញុំនឹងពន្យល់ប្រាប់យ៉ាងលម្អិត និងងាយយល់បំផុត! តោះ ចាប់ផ្តើមសួរមក! 🚀" },
+    { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
+    { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
 
     { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
     { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
     
-    { keys: ['exposure', 'ពន្លឺ'], answer: "💡 **Exposure** គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រង **ពន្លឺរួម (Overall Light)** នៃរូបភាពទាំងមូលតែម្ដង។\n\n- បើទាញទៅស្ដាំ (+) រូបនឹងភ្លឺឡើង។\n- បើទាញទៅឆ្វេង (-) រូបនឹងងងឹត។\nវាជាជំហានទី ១ សំខាន់បំផុត ដែលបងត្រូវប៉ះមុនគេបង្អស់ ពេលចាប់ផ្តើមកែរូបមួយសន្លឹក! កុំភ្លេចសារ៉េវាឱ្យត្រូវពន្លឺសិនមុននឹងទៅលេងពណ៌ណា៎! ☀️" },
-    { keys: ['contrast'], answer: "🌗 **Contrast** គឺជាមេបញ្ជាការកំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n- បើបងដាក់ Contrast ខ្ពស់៖ កន្លែងងងឹតនឹងកាន់តែខ្មៅ កន្លែងភ្លឺកាន់តែភ្លឺ ធ្វើឱ្យរូបភាពមើលទៅរឹងមាំ (Punchy) និងដិតច្បាស់ល្អសម្រាប់ការថតទេសភាព។\n- បើបន្ថយវាទាប៖ រូបភាពនឹងមើលទៅស្រទន់បែបស្រអាប់ៗ (Faded/Vintage look) ដ៏សែនរ៉ូមែនទិក ល្អសម្រាប់ស្តាយកូរ៉េ។ បងចូលចិត្តបែបណាដែរថ្ងៃនេះ? 🤔" },
-    { keys: ['highlight', 'whits', 'whites'], answer: "☁️ បងប្រាកដជាឆ្ងល់ហើយថា **Highlights** និង **Whites** ខុសគ្នាម៉េចមែនទេ?\n\n- **Highlights**: គ្រប់គ្រងតែតំបន់ដែលភ្លឺខ្លាំង (ដូចជាមេឃ ឬពន្លឺថ្ងៃជះលើមុខ)។ ភាគច្រើនអ្នកជំនាញចូលចិត្តបន្ថយវា (-) ដើម្បីសង្គ្រោះពពក ឬពន្លឺដែលឆេះឱ្យលេចចេញមកវិញ។\n- **Whites**: កំណត់ចំណុច 'សបំផុត' នៅក្នុងរូបភាពទាំងមូល។ គេទាញវាឡើងបន្តិច (+) ដើម្បីឱ្យរូបភាពទាំងមូលមើលទៅស្រឡះ (Pop) និងមិនស្លេកស្លាំង។ សាកសង្កេតពេលទាញវាទាំងពីរមើលបង នឹងឃើញភាពខុសគ្នា! ✨" },
-    { keys: ['shadow', 'blacks', 'ពណ៌ខ្មៅ'], answer: "🌑 សម្រាប់ការគ្រប់គ្រងភាពងងឹត យើងមានវីរបុរស ២ គឺ **Shadows** និង **Blacks**៖\n\n- **Shadows**: ប៉ះពាល់តែតំបន់នៅក្នុងម្លប់ប៉ុណ្ណោះ។ បើបងថតបញ្ច្រាស់ថ្ងៃមុខតួអង្គខ្មៅងងឹត គ្រាន់តែទាញ Shadows បូក (+) មុខនឹងភ្លឺមកវិញវេទមន្តតែម្ដង!\n- **Blacks**: កំណត់ចំណុច 'ខ្មៅបំផុត' ក្នុងរូប។ ការទាញ Blacks ចុះ (-) ជួយឱ្យរូបភាពមានជម្រៅ (Depth) មើលទៅមានទម្ងន់ មិនអណ្ដែត។ ដៃគូទាំងពីរនេះសំខាន់ណាស់សម្រាប់រូប Portrait! 🎩" },
-    { keys: ['tone curve', 'curve', 'ខ្សែកោង'], answer: "📈 **Tone Curve** គឺជាអាវុធសម្ងាត់ដ៏មានឥទ្ធិពលបំផុតរបស់អ្នកកែរូបអាជីព (Pro Retoucher)!\n\nវាជួយគ្រប់គ្រងពន្លឺ និងពណ៌កម្រិតខ្ពស់។ ក្បួនដែលល្បីជាងគេគឺ ការទាញខ្សែកោងឱ្យចេញជារាង **អក្សរ S (S-Curve)** ៖ គឺគ្រាន់តែទាញចំណុច Highlights (ខាងលើ) ឡើងលើបន្តិច និងទាញ Shadows (ខាងក្រោម) ចុះក្រោមបន្តិច... បងនឹងទទួលបាន Contrast ដ៏ស្រស់ស្អាតនិងទន់ភ្លន់បំផុត! ហ៊ានសាកល្បងប្រើវាទេបង? បើចេះប្រើវាហើយ គឺដកចិត្តមិនរួចទេ! 🚀" },
-    { keys: ['texture', 'clarity'], answer: "💎 ចង់ឱ្យរូបច្បាស់កម្រិតណា? តោះស្គាល់ពីភាពខុសគ្នារវាង **Texture** និង **Clarity**៖\n\n- **Texture**: ផ្ដោតលើលម្អិតតូចៗ (Micro-details)។ បើទាញដក (-) វាធ្វើឱ្យស្បែកមុខម៉ត់រលោងស្អាតខ្លាំងណាស់ (Skin Smoothing) ដោយមិនប៉ះពាល់ភ្នែក ឬសក់ឱ្យព្រិលឡើយ។\n- **Clarity**: បង្កើន Contrast នៅកម្រិត Midtones។ វាធ្វើឱ្យរូបភាពរឹងមាំ និងមុតស្រួច។ ល្អសម្រាប់ការថតសំណង់អគារ ទេសភាព ឬមនុស្សប្រុស តែបើទាញលើមុខមនុស្សស្រី អាចធ្វើឱ្យមើលទៅចាស់ ឬគ្រើមពេក! ប្រើដោយប្រុងប្រយ័ត្នណា៎បង! 🧑‍🎨" },
-    { keys: ['dehaze', 'អ័ព្ទ', 'fog', 'mist'], answer: "🌫️ **Dehaze** គឺជាឧបករណ៍កម្ចាត់អ័ព្ទដ៏មានឥទ្ធិពលបំផុត៖\n\n- ទាញទៅស្តាំ (+)៖ វាសម្លាប់អ័ព្ទ ផ្សែង ឬធូលី ធ្វើឱ្យរូបភាពទេសភាព ឬមេឃដែលស្រអាប់ ក្លាយជាថ្លាឆ្វង់ និងដិតពណ៌មកវិញភ្លាមៗ។\n- ទាញទៅឆ្វេង (-)៖ វាបន្ថែមអ័ព្ទចូលទៅក្នុងរូប បង្កើតជា Mood បែបយល់សប្តិ អាថ៌កំបាំង ឬរដូវរងា (Dreamy/Fairy tale)។\nឧបករណ៍នេះក៏អាចប្រើសម្រាប់បិទបាំងកន្លែងដែលឆេះពន្លឺខ្លាំងពេកបានខ្លះៗដែរណា៎! 🌄" },
-    { keys: ['vignette', 'គែមងងឹត'], answer: "⚫ **Vignette** គឺជាបែបផែនកាត់គែម ធ្វើឱ្យជុំវិញគែមរូបភាពទៅជាងងឹត (ឬស)។\n\nមូលហេតុដែលអ្នកថតរូបចូលចិត្តប្រើវា គឺដើម្បីទាញចំណាប់អារម្មណ៍ភ្នែកអ្នកមើល ឱ្យផ្ដោតត្រង់ទៅចំណុចកណ្តាលនៃរូបភាព (Subject) ដោយកាត់បន្ថយភាពរំខាននៅជុំវិញ។ ជាទូទៅ គេដាក់វានៅខ្ទង់ -10 ទៅ -20 សម្រាប់រូប Portrait គឺមើលទៅមានសិល្បៈណាស់បង! អត់ជឿសាកមើលទៅ! 👁️" },
-    { keys: ['grain', 'គ្រាប់', 'film'], answer: "🎞️ **Grain** គឺជាការបន្ថែមគ្រាប់អុចៗតូចៗទៅក្នុងរូបភាព ដើម្បីត្រាប់តាមកាមេរ៉ាហ្វីលជំនាន់មុន (Analog Film Look)។\n\nវាជួយឱ្យរូបភាពមើលទៅមានលក្ខណៈសិល្បៈ បុរាណ (Vintage) និងកាត់បន្ថយភាពរលោងរលិបរលុបពេករបស់កាមេរ៉ាឌីជីថលសម័យថ្មី។ ជួនកាល បើបងកែរូបហើយខូចពណ៌តិចតួច ឬបែកសាច់ ការរោយ Grain ពីលើក៏អាចជួយបិទបាំងកំហុសបានយ៉ាងស័ក្តិសមដែរណា៎! ឆ្លាតមែនទេ? 😉" },
-    { keys: ['sharp', 'sharpness', 'ច្បាស់', 'sharpening'], answer: "🔪 ដើម្បីធ្វើឱ្យរូបភាពកាន់តែច្បាស់មុតស្រួច (Sharp) បងអាចប្រើឧបករណ៍ **Sharpening** នៅក្នុងផ្នែក Detail។\n\n💡 **គន្លឹះពិសេស (Pro Trick) សម្រាប់ការថត Portrait**:\nពេលបងទាញ Sharpening កុំភ្លេចប្រើមុខងារ **Masking** ពីក្រោមវា (នៅលើកុំព្យូទ័រចុច Alt សង្កត់ រួចអូស slider Masking) ដើម្បីកំណត់ឱ្យកម្មវិធីធ្វើឱ្យច្បាស់តែត្រង់គែមវត្ថុ ឬភ្នែក សក់ប៉ុណ្ណោះ ដោយរក្សាផ្ទៃស្បែកមុខឱ្យនៅរលោងដដែល។ បើមិនអញ្ចឹងទេ ស្នាមមុនក៏ត្រូវបានច្បាស់មកជាមួយដែរណា៎! 👁️✨" },
-    { keys: ['hsl', 'mix', 'លាយពណ៌'], answer: "🎛️ **HSL ឬ Color Mix** គឺជាបន្ទប់ពិសោធន៍វេទមន្តពណ៌របស់អ្នកកែរូប!\n\nពាក្យនេះមកពី៖\n- **H (Hue)**: ប្តូរប្រភេទពណ៌ (ឧ. ប្តូរពណ៌ស្លឹកឈើបៃតង ទៅជាពណ៌លឿងរដូវស្លឹកឈើជ្រុះ)\n- **S (Saturation)**: កំណត់ភាពដិត ឬភាពស្លេករបស់ពណ៌មួយនោះដាច់ដោយឡែក\n- **L (Luminance)**: កំណត់ភាពភ្លឺ ឬងងឹតរបស់ពណ៌នោះ (ឧ. ល្បិចធ្វើឱ្យស្បែកមុខភ្លឺស គឺប្រើ Orange Luminance ទាញឡើងបូក)។\n\nបងចង់ប្តូរពណ៌មួយណាក្នុងរូបដែរពេលនេះ? ប្រាប់ខ្ញុំមក! 🖌️" },
-    { keys: ['split toning', 'grading', 'color grading'], answer: "🎬 **Color Grading (កាលមុនគេហៅថា Split Toning)** គឺជាតិចនិកកំពូលធ្វើឱ្យរូបមានស្តាយភាពយន្ត (Cinematic Look) កម្រិតហូលីវូដ។\n\nវាអនុញ្ញាតឱ្យបងបាញ់ពណ៌ចូលទៅក្នុងតំបន់ ៣ ផ្សេងគ្នានៃរូបភាព៖\n- **Shadows (តំបន់ងងឹត)**: គេនិយមដាក់ពណ៌ Teal (ខៀវបៃតង) ឬ ខៀវទឹកប៊ិច ឱ្យត្រជាក់ភ្នែក។\n- **Highlights (តំបន់ភ្លឺ)**: គេនិយមដាក់ពណ៌ Orange (ទឹកក្រូច) ឬ លឿង ឱ្យមានភាពកក់ក្តៅ។\nការលាយបញ្ចូលគ្នានៃ Teal & Orange នេះ ធ្វើឱ្យរូបភាពមានសោភ័ណភាព និងអារម្មណ៍ជ្រាលជ្រៅបំផុត! សាកមើលបង ធានាថាឡូយ! 🍿" },
+    { keys: ['exposure', 'ពន្លឺ', 'ពន្លឺរួម', 'ពន្លឺរូប', 'ភ្លឺ', 'light', 'bright', 'brightness'], answer: "💡 **Exposure** គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រង **ពន្លឺរួម (Overall Light)** នៃរូបភាពទាំងមូលតែម្ដង។\n\n- បើទាញទៅស្ដាំ (+) រូបនឹងភ្លឺឡើង។\n- បើទាញទៅឆ្វេង (-) រូបនឹងងងឹត។\nវាជាជំហានទី ១ សំខាន់បំផុត ដែលបងត្រូវប៉ះមុនគេបង្អស់ ពេលចាប់ផ្តើមកែរូបមួយសន្លឹក! កុំភ្លេចសារ៉េវាឱ្យត្រូវពន្លឺសិនមុននឹងទៅលេងពណ៌ណា៎! ☀️" },
+    { keys: ['contrast', 'ភាពផ្ទុយ', 'កម្រិតពណ៌ផ្ទុយ', 'ភាពដិត', 'ដិត'], answer: "🌗 **Contrast** គឺជាមេបញ្ជាការកំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n- បើបងដាក់ Contrast ខ្ពស់៖ កន្លែងងងឹតនឹងកាន់តែខ្មៅ កន្លែងភ្លឺកាន់តែភ្លឺ ធ្វើឱ្យរូបភាពមើលទៅរឹងមាំ (Punchy) និងដិតច្បាស់ល្អសម្រាប់ការថតទេសភាព។\n- បើបន្ថយវាទាប៖ រូបភាពនឹងមើលទៅស្រទន់បែបស្រអាប់ៗ (Faded/Vintage look) ដ៏សែនរ៉ូមែនទិក ល្អសម្រាប់ស្តាយកូរ៉េ។ បងចូលចិត្តបែបណាដែរថ្ងៃនេះ? 🤔" },
+    { keys: ['highlight', 'highlights', 'whits', 'whites', 'ផ្នែកភ្លឺ', 'កន្លែងភ្លឺ', 'ពណ៌ស', 'ពន្លឺខ្លាំង', 'ពន្លឺថ្ងៃ', 'ឆេះ'], answer: "☁️ បងប្រាកដជាឆ្ងល់ហើយថា **Highlights** និង **Whites** ខុសគ្នាម៉េចមែនទេ?\n\n- **Highlights**: គ្រប់គ្រងតែតំបន់ដែលភ្លឺខ្លាំង (ដូចជាមេឃ ឬពន្លឺថ្ងៃជះលើមុខ)។ ភាគច្រើនអ្នកជំនាញចូលចិត្តបន្ថយវា (-) ដើម្បីសង្គ្រោះពពក ឬពន្លឺដែលឆេះឱ្យលេចចេញមកវិញ។\n- **Whites**: កំណត់ចំណុច 'សបំផុត' នៅក្នុងរូបភាពទាំងមូល។ គេទាញវាឡើងបន្តិច (+) ដើម្បីឱ្យរូបភាពទាំងមូលមើលទៅស្រឡះ (Pop) និងមិនស្លេកស្លាំង។ សាកសង្កេតពេលទាញវាទាំងពីរមើលបង នឹងឃើញភាពខុសគ្នា! ✨" },
+    { keys: ['shadow', 'shadows', 'blacks', 'ផ្នែកងងឹត', 'កន្លែងងងឹត', 'ស្រមោល', 'ពណ៌ខ្មៅ', 'ងងឹត', 'ខ្មៅ'], answer: "🌑 សម្រាប់ការគ្រប់គ្រងភាពងងឹត យើងមានវីរបុរស ២ គឺ **Shadows** និង **Blacks**៖\n\n- **Shadows**: ប៉ះពាល់តែតំបន់នៅក្នុងម្លប់ប៉ុណ្ណោះ។ បើបងថតបញ្ច្រាស់ថ្ងៃមុខតួអង្គខ្មៅងងឹត គ្រាន់តែទាញ Shadows បូក (+) មុខនឹងភ្លឺមកវិញវេទមន្តតែម្ដង!\n- **Blacks**: កំណត់ចំណុច 'ខ្មៅបំផុត' ក្នុងរូប។ ការទាញ Blacks ចុះ (-) ជួយឱ្យរូបភាពមានជម្រៅ (Depth) មើលទៅមានទម្ងន់ មិនអណ្ដែត។ ដៃគូទាំងពីរនេះសំខាន់ណាស់សម្រាប់រូប Portrait! 🎩" },
+    { keys: ['tone curve', 'curve', 'ខ្សែកោង', 'ខ្សែបន្ទាត់', 'អូសខ្សែ', 's curve', 'ទាញខ្សែ'], answer: "📈 **Tone Curve** គឺជាអាវុធសម្ងាត់ដ៏មានឥទ្ធិពលបំផុតរបស់អ្នកកែរូបអាជីព (Pro Retoucher)!\n\nវាជួយគ្រប់គ្រងពន្លឺ និងពណ៌កម្រិតខ្ពស់។ ក្បួនដែលល្បីជាងគេគឺ ការទាញខ្សែកោងឱ្យចេញជារាង **អក្សរ S (S-Curve)** ៖ គឺគ្រាន់តែទាញចំណុច Highlights (ខាងលើ) ឡើងលើបន្តិច និងទាញ Shadows (ខាងក្រោម) ចុះក្រោមបន្តិច... បងនឹងទទួលបាន Contrast ដ៏ស្រស់ស្អាតនិងទន់ភ្លន់បំផុត! ហ៊ានសាកល្បងប្រើវាទេបង? បើចេះប្រើវាហើយ គឺដកចិត្តមិនរួចទេ! 🚀" },
+    { keys: ['texture', 'clarity', 'វាយនភាព', 'ភាពច្បាស់', 'ច្បាស់', 'ម៉ត់', 'រលោង', 'គ្រើម', 'ស្បែកមុខ'], answer: "💎 ចង់ឱ្យរូបច្បាស់កម្រិតណា? តោះស្គាល់ពីភាពខុសគ្នារវាង **Texture** និង **Clarity**៖\n\n- **Texture**: ផ្ដោតលើលម្អិតតូចៗ (Micro-details)។ បើទាញដក (-) វាធ្វើឱ្យស្បែកមុខម៉ត់រលោងស្អាតខ្លាំងណាស់ (Skin Smoothing) ដោយមិនប៉ះពាល់ភ្នែក ឬសក់ឱ្យព្រិលឡើយ។\n- **Clarity**: បង្កើន Contrast នៅកម្រិត Midtones។ វាធ្វើឱ្យរូបភាពរឹងមាំ និងមុតស្រួច។ ល្អសម្រាប់ការថតសំណង់អគារ ទេសភាព ឬមនុស្សប្រុស តែបើទាញលើមុខមនុស្សស្រី អាចធ្វើឱ្យមើលទៅចាស់ ឬគ្រើមពេក! ប្រើដោយប្រុងប្រយ័ត្នណា៎បង! 🧑‍🎨" },
+    { keys: ['dehaze', 'អ័ព្ទ', 'fog', 'mist', 'កាត់អ័ព្ទ', 'ផ្សែង'], answer: "🌫️ **Dehaze** គឺជាឧបករណ៍កម្ចាត់អ័ព្ទដ៏មានឥទ្ធិពលបំផុត៖\n\n- ទាញទៅស្តាំ (+)៖ វាសម្លាប់អ័ព្ទ ផ្សែង ឬធូលី ធ្វើឱ្យរូបភាពទេសភាព ឬមេឃដែលស្រអាប់ ក្លាយជាថ្លាឆ្វង់ និងដិតពណ៌មកវិញភ្លាមៗ។\n- ទាញទៅឆ្វេង (-)៖ វាបន្ថែមអ័ព្ទចូលទៅក្នុងរូប បង្កើតជា Mood បែបយល់សប្តិ អាថ៌កំបាំង ឬរដូវរងា (Dreamy/Fairy tale)។\nឧបករណ៍នេះក៏អាចប្រើសម្រាប់បិទបាំងកន្លែងដែលឆេះពន្លឺខ្លាំងពេកបានខ្លះៗដែរណា៎! 🌄" },
+    { keys: ['vignette', 'គែមងងឹត', 'គែមរូប', 'កាត់គែម', 'border', 'edge'], answer: "⚫ **Vignette** គឺជាបែបផែនកាត់គែម ធ្វើឱ្យជុំវិញគែមរូបភាពទៅជាងងឹត (ឬស)។\n\nមូលហេតុដែលអ្នកថតរូបចូលចិត្តប្រើវា គឺដើម្បីទាញចំណាប់អារម្មណ៍ភ្នែកអ្នកមើល ឱ្យផ្ដោតត្រង់ទៅចំណុចកណ្តាលនៃរូបភាព (Subject) ដោយកាត់បន្ថយភាពរំខាននៅជុំវិញ។ ជាទូទៅ គេដាក់វានៅខ្ទង់ -10 ទៅ -20 សម្រាប់រូប Portrait គឺមើលទៅមានសិល្បៈណាស់បង! អត់ជឿសាកមើលទៅ! 👁️" },
+    { keys: ['grain', 'គ្រាប់', 'film', 'គ្រាប់អុចៗ', 'noise'], answer: "🎞️ **Grain** គឺជាការបន្ថែមគ្រាប់អុចៗតូចៗទៅក្នុងរូបភាព ដើម្បីត្រាប់តាមកាមេរ៉ាហ្វីលជំនាន់មុន (Analog Film Look)។\n\nវាជួយឱ្យរូបភាពមើលទៅមានលក្ខណៈសិល្បៈ បុរាណ (Vintage) និងកាត់បន្ថយភាពរលោងរលិបរលុបពេករបស់កាមេរ៉ាឌីជីថលសម័យថ្មី។ ជួនកាល បើបងកែរូបហើយខូចពណ៌តិចតួច ឬបែកសាច់ ការរោយ Grain ពីលើក៏អាចជួយបិទបាំងកំហុសបានយ៉ាងស័ក្តិសមដែរណា៎! ឆ្លាតមែនទេ? 😉" },
+    { keys: ['sharp', 'sharpness', 'ច្បាស់', 'sharpening', 'មុត', 'ច្បាស់ល្អ'], answer: "🔪 ដើម្បីធ្វើឱ្យរូបភាពកាន់តែច្បាស់មុតស្រួច (Sharp) បងអាចប្រើឧបករណ៍ **Sharpening** នៅក្នុងផ្នែក Detail។\n\n💡 **គន្លឹះពិសេស (Pro Trick) សម្រាប់ការថត Portrait**:\nពេលបងទាញ Sharpening កុំភ្លេចប្រើមុខងារ **Masking** ពីក្រោមវា (នៅលើកុំព្យូទ័រចុច Alt សង្កត់ រួចអូស slider Masking) ដើម្បីកំណត់ឱ្យកម្មវិធីធ្វើឱ្យច្បាស់តែត្រង់គែមវត្ថុ ឬភ្នែក សក់ប៉ុណ្ណោះ ដោយរក្សាផ្ទៃស្បែកមុខឱ្យនៅរលោងដដែល។ បើមិនអញ្ចឹងទេ ស្នាមមុនក៏ត្រូវបានច្បាស់មកជាមួយដែរណា៎! 👁️✨" },
+    { keys: ['hsl', 'mix', 'លាយពណ៌', 'កែពណ៌', 'ពណ៌', 'hue', 'saturation', 'luminance', 'color mix'], answer: "🎛️ **HSL ឬ Color Mix** គឺជាបន្ទប់ពិសោធន៍វេទមន្តពណ៌របស់អ្នកកែរូប!\n\nពាក្យនេះមកពី៖\n- **H (Hue)**: ប្តូរប្រភេទពណ៌ (ឧ. ប្តូរពណ៌ស្លឹកឈើបៃតង ទៅជាពណ៌លឿងរដូវស្លឹកឈើជ្រុះ)\n- **S (Saturation)**: កំណត់ភាពដិត ឬភាពស្លេករបស់ពណ៌មួយនោះដាច់ដោយឡែក\n- **L (Luminance)**: កំណត់ភាពភ្លឺ ឬងងឹតរបស់ពណ៌នោះ (ឧ. ល្បិចធ្វើឱ្យស្បែកមុខភ្លឺស គឺប្រើ Orange Luminance ទាញឡើងបូក)។\n\nបងចង់ប្តូរពណ៌មួយណាក្នុងរូបដែរពេលនេះ? ប្រាប់ខ្ញុំមក! 🖌️" },
+    { keys: ['split toning', 'grading', 'color grading', 'ដាក់ពណ៌', 'ចាក់ពណ៌', 'cinematic'], answer: "🎬 **Color Grading (កាលមុនគេហៅថា Split Toning)** គឺជាតិចនិកកំពូលធ្វើឱ្យរូបមានស្តាយភាពយន្ត (Cinematic Look) កម្រិតហូលីវូដ។\n\nវាអនុញ្ញាតឱ្យបងបាញ់ពណ៌ចូលទៅក្នុងតំបន់ ៣ ផ្សេងគ្នានៃរូបភាព៖\n- **Shadows (តំបន់ងងឹត)**: គេនិយមដាក់ពណ៌ Teal (ខៀវបៃតង) ឬ ខៀវទឹកប៊ិច ឱ្យត្រជាក់ភ្នែក។\n- **Highlights (តំបន់ភ្លឺ)**: គេនិយមដាក់ពណ៌ Orange (ទឹកក្រូច) ឬ លឿង ឱ្យមានភាពកក់ក្តៅ។\nការលាយបញ្ចូលគ្នានៃ Teal & Orange នេះ ធ្វើឱ្យរូបភាពមានសោភ័ណភាព និងអារម្មណ៍ជ្រាលជ្រៅបំផុត! សាកមើលបង ធានាថាឡូយ! 🍿" },
 
     { keys: ['clone stamp', 'healing brush', 'លុបមុន', 'លុបមនុស្ស', 'ស្នាម'], answer: "🩹 បងមានបញ្ហារូបជាប់ស្នាម ឬជាប់មនុស្សមែនទេ? **Healing Brush** និង **Clone Stamp** គឺជាវេទមន្តសម្រាប់ជួសជុលរូបភាព៖\n\n- **Healing Brush**: ល្អបំផុតសម្រាប់ **លុបមុន ឬស្នាម** លើស្បែក ដោយវាចម្លងយកទម្រង់ក្បែរៗនោះមកបិទពីលើ រួចតម្រឹមពណ៌ និងពន្លឺដោយស្វ័យប្រវត្តិ។\n- **Clone Stamp**: ចម្លងវត្ថុទាំងមូលពីកន្លែងមួយទៅកន្លែងមួយទៀតទាំងស្រុង ល្អសម្រាប់លុបវត្ថុរំខានធំៗចេញពីផ្ទៃខាងក្រោយ។\n\nសាកល្បងប្រើវា ដើម្បីឱ្យរូបបងកាន់តែ Perfect ឥតខ្ចោះ! ✨" },
     { keys: ['snapshot', 'versions', 'រក្សាទុកការកែ', 'កត់ត្រា'], answer: "📸 តើបងធ្លាប់ឆ្ងល់ទេថា **Snapshot (ឬ Versions លើទូរស័ព្ទ)** មានប្រយោជន៍អ្វី?\n\nវាជួយបងឱ្យ **រក្សាទុកដំណាក់កាលកែប្រែ (Save State)** នៅវិនាទីណាមួយ។ ឧទាហរណ៍ បងកែបានស្អាតមួយបែបហើយ ចង់សាកលេងពណ៌បែបផ្សេងទៀត តែខ្លាចបាត់កុងមុន បងគ្រាន់តែបង្កើត Snapshot ទុកសិន។ ពេលបងចង់ត្រលប់មកពណ៌ចាស់វិញ គ្រាន់តែចុចលើ Snapshot នោះ គឺមកវិញភ្លាម ដោយមិនបាច់ចុច Undo ហត់ទេ! ងាយៗមែនទែនបង! 🙌" },
@@ -878,6 +881,7 @@ const PhotoLab = ({ isDarkMode }) => {
   const [activeCurveChannel, setActiveCurveChannel] = useState('Master');
   const [draggingPointIndex, setDraggingPointIndex] = useState(null);
   
+  
   const initialCurve = [{x:0, y:0}, {x:100, y:100}];
   
   const defaultSettings = { 
@@ -890,13 +894,19 @@ const PhotoLab = ({ isDarkMode }) => {
   const [activeColor, setActiveColor] = useState('Orange'); 
   const [filteredPresets, setFilteredPresets] = useState([]);
   const [suggestedMoods, setSuggestedMoods] = useState([]);
+  const [userPresets, setUserPresets] = useState(() => {
+      const saved = localStorage.getItem('myDesignUserPresets');
+      return saved ? JSON.parse(saved) : [];
+  });
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [customPresetName, setCustomPresetName] = useState("My Preset");
   
   useEffect(() => {
       if (mode !== 'preset') return;
       const query = aiPrompt.toLowerCase().trim();
-      const allPresets = Object.values(BASE_PRESETS_DATA);
+      const allPresets = [...userPresets, ...Object.values(BASE_PRESETS_DATA)];
       if (!query) {
-        setFilteredPresets(allPresets.filter(p => p.id.endsWith('_1'))); 
+        setFilteredPresets(allPresets.filter(p => p.id.endsWith('_1') || p.id.startsWith('user_'))); 
         setSuggestedMoods([]);
         return;
       }
@@ -937,7 +947,7 @@ const PhotoLab = ({ isDarkMode }) => {
       const combined = [...new Set([...exactMatches, ...relatedPresets])];
       setFilteredPresets(combined);
       setSuggestedMoods(matchedMoods);
-  }, [aiPrompt, mode]);
+  }, [aiPrompt, mode, userPresets]);
 
   const updateSetting = (key, value) => setSettings(prev => ({...prev, [key]: value}));
   const resetSettings = () => setSettings(defaultSettings);
@@ -1072,6 +1082,29 @@ const handleDownload = () => {
       }; 
       const presetName = aiPrompt.trim() ? aiPrompt.trim() : "Custom_Preset";
       generateXMP(recipe, `${presetName}_MD`); 
+  };
+
+  const handleSaveCustomPreset = () => {
+      setCustomPresetName("My Preset");
+      setShowSaveModal(true);
+  };
+
+  const confirmSavePreset = () => {
+      if (!customPresetName.trim()) return;
+      
+      const newPreset = {
+          id: `user_${Date.now()}`,
+          name: customPresetName.trim(),
+          category: 'My Presets',
+          basic: { Exposure: settings.exposure / 10, Contrast: settings.contrast, Highlights: settings.highlights, Shadows: settings.shadows, Whites: settings.whites, Blacks: settings.blacks, Temp: settings.temp, Tint: settings.tint, Vibrance: settings.vibrance, Saturation: settings.saturation, Texture: settings.texture, Clarity: settings.clarity, Dehaze: settings.dehaze, Vignette: settings.vignette },
+          grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance },
+          curveMaster: [...settings.curveMaster], curveRed: [...settings.curveRed], curveGreen: [...settings.curveGreen], curveBlue: [...settings.curveBlue]
+      };
+
+      const updatedPresets = [newPreset, ...userPresets];
+      setUserPresets(updatedPresets);
+      localStorage.setItem('myDesignUserPresets', JSON.stringify(updatedPresets));
+      setShowSaveModal(false);
   };
   
   const applyPresetToSettings = (presetData) => { 
@@ -1347,6 +1380,7 @@ const handleDownload = () => {
                         <button onClick={() => setMode('manual')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'manual' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>កែដោយដៃ</button>
                         <button onClick={() => setMode('preset')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'preset' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>Preset</button>
                     </div>
+                    <button onClick={handleSaveCustomPreset} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${isDarkMode ? 'text-[#9AA0A6] hover:text-green-400 hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-green-500 hover:bg-[#E0E0E0]'}`} title="Save Custom Preset"><Save size={16}/></button>
                     <button onClick={resetSettings} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${isDarkMode ? 'text-[#9AA0A6] hover:text-red-400 hover:bg-[#2C2C2C]' : 'text-[#5F6368] hover:text-red-500 hover:bg-[#E0E0E0]'}`} title="Reset All"><RotateCcw size={16}/></button>
                  </div>
                  <div className={`flex-1 flex flex-col overflow-hidden relative ${isDarkMode ? 'bg-[#1E1E1E]' : 'bg-[#FFFFFF]'}`}>
@@ -1528,7 +1562,23 @@ const handleDownload = () => {
             </div>
         </div>
         
-        
+        {showSaveModal && (
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-all">
+                <div className={`w-full max-w-sm p-6 rounded-[24px] border shadow-2xl animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+                    <h3 className={`text-xl font-bold font-khmer mb-4 tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>រក្សាទុក Preset របស់អ្នក</h3>
+                    <input 
+                        value={customPresetName}
+                        onChange={(e) => setCustomPresetName(e.target.value)}
+                        className={`w-full px-4 py-3 rounded-xl border mb-6 outline-none font-khmer font-bold transition-colors ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C] text-[#E3E3E3] focus:border-[#C65102]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#1A1C1E] focus:border-[#C65102]'}`}
+                        autoFocus
+                    />
+                    <div className="flex justify-end gap-3">
+                        <button onClick={() => setShowSaveModal(false)} className={`px-5 py-2.5 rounded-xl font-khmer font-bold text-sm transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:bg-[#3A3A3C]' : 'bg-[#E0E0E0] text-[#5F6368] hover:bg-[#D1D5DB]'}`}>បោះបង់</button>
+                        <button onClick={confirmSavePreset} className="px-5 py-2.5 rounded-xl font-khmer font-bold text-sm bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] shadow-lg shadow-[#C65102]/20 active:scale-95 transition-all">រក្សាទុក</button>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
   );
 };
@@ -1541,6 +1591,8 @@ const Quiz = ({ isDarkMode }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [quizConfig, setQuizConfig] = useState({ level: 'beginner', amount: 10 });
+  const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('myDesignHighScore')) || 0);
+
   const startQuiz = () => { let filtered = initialQuestionBank.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level); if (filtered.length < quizConfig.amount) filtered = initialQuestionBank; const shuffled = [...filtered].sort(() => 0.5 - Math.random()); setQuestions(shuffled.slice(0, quizConfig.amount)); setCurrentQuestion(0); setScore(0); setIsAnswered(false); setSelectedOption(null); setGameState('playing'); };
 
   if (gameState === 'menu') return (
@@ -1548,6 +1600,7 @@ const Quiz = ({ isDarkMode }) => {
       <div className={`backdrop-blur-md p-6 sm:p-8 text-center rounded-[32px] border shadow-2xl max-w-lg w-full animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E]/80 border-[#2C2C2C]' : 'bg-[#FFFFFF]/80 border-[#E0E0E0]'}`}>
           <div className={`w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ${isDarkMode ? 'bg-[#C65102]/20 ring-[#2C2C2C]' : 'bg-[#C65102]/10 ring-[#E0E0E0]'}`}><Award className="w-12 h-12 text-[#C65102] drop-shadow-sm" /></div>
           <h2 className={`text-3xl font-extrabold font-khmer mb-3 tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>ការធ្វើតេស្ត</h2>
+          <p className={`font-khmer text-sm mb-4 font-bold ${isDarkMode ? 'text-yellow-500' : 'text-[#C65102]'}`}>ពិន្ទុខ្ពស់បំផុតរបស់អ្នក៖ {highScore}</p>
           <div className="space-y-6">
               <div className={`p-1.5 rounded-2xl w-fit mx-auto border flex justify-center gap-3 ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
                 <button onClick={() => setQuizConfig({...quizConfig, level: 'beginner'})} className={`px-6 py-2.5 rounded-xl font-khmer text-sm font-bold transition-all duration-300 ease-spring ${quizConfig.level==='beginner' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-md ring-1 ring-[#2C2C2C]' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-md ring-1 ring-[#E0E0E0]') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>មូលដ្ឋាន</button>
@@ -1580,7 +1633,7 @@ const Quiz = ({ isDarkMode }) => {
             <button key={i} onClick={() => { if (!isAnswered) { setSelectedOption(i); setIsAnswered(true); if (i === q.correct) setScore(score + 1); } }} className={`p-4 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-sm relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : (isDarkMode ? 'bg-[#2C2C2C]/30 border-transparent text-[#9AA0A6] opacity-50' : 'bg-[#FAFAFA]/50 border-transparent text-[#5F6368] opacity-50'))) : (isDarkMode ? 'bg-[#2C2C2C]/50 border-transparent text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-transparent text-[#1A1C1E] hover:bg-[#E0E0E0]/50')}`}><span className={`inline-flex w-6 h-6 items-center justify-center rounded-full mr-3 text-[10px] font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-[#FFFFFF]' : (isDarkMode ? 'bg-[#3A3A3C] text-[#9AA0A6] group-hover:bg-[#E3E3E3] group-hover:text-[#121212]' : 'bg-[#E0E0E0] text-[#5F6368] group-hover:bg-[#1A1C1E] group-hover:text-[#FFFFFF]')}`}>{String.fromCharCode(65 + i)}</span>{opt}</button>
           ))}
         </div>
-        {isAnswered && (<div className="mt-8 flex justify-end animate-fade-in-up"><button onClick={() => { const next = currentQuestion + 1; if (next < questions.length) { setCurrentQuestion(next); setIsAnswered(false); setSelectedOption(null); } else { setGameState('result'); } }} className={`px-8 py-3 rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-2 transform hover:translate-x-1 text-sm ${isDarkMode ? 'bg-[#E3E3E3] hover:bg-[#FFFFFF] text-[#1A1C1E]' : 'bg-[#1A1C1E] hover:bg-[#5F6368] text-[#FFFFFF]'}`}>បន្ទាប់ <ChevronRight size={16}/></button></div>)}
+        {isAnswered && (<div className="mt-8 flex justify-end animate-fade-in-up"><button onClick={() => { const next = currentQuestion + 1; if (next < questions.length) { setCurrentQuestion(next); setIsAnswered(false); setSelectedOption(null); } else { setGameState('result'); if (score > highScore) { setHighScore(score); localStorage.setItem('myDesignHighScore', score); } } }} className={`px-8 py-3 rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-2 transform hover:translate-x-1 text-sm ${isDarkMode ? 'bg-[#E3E3E3] hover:bg-[#FFFFFF] text-[#1A1C1E]' : 'bg-[#1A1C1E] hover:bg-[#5F6368] text-[#FFFFFF]'}`}>បន្ទាប់ <ChevronRight size={16}/></button></div>)}
       </div>
     </div>
   );
@@ -1615,14 +1668,15 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
                   const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
                   if (apiResponse) response = apiResponse;
               } catch (apiErr) {
-                  throw apiErr; // បោះកំហុសទៅ Catch ខាងក្រោម
+                  throw apiErr; 
               }
           }
           
           setMessages(prev => [...prev, { role: 'model', text: response }]);
       } catch (error) {
           // នេះជាសារដែលលោតពេលមានបញ្ហា
-          setMessages(prev => [...prev, { role: 'model', text: "សុំទោសបង! ប្រព័ន្ធអ៉ីនធឺណិតរាងខ្សោយបន្តិច ឬ API មានបញ្ហា សុំព្យាយាមម្ដងទៀត! 🌐⚠️" }]);
+          const errorMsg = "សុំទោសបង! ប្រព័ន្ធអ៉ីនធឺណិតរាងខ្សោយបន្តិច ឬ API មានបញ្ហា សុំព្យាយាមម្ដងទៀត! 🌐⚠️";
+          setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
       } finally {
           setLoading(false);
       }
