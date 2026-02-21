@@ -8,8 +8,11 @@ import {
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
   Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
   Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
-  ThumbsUp, User, Activity
+  ThumbsUp, User, Activity, Cloud
 } from 'lucide-react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 
 // ==========================================
 // 1. CONFIGURATION & UTILS
@@ -23,6 +26,17 @@ try {
   }
 } catch (e) {
   apiKey = ""; 
+}
+
+let app, auth, db, appId;
+try {
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+} catch (error) {
+    console.warn("Firebase config not found, running local only.");
 }
 
 const responseCache = {};
@@ -267,9 +281,6 @@ const KNOWLEDGE_BASE = [
     { keys: ['how to learn', 'how to study', 'learn', 'where to learn','ចាប់រៀនពីណាទៅ','ចាប់ផ្ដើមពីណា','គួររៀនបែបណា','រៀនម៉េច','ខ្ញុំមិនចេះ', 'មិនចេះទេ', 'ខ្ញុំគួររៀនរបៀបណា', 'ខ្ញុំចាប់ផ្ដើមតាមណា', 'ចាប់ផ្ដើមតាមណា', 'រៀនម៉េចឆាប់ចេះ', 'គួររៀនពីចំណុចណាមុន', 'ជួយពន្យល់ផង', 'តើអ្នកទំនេរទេ', 'អ្នកទំនេរទេ', 'ទំនេរទេ', 'ចាប់ផ្តើម', 'start', 'beginner'], answer: "ខ្ញុំទំនេរចាំជួយបងជានិច្ចបាទ! 💡 សម្រាប់អ្នកទើបចាប់ផ្ដើម ខ្ញុំសូមណែនាំឱ្យរៀនតាមជំហានងាយៗទាំងនេះជាមុនសិន៖\n\n១. **ពន្លឺ (Light):** ចាប់ផ្ដើមរៀនពី Exposure, Contrast, Highlights, និង Shadows ព្រោះវាជាគ្រឹះនៃការកែរូបទាំងអស់។\n២. **ពណ៌ (Color):** ស្វែងយល់ពីឧបករណ៍ White Balance (Temp/Tint) និងមុខងារ HSL / Color Mix សម្រាប់កែពណ៌ដាច់ដោយឡែក។\n៣. **Tone Curve:** ពេលយល់ពីពន្លឺហើយ សាករៀនអូស Tone Curve រាងអក្សរ S ដើម្បីទទួលបានរូបភាពមានភាពទាក់ទាញ (Cinematic)។\n\nបងអាចអានបន្ថែមក្នុងផ្ទាំង 'មេរៀន' ឬសាកល្បងទាញពណ៌លេងក្នុងផ្ទាំង 'Lab' ផ្ទាល់បានណា៎។ តើបងចង់ឱ្យខ្ញុំពន្យល់ពីឧបករណ៍ណាមួយមុនគេទេបាទ? 😊" },
     { keys: ['thanks', 'orkun', 'អរគុណ'], answer: "មិនអីទេបង! ខ្ញុំជួយបានដោយក្ដីរំភើប! ❤️ ខ្ញុំសប្បាយចិត្តណាស់ដែលបានជួយចែករំលែកចំណេះដឹងនេះដល់បង។ \n\nកុំភ្លេចណា៎ ការកែរូបកាន់តែស្អាត គឺអាស្រ័យលើការហាត់អនុវត្តញឹកញាប់ (Practice makes perfect!) លេងជាមួយពណ៌ឱ្យច្រើន។ បើពេលកំពុងកែមានចម្ងល់អី ឬចង់សួរពីបច្ចេកទេសថ្មីៗ បងអាចឆាតសួរខ្ញុំបានរហូតណា៎! សំណាងល្អក្នុងការកែរូបបង! 📸🔥" },
     { keys: ['help', 'ជួយ', 'របៀបប្រើ', 'guide'], answer: "ជម្រាបសួរ! 🤝 ខ្ញុំនៅទីនេះរង់ចាំជួយបងជានិច្ច! បងអាចសួរខ្ញុំបានរាល់ចម្ងល់ទាំងអស់ទាក់ទងនឹងការកែរូប ដូចជា៖\n\n🎨 **សួរពីរូបមន្តពណ៌**: 'សុំ Preset ហាងកាហ្វេ' ឬ 'របៀបកែពណ៌ Cinematic'\n🛠️ **សួរពីឧបករណ៍កែរូប**: 'តើ Dehaze ប្រើសម្រាប់អ្វី?' ឬ 'ពន្យល់ពី Tone Curve'\n🧠 **សួរពីអត្ថន័យពណ៌**: 'តើពណ៌ខៀវមានន័យដូចម្តេចក្នុងរូបភាព?'\n📸 **សួរពីបញ្ហាក្នុងរូប**: 'ហេតុអីថតរូបមកងងឹតមុខ?' ឬ 'របៀបកែរូបកុំឱ្យមាន Noise'\n\nគ្រាន់តែសរសេរសំណួររបស់បងមក ខ្ញុំនឹងពន្យល់ប្រាប់យ៉ាងលម្អិត និងងាយយល់បំផុត! តោះ ចាប់ផ្តើមសួរមក! 🚀" },
-    { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
-    { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
-
     { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
     { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
     
@@ -682,7 +693,7 @@ const ColorWheel = ({ hue, sat, onChange, size = 150, isDarkMode }) => {
     );
 };
 
-const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
+const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode, isSynced, setShowCloudModal }) => {
   return (
     <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} backdrop-blur-xl sticky top-0 z-50 border-b transition-colors ${isDarkMode ? 'bg-[#1E1E1E]/80 text-[#E3E3E3] border-[#2C2C2C]' : 'bg-[#FFFFFF]/80 text-[#1A1C1E] border-[#E0E0E0]'}`}>
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -693,6 +704,10 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
           <h1 className={`text-xl font-bold font-khmer tracking-tight group-hover:opacity-80 transition-opacity ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>ម៉ាយឌីហ្សាញ</h1>
         </div>
         <div className="flex items-center gap-4">
+            <button onClick={() => setShowCloudModal(true)} className={`p-2 rounded-full transition-colors relative ${isDarkMode ? 'hover:bg-[#2C2C2C] text-[#9AA0A6]' : 'hover:bg-[#FAFAFA] text-[#5F6368]'}`} title="Cloud Sync / Sign In">
+                <Cloud size={20} className={isSynced ? "text-green-500" : ""} />
+                {!isSynced && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[#1E1E1E]"></span>}
+            </button>
             <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-[#2C2C2C] text-[#9AA0A6]' : 'hover:bg-[#FAFAFA] text-[#5F6368]'}`}>
                 {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -867,7 +882,7 @@ const ContactSection = ({ isDarkMode }) => (
   </div>
 );
 
-const PhotoLab = ({ isDarkMode }) => {
+const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const [image, setImage] = useState("https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=1920&q=100");
   const [imageName, setImageName] = useState("Portrait");
   const [mode, setMode] = useState('manual');
@@ -1105,6 +1120,8 @@ const handleDownload = () => {
       setUserPresets(updatedPresets);
       localStorage.setItem('myDesignUserPresets', JSON.stringify(updatedPresets));
       setShowSaveModal(false);
+      
+      if (isSynced && user) syncDataToCloud(user);
   };
   
   const applyPresetToSettings = (presetData) => { 
@@ -1583,7 +1600,7 @@ const handleDownload = () => {
   );
 };
 
-const Quiz = ({ isDarkMode }) => {
+const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const [gameState, setGameState] = useState('menu');
   const [questions, setQuestions] = useState(initialQuestionBank);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -1592,8 +1609,10 @@ const Quiz = ({ isDarkMode }) => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [quizConfig, setQuizConfig] = useState({ level: 'beginner', amount: 10 });
   const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('myDesignHighScore')) || 0);
+  const [isNewRecord, setIsNewRecord] = useState(false);
+  const [userAnswers, setUserAnswers] = useState([]); // <-- បន្ថែម State ថ្មីសម្រាប់ផ្ទុកចម្លើយ
 
-  const startQuiz = () => { let filtered = initialQuestionBank.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level); if (filtered.length < quizConfig.amount) filtered = initialQuestionBank; const shuffled = [...filtered].sort(() => 0.5 - Math.random()); setQuestions(shuffled.slice(0, quizConfig.amount)); setCurrentQuestion(0); setScore(0); setIsAnswered(false); setSelectedOption(null); setGameState('playing'); };
+  const startQuiz = () => { let filtered = initialQuestionBank.filter(q => quizConfig.level === 'all' || q.level === quizConfig.level); if (filtered.length < quizConfig.amount) filtered = initialQuestionBank; const shuffled = [...filtered].sort(() => 0.5 - Math.random()); setQuestions(shuffled.slice(0, quizConfig.amount)); setCurrentQuestion(0); setScore(0); setIsAnswered(false); setSelectedOption(null); setIsNewRecord(false); setUserAnswers([]); setGameState('playing'); };
 
   if (gameState === 'menu') return (
     <div className="flex h-full items-center justify-center p-4">
@@ -1613,11 +1632,60 @@ const Quiz = ({ isDarkMode }) => {
     </div>
   );
   
+  if (gameState === 'review') {
+      return (
+          <div className="flex h-full flex-col p-4 max-w-3xl mx-auto w-full animate-fade-in-up">
+              <div className={`p-5 rounded-[24px] border shadow-xl mb-4 shrink-0 flex justify-between items-center ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+                  <h2 className={`text-lg font-bold font-khmer ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>ការត្រួតពិនិត្យ & ការណែនាំ</h2>
+                  <button onClick={() => setGameState('result')} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368] hover:text-[#1A1C1E]'}`}><XCircle size={20}/></button>
+              </div>
+              <div className="flex-1 overflow-y-auto space-y-4 custom-scrollbar pb-20 px-1">
+                  {/* កន្លែងបង្ហាញ ការណែនាំ (Recommendations) */}
+                  <div className={`p-5 rounded-2xl border ${score/questions.length >= 0.8 ? (isDarkMode ? 'bg-[#34C759]/10 border-[#34C759]/20 text-[#34C759]' : 'bg-[#34C759]/10 border-[#34C759]/30 text-green-700') : (isDarkMode ? 'bg-[#FFD60A]/10 border-[#FFD60A]/20 text-[#FFD60A]' : 'bg-[#FFD60A]/10 border-[#FFD60A]/30 text-yellow-700')}`}>
+                      <h3 className="font-bold mb-2 flex items-center gap-2"><Lightbulb size={18}/> ការណែនាំសម្រាប់អ្នក៖</h3>
+                      <p className="text-sm font-khmer leading-relaxed">
+                          {score/questions.length >= 0.8 
+                              ? "អ្នកយល់ដឹងពី Lightroom បានល្អខ្លាំងណាស់! 🎉 អ្នកមានគ្រឹះរឹងមាំក្នុងការគ្រប់គ្រងពន្លឺ និងពណ៌។ សូមសាកល្បងបង្កើត Preset ផ្ទាល់ខ្លួន ឬកែរូបភាពបែប Cinematic កម្រិតខ្ពស់នៅក្នុងផ្ទាំង Lab បន្ថែម។" 
+                              : "អ្នកគួរតែចំណាយពេលអាន 'មេរៀន' បន្ថែមបន្តិចទៀត ជាពិសេសទាក់ទងនឹងការគ្រប់គ្រងពន្លឺ (Tone Curve) និងពណ៌ (HSL) ដើម្បីឱ្យកាន់តែស្ទាត់ជំនាញ។ កុំបារម្ភ ការហាត់អនុវត្តញឹកញាប់នឹងធ្វើឱ្យអ្នកពូកែ! 💪"}
+                      </p>
+                  </div>
+                  
+                  {/* បង្ហាញចម្លើយដែលទើបតែឆ្លើយរួចទាំងអស់ */}
+                  {userAnswers.map((ans, idx) => {
+                      const qInfo = questions[ans.qId];
+                      return (
+                          <div key={idx} className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+                              <p className={`font-bold text-[15px] mb-4 font-khmer leading-relaxed ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{idx + 1}. {qInfo.question}</p>
+                              <div className="space-y-2.5">
+                                  {qInfo.options.map((opt, i) => {
+                                      let isUserChoice = ans.selected === i;
+                                      let isCorrectChoice = qInfo.correct === i;
+                                      let btnClass = isDarkMode ? 'bg-[#2C2C2C]/30 border-transparent text-[#9AA0A6]' : 'bg-[#FAFAFA]/50 border-transparent text-[#5F6368]';
+                                      
+                                      if (isCorrectChoice) btnClass = 'bg-[#34C759]/10 border-[#34C759] text-[#34C759] font-bold';
+                                      else if (isUserChoice && !isCorrectChoice) btnClass = 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A] line-through opacity-80';
+                                      
+                                      return (
+                                          <div key={i} className={`p-3.5 text-sm rounded-xl border flex items-center gap-3 font-khmer ${btnClass}`}>
+                                              {(isCorrectChoice) ? <CheckCircle size={16}/> : (isUserChoice && !isCorrectChoice) ? <XCircle size={16}/> : <div className="w-4 h-4 rounded-full border border-current opacity-30"/>}
+                                              {opt}
+                                          </div>
+                                      )
+                                  })}
+                              </div>
+                          </div>
+                      )
+                  })}
+              </div>
+          </div>
+      )
+  }
+
   if (gameState === 'result') {
       const percentage = Math.round((score / questions.length) * 100);
       return (
         <div className="flex h-full items-center justify-center p-4">
-          <div className={`p-10 text-center rounded-[32px] border shadow-2xl max-w-lg w-full animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}><div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="80" cy="80" r="64" stroke="currentColor" className={isDarkMode ? "text-[#2C2C2C]" : "text-[#E0E0E0]"} strokeWidth="12" fill="none" /><circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" /></svg><div className={`absolute text-4xl font-black tracking-tighter ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{percentage}%</div></div><h2 className={`text-2xl font-bold font-khmer mb-2 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2><p className={`font-khmer mb-8 text-sm ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ពិន្ទុរបស់អ្នក: <span className={`font-bold ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{score}</span> / {questions.length}</p><button onClick={() => setGameState('menu')} className={`px-10 py-3 rounded-2xl font-bold font-khmer transition-all shadow-md w-full text-sm ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#1A1C1E]'}`}>សាកល្បងម្តងទៀត</button></div>
+          <div className={`p-10 text-center rounded-[32px] border shadow-2xl max-w-lg w-full animate-fade-in-up ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}><div className="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center"><svg className="w-full h-full transform -rotate-90"><circle cx="80" cy="80" r="64" stroke="currentColor" className={isDarkMode ? "text-[#2C2C2C]" : "text-[#E0E0E0]"} strokeWidth="12" fill="none" /><circle cx="80" cy="80" r="64" stroke={percentage > 70 ? "#34C759" : percentage > 40 ? "#FFD60A" : "#FF453A"} strokeWidth="16" fill="none" strokeDasharray={402} strokeDashoffset={402 - (402 * percentage) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-out" /></svg><div className={`absolute text-4xl font-black tracking-tighter ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{percentage}%</div></div><h2 className={`text-2xl font-bold font-khmer mb-2 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{percentage > 80 ? "អស្ចារ្យណាស់!" : "ព្យាយាមទៀត!"}</h2>{isNewRecord && <div className="inline-block bg-[#C65102]/20 text-[#C65102] border border-[#C65102]/30 px-4 py-1.5 rounded-full text-xs font-bold mb-4 animate-bounce">🎉 កំណត់ត្រាថ្មី (New High Score)!</div>}<p className={`font-khmer mb-8 text-sm ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>ពិន្ទុរបស់អ្នក: <span className={`font-bold ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{score}</span> / {questions.length}</p><div className="space-y-3"><button onClick={() => setGameState('review')} className={`w-full py-3 rounded-2xl font-bold font-khmer transition-all shadow-sm text-sm border flex items-center justify-center gap-2 ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] border-[#2C2C2C] text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] border-[#E0E0E0] text-[#1A1C1E]'}`}><ListIcon size={16}/> មើលចម្លើយ និង ការណែនាំ</button><button onClick={() => setGameState('menu')} className={`w-full py-3 rounded-2xl font-bold font-khmer transition-all shadow-md text-sm flex items-center justify-center gap-2 ${isDarkMode ? 'bg-[#E3E3E3] hover:bg-[#FFFFFF] text-[#1A1C1E]' : 'bg-[#1A1C1E] hover:bg-[#5F6368] text-[#FFFFFF]'}`}><RotateCcw size={16}/> សាកល្បងម្តងទៀត</button></div></div>
         </div>
       );
   }
@@ -1630,10 +1698,37 @@ const Quiz = ({ isDarkMode }) => {
         <h3 className={`text-xl md:text-2xl font-bold mb-8 font-khmer leading-snug ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{q.question}</h3>
         <div className="grid gap-3">
           {q.options.map((opt, i) => (
-            <button key={i} onClick={() => { if (!isAnswered) { setSelectedOption(i); setIsAnswered(true); if (i === q.correct) setScore(score + 1); } }} className={`p-4 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-sm relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : (isDarkMode ? 'bg-[#2C2C2C]/30 border-transparent text-[#9AA0A6] opacity-50' : 'bg-[#FAFAFA]/50 border-transparent text-[#5F6368] opacity-50'))) : (isDarkMode ? 'bg-[#2C2C2C]/50 border-transparent text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-transparent text-[#1A1C1E] hover:bg-[#E0E0E0]/50')}`}><span className={`inline-flex w-6 h-6 items-center justify-center rounded-full mr-3 text-[10px] font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-[#FFFFFF]' : (isDarkMode ? 'bg-[#3A3A3C] text-[#9AA0A6] group-hover:bg-[#E3E3E3] group-hover:text-[#121212]' : 'bg-[#E0E0E0] text-[#5F6368] group-hover:bg-[#1A1C1E] group-hover:text-[#FFFFFF]')}`}>{String.fromCharCode(65 + i)}</span>{opt}</button>
+            <button key={i} onClick={() => { 
+                if (!isAnswered) { 
+                    setSelectedOption(i); 
+                    setIsAnswered(true); 
+                    const isCorrect = i === q.correct;
+                    if (isCorrect) setScore(score + 1); 
+                    
+                    setUserAnswers(prev => [...prev, { qId: currentQuestion, selected: i, isCorrect }]);
+                    
+                    // Auto-Next ដំណើរការដោយស្វ័យប្រវត្តិនៅទីនេះ
+                    setTimeout(() => {
+                        const next = currentQuestion + 1; 
+                        if (next < questions.length) { 
+                            setCurrentQuestion(next); 
+                            setIsAnswered(false); 
+                            setSelectedOption(null); 
+                        } else { 
+                            setGameState('result'); 
+                            const finalScore = score + (isCorrect ? 1 : 0);
+                            if (finalScore > highScore) { 
+                                setHighScore(finalScore); 
+                                localStorage.setItem('myDesignHighScore', finalScore); 
+                                setIsNewRecord(true); 
+                                if (isSynced && user) syncDataToCloud(user);
+                            } 
+                        }
+                    }, 1200); // រង់ចាំ 1.2 វិនាទី
+                } 
+            }} className={`p-4 text-left rounded-2xl border transition-all duration-300 ease-spring font-khmer text-sm relative overflow-hidden group ${isAnswered ? (i === q.correct ? 'bg-[#34C759]/10 border-[#34C759] text-[#34C759]' : (i === selectedOption ? 'bg-[#FF453A]/10 border-[#FF453A] text-[#FF453A]' : (isDarkMode ? 'bg-[#2C2C2C]/30 border-transparent text-[#9AA0A6] opacity-50' : 'bg-[#FAFAFA]/50 border-transparent text-[#5F6368] opacity-50'))) : (isDarkMode ? 'bg-[#2C2C2C]/50 border-transparent text-[#E3E3E3] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-transparent text-[#1A1C1E] hover:bg-[#E0E0E0]/50')}`}><span className={`inline-flex w-6 h-6 items-center justify-center rounded-full mr-3 text-[10px] font-bold ${isAnswered && i === q.correct ? 'bg-[#34C759] text-[#FFFFFF]' : (isDarkMode ? 'bg-[#3A3A3C] text-[#9AA0A6] group-hover:bg-[#E3E3E3] group-hover:text-[#121212]' : 'bg-[#E0E0E0] text-[#5F6368] group-hover:bg-[#1A1C1E] group-hover:text-[#FFFFFF]')}`}>{String.fromCharCode(65 + i)}</span>{opt}</button>
           ))}
         </div>
-        {isAnswered && (<div className="mt-8 flex justify-end animate-fade-in-up"><button onClick={() => { const next = currentQuestion + 1; if (next < questions.length) { setCurrentQuestion(next); setIsAnswered(false); setSelectedOption(null); } else { setGameState('result'); if (score > highScore) { setHighScore(score); localStorage.setItem('myDesignHighScore', score); } } }} className={`px-8 py-3 rounded-2xl font-bold font-khmer shadow-xl transition-all flex items-center gap-2 transform hover:translate-x-1 text-sm ${isDarkMode ? 'bg-[#E3E3E3] hover:bg-[#FFFFFF] text-[#1A1C1E]' : 'bg-[#1A1C1E] hover:bg-[#5F6368] text-[#FFFFFF]'}`}>បន្ទាប់ <ChevronRight size={16}/></button></div>)}
       </div>
     </div>
   );
@@ -1716,6 +1811,70 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('learn');
   const [expandedLesson, setExpandedLesson] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
+  
+  // Cloud Sync States
+  const [user, setUser] = useState(null);
+  const [isSynced, setIsSynced] = useState(() => localStorage.getItem('myDesignCloudSync') === 'true');
+  const [showCloudModal, setShowCloudModal] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
+
+  useEffect(() => {
+      if (!auth) return;
+      const initAuth = async () => {
+          try {
+              if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                  await signInWithCustomToken(auth, __initial_auth_token);
+              } else {
+                  await signInAnonymously(auth);
+              }
+          } catch (err) {
+              console.warn("Auth initialization failed", err);
+          }
+      };
+      initAuth();
+      
+      const unsubscribe = onAuthStateChanged(auth, async (u) => {
+          setUser(u);
+          if (u && isSynced) {
+              try {
+                  const snap = await getDoc(doc(db, 'artifacts', appId, 'users', u.uid, 'profile', 'data'));
+                  if (snap.exists()) {
+                      const data = snap.data();
+                      if (data.highScore !== undefined) localStorage.setItem('myDesignHighScore', data.highScore);
+                      if (data.presets) localStorage.setItem('myDesignUserPresets', JSON.stringify(data.presets));
+                  }
+              } catch (err) { console.warn("Failed to load cloud data", err); }
+          }
+      });
+      return () => unsubscribe();
+  }, [isSynced]);
+
+  const syncDataToCloud = async (currentUser) => {
+      if (!db || !currentUser) return;
+      const hScore = parseInt(localStorage.getItem('myDesignHighScore')) || 0;
+      const presets = JSON.parse(localStorage.getItem('myDesignUserPresets') || '[]');
+      try {
+          await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'data'), {
+              highScore: hScore,
+              presets: presets,
+              lastSync: Date.now()
+          }, { merge: true });
+      } catch (error) {
+          console.error("Cloud Sync failed", error);
+      }
+  };
+
+  const handleEnableCloudSync = async () => {
+      setSyncLoading(true);
+      if (user) {
+          await syncDataToCloud(user);
+          setIsSynced(true);
+          localStorage.setItem('myDesignCloudSync', 'true');
+      }
+      setSyncLoading(false);
+      setShowCloudModal(false);
+  };
+
   // ១. ទាញយកប្រវត្តិឆាតពី LocalStorage មកបង្ហាញ ឬ លោតសារស្វាគមន៍បើជាការចូលប្រើលើកដំបូងបំផុត
   const [chatMessages, setChatMessages] = useState(() => {
       const savedChat = localStorage.getItem('myDesignChatHistory');
@@ -1738,13 +1897,57 @@ export default function App() {
     const existingMeta = document.querySelector('meta[name="viewport"]');
     if (existingMeta) document.head.removeChild(existingMeta);
     document.head.appendChild(meta);
-  }, []);
+
+    // --- ៤. កូដប្រែក្លាយជា PWA (Progressive Web App) ដោយស្វ័យប្រវត្តិ ---
+    // បង្កើត Manifest ភ្លាមៗ (Dynamic Manifest)
+    const manifest = {
+      "short_name": "ម៉ាយឌីហ្សាញ",
+      "name": "My Design Lightroom Master",
+      "icons": [
+        { "src": "/logo.svg", "type": "image/svg+xml", "sizes": "192x192" },
+        { "src": "/logo.svg", "type": "image/svg+xml", "sizes": "512x512" }
+      ],
+      "start_url": ".",
+      "display": "standalone",
+      "theme_color": isDarkMode ? "#121212" : "#FAFAFA",
+      "background_color": isDarkMode ? "#121212" : "#FAFAFA"
+    };
+    
+    // បំប្លែង Object ទៅជា Data URL ជំនួសឱ្យការប្រើ File ខាងក្រៅ
+    const manifestString = JSON.stringify(manifest);
+    const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
+    
+    let manifestLink = document.querySelector('link[rel="manifest"]');
+    if (!manifestLink) {
+      manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      document.head.appendChild(manifestLink);
+    }
+    manifestLink.href = manifestUrl;
+
+    // បន្ថែម Support សម្រាប់ iOS (Apple Touch Icon និង Status Bar)
+    let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+    if (!appleIcon) {
+      appleIcon = document.createElement('link');
+      appleIcon.rel = 'apple-touch-icon';
+      appleIcon.href = '/logo.svg'; // ទាញយក Logo ដែលមានស្រាប់
+      document.head.appendChild(appleIcon);
+    }
+    
+    let appleStatusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (!appleStatusMeta) {
+      appleStatusMeta = document.createElement('meta');
+      appleStatusMeta.name = 'apple-mobile-web-app-status-bar-style';
+      appleStatusMeta.content = 'black-translucent';
+      document.head.appendChild(appleStatusMeta);
+    }
+  }, [isDarkMode]);
 
   return (
     <div className={`fixed inset-0 w-full h-full flex flex-col font-khmer overflow-hidden touch-pan-x touch-pan-y transition-colors duration-300 ${isDarkMode ? 'bg-[#121212] text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#1A1C1E]'}`}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&display=swap'); body, html { overscroll-behavior: none; } .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }`}</style>
       
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} isSynced={isSynced} setShowCloudModal={setShowCloudModal} />
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} isDarkMode={isDarkMode} />}
       
       <main className={`flex-1 max-w-7xl mx-auto w-full ${activeTab === 'ai' || activeTab === 'lab' ? 'h-full overflow-hidden p-0 md:p-8' : 'overflow-y-auto custom-scrollbar p-4 md:p-8'}`}>
@@ -1756,8 +1959,8 @@ export default function App() {
             <ContactSection isDarkMode={isDarkMode} />
           </div>
         )}
-        {activeTab === 'lab' && <PhotoLab isDarkMode={isDarkMode} />}
-        {activeTab === 'quiz' && <Quiz isDarkMode={isDarkMode} />}
+        {activeTab === 'lab' && <PhotoLab isDarkMode={isDarkMode} user={user} isSynced={isSynced} syncDataToCloud={syncDataToCloud} />}
+        {activeTab === 'quiz' && <Quiz isDarkMode={isDarkMode} user={user} isSynced={isSynced} syncDataToCloud={syncDataToCloud} />}
         {activeTab === 'ai' && <div className="h-full md:h-[650px] max-w-2xl mx-auto w-full relative"><ChatBot messages={chatMessages} setMessages={setChatMessages} isDarkMode={isDarkMode} /></div>}
       </main>
 
@@ -1766,6 +1969,36 @@ export default function App() {
             <button key={t} onClick={() => setActiveTab(t)} className={`flex flex-col items-center gap-1 transition-all ${activeTab === t ? 'text-[#C65102] scale-110' : (isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]')}`}>{t === 'learn' && <BookOpen size={22}/>}{t === 'quiz' && <Award size={22}/>}{t === 'lab' && <Sliders size={22}/>}{t === 'ai' && <Bot size={22}/>}<span className="text-[10px] font-bold uppercase">{t === 'learn' ? 'មេរៀន' : t === 'quiz' ? 'តេស្ត' : t === 'lab' ? 'Lab' : 'AI'}</span></button>
         ))}
       </nav>
+
+      {/* Cloud Sync Modal */}
+      {showCloudModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-all">
+              <div className={`w-full max-w-sm p-8 rounded-[32px] border shadow-2xl animate-fade-in-up text-center ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+                  <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 shadow-inner border ${isSynced ? 'bg-[#34C759]/10 border-[#34C759]/30 text-[#34C759]' : (isDarkMode ? 'bg-[#C65102]/10 border-[#C65102]/20 text-[#C65102]' : 'bg-[#C65102]/5 border-[#C65102]/20 text-[#C65102]')}`}>
+                      <Cloud size={40} />
+                  </div>
+                  <h3 className={`text-2xl font-bold font-khmer mb-3 tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>
+                      {isSynced ? 'Cloud Synced' : 'គណនី Cloud Sync'}
+                  </h3>
+                  <p className={`text-sm font-khmer leading-relaxed mb-8 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                      {isSynced 
+                          ? "ទិន្នន័យ (Preset និងពិន្ទុ) របស់អ្នកត្រូវបានរក្សាទុកដោយសុវត្ថិភាពនៅលើ Cloud រួចរាល់ហើយបាទ! ☁️✨" 
+                          : "កម្មវិធីនេះអាចប្រើប្រាស់ដោយសេរី (អត់ចាំបាច់មានគណនី)។ ប៉ុន្តែអ្នកអាចបើក Cloud Sync ដើម្បីរក្សាទុក Preset និងពិន្ទុរបស់អ្នកកុំឱ្យបាត់បង់ពេលក្រោយ!"}
+                  </p>
+                  
+                  {isSynced ? (
+                      <button onClick={() => setShowCloudModal(false)} className={`w-full py-3.5 rounded-2xl font-bold font-khmer transition-all shadow-md text-sm ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#1A1C1E]'}`}>បិទផ្ទាំង</button>
+                  ) : (
+                      <div className="flex gap-3">
+                          <button onClick={() => setShowCloudModal(false)} className={`flex-1 py-3.5 rounded-2xl font-bold font-khmer transition-all text-sm border ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C] text-[#9AA0A6] hover:bg-[#3A3A3C]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#5F6368] hover:bg-[#E0E0E0]'}`}>មិនអីទេ</button>
+                          <button onClick={handleEnableCloudSync} disabled={syncLoading} className="flex-1 py-3.5 rounded-2xl font-bold font-khmer bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] shadow-lg shadow-[#C65102]/30 active:scale-95 transition-all text-sm flex justify-center items-center gap-2">
+                              {syncLoading ? <Loader2 size={18} className="animate-spin" /> : "បើក Sync"}
+                          </button>
+                      </div>
+                  )}
+              </div>
+          </div>
+      )}
     </div>
   );
 }
