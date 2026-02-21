@@ -191,7 +191,7 @@ const generateXMP = (recipe, title) => {
     crs:SaturationAdjustmentRed="${getHSL('Red').s}" crs:SaturationAdjustmentOrange="${getHSL('Orange').s}" crs:SaturationAdjustmentYellow="${getHSL('Yellow').s}" crs:SaturationAdjustmentGreen="${getHSL('Green').s}" crs:SaturationAdjustmentAqua="${getHSL('Aqua').s}" crs:SaturationAdjustmentBlue="${getHSL('Blue').s}" crs:SaturationAdjustmentPurple="${getHSL('Purple').s}" crs:SaturationAdjustmentMagenta="${getHSL('Magenta').s}"
     crs:LuminanceAdjustmentRed="${getHSL('Red').l}" crs:LuminanceAdjustmentOrange="${getHSL('Orange').l}" crs:LuminanceAdjustmentYellow="${getHSL('Yellow').l}" crs:LuminanceAdjustmentGreen="${getHSL('Green').l}" crs:LuminanceAdjustmentAqua="${getHSL('Aqua').l}" crs:LuminanceAdjustmentBlue="${getHSL('Blue').l}" crs:LuminanceAdjustmentPurple="${getHSL('Purple').l}" crs:LuminanceAdjustmentMagenta="${getHSL('Magenta').l}"
     crs:SplitToningShadowHue="${grading.Shadows?.h || 0}" crs:SplitToningShadowSaturation="${grading.Shadows?.s || 0}" crs:SplitToningHighlightHue="${grading.Highlights?.h || 0}" crs:SplitToningHighlightSaturation="${grading.Highlights?.s || 0}" crs:SplitToningBalance="${grading.Balance || 0}"
-    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}" crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}" crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}" crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}" crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}" crs:ColorGradeBlending="${grading.Blending || 50}" crs:ColorGradeGlobalHue="0" crs:ColorGradeGlobalSat="0" crs:ColorGradeGlobalLum="0"
+    crs:ColorGradeMidtoneHue="${grading.Midtones?.h || 0}" crs:ColorGradeMidtoneSat="${grading.Midtones?.s || 0}" crs:ColorGradeMidtoneLum="${grading.Midtones?.l || 0}" crs:ColorGradeShadowLum="${grading.Shadows?.l || 0}" crs:ColorGradeHighlightLum="${grading.Highlights?.l || 0}" crs:ColorGradeBlending="${grading.Blending || 50}" crs:ColorGradeGlobalHue="${grading.Global?.h || 0}" crs:ColorGradeGlobalSat="${grading.Global?.s || 0}" crs:ColorGradeGlobalLum="${grading.Global?.l || 0}"
     crs:GrainAmount="${effects.Grain || 0}" crs:PostCropVignetteAmount="${basic.Vignette || 0}" crs:LensProfileEnable="1">
    <crs:ToneCurvePV2012>
     <rdf:Seq>${formatCurveForXMP(recipe.curveMaster)}</rdf:Seq>
@@ -547,7 +547,7 @@ const lessonsData = [
           tool: 'Color Mix (HSL)', 
           khmer: 'លាយពណ៌ (កែពណ៌ដាច់ដោយឡែក)', 
           shortDesc: 'គ្រប់គ្រងពណ៌នីមួយៗដាច់ដោយឡែកពីគ្នា (Hue, Saturation, Luminance)។',
-          image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
+          image: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&w=800&q=80',
           advancedUI: 'color_mix',
           desc: 'HSL គឺជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់អ្នកកែរូប ព្រោះវាអនុញ្ញាតឱ្យយើងជ្រើសរើសកែពណ៌នីមួយៗ (ក្នុងចំណោម ៨ពណ៌) ដាច់ដោយឡែកពីគ្នា៖\n\n⬅️ ទាញទៅឆ្វេង (-): ប្តូរពណ៌ទៅលាំពណ៌មួយទៀត (ឧទាហរណ៍៖ ទាញពណ៌បៃតងទៅឆ្វេង ឱ្យស្លឹកឈើទៅជាពណ៌លឿង)\n➡️ ទាញទៅស្តាំ (+): ប្តូរពណ៌ទៅលាំផ្ទុយគ្នា (ឧទាហរណ៍៖ ទាញពណ៌បៃតងទៅស្តាំ ឱ្យស្លឹកឈើទៅជាពណ៌ខៀវ)', 
           tip: '💡 គន្លឹះធ្វើឱ្យស្បែកមុខតួអង្គភ្លឺសរលោង៖ សូមជ្រើសរើសពណ៌ Orange (ទឹកក្រូច) រួចទាញ Luminance ឡើងបូក (+) ឱ្យភ្លឺ និងបន្ថយ Saturation ដក (-) បន្តិចកុំឱ្យមុខលឿងពេក។' 
@@ -595,7 +595,7 @@ const lessonsData = [
         tool: 'Dehaze', 
         khmer: 'កាត់អ័ព្ទ', 
         shortDesc: 'លុបអ័ព្ទ ឬផ្សែងដើម្បីធ្វើឱ្យរូបថ្លា ឬបន្ថែមអ័ព្ទសម្រាប់អារម្មណ៍ Cinematic។',
-        image: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1485470733090-0aae1788d5af?auto=format&fit=crop&w=800&q=80',
         slider: { min: -100, max: 100, step: 1, default: 0, type: 'dehaze', actionText: (v) => v > 0 ? `លុបអ័ព្ទ ថ្លាឆ្វង់ (+${v})` : v < 0 ? `បន្ថែមអ័ព្ទ (${v})` : 'ដើម' },
         desc: 'Dehaze គឺជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់រូបថតទេសភាព!\n\n⬅️ ទាញទៅឆ្វេង (-): បន្ថែមអ័ព្ទពណ៌សចូលទៅក្នុងរូបភាព បង្កើតជាបរិយាកាសអាថ៌កំបាំង ឬរដូវរងា។\n➡️ ទាញទៅស្តាំ (+): លុបអ័ព្ទ ផ្សែង ឬធូលី ធ្វើឱ្យមេឃដែលស្រអាប់ ក្លាយជាថ្លាឆ្វង់ និងដិតពណ៌មកវិញភ្លាមៗ។', 
         tip: 'ឧទាហរណ៍៖ ថតទេសភាពមេឃស្រអាប់នៅពេលថ្ងៃ ដាក់ Dehaze +15 ទៅ +25 ធ្វើឱ្យមេឃដិតនិងស្រឡះ។' 
@@ -607,6 +607,7 @@ const lessonsData = [
         khmer: 'ភាពមុត', 
         shortDesc: 'ធ្វើអោយគែមនៃវត្ថុក្នុងរូបកាន់តែច្បាស់ និងមុតស្រួច។',
         image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=800&q=80',
+        slider: { min: 0, max: 100, step: 1, default: 0, type: 'sharpening', actionText: (v) => v > 0 ? `គែមវត្ថុមុតស្រួច (+${v})` : 'ធម្មតា (ដើម)' },
         desc: 'Sharpening បង្កើនភាពច្បាស់ (Sharpness) ដោយស្វែងរកគែមនៃវត្ថុ ហើយបង្កើនពន្លឺរបស់វា។\n\n➡️ ទាញទៅស្តាំ (+): ធ្វើឱ្យរូបភាពកាន់តែមុតស្រួច (Sharp)។\n\n💡 អ្វីដែលសំខាន់បំផុតគឺមុខងារ Masking ដែលនៅពីក្រោមវា៖\n- បើបងអូស Masking ទៅស្តាំ (ចុច Alt ជាប់ដើម្បីមើល) វានឹងធ្វើឱ្យច្បាស់តែត្រង់គែមវត្ថុ (សក់ ភ្នែក) ប៉ុណ្ណោះ ដោយរក្សាផ្ទៃស្បែកឱ្យនៅរលោងដដែល។', 
         tip: 'តែងតែប្រើ Sharpening អមជាមួយ Masking កម្រិត 50 ទៅ 70 ដើម្បីកុំឱ្យស្បែកមុខមនុស្សឡើងគ្រើម!' 
     }, 
@@ -614,7 +615,8 @@ const lessonsData = [
         tool: 'Noise Reduction', 
         khmer: 'កាត់បន្ថយគ្រាប់', 
         shortDesc: 'លុបគ្រាប់ Noise ដែលកើតឡើងដោយសារថតយប់ ឬប្រើ ISO ខ្ពស់។',
-        image: 'https://images.unsplash.com/photo-1555679427-1f6dfcce943b?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?auto=format&fit=crop&w=800&q=80',
+        slider: { min: 0, max: 100, step: 1, default: 0, type: 'noise', actionText: (v) => v > 0 ? `រូបម៉ត់រលោង លុប Noise (+${v})` : 'មានគ្រាប់ Noise (ដើម)' },
         desc: 'ពេលបងថតរូបនៅកន្លែងងងឹតដោយប្រើ ISO ខ្ពស់ រូបភាពនឹងលេចចេញនូវគ្រាប់អុចៗ (Noise)។\n\n➡️ ទាញ Luminance Noise Reduction ទៅស្តាំ (+): វានឹងធ្វើការលុបបំបាត់គ្រាប់ទាំងនោះ ធ្វើឱ្យរូបភាពត្រលប់មកម៉ត់វិញ។\n\n⚠️ ការព្រមាន៖ បើទាញវាកាន់តែខ្លាំង រូបភាពនឹងបាត់បង់ភាពច្បាស់ ហើយមើលទៅព្រិលៗដូចជ័រ។ ដូច្នេះគួរទាញត្រឹម +20 ទៅ +40 បានហើយ។', 
         tip: 'បច្ចុប្បន្ន Lightroom មានមុខងារ AI Denoise ដែលអាចលុប Noise បាន 100% ដោយមិនព្រិលរូប ប៉ុន្តែវាស៊ីកម្លាំងកុំព្យូទ័រខ្លាំង។' 
     }
@@ -644,15 +646,16 @@ const lessonsData = [
           khmer: 'កែកែវថត', 
           shortDesc: 'លុបភាពកោង (Distortion) និងគែមខ្មៅ (Vignette) ពីកាមេរ៉ា។',
           image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-          slider: { min: 0, max: 100, step: 1, default: 0, type: 'lens_sim', actionText: (v) => v > 0 ? `កែតម្រូវកែវថតបាន ${v}%` : 'មិនទាន់កែ' },
-          desc: 'កែវថត (Lens) ភាគច្រើន ពិសេស Lens Wide-angle តែងតែធ្វើឱ្យរូបភាពមានសភាពកោងប៉ោង និងមានគែមងងឹត (Vignette) ដោយអចេតនា។\n\n➡️ ទាញទៅស្តាំ ឬធីកយកពាក្យ "Enable Profile Corrections": កម្មវិធីនឹងស្គាល់ម៉ាកកាមេរ៉ារបស់បង ហើយទាញរូបឱ្យត្រង់ និងភ្លឺគែមមកវិញភ្លាមៗ។', 
+          advancedUI: 'lens_switch',
+          desc: 'កែវថត (Lens) ភាគច្រើន ពិសេស Lens Wide-angle តែងតែធ្វើឱ្យរូបភាពមានសភាពកោងប៉ោង និងមានគែមងងឹត (Vignette) ដោយអចេតនា។\n\n➡️ ចុចបើក "Enable Profile Corrections": កម្មវិធីនឹងស្គាល់ម៉ាកកាមេរ៉ារបស់បង រួចធ្វើការទាញរូបឱ្យត្រង់ និងភ្លឺគែមមកវិញភ្លាមៗដោយស្វ័យប្រវត្តិ។', 
           tip: '💡 នេះជាជំហានដែល Pro Retoucher តែងតែបើកវាជានិច្ច (១០០%) មុននឹងចាប់ផ្តើមកែពណ៌អ្វីទាំងអស់!' 
       },
       { 
           tool: 'Chromatic Aberration', 
           khmer: 'លុបពណ៌តាមគែម', 
           shortDesc: 'លុបពណ៌ស្វាយ ឬបៃតងដែលហៀរចេញនៅតាមគែមវត្ថុ។',
-          image: 'https://images.unsplash.com/photo-1462206192226-f494c64e4626?auto=format&fit=crop&w=800&q=80',
+          image: 'https://images.unsplash.com/photo-1423483641154-5411ec9c0ddf?auto=format&fit=crop&w=800&q=80',
+          advancedUI: 'chromatic_graphic',
           desc: 'នៅពេលថតរូបដែលមានពន្លឺកាត់គ្នាខ្លាំង (ឧទាហរណ៍ ថតស្លឹកឈើទល់នឹងមេឃស) វានឹងមានហៀរពណ៌ស្វាយ (Purple fringing) ឬបៃតង នៅតាមគែមវត្ថុ។\n\nគ្រាន់តែធីកយកពាក្យ "Remove Chromatic Aberration" ពណ៌ដែលរំខានទាំងនោះនឹងបាត់រលីង។', 
           tip: '💡 បើកវាជានិច្ច ដើម្បីឱ្យរូបភាពបងមើលទៅម៉ត់ និងមានគុណភាពខ្ពស់ដូចថតនឹងកែវថតថ្លៃៗ។' 
       }
@@ -662,6 +665,7 @@ const lessonsData = [
 const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
     const [sliderValue, setSliderValue] = useState(item.slider ? item.slider.default : 0);
     const [multiSliders, setMultiSliders] = useState(item.sliders ? item.sliders.reduce((acc, s) => ({...acc, [s.id]: s.default}), {}) : {});
+    const [isSwitchedOn, setIsSwitchedOn] = useState(false);
 
     const [activeMixColor, setActiveMixColor] = useState('Orange');
     const [mixSettings, setMixSettings] = useState({
@@ -766,11 +770,13 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
             case 'temp': return `sepia(50%) hue-rotate(${val > 0 ? -30 : 180}deg) saturate(${100 + Math.abs(val)}%)`;
             case 'texture': return val < 0 ? `blur(${Math.abs(val) * 0.04}px)` : `contrast(${100 + val * 0.4}%)`;
             case 'clarity': return `contrast(${100 + val * 0.8}%)`;
-            case 'dehaze': return `contrast(${100 + val}) saturate(${100 + val * 0.5}%)`;
+            case 'dehaze': return `contrast(${100 + val * 0.6}%) saturate(${100 + val * 0.5}%) brightness(${100 - val * 0.1}%)`;
             case 'hue': return `hue-rotate(${val}deg)`;
             case 'grading_sim': return `sepia(${Math.abs(val)}%) hue-rotate(${val > 0 ? -30 : 180}deg)`;
             case 'rotate': return `rotate(${val}deg) scale(1.4)`;
             case 'lens_sim': return `contrast(${100 - (val * 0.2)}%) brightness(${100 + (val * 0.2)}%)`;
+            case 'sharpening': return `contrast(${100 + val * 0.6}%)`;
+            case 'noise': return `blur(${val * 0.03}px) contrast(${100 - (val * 0.1)}%)`;
             default: return 'none';
         }
     };
@@ -807,7 +813,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                     {item.slider && item.image && !item.advancedUI && (
                         <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
                             <div className="w-full h-48 sm:h-64 overflow-hidden rounded-xl mb-4 relative">
-                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                                <img src={item.image} crossOrigin="anonymous" alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
                                 <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">
                                     {sliderValue > 0 ? `+${sliderValue.toFixed(item.slider.step < 1 ? 1 : 0)}` : sliderValue.toFixed(item.slider.step < 1 ? 1 : 0)}
                                 </div>
@@ -818,7 +824,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                 min={item.slider.min} max={item.slider.max} step={item.slider.step} 
                                 value={sliderValue} 
                                 onChange={(e) => setSliderValue(Number(e.target.value))} 
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-[#C65102]/30 outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full"
+                                className="w-full appearance-none cursor-pointer outline-none"
                             />
                             
                             {item.slider.actionText && (
@@ -840,7 +846,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                         </filter>
                                     </svg>
                                 )}
-                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                                <img src={item.image} crossOrigin="anonymous" alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
                             </div>
                             <div className="space-y-5 px-2">
                             {item.sliders.map(s => (
@@ -853,7 +859,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                         type="range" min={s.min} max={s.max} step={s.step} 
                                         value={multiSliders[s.id]} 
                                         onChange={(e) => setMultiSliders({...multiSliders, [s.id]: Number(e.target.value)})} 
-                                        className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer outline-none ${s.id === 'temp' ? 'grad-temp' : s.id === 'tint' ? 'grad-tint' : 'bg-[#C65102]/30'} [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full`}
+                                        className={`w-full appearance-none cursor-pointer outline-none ${s.id === 'temp' ? 'grad-temp' : s.id === 'tint' ? 'grad-tint' : ''}`}
                                     />
                                 </div>
                             ))}
@@ -870,7 +876,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                         <feColorMatrix type="matrix" values={getMatrixValue()} />
                                     </filter>
                                 </svg>
-                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                                <img src={item.image} crossOrigin="anonymous" alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
                             </div>
                             <div className="flex justify-between gap-1 mb-5 px-1">
                                 {colorsList.map(c => (
@@ -883,7 +889,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                     return (
                                         <div key={type} className="flex items-center gap-3">
                                             <label className={`text-[10px] font-bold uppercase w-8 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{type}</label>
-                                            <input type="range" min={type==='Hue'?'-180':'-100'} max={type==='Hue'?'180':'100'} value={mixSettings[activeMixColor][key]} onChange={(e)=>setMixSettings({...mixSettings, [activeMixColor]: {...mixSettings[activeMixColor], [key]: Number(e.target.value)}})} className={`flex-1 h-2 rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full ${type === 'Hue' ? 'grad-hue [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md' : 'bg-[#C65102]/30 [&::-webkit-slider-thumb]:bg-[#C65102]'}`} />
+                                            <input type="range" min={type==='Hue'?'-180':'-100'} max={type==='Hue'?'180':'100'} value={mixSettings[activeMixColor][key]} onChange={(e)=>setMixSettings({...mixSettings, [activeMixColor]: {...mixSettings[activeMixColor], [key]: Number(e.target.value)}})} className={`flex-1 appearance-none cursor-pointer outline-none ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
                                             <span className={`w-6 text-right text-xs font-bold ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{mixSettings[activeMixColor][key]}</span>
                                         </div>
                                     )
@@ -944,20 +950,20 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                     {item.advancedUI === 'straighten_before_after' && item.image && (
                         <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
                             <div className="grid grid-cols-2 gap-3">
-                                {/* Before: Crooked Image */}
+                                {/* Before: Crooked Image (Zoomed to hide edges) */}
                                 <div className="flex flex-col gap-2">
                                     <div className="w-full aspect-[4/5] rounded-xl overflow-hidden relative border border-red-500/30">
-                                        <img src={item.image} alt="Before" className="w-full h-full object-cover transform -rotate-[15deg] scale-[1.3]" />
+                                        <img src={item.image} alt="Before" className="w-full h-full object-cover transform -rotate-[12deg] scale-[1.35]" />
                                         <div className="absolute inset-0 flex flex-col justify-center items-center pointer-events-none">
-                                            <div className="w-full h-[2px] bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)] transform rotate-[15deg] border-y border-black/20"></div>
+                                            <div className="w-full h-[1.5px] bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)] transform rotate-[12deg]"></div>
                                         </div>
                                         <span className="absolute top-2 left-2 bg-red-500/90 text-white text-[10px] px-2 py-1 rounded-md font-bold shadow-md backdrop-blur-md font-khmer">ថតវៀច</span>
                                     </div>
                                 </div>
-                                {/* After: Straight Image */}
+                                {/* After: Straight Image (Same Zoom to match result) */}
                                 <div className="flex flex-col gap-2">
                                     <div className="w-full aspect-[4/5] rounded-xl overflow-hidden relative border border-[#34C759]/40">
-                                        <img src={item.image} alt="After" className="w-full h-full object-cover" />
+                                        <img src={item.image} alt="After" className="w-full h-full object-cover scale-[1.35]" />
                                         <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-40">
                                             <div className="border-r border-b border-white"></div>
                                             <div className="border-r border-b border-white"></div>
@@ -976,6 +982,35 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                         </div>
                     )}
 
+                    {/* UI: សម្រាប់ Lens Profile Correction (Switch Button) */}
+                    {item.advancedUI === 'lens_switch' && item.image && (
+                        <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                            <div className="w-full h-48 sm:h-64 rounded-xl mb-5 relative overflow-hidden bg-black border border-white/5">
+                                <img
+                                    src={item.image}
+                                    alt={item.tool}
+                                    className={`w-full h-full object-cover transition-all duration-700 ease-out ${isSwitchedOn ? 'scale-100' : 'scale-[1.08]'}`}
+                                    style={{ filter: isSwitchedOn ? 'contrast(100%) brightness(100%)' : 'contrast(105%) brightness(90%)' }}
+                                />
+                                {/* Simulated Vignette for OFF state */}
+                                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-700 ease-out ${isSwitchedOn ? 'opacity-0' : 'opacity-100'}`} style={{ background: 'radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 120%)' }}></div>
+                                
+                                <span className={`absolute top-2 left-2 text-[10px] px-2 py-1 rounded-md font-bold shadow-md backdrop-blur-md font-khmer transition-all ${isSwitchedOn ? 'bg-[#34C759]/90 text-white' : 'bg-black/60 text-white border border-white/20'}`}>
+                                    {isSwitchedOn ? 'កែតម្រូវរួចរាល់' : 'រូបដើមពីកាមេរ៉ា (មានគែមខ្មៅ)'}
+                                </span>
+                            </div>
+
+                            <div className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-colors cursor-pointer ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] hover:bg-[#2C2C2E]' : 'bg-[#FFFFFF] border-[#E0E0E0] hover:bg-[#FAFAFA]'}`} onClick={() => { setIsSwitchedOn(!isSwitchedOn); if(typeof triggerHaptic !== 'undefined') triggerHaptic(); }}>
+                                <span className={`text-sm font-bold tracking-wide ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>Enable Profile Corrections</span>
+                                <button
+                                    className={`w-12 h-6 rounded-full relative transition-colors duration-300 ease-in-out ${isSwitchedOn ? 'bg-[#34C759]' : (isDarkMode ? 'bg-[#3A3A3C]' : 'bg-[#D1D5DB]')}`}
+                                >
+                                    <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform duration-300 ease-spring shadow-sm`} style={{ transform: isSwitchedOn ? 'translateX(26px)' : 'translateX(2px)' }}></div>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* UI: Advanced Color Grading */}
                     {item.advancedUI === 'color_grading' && item.image && (
                         <div className={`mb-6 p-4 rounded-2xl border shadow-inner ${isDarkMode ? 'bg-[#121212] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
@@ -985,7 +1020,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                         <feColorMatrix type="matrix" values={getMatrixValue()} />
                                     </filter>
                                 </svg>
-                                <img src={item.image} alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
+                                <img src={item.image} crossOrigin="anonymous" alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
                             </div>
                             
                             <div className={`flex justify-around mb-5 p-1 rounded-xl ${isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]'}`}>
@@ -1002,15 +1037,15 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                 <div className="w-full space-y-4 px-2">
                                     <div className="flex items-center gap-3">
                                         <label className={`text-[10px] font-bold uppercase w-14 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Lum</label>
-                                        <input type="range" min="-100" max="100" value={gradingSettings[activeWheel].l} onChange={(e)=>setGradingSettings({...gradingSettings, [activeWheel]: {...gradingSettings[activeWheel], l: Number(e.target.value)}})} className="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer outline-none bg-[#C65102]/30 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full" />
+                                        <input type="range" min="-100" max="100" value={gradingSettings[activeWheel].l} onChange={(e)=>setGradingSettings({...gradingSettings, [activeWheel]: {...gradingSettings[activeWheel], l: Number(e.target.value)}})} className="flex-1 appearance-none cursor-pointer outline-none" />
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <label className={`text-[10px] font-bold uppercase w-14 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Blend</label>
-                                        <input type="range" min="0" max="100" value={gradingSettings.Blending} onChange={(e)=>setGradingSettings({...gradingSettings, Blending: Number(e.target.value)})} className="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer outline-none bg-[#C65102]/30 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full" />
+                                        <input type="range" min="0" max="100" value={gradingSettings.Blending} onChange={(e)=>setGradingSettings({...gradingSettings, Blending: Number(e.target.value)})} className="flex-1 appearance-none cursor-pointer outline-none" />
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <label className={`text-[10px] font-bold uppercase w-14 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Balance</label>
-                                        <input type="range" min="-100" max="100" value={gradingSettings.Balance} onChange={(e)=>setGradingSettings({...gradingSettings, Balance: Number(e.target.value)})} className="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer outline-none bg-[#C65102]/30 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-[#C65102] [&::-webkit-slider-thumb]:rounded-full" />
+                                        <input type="range" min="-100" max="100" value={gradingSettings.Balance} onChange={(e)=>setGradingSettings({...gradingSettings, Balance: Number(e.target.value)})} className="flex-1 appearance-none cursor-pointer outline-none" />
                                     </div>
                                 </div>
                             </div>
@@ -1019,7 +1054,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
 
                     {!item.slider && !item.sliders && !item.advancedUI && item.image && (
                         <div className={`mb-6 w-full overflow-hidden rounded-2xl border shadow-sm ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
-                            <img src={item.image} alt={item.tool} className="w-full h-auto object-cover max-h-[250px]" loading="lazy" />
+                            <img src={item.image} crossOrigin="anonymous" alt={item.tool} className="w-full h-auto object-cover max-h-[250px]" loading="lazy" />
                         </div>
                     )}
                     
@@ -1414,7 +1449,7 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const defaultSettings = { 
       exposure: 0, contrast: 0, highlights: 0, shadows: 0, whites: 0, blacks: 0, temp: 0, tint: 0, vibrance: 0, saturation: 0, texture: 0, clarity: 0, dehaze: 0, vignette: 0, 
       redHue: 0, redSat: 0, redLum: 0, orangeHue: 0, orangeSat: 0, orangeLum: 0, yellowHue: 0, yellowSat: 0, yellowLum: 0, greenHue: 0, greenSat: 0, greenLum: 0, aquaHue: 0, aquaSat: 0, aquaLum: 0, blueHue: 0, blueSat: 0, blueLum: 0, purpleHue: 0, purpleSat: 0, purpleLum: 0, magentaHue: 0, magentaSat: 0, magentaLum: 0, 
-      shadowHue: 0, shadowSat: 0, shadowLum: 0, midHue: 0, midSat: 0, midLum: 0, highlightHue: 0, highlightSat: 0, highlightLum: 0, gradingBlending: 50, gradingBalance: 0, 
+      shadowHue: 0, shadowSat: 0, shadowLum: 0, midHue: 0, midSat: 0, midLum: 0, highlightHue: 0, highlightSat: 0, highlightLum: 0, globalHue: 0, globalSat: 0, globalLum: 0, gradingBlending: 50, gradingBalance: 0, 
       curveMaster: [...initialCurve], curveRed: [...initialCurve], curveGreen: [...initialCurve], curveBlue: [...initialCurve]
   };
   const [settings, setSettings] = useState(defaultSettings);
@@ -1569,6 +1604,13 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
           g += (hg - 0.5) * (settings.highlightSat / 100) * 0.6 * highlightWeight * (0.5 + blend * 0.5);
           b += (hb - 0.5) * (settings.highlightSat / 100) * 0.6 * highlightWeight * (0.5 + blend * 0.5);
       }
+      
+      if (settings.globalSat > 0) {
+          const [gr, gg, gb] = hslToRgb(settings.globalHue, 100, 50);
+          r += (gr - 0.5) * (settings.globalSat / 100) * 0.5;
+          g += (gg - 0.5) * (settings.globalSat / 100) * 0.5;
+          b += (gb - 0.5) * (settings.globalSat / 100) * 0.5;
+      }
 
       // 2. Color Mix Basic Simulation
       let rOff = (settings.redSat + settings.orangeSat) * 0.001;
@@ -1580,6 +1622,7 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
       settings.temp, settings.tint, 
       settings.shadowHue, settings.shadowSat, 
       settings.highlightHue, settings.highlightSat,
+      settings.globalHue, settings.globalSat,
       settings.gradingBlending, settings.gradingBalance, // បន្ថែម Dependencies ថ្មី ២ នេះ
       settings.redSat, settings.orangeSat, settings.blueSat, settings.aquaSat, settings.greenSat
   ]);
@@ -1621,7 +1664,7 @@ const handleDownload = () => {
           basic: { Exposure: settings.exposure, Contrast: settings.contrast, Highlights: settings.highlights, Shadows: settings.shadows, Whites: settings.whites, Blacks: settings.blacks, Temp: settings.temp, Tint: settings.tint, Vibrance: settings.vibrance, Saturation: settings.saturation, Texture: settings.texture, Clarity: settings.clarity, Dehaze: settings.dehaze, Vignette: settings.vignette }, 
           detail: { Sharpening: 40, Noise: 0, ColorNoise: 25 }, 
           colorMix: [ { color: 'Red', h: settings.redHue, s: settings.redSat, l: settings.redLum }, { color: 'Orange', h: settings.orangeHue, s: settings.orangeSat, l: settings.orangeLum }, { color: 'Yellow', h: settings.yellowHue, s: settings.yellowSat, l: settings.yellowLum }, { color: 'Green', h: settings.greenHue, s: settings.greenSat, l: settings.greenLum }, { color: 'Aqua', h: settings.aquaHue, s: settings.aquaSat, l: settings.aquaLum }, { color: 'Blue', h: settings.blueHue, s: settings.blueSat, l: settings.blueLum }, { color: 'Purple', h: settings.purpleHue, s: settings.purpleSat, l: settings.purpleLum }, { color: 'Magenta', h: settings.magentaHue, s: settings.magentaSat, l: settings.magentaLum } ], 
-          grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance },
+          grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Global: { h: settings.globalHue, s: settings.globalSat, l: settings.globalLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance },
           curveMaster: settings.curveMaster,
           curveRed: settings.curveRed,
           curveGreen: settings.curveGreen,
@@ -1644,7 +1687,7 @@ const handleDownload = () => {
           name: customPresetName.trim(),
           category: 'My Presets',
           basic: { Exposure: settings.exposure / 10, Contrast: settings.contrast, Highlights: settings.highlights, Shadows: settings.shadows, Whites: settings.whites, Blacks: settings.blacks, Temp: settings.temp, Tint: settings.tint, Vibrance: settings.vibrance, Saturation: settings.saturation, Texture: settings.texture, Clarity: settings.clarity, Dehaze: settings.dehaze, Vignette: settings.vignette },
-          grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance },
+          grading: { Shadows: { h: settings.shadowHue, s: settings.shadowSat, l: settings.shadowLum }, Midtones: { h: settings.midHue, s: settings.midSat, l: settings.midLum }, Highlights: { h: settings.highlightHue, s: settings.highlightSat, l: settings.highlightLum }, Global: { h: settings.globalHue, s: settings.globalSat, l: settings.globalLum }, Blending: settings.gradingBlending, Balance: settings.gradingBalance },
           curveMaster: [...settings.curveMaster], curveRed: [...settings.curveRed], curveGreen: [...settings.curveGreen], curveBlue: [...settings.curveBlue]
       };
 
@@ -1677,6 +1720,7 @@ const handleDownload = () => {
       if (presetData.grading) { 
           if (presetData.grading.Shadows) { newSettings.shadowHue = presetData.grading.Shadows.h || 0; newSettings.shadowSat = presetData.grading.Shadows.s || 0; } 
           if (presetData.grading.Highlights) { newSettings.highlightHue = presetData.grading.Highlights.h || 0; newSettings.highlightSat = presetData.grading.Highlights.s || 0; } 
+          if (presetData.grading.Global) { newSettings.globalHue = presetData.grading.Global.h || 0; newSettings.globalSat = presetData.grading.Global.s || 0; }
       }
       
       newSettings.curveMaster = presetData.curveMaster ? [...presetData.curveMaster] : [...initialCurve];
@@ -1834,25 +1878,7 @@ const handleDownload = () => {
           : { background: `radial-gradient(circle, transparent ${60 - (v * 0.4)}%, rgba(255,255,255,${v/100}))` }; 
   }, [settings.vignette]);
 
-  const updateGrading = (tone, hue, sat) => { let targetHueKey = tone === 'Shadows' ? 'shadowHue' : tone === 'Midtones' ? 'midHue' : 'highlightHue'; let targetSatKey = tone === 'Shadows' ? 'shadowSat' : tone === 'Midtones' ? 'midSat' : 'highlightSat'; const newSettings = { ...settings }; newSettings[targetHueKey] = hue; newSettings[targetSatKey] = sat; if (gradingSync && (tone === 'Shadows' || tone === 'Highlights')) { const otherTone = tone === 'Shadows' ? 'Highlights' : 'Shadows'; const otherHueKey = otherTone === 'Shadows' ? 'shadowHue' : 'highlightHue'; const otherSatKey = otherTone === 'Shadows' ? 'shadowSat' : 'highlightSat'; newSettings[otherHueKey] = (hue + 180) % 360; newSettings[otherSatKey] = sat; } setSettings(newSettings); };
-
-  useEffect(() => { 
-    const style = document.createElement('style'); 
-    style.innerHTML = `
-    .grad-hue::-webkit-slider-runnable-track { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red) !important; } 
-    .grad-sat::-webkit-slider-runnable-track { background: linear-gradient(to right, ${isDarkMode ? '#2C2C2C, #E3E3E3' : '#5F6368, #E0E0E0'}) !important; } 
-    .grad-lum::-webkit-slider-runnable-track { background: linear-gradient(to right, ${isDarkMode ? '#121212, #E3E3E3' : '#1A1C1E, #FFFFFF'}) !important; } 
-    .grad-temp::-webkit-slider-runnable-track { background: linear-gradient(to right, #3B82F6, #9CA3AF, #F59E0B) !important; }
-    .grad-tint::-webkit-slider-runnable-track { background: linear-gradient(to right, #10B981, #9CA3AF, #EC4899) !important; }
-    
-    input[type=range] { -webkit-appearance: none; background: transparent; pointer-events: none; } 
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: ${isDarkMode ? '#E3E3E3' : '#FFFFFF'}; border: 1px solid ${isDarkMode ? '#2C2C2C' : '#E0E0E0'}; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-top: -7px; cursor: grab; pointer-events: auto; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } 
-    input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); cursor: grabbing; } 
-    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: ${isDarkMode ? '#2C2C2C' : '#E0E0E0'}; border-radius: 10px; } 
-    `; 
-    document.head.appendChild(style); 
-    return () => document.head.removeChild(style); 
-  }, [isDarkMode]);
+  const updateGrading = (tone, hue, sat) => { let targetHueKey = tone === 'Shadows' ? 'shadowHue' : tone === 'Midtones' ? 'midHue' : tone === 'Highlights' ? 'highlightHue' : 'globalHue'; let targetSatKey = tone === 'Shadows' ? 'shadowSat' : tone === 'Midtones' ? 'midSat' : tone === 'Highlights' ? 'highlightSat' : 'globalSat'; const newSettings = { ...settings }; newSettings[targetHueKey] = hue; newSettings[targetSatKey] = sat; if (gradingSync && (tone === 'Shadows' || tone === 'Highlights')) { const otherTone = tone === 'Shadows' ? 'Highlights' : 'Shadows'; const otherHueKey = otherTone === 'Shadows' ? 'shadowHue' : 'highlightHue'; const otherSatKey = otherTone === 'Shadows' ? 'shadowSat' : 'highlightSat'; newSettings[otherHueKey] = (hue + 180) % 360; newSettings[otherSatKey] = sat; } setSettings(newSettings); };
 
   const toolsGroups = [ { group: 'Light', icon: <Sun size={18}/>, items: [{ id: 'exposure', label: 'Exposure', min: -5, max: 5, step: 0.1 }, { id: 'contrast', label: 'Contrast', min: -100, max: 100 }, { id: 'highlights', label: 'Highlights', min: -100, max: 100 }, { id: 'shadows', label: 'Shadows', min: -100, max: 100 }, { id: 'whites', label: 'Whites', min: -100, max: 100 }, { id: 'blacks', label: 'Blacks', min: -100, max: 100 }] }, { group: 'Color', icon: <Palette size={18}/>, items: [{ id: 'temp', label: 'Temp', min: -100, max: 100 }, { id: 'tint', label: 'Tint', min: -100, max: 100 }, { id: 'vibrance', label: 'Vibrance', min: -100, max: 100 }, { id: 'saturation', label: 'Saturation', min: -100, max: 100 }] }, { group: 'Effects', icon: <Aperture size={18}/>, items: [{ id: 'texture', label: 'Texture', min: -100, max: 100 }, { id: 'clarity', label: 'Clarity', min: -100, max: 100 }, { id: 'dehaze', label: 'Dehaze', min: -100, max: 100 }, { id: 'vignette', label: 'Vignette', min: -100, max: 100 }] } ];
   
@@ -1980,7 +2006,7 @@ const handleDownload = () => {
                                                         type="range" min={t.min} max={t.max} step={t.step || 1} 
                                                         value={settings[t.id]} 
                                                         onChange={(e) => updateSetting(t.id, Number(e.target.value))} 
-                                                        className={`flex-1 ${t.id === 'temp' ? 'grad-temp' : ''} ${t.id === 'tint' ? 'grad-tint' : ''}`} 
+                                                        className={`flex-1 appearance-none cursor-pointer outline-none ${t.id === 'temp' ? 'grad-temp' : ''} ${t.id === 'tint' ? 'grad-tint' : ''}`} 
                                                     />
                                                     <button onClick={() => updateSetting(t.id, settings[t.id] + (t.step || 1))} className={`transition-colors active:scale-90 ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]'}`}><Plus size={14}/></button>
                                                 </div>
@@ -2043,7 +2069,6 @@ const handleDownload = () => {
                                 key={idx} cx={p.x} cy={100 - p.y} r={draggingPointIndex === idx ? "3.5" : "2.8"}
                                 fill={getCurveColor()} stroke={isDarkMode ? '#121212' : '#FFFFFF'} strokeWidth="1.5"
                                 className="transition-all duration-100 ease-linear pointer-events-none drop-shadow-md"
-               
                             />
                        ))}
                    </svg>
@@ -2051,12 +2076,127 @@ const handleDownload = () => {
             </div>
         )}
     </div>
-)}
+        )}
                                     </div>
                                 </div>
                             ))}
-                            <div className="space-y-4"><div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}><Palette size={16}/> Color Mix</h4></div><div className="flex justify-between gap-3 mb-4 px-1">{colors.map(c => (<button key={c.id} onClick={() => setActiveColor(c.name)} style={{ backgroundColor: c.hex }} className={`w-8 h-8 rounded-full border-2 ${activeColor === c.name ? (isDarkMode ? 'border-[#E3E3E3] scale-110 shadow-lg ring-2 ring-[#2C2C2C]' : 'border-[#1A1C1E] scale-110 shadow-lg ring-2 ring-[#E0E0E0]') : 'border-transparent opacity-80 hover:opacity-100'} transition-all duration-300 ease-spring`} />))}</div><div className="space-y-4 px-2">{['Hue', 'Sat', 'Lum'].map((type) => { const key = `${activeColor.toLowerCase()}${type}`; return (<div key={key} className="flex items-center gap-3"><label className={`text-[10px] font-bold font-khmer w-8 uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{type}</label><input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} /><input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`} /></div>)})}</div></div>
-                            <div className="space-y-4 pb-4"><div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}><TrendingUp size={16}/> Grading</h4><button onClick={() => setGradingSync(!gradingSync)} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${gradingSync ? 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]' : (isDarkMode ? 'bg-[#2C2C2E] border-[#2C2C2C] text-[#5F6368]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#5F6368]')}`}><span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span><div className={`w-2 h-2 rounded-full ${gradingSync ? 'bg-[#C65102] shadow-[0_0_8px_rgba(198,81,2,0.5)]' : (isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]')}`}></div></button></div><div className={`flex justify-around mb-2 p-1.5 rounded-xl ${isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#FAFAFA]'}`}>{['Shadows', 'Midtones', 'Highlights'].map(t => (<button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? (isDarkMode ? 'bg-[#1E1E1E] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>{t}</button>))}</div><div className="p-1 space-y-4"><div className="flex justify-center py-1"><ColorWheel hue={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']} sat={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={160} isDarkMode={isDarkMode} /></div><div className={`rounded-2xl p-3 border space-y-3 ${isDarkMode ? 'bg-[#2C2C2C]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}><div className="flex justify-between items-center px-1"><div className="flex flex-col"><span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold">Selected</span><span className={`text-xs font-bold flex items-center gap-1.5 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}><div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']}, ${settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']}%, 50%)`}}></div>{getColorName(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])}</span></div><div className="flex flex-col items-end"><span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold">Complementary</span><span className={`text-xs font-bold flex items-center gap-1.5 flex-row-reverse ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}><div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'] + 180) % 360}, 60%, 50%)`}}></div>{getColorName((settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'] + 180) % 360)}</span></div></div><div className="space-y-1"><div className="flex justify-between"><label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Hue</label></div><div className="flex items-center gap-3"><input type="range" min="0" max="360" value={settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue']} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-hue flex-1" /><input type="number" value={Math.round(settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'])} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/></div></div><div className="space-y-1"><div className="flex justify-between"><label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Saturation</label></div><div className="flex items-center gap-3"><input type="range" min="0" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat']} onChange={(e) => updateGrading(gradingTab, settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], Number(e.target.value))} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-sat flex-1" /><input type="number" value={Math.round(settings[gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : 'highlightSat'])} onChange={(e) => updateGrading(gradingTab, settings[gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : 'highlightHue'], Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/></div></div><div className="space-y-1"><div className="flex justify-between"><label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Luminance</label></div><div className="flex items-center gap-3"><input type="range" min="-100" max="100" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className="w-full h-1.5 rounded-lg appearance-none cursor-pointer grad-lum flex-1" /><input type="number" value={settings[gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum']} onChange={(e) => updateSetting(gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : 'highlightLum', Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/></div></div><div className={`pt-2 border-t space-y-2 px-1 mt-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><div className="flex flex-col gap-1.5"><div className="flex justify-between"><label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Blending</label><span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBlending}</span></div><input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="w-full"/></div><div className="flex flex-col gap-1.5"><div className="flex justify-between"><label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Balance</label><span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBalance}</span></div><input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="w-full"/></div></div></div></div></div>
+                            
+                            <div className="space-y-4">
+                                <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
+                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                                        <Palette size={16}/> Color Mix
+                                    </h4>
+                                </div>
+                                <div className="flex justify-between gap-3 mb-4 px-1">
+                                    {colors.map(c => (
+                                        <button key={c.id} onClick={() => setActiveColor(c.name)} style={{ backgroundColor: c.hex }} className={`w-8 h-8 rounded-full border-2 ${activeColor === c.name ? (isDarkMode ? 'border-[#E3E3E3] scale-110 shadow-lg ring-2 ring-[#2C2C2C]' : 'border-[#1A1C1E] scale-110 shadow-lg ring-2 ring-[#E0E0E0]') : 'border-transparent opacity-80 hover:opacity-100'} transition-all duration-300 ease-spring`} />
+                                    ))}
+                                </div>
+                                <div className="space-y-4 px-2">
+                                    {['Hue', 'Sat', 'Lum'].map((type) => { 
+                                        const key = `${activeColor.toLowerCase()}${type}`; 
+                                        return (
+                                            <div key={key} className="flex items-center gap-3">
+                                                <label className={`text-[10px] font-bold font-khmer w-8 uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{type}</label>
+                                                <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 appearance-none cursor-pointer outline-none ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
+                                                <input type="number" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`} />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-4 pb-4">
+                                <div className={`flex items-center justify-between pb-0 border-b ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
+                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-2 tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                                        <TrendingUp size={16}/> Grading
+                                    </h4>
+                                    <button onClick={() => setGradingSync(!gradingSync)} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${gradingSync ? 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]' : (isDarkMode ? 'bg-[#2C2C2E] border-[#2C2C2C] text-[#5F6368]' : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#5F6368]')}`}>
+                                        <span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span>
+                                        <div className={`w-2 h-2 rounded-full ${gradingSync ? 'bg-[#C65102] shadow-[0_0_8px_rgba(198,81,2,0.5)]' : (isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]')}`}></div>
+                                    </button>
+                                </div>
+                                <div className={`flex justify-around mb-2 p-1.5 rounded-xl ${isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#FAFAFA]'}`}>
+                                    {['Shadows', 'Midtones', 'Highlights', 'Global'].map(t => (
+                                        <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold transition-all duration-300 ease-spring ${gradingTab === t ? (isDarkMode ? 'bg-[#1E1E1E] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>{t}</button>
+                                    ))}
+                                </div>
+                                {(() => {
+                                    const hKey = gradingTab === 'Shadows' ? 'shadowHue' : gradingTab === 'Midtones' ? 'midHue' : gradingTab === 'Highlights' ? 'highlightHue' : 'globalHue';
+                                    const sKey = gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : gradingTab === 'Highlights' ? 'highlightSat' : 'globalSat';
+                                    const lKey = gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : gradingTab === 'Highlights' ? 'highlightLum' : 'globalLum';
+                                    return (
+                                        <div className="p-1 space-y-4">
+                                            <div className="flex justify-center py-1">
+                                                <ColorWheel hue={settings[hKey]} sat={settings[sKey]} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={160} isDarkMode={isDarkMode} />
+                                            </div>
+                                            <div className={`rounded-2xl p-3 border space-y-3 ${isDarkMode ? 'bg-[#2C2C2C]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+                                                <div className="flex justify-between items-center px-1">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold">Selected</span>
+                                                        <span className={`text-xs font-bold flex items-center gap-1.5 ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>
+                                                            <div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${settings[hKey]}, ${settings[sKey]}%, 50%)`}}></div>
+                                                            {getColorName(settings[hKey], settings[sKey])}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold">Complementary</span>
+                                                        <span className={`text-xs font-bold flex items-center gap-1.5 flex-row-reverse ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                                                            <div className="w-2 h-2 rounded-full" style={{backgroundColor: `hsl(${(settings[hKey] + 180) % 360}, 60%, 50%)`}}></div>
+                                                            {getColorName((settings[hKey] + 180) % 360)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between">
+                                                        <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Hue</label>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <input type="range" min="0" max="360" value={settings[hKey]} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[sKey])} className="flex-1 appearance-none cursor-pointer outline-none grad-hue" />
+                                                        <input type="number" value={Math.round(settings[hKey])} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[sKey])} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between">
+                                                        <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Saturation</label>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <input type="range" min="0" max="100" value={settings[sKey]} onChange={(e) => updateGrading(gradingTab, settings[hKey], Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-sat" />
+                                                        <input type="number" value={Math.round(settings[sKey])} onChange={(e) => updateGrading(gradingTab, settings[hKey], Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between">
+                                                        <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Luminance</label>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <input type="range" min="-100" max="100" value={settings[lKey]} onChange={(e) => updateSetting(lKey, Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-lum" />
+                                                        <input type="number" value={settings[lKey]} onChange={(e) => updateSetting(lKey, Number(e.target.value))} className={`w-10 bg-transparent text-xs font-bold text-right outline-none ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}/>
+                                                    </div>
+                                                </div>
+                                                {gradingTab !== 'Global' && (
+                                                <div className={`pt-2 border-t space-y-2 px-1 mt-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}>
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <div className="flex justify-between">
+                                                            <label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Blending</label>
+                                                            <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBlending}</span>
+                                                        </div>
+                                                        <input type="range" min="0" max="100" value={settings.gradingBlending} onChange={(e) => updateSetting('gradingBlending', Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none" />
+                                                    </div>
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <div className="flex justify-between">
+                                                            <label className={`text-[10px] uppercase tracking-wider font-bold ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Balance</label>
+                                                            <span className={`text-[10px] font-mono font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{settings.gradingBalance}</span>
+                                                        </div>
+                                                        <input type="range" min="-100" max="100" value={settings.gradingBalance} onChange={(e) => updateSetting('gradingBalance', Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none" />
+                                                    </div>
+                                                </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
                         </div>
                     ) : (
                         <div className={`flex flex-col h-full ${isDarkMode ? 'bg-[#1E1E1E]' : 'bg-[#FFFFFF]'}`}>
@@ -2556,7 +2696,31 @@ export default function App() {
 
   return (
     <div className={`fixed inset-0 w-full h-full flex flex-col font-khmer overflow-hidden touch-pan-x touch-pan-y transition-colors duration-300 ${isDarkMode ? 'bg-[#121212] text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#1A1C1E]'}`}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&display=swap'); body, html { overscroll-behavior: none; } .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } .no-scrollbar::-webkit-scrollbar { display: none; } @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..700&display=swap'); 
+        body, html { overscroll-behavior: none; } 
+        .font-khmer { font-family: 'Kantumruy Pro', sans-serif; } 
+        .no-scrollbar::-webkit-scrollbar { display: none; } 
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }
+        
+        /* Premium Lightroom Sliders */
+        :root {
+            --track-bg: ${isDarkMode ? '#3A3A3C' : '#E0E0E0'};
+            --thumb-bg: ${isDarkMode ? '#E3E3E3' : '#FFFFFF'};
+            --thumb-border: ${isDarkMode ? '#1E1E1E' : '#D1D5DB'};
+        }
+        input[type=range] { -webkit-appearance: none; background: transparent; pointer-events: none; width: 100%; margin: 8px 0; } 
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: var(--track-bg); border-radius: 2px; } 
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--thumb-bg); border: 1px solid var(--thumb-border); box-shadow: 0 2px 6px rgba(0,0,0,0.3); margin-top: -7px; cursor: grab; pointer-events: auto; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } 
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); cursor: grabbing; background: #C65102; border-color: #C65102; box-shadow: 0 4px 12px rgba(198,81,2,0.4); }
+        .grad-hue::-webkit-slider-runnable-track { background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red) !important; } 
+        .grad-sat::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--track-bg), var(--thumb-bg)) !important; } 
+        .grad-lum::-webkit-slider-runnable-track { background: linear-gradient(to right, #000000, var(--track-bg), #FFFFFF) !important; } 
+        .grad-temp::-webkit-slider-runnable-track { background: linear-gradient(to right, #3B82F6, var(--track-bg), #F59E0B) !important; }
+        .grad-tint::-webkit-slider-runnable-track { background: linear-gradient(to right, #10B981, var(--track-bg), #EC4899) !important; }
+      `}</style>
       
       <Header activeTab={activeTab} setActiveTab={setActiveTab} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} isSynced={isSynced} setShowCloudModal={setShowCloudModal} />
       {expandedLesson && <LessonModal lesson={lessonsData.find(l => l.id === expandedLesson)} onClose={() => setExpandedLesson(null)} isDarkMode={isDarkMode} />}
