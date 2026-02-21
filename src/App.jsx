@@ -18,9 +18,10 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 // 1. CONFIGURATION & UTILS
 // ==========================================
 
+const APP_VERSION = "v1.1.0"; // <-- កំណត់ជំនាន់កម្មវិធីនៅទីនេះ
+
 let apiKey = ""; 
 try {
-  // @ts-ignore
   if (typeof import.meta !== 'undefined' && import.meta.env) {
     apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
   }
@@ -291,7 +292,7 @@ const KNOWLEDGE_BASE = [
     { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
     { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
     
-    { keys: ['exposure', 'ពន្លឺ', 'ពន្លឺរួម', 'ពន្លឺរូប', 'ភ្លឺ', 'light', 'bright', 'brightness'], answer: "💡 **Exposure** គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រង **ពន្លឺរួម (Overall Light)** នៃរូបភាពទាំងមូលតែម្ដង។\n\n- បើទាញទៅស្ដាំ (+) រូបនឹងភ្លឺឡើង។\n- បើទាញទៅឆ្វេង (-) រូបនឹងងងឹត។\nវាជាជំហានទី ១ សំខាន់បំផុត ដែលបងត្រូវប៉ះមុនគេបង្អស់ ពេលចាប់ផ្តើមកែរូបមួយសន្លឹក! កុំភ្លេចសារ៉េវាឱ្យត្រូវពន្លឺសិនមុននឹងទៅលេងពណ៌ណា៎! ☀️" },
+    { keys: ['exposure', 'ពន្លឺ', 'ពន្លឺរួម', 'ពន្លឺរូប', 'ភ្លឺ', 'brightness'], answer: "💡 **Exposure** គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រង **ពន្លឺរួម (Overall Light)** នៃរូបភាពទាំងមូលតែម្ដង។\n\n- បើទាញទៅស្ដាំ (+) រូបនឹងភ្លឺឡើង។\n- បើទាញទៅឆ្វេង (-) រូបនឹងងងឹត។\nវាជាជំហានទី ១ សំខាន់បំផុត ដែលបងត្រូវប៉ះមុនគេបង្អស់ ពេលចាប់ផ្តើមកែរូបមួយសន្លឹក! កុំភ្លេចសារ៉េវាឱ្យត្រូវពន្លឺសិនមុននឹងទៅលេងពណ៌ណា៎! ☀️" },
     { keys: ['contrast', 'ភាពផ្ទុយ', 'កម្រិតពណ៌ផ្ទុយ', 'ភាពដិត', 'ដិត'], answer: "🌗 **Contrast** គឺជាមេបញ្ជាការកំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n- បើបងដាក់ Contrast ខ្ពស់៖ កន្លែងងងឹតនឹងកាន់តែខ្មៅ កន្លែងភ្លឺកាន់តែភ្លឺ ធ្វើឱ្យរូបភាពមើលទៅរឹងមាំ (Punchy) និងដិតច្បាស់ល្អសម្រាប់ការថតទេសភាព។\n- បើបន្ថយវាទាប៖ រូបភាពនឹងមើលទៅស្រទន់បែបស្រអាប់ៗ (Faded/Vintage look) ដ៏សែនរ៉ូមែនទិក ល្អសម្រាប់ស្តាយកូរ៉េ។ បងចូលចិត្តបែបណាដែរថ្ងៃនេះ? 🤔" },
     { keys: ['highlight', 'highlights', 'whits', 'whites', 'ផ្នែកភ្លឺ', 'កន្លែងភ្លឺ', 'ពណ៌ស', 'ពន្លឺខ្លាំង', 'ពន្លឺថ្ងៃ', 'ឆេះ'], answer: "☁️ បងប្រាកដជាឆ្ងល់ហើយថា **Highlights** និង **Whites** ខុសគ្នាម៉េចមែនទេ?\n\n- **Highlights**: គ្រប់គ្រងតែតំបន់ដែលភ្លឺខ្លាំង (ដូចជាមេឃ ឬពន្លឺថ្ងៃជះលើមុខ)។ ភាគច្រើនអ្នកជំនាញចូលចិត្តបន្ថយវា (-) ដើម្បីសង្គ្រោះពពក ឬពន្លឺដែលឆេះឱ្យលេចចេញមកវិញ។\n- **Whites**: កំណត់ចំណុច 'សបំផុត' នៅក្នុងរូបភាពទាំងមូល។ គេទាញវាឡើងបន្តិច (+) ដើម្បីឱ្យរូបភាពទាំងមូលមើលទៅស្រឡះ (Pop) និងមិនស្លេកស្លាំង។ សាកសង្កេតពេលទាញវាទាំងពីរមើលបង នឹងឃើញភាពខុសគ្នា! ✨" },
     { keys: ['shadow', 'shadows', 'blacks', 'ផ្នែកងងឹត', 'កន្លែងងងឹត', 'ស្រមោល', 'ពណ៌ខ្មៅ', 'ងងឹត', 'ខ្មៅ'], answer: "🌑 សម្រាប់ការគ្រប់គ្រងភាពងងឹត យើងមានវីរបុរស ២ គឺ **Shadows** និង **Blacks**៖\n\n- **Shadows**: ប៉ះពាល់តែតំបន់នៅក្នុងម្លប់ប៉ុណ្ណោះ។ បើបងថតបញ្ច្រាស់ថ្ងៃមុខតួអង្គខ្មៅងងឹត គ្រាន់តែទាញ Shadows បូក (+) មុខនឹងភ្លឺមកវិញវេទមន្តតែម្ដង!\n- **Blacks**: កំណត់ចំណុច 'ខ្មៅបំផុត' ក្នុងរូប។ ការទាញ Blacks ចុះ (-) ជួយឱ្យរូបភាពមានជម្រៅ (Depth) មើលទៅមានទម្ងន់ មិនអណ្ដែត។ ដៃគូទាំងពីរនេះសំខាន់ណាស់សម្រាប់រូប Portrait! 🎩" },
@@ -372,7 +373,11 @@ const KNOWLEDGE_BASE = [
     { keys: ['dark academia', 'y2k', 'pastel', 'aesthetic', 'style ថ្មីៗ'], answer: "💅 ស្ទីលកំពុងល្បីនៅលើ Social Media:\n\n- **Dark Academia:** បន្ថយ Exposure, បង្កើន Contrast, ប្រើ Tone Curve កាត់ខ្មៅ, និងដាក់ពណ៌ត្នោត/លឿងក្នុង Highlights។\n- **Y2K / Disposable Cam:** ប្រើកាមេរ៉ាបើក Flash រួចបង្កើន Contrast, Clarity និងបន្ថែម Grain អោយច្រើន។\n- **Pastel:** បង្កើន Exposure, បន្ថយ Contrast, និងទាញពណ៌ទាំងអស់អោយស្លេក (Desaturate) តែភ្លឺ (Luminance +)។ សាកស្ទីលមួយណាដែរថ្ងៃនេះ? 🦋" },
     { keys: ['shop', 'ហាង', 'cafe', 'ហាងកាហ្វេ', 'store'], answer: "សម្រាប់ការថតរូបក្នុងហាង (Shop/Cafe) បងគួរតែបន្ថយ Highlights កុំឱ្យឆេះភ្លើងអំពូល និងទាញ Temp ទៅរកពណ៌លឿងបន្តិចដើម្បីបង្កើតភាពកក់ក្តៅ (Cozy Vibe) គួរឱ្យចង់អង្គុយលេងបាទ!" },
     { keys: ['លឿង', 'yellow'], answer: "ពណ៌លឿងតំណាងឱ្យភាពរីករាយ និងភាពកក់ក្តៅ! បើចង់ឱ្យពណ៌លឿងលេចធ្លោ ចូលទៅ HSL បង្កើន Saturation និង Luminance នៃពណ៌ Yellow បន្តិចបាទ!" },
-    { keys: ['ស', 'white', 'ពណ៌ស'], answer: "ដើម្បីធ្វើឱ្យផ្ទៃពណ៌ស (White) មើលទៅស្រឡះស្អាត សូមទាញ Whites ឡើងបន្តិច ប៉ុន្តែប្រយ័ត្នកុំឱ្យឆេះពន្លឺណា៎បាទ!" }
+    { keys: ['ស', 'white', 'ពណ៌ស'], answer: "ដើម្បីធ្វើឱ្យផ្ទៃពណ៌ស (White) មើលទៅស្រឡះស្អាត សូមទាញ Whites ឡើងបន្តិច ប៉ុន្តែប្រយ័ត្នកុំឱ្យឆេះពន្លឺណា៎បាទ!" },
+    { keys: ['lens profile', 'lens correction', 'កែកែវថត', 'profile correction'], answer: "🔍 **Lens Profile Correction** គឺជាមុខងារសម្រាប់កែតម្រូវកំហុសរបស់កែវថត (Lens) ដូចជាភាពកោង (Distortion) និងគែមងងឹត (Vignette)។ បងគួរតែបើកវាជានិច្ច (Enable Profile Corrections) គ្រប់ពេលកែរូប!" },
+    { keys: ['landscape', 'ទេសភាព', 'ធម្មជាតិ', 'ព្រៃភ្នំ'], answer: "🏞️ សម្រាប់ការថតទេសភាព (Landscape) ឱ្យលេចធ្លោ៖\n១. ទាញ Highlights ចុះដើម្បីឃើញពពកច្បាស់\n២. ទាញ Shadows ឡើងដើម្បីឃើញព័ត៌មានលើដី\n៣. បង្កើន Clarity និង Dehaze (+15 ទៅ +30) ឱ្យរូបរឹងមាំ និងមុតស្រួច\n៤. ទាញ Vibrance បន្តិចដើម្បីឱ្យពណ៌ស្រស់ស្អាត!" },
+    { keys: ['dark & moody', 'dark and moody', 'dark academia', 'moody'], answer: "🖤 ដើម្បីកែរូបស្តាយ **Dark & Moody**:\n១. បន្ថយ Exposure បន្តិច\n២. បង្កើន Contrast ឱ្យខ្លាំង\n៣. ទាញ Highlights និង Whites ចុះក្រោម (-)\n៤. ចូលទៅ Tone Curve ទាញចំណុចខ្មៅឡើងលើបន្តិច (Faded Look)\n៥. បន្ថយ Saturation ពណ៌ផ្សេងៗ ទុកតែពណ៌ទឹកក្រូច (ស្បែក) និងក្រហមបន្តិចបានហើយ!" },
+    { keys: ['vibrance', 'saturation'], answer: "🎨 **Vibrance និង Saturation** គឺសម្រាប់បង្កើនពណ៌ទាំងពីរ តែខុសគ្នាត្រង់៖\n- **Saturation**: ទាញពណ៌ទាំងអស់ឡើងស្មើគ្នា (បើទាញខ្លាំង ស្បែកមនុស្សនឹងទៅជាលឿង/ក្រហមឆ្អៅ)។\n- **Vibrance**: ឆ្លាតជាង! វាទាញតែពណ៌ណាដែលស្លេកឱ្យដិតឡើង ហើយការពារពណ៌ស្បែកមនុស្សមិនឱ្យខូចទេ។ សម្រាប់រូប Portrait គួរប្រើ Vibrance ជានិច្ចបាទ!" }
 ];
 
 const findAIResponse = (input) => {
@@ -885,7 +890,7 @@ const ContactSection = ({ isDarkMode }) => (
               <span className={`text-[10px] font-khmer ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Website</span>
           </a>
       </div>
-      <p className={`text-center text-[10px] mt-8 font-khmer uppercase opacity-50 tracking-widest ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>© 2026 My Design. Crafted with Passion.</p>
+      <p className={`text-center text-[10px] mt-8 font-khmer uppercase opacity-50 tracking-widest ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>© 2026 My Design. Crafted with Passion. | ទម្រង់ {APP_VERSION}</p>
   </div>
 );
 
@@ -1816,21 +1821,23 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
           await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
           
           let response = findAIResponse(msg);
+          const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
           
-          if ((SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response)) && apiKey) {
+          if (isFallback && apiKey) {
               try {
                   const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
                   if (apiResponse) response = apiResponse;
               } catch (apiErr) {
-                  throw apiErr; 
+                  console.warn("API Error:", apiErr);
+                  response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
               }
+          } else if (isFallback && !apiKey) {
+              response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
           }
           
           setMessages(prev => [...prev, { role: 'model', text: response }]);
       } catch (error) {
-          // នេះជាសារដែលលោតពេលមានបញ្ហា
-          const errorMsg = "សុំទោសបង! ប្រព័ន្ធអ៉ីនធឺណិតរាងខ្សោយបន្តិច ឬ API មានបញ្ហា សុំព្យាយាមម្ដងទៀត! 🌐⚠️";
-          setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
+          setMessages(prev => [...prev, { role: 'model', text: "សុំទោសបងបាទ! មានបញ្ហាបច្ចេកទេសបន្តិចបន្តួច។ សូមសាកល្បងម្ដងទៀត! 🛠️" }]);
       } finally {
           setLoading(false);
       }
@@ -1870,6 +1877,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('learn');
   const [expandedLesson, setExpandedLesson] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   
   // Cloud Sync States
   const [user, setUser] = useState(null);
@@ -1948,6 +1956,26 @@ export default function App() {
       localStorage.setItem('myDesignChatHistory', JSON.stringify(chatMessages));
   }, [chatMessages]);
   const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // --- ឆែកមើលជំនាន់ថ្មី (Version Checker) ---
+  useEffect(() => {
+      const savedVersion = localStorage.getItem('myDesignAppVersion');
+      if (savedVersion !== APP_VERSION) {
+          setShowUpdateModal(true);
+      }
+  }, []);
+
+  const handleUpdateApp = () => {
+      localStorage.setItem('myDesignAppVersion', APP_VERSION);
+      setShowUpdateModal(false);
+      // សម្អាត Cache របស់ PWA និង Refresh 
+      if ('caches' in window) {
+          caches.keys().then((names) => {
+              names.forEach(name => caches.delete(name));
+          });
+      }
+      window.location.reload(true);
+  };
 
   useEffect(() => {
     const meta = document.createElement('meta');
@@ -2055,6 +2083,36 @@ export default function App() {
                           </button>
                       </div>
                   )}
+              </div>
+          </div>
+      )}
+
+      {/* Update Version Modal */}
+      {showUpdateModal && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 backdrop-blur-md bg-black/60 transition-all">
+              <div className={`w-full max-w-sm p-8 rounded-[32px] border shadow-2xl animate-fade-in-up text-center ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
+                  <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-gradient-to-tr from-[#C65102] to-[#E86A10] shadow-lg">
+                      <Zap size={36} className="text-white" />
+                  </div>
+                  <h3 className={`text-2xl font-bold font-khmer mb-3 tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>
+                      មានកំណែអាប់ដេតថ្មី!
+                  </h3>
+                  <p className={`text-sm font-khmer leading-relaxed mb-4 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>
+                      ជំនាន់ថ្មី <span className="font-bold text-[#C65102]">{APP_VERSION}</span> ត្រូវបានដាក់ឱ្យដំណើរការហើយបាទ!
+                  </p>
+                  <div className={`p-4 rounded-2xl text-left mb-8 space-y-2 text-xs font-khmer ${isDarkMode ? 'bg-[#2C2C2C]/50 text-[#E3E3E3]' : 'bg-[#FAFAFA] text-[#5F6368]'}`}>
+                      <p>✨ មានអ្វីថ្មីខ្លះ?</p>
+                      <ul className="list-disc pl-4 space-y-1 opacity-80">
+                          <li>បន្ថែមផ្ទាំងមើលចម្លើយ Quiz</li>
+                          <li>ជួសជុលបញ្ហាប៊ូតុង "បន្ទាប់" លើទូរស័ព្ទ</li>
+                          <li>អាប់ដេតទិន្នន័យ AI កាន់តែឆ្លាតវៃ</li>
+                          <li>បង្កើនល្បឿនដំណើរការកម្មវិធី (PWA)</li>
+                      </ul>
+                  </div>
+                  
+                  <button onClick={handleUpdateApp} className="w-full py-4 rounded-2xl font-bold font-khmer bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] shadow-lg active:scale-95 transition-all text-sm flex justify-center items-center gap-2">
+                      <RefreshCw size={18} /> អាប់ដេតឥឡូវនេះ
+                  </button>
               </div>
           </div>
       )}
