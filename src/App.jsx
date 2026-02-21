@@ -962,14 +962,18 @@ const LessonModal = ({ lesson, onClose, isDarkMode }) => {
   return (
       <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6">
           <div className={`absolute inset-0 backdrop-blur-md transition-opacity duration-500 ease-out ${closing ? 'opacity-0' : 'opacity-100'} ${isDarkMode ? 'bg-[#121212]/60' : 'bg-[#1A1C1E]/20'}`} style={{ opacity: Math.max(0, opacity) }} onClick={handleClose} />
-          <div ref={modalRef} className={`relative w-full max-w-3xl rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] h-[85vh] sm:h-auto transition-transform duration-500 ease-spring ring-1 ${isDarkMode ? 'bg-[#1E1E1E] ring-[#2C2C2C]' : 'bg-[#FFFFFF] ring-[#E0E0E0]'} ${closing ? 'translate-y-full' : 'translate-y-0'}`} style={{ transform: `translateY(${closing ? '100%' : `${dragOffset}px`})`, transition: dragOffset > 0 ? 'none' : 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-             <div className="w-full flex justify-center pt-3 pb-1 shrink-0 cursor-grab active:cursor-grabbing sm:hidden" onClick={handleClose}><div className={`w-12 h-1.5 rounded-full ${isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]'}`}></div></div>
-             <div className={`border-b p-6 flex items-center justify-between sticky top-0 z-10 shrink-0 rounded-t-3xl ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}>
-                <div className="flex items-center gap-5">
-                    <div className="p-3.5 bg-[#C65102]/10 rounded-2xl text-[#C65102] border border-[#C65102]/20">{lesson.icon}</div>
-                    <h2 className={`text-2xl font-bold font-khmer tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{lesson.title}</h2>
+          <div ref={modalRef} className={`relative w-full max-w-3xl rounded-t-[32px] sm:rounded-3xl shadow-2xl flex flex-col h-[96vh] sm:h-auto sm:max-h-[90vh] transition-transform duration-500 ease-spring ring-1 ${isDarkMode ? 'bg-[#1E1E1E] ring-[#2C2C2C]' : 'bg-[#FFFFFF] ring-[#E0E0E0]'} ${closing ? 'translate-y-full' : 'translate-y-0'}`} style={{ transform: `translateY(${closing ? '100%' : `${dragOffset}px`})`, transition: dragOffset > 0 ? 'none' : 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+             <div className="w-full flex justify-center pt-2.5 pb-1.5 shrink-0 cursor-grab active:cursor-grabbing sm:hidden" onClick={handleClose}>
+                 <div className={`w-12 h-1.5 rounded-full opacity-50 ${isDarkMode ? 'bg-[#9AA0A6]' : 'bg-[#5F6368]'}`}></div>
+             </div>
+             <div className={`border-b px-5 py-3.5 flex items-center justify-between sticky top-0 z-10 shrink-0 rounded-t-[32px] backdrop-blur-xl ${isDarkMode ? 'bg-[#1E1E1E]/95 border-[#2C2C2C]' : 'bg-[#FFFFFF]/95 border-[#E0E0E0]'}`}>
+                <div className="flex items-center gap-3.5">
+                    <div className="p-2.5 bg-[#C65102]/10 rounded-xl text-[#C65102] border border-[#C65102]/20 [&>svg]:w-5 [&>svg]:h-5">{lesson.icon}</div>
+                    <h2 className={`text-xl font-bold font-khmer tracking-tight ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{lesson.title}</h2>
                 </div>
-                <button onClick={handleClose} className={`p-2.5 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#2C2C2C]/80 text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]'}`}><XCircle className="w-6 h-6" /></button>
+                <button onClick={handleClose} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]'}`}>
+                    <XCircle className="w-6 h-6 opacity-80" />
+                </button>
              </div>
              <div className={`scroll-content flex-1 overflow-y-auto p-6 space-y-4 overscroll-contain ${isDarkMode ? 'bg-[#121212]' : 'bg-[#FAFAFA]'}`}>
                 {lesson.content.map((item, idx) => (
