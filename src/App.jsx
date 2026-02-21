@@ -684,7 +684,7 @@ const Header = ({ activeTab, setActiveTab, isDarkMode, setIsDarkMode }) => {
     <header className={`${(activeTab === 'lab' || activeTab === 'ai') ? 'hidden md:block' : ''} backdrop-blur-xl sticky top-0 z-50 border-b transition-colors ${isDarkMode ? 'bg-[#1E1E1E]/80 text-[#E3E3E3] border-[#2C2C2C]' : 'bg-[#FFFFFF]/80 text-[#1A1C1E] border-[#E0E0E0]'}`}>
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('learn')}>
-          <div className={`w-12 h-12 relative rounded-xl overflow-hidden shadow-lg flex-shrink-0 group-hover:shadow-[#C65102]/20 transition-all duration-500 ease-spring group-hover:scale-105 p-1 border ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
+          <div className={`w-12 h-12 relative rounded-2xl overflow-hidden shadow-lg flex-shrink-0 group-hover:shadow-[#C65102]/20 transition-all duration-500 ease-spring group-hover:scale-105 p-1 border ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
               <img src="/logo.svg" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className={`text-xl font-bold font-khmer tracking-tight group-hover:opacity-80 transition-opacity ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>ម៉ាយឌីហ្សាញ</h1>
