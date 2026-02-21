@@ -292,6 +292,7 @@ const KNOWLEDGE_BASE = [
     { keys: ['sad', 'lonely', 'កំសត់', 'សោកសៅ', 'ឯកា', 'យំ', 'ខូចចិត្ត'], answer: "អូយ... អារម្មណ៍កំសត់មែនទេបង? 🥺 ដើម្បីកែពណ៌ឱ្យស៊ីនឹងអារម្មណ៍សោកសៅ (Sad/Lonely Mood) បងអាចសាកក្បួននេះ៖\n\n១. ទាញ Temp ទៅរកពណ៌ខៀវ (-) បន្តិចដើម្បីបង្កើតភាពត្រជាក់និងឯកា។\n២. បន្ថយ Vibrance និង Saturation (-15 ដល់ -30) ឱ្យរូបមើលទៅស្លេកគ្មានជីវិត។\n៣. ប្រើ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រមោលមើលទៅស្រអាប់ (Faded/Matte)។\nធានាថាមើលហើយ ចង់ស្រក់ទឹកភ្នែកម៉ងបង! ជួយកន្សែងមួយ? 🤧" },
     { keys: ['happy', 'smile', 'joy', 'សប្បាយ', 'ញញឹម', 'រីករាយ'], answer: "យេ! អារម្មណ៍សប្បាយរីករាយត្រូវតែអមដោយពណ៌ស្រស់ថ្លា! 🥳 សម្រាប់រូបភាពស្នាមញញឹម ឬបែប Happy នេះជាគន្លឹះ៖\n\n១. ទាញ Exposure ឱ្យភ្លឺស្រឡះបន្តិចបង។\n២. បង្កើន Temp (+) ឱ្យកក់ក្តៅ និងមានជីវិតជីវ៉ា។\n៣. បង្កើន Vibrance (+20 ទៅ +35) ឱ្យពណ៌សម្លៀកបំពាក់ និងធម្មជាតិលេចធ្លោ។\n៤. ទាញ Shadows ឡើង (+) ដើម្បីលុបភាពងងឹតលើផ្ទៃមុខ ឱ្យស្នាមញញឹមកាន់តែច្បាស់! រក្សាស្នាមញញឹមណា៎បង! 😁✨" },
     
+    // ដកពាក្យ 'light' ចេញពីទីនេះ ដើម្បីកុំឱ្យជាន់គ្នានឹងពាក្យ Lightroom
     { keys: ['exposure', 'ពន្លឺ', 'ពន្លឺរួម', 'ពន្លឺរូប', 'ភ្លឺ', 'brightness'], answer: "💡 **Exposure** គឺជាឧបករណ៍សម្រាប់គ្រប់គ្រង **ពន្លឺរួម (Overall Light)** នៃរូបភាពទាំងមូលតែម្ដង។\n\n- បើទាញទៅស្ដាំ (+) រូបនឹងភ្លឺឡើង។\n- បើទាញទៅឆ្វេង (-) រូបនឹងងងឹត។\nវាជាជំហានទី ១ សំខាន់បំផុត ដែលបងត្រូវប៉ះមុនគេបង្អស់ ពេលចាប់ផ្តើមកែរូបមួយសន្លឹក! កុំភ្លេចសារ៉េវាឱ្យត្រូវពន្លឺសិនមុននឹងទៅលេងពណ៌ណា៎! ☀️" },
     { keys: ['contrast', 'ភាពផ្ទុយ', 'កម្រិតពណ៌ផ្ទុយ', 'ភាពដិត', 'ដិត'], answer: "🌗 **Contrast** គឺជាមេបញ្ជាការកំណត់គម្លាតរវាងកន្លែងភ្លឺ និងកន្លែងងងឹត។\n\n- បើបងដាក់ Contrast ខ្ពស់៖ កន្លែងងងឹតនឹងកាន់តែខ្មៅ កន្លែងភ្លឺកាន់តែភ្លឺ ធ្វើឱ្យរូបភាពមើលទៅរឹងមាំ (Punchy) និងដិតច្បាស់ល្អសម្រាប់ការថតទេសភាព។\n- បើបន្ថយវាទាប៖ រូបភាពនឹងមើលទៅស្រទន់បែបស្រអាប់ៗ (Faded/Vintage look) ដ៏សែនរ៉ូមែនទិក ល្អសម្រាប់ស្តាយកូរ៉េ។ បងចូលចិត្តបែបណាដែរថ្ងៃនេះ? 🤔" },
     { keys: ['highlight', 'highlights', 'whits', 'whites', 'ផ្នែកភ្លឺ', 'កន្លែងភ្លឺ', 'ពណ៌ស', 'ពន្លឺខ្លាំង', 'ពន្លឺថ្ងៃ', 'ឆេះ'], answer: "☁️ បងប្រាកដជាឆ្ងល់ហើយថា **Highlights** និង **Whites** ខុសគ្នាម៉េចមែនទេ?\n\n- **Highlights**: គ្រប់គ្រងតែតំបន់ដែលភ្លឺខ្លាំង (ដូចជាមេឃ ឬពន្លឺថ្ងៃជះលើមុខ)។ ភាគច្រើនអ្នកជំនាញចូលចិត្តបន្ថយវា (-) ដើម្បីសង្គ្រោះពពក ឬពន្លឺដែលឆេះឱ្យលេចចេញមកវិញ។\n- **Whites**: កំណត់ចំណុច 'សបំផុត' នៅក្នុងរូបភាពទាំងមូល។ គេទាញវាឡើងបន្តិច (+) ដើម្បីឱ្យរូបភាពទាំងមូលមើលទៅស្រឡះ (Pop) និងមិនស្លេកស្លាំង។ សាកសង្កេតពេលទាញវាទាំងពីរមើលបង នឹងឃើញភាពខុសគ្នា! ✨" },
@@ -374,10 +375,12 @@ const KNOWLEDGE_BASE = [
     { keys: ['shop', 'ហាង', 'cafe', 'ហាងកាហ្វេ', 'store'], answer: "សម្រាប់ការថតរូបក្នុងហាង (Shop/Cafe) បងគួរតែបន្ថយ Highlights កុំឱ្យឆេះភ្លើងអំពូល និងទាញ Temp ទៅរកពណ៌លឿងបន្តិចដើម្បីបង្កើតភាពកក់ក្តៅ (Cozy Vibe) គួរឱ្យចង់អង្គុយលេងបាទ!" },
     { keys: ['លឿង', 'yellow'], answer: "ពណ៌លឿងតំណាងឱ្យភាពរីករាយ និងភាពកក់ក្តៅ! បើចង់ឱ្យពណ៌លឿងលេចធ្លោ ចូលទៅ HSL បង្កើន Saturation និង Luminance នៃពណ៌ Yellow បន្តិចបាទ!" },
     { keys: ['ស', 'white', 'ពណ៌ស'], answer: "ដើម្បីធ្វើឱ្យផ្ទៃពណ៌ស (White) មើលទៅស្រឡះស្អាត សូមទាញ Whites ឡើងបន្តិច ប៉ុន្តែប្រយ័ត្នកុំឱ្យឆេះពន្លឺណា៎បាទ!" },
-    { keys: ['lens profile', 'lens correction', 'កែកែវថត', 'profile correction'], answer: "🔍 **Lens Profile Correction** គឺជាមុខងារសម្រាប់កែតម្រូវកំហុសរបស់កែវថត (Lens) ដូចជាភាពកោង (Distortion) និងគែមងងឹត (Vignette)។ បងគួរតែបើកវាជានិច្ច (Enable Profile Corrections) គ្រប់ពេលកែរូប!" },
-    { keys: ['landscape', 'ទេសភាព', 'ធម្មជាតិ', 'ព្រៃភ្នំ'], answer: "🏞️ សម្រាប់ការថតទេសភាព (Landscape) ឱ្យលេចធ្លោ៖\n១. ទាញ Highlights ចុះដើម្បីឃើញពពកច្បាស់\n២. ទាញ Shadows ឡើងដើម្បីឃើញព័ត៌មានលើដី\n៣. បង្កើន Clarity និង Dehaze (+15 ទៅ +30) ឱ្យរូបរឹងមាំ និងមុតស្រួច\n៤. ទាញ Vibrance បន្តិចដើម្បីឱ្យពណ៌ស្រស់ស្អាត!" },
-    { keys: ['dark & moody', 'dark and moody', 'dark academia', 'moody'], answer: "🖤 ដើម្បីកែរូបស្តាយ **Dark & Moody**:\n១. បន្ថយ Exposure បន្តិច\n២. បង្កើន Contrast ឱ្យខ្លាំង\n៣. ទាញ Highlights និង Whites ចុះក្រោម (-)\n៤. ចូលទៅ Tone Curve ទាញចំណុចខ្មៅឡើងលើបន្តិច (Faded Look)\n៥. បន្ថយ Saturation ពណ៌ផ្សេងៗ ទុកតែពណ៌ទឹកក្រូច (ស្បែក) និងក្រហមបន្តិចបានហើយ!" },
-    { keys: ['vibrance', 'saturation'], answer: "🎨 **Vibrance និង Saturation** គឺសម្រាប់បង្កើនពណ៌ទាំងពីរ តែខុសគ្នាត្រង់៖\n- **Saturation**: ទាញពណ៌ទាំងអស់ឡើងស្មើគ្នា (បើទាញខ្លាំង ស្បែកមនុស្សនឹងទៅជាលឿង/ក្រហមឆ្អៅ)។\n- **Vibrance**: ឆ្លាតជាង! វាទាញតែពណ៌ណាដែលស្លេកឱ្យដិតឡើង ហើយការពារពណ៌ស្បែកមនុស្សមិនឱ្យខូចទេ។ សម្រាប់រូប Portrait គួរប្រើ Vibrance ជានិច្ចបាទ!" }
+    
+    // បន្ថែមចំណេះដឹងថ្មីៗ (New Knowledge Base) ខាងក្រោមនេះ
+    { keys: ['range mask', 'range masking'], answer: "🎭 **Range Masking** នៅក្នុង Lightroom អនុញ្ញាតឱ្យបងជ្រើសរើស (Select) ផ្នែកណាមួយនៃរូបភាពដោយផ្អែកលើ ពណ៌ (Color) ឬ ពន្លឺ (Luminance)។ \n\n- បងអាចកែតែមេឃពណ៌ខៀវ ដោយមិនប៉ះពាល់ពណ៌ផ្សេង។\n- ឬកែតែតំបន់ដែលភ្លឺបំផុតឱ្យងងឹតវិញ។ វាជាឧបករណ៍ដ៏មានឥទ្ធិពលបំផុតសម្រាប់អ្នកកែរូបអាជីព! 🪄" },
+    { keys: ['dark & moody', 'dark and moody', 'moody'], answer: "🖤 ដើម្បីកែរូបស្តាយ **Dark & Moody**:\n១. បន្ថយ Exposure និងបង្កើន Contrast ឱ្យខ្លាំង\n២. ទាញ Highlights និង Whites ចុះក្រោម (-)\n៣. ចូលទៅ Tone Curve ទាញចំណុចខ្មៅ (Blacks) ឡើងលើបន្តិច ដើម្បីឱ្យស្រអាប់ (Faded Look)\n៤. បន្ថយ Saturation ពណ៌ផ្សេងៗ ទុកតែពណ៌ទឹកក្រូច (ស្បែក) និងពណ៌ក្រហមបន្តិចបានហើយ! 📸" },
+    { keys: ['lens profile', 'lens correction', 'កែកែវថត'], answer: "🔍 **Lens Profile Correction** គឺជាមុខងារសម្រាប់កែតម្រូវកំហុសរបស់កែវថត (Lens) ដូចជាភាពកោង (Distortion) និងគែមងងឹត (Vignette) ដែលកាមេរ៉ាបង្កើតឡើងដោយអចេតនា។ បងគួរតែបើកវាជានិច្ច (Enable Profile Corrections) គ្រប់ពេលកែរូបបាទ!" },
+    { keys: ['color cast', 'ជាប់ពណ៌'], answer: "🤢 បើថតក្រោមដើមឈើហើយមុខមនុស្សជាប់ពណ៌បៃតង ហ្នឹងហើយគេហៅថា **Color Cast**!\n\nដើម្បីជួសជុល៖\n១. ប្រើប្រាស់ **Tint** ទាញទៅរកពណ៌ Magenta (+) បន្តិចដើម្បីស៊ីសងជាមួយពណ៌បៃតង។\n២. ចូល HSL > Green > បន្ថយ Saturation របស់វាចោលបន្តិចទៅ។ មុខនឹងត្រលប់មកពណ៌ធម្មតាវិញហើយ! 🧪" }
 ];
 
 const findAIResponse = (input) => {
@@ -1817,25 +1820,32 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
       setLoading(true);
       
       try {
-          // Add slight natural delay
-          await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
+          await new Promise(resolve => setTimeout(resolve, 600)); // Delay បន្តិចឱ្យសមរម្យ
           
-          let response = findAIResponse(msg);
-          const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
+          let localResponse = findAIResponse(msg);
+          const isFallback = SHORT_FALLBACK_RESPONSES.includes(localResponse) || LONG_FALLBACK_RESPONSES.includes(localResponse);
           
           if (isFallback && apiKey) {
               try {
-                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
-                  if (apiResponse) response = apiResponse;
+                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI របស់ My Design ជំនាញខាងកែរូប។ ឆ្លើយតបជាភាសាខ្មែរឱ្យខ្លី ងាយយល់ និងរួសរាយ។");
+                  if (apiResponse) {
+                      setMessages(prev => [...prev, { role: 'model', text: apiResponse }]);
+                      setLoading(false);
+                      return;
+                  }
               } catch (apiErr) {
                   console.warn("API Error:", apiErr);
-                  response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
               }
-          } else if (isFallback && !apiKey) {
-              response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
           }
           
-          setMessages(prev => [...prev, { role: 'model', text: response }]);
+          // កែប្រែប្រព័ន្ធ Fallback ថ្មី ពេលគ្មានអ៊ីនធឺណិត ឬ API មានបញ្ហា
+          if (isFallback) {
+              const friendlyError = "សុំទោសបងបាទ! ពេលនេះប្រព័ន្ធ AI (Online) កំពុងមានភាពរអាក់រអួល។ 🌐\n\nប៉ុន្តែបងនៅតែអាចសួរខ្ញុំពីគន្លឹះមានស្រាប់ (Offline) ដូចជា៖\n- តើអ្វីទៅជា Range Masking?\n- របៀបកែរូបបែប Dark & Moody\n- តើ Tone Curve ប្រើសម្រាប់អ្វី?\nសាកល្បងចុចលើសំណួរណែនាំខាងក្រោមបានណា៎បាទ! 👇";
+              setMessages(prev => [...prev, { role: 'model', text: friendlyError }]);
+          } else {
+              setMessages(prev => [...prev, { role: 'model', text: localResponse }]);
+          }
+          
       } catch (error) {
           setMessages(prev => [...prev, { role: 'model', text: "សុំទោសបងបាទ! មានបញ្ហាបច្ចេកទេសបន្តិចបន្តួច។ សូមសាកល្បងម្ដងទៀត! 🛠️" }]);
       } finally {
