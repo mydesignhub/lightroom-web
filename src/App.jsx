@@ -1766,7 +1766,7 @@ const handleDownload = () => {
       // ឆែកមើលថាតើចុចប៉ះចំណុច (Points) ចាស់ៗដែលមានស្រាប់ឬទេ
       for (let i = 0; i < points.length; i++) {
           const dist = Math.hypot(points[i].x - coords.x, points[i].y - coords.y);
-          const hitRadius = (i === 0 || i === points.length - 1) ? 10 : 5; 
+          const hitRadius = (i === 0 || i === points.length - 1) ? 15 : 8; 
           if (dist < hitRadius && dist < minDist) { 
               foundIndex = i;
               minDist = dist;
@@ -1783,7 +1783,7 @@ const handleDownload = () => {
           const curveY = evaluateSplineForFilter(points, coords.x);
           
           // ២. ឆែកមើលថាទីតាំងដែលចុច (coords.y) គឺស្ថិតនៅក្បែរខ្សែ (គម្លាតមិនលើសពី 8 ឯកតា ដើម្បីងាយស្រួលចុចប៉ះដោយម្រាមដៃ)
-          if (Math.abs(coords.y - curveY) <= 8 && coords.x > 2 && coords.x < 98) {
+          if (Math.abs(coords.y - curveY) <= 12 && coords.x > 2 && coords.x < 98) {
               
               // ៣. បន្ថែមចំណុចថ្មី ដោយបង្ខំវាឱ្យស្ថិតនៅចំកណ្តាលខ្សែ (curveY) ជានិច្ច
               points.push({x: coords.x, y: curveY});
@@ -1838,7 +1838,7 @@ const handleDownload = () => {
       
       for (let i = 1; i < points.length - 1; i++) { 
           const dist = Math.hypot(points[i].x - coords.x, points[i].y - coords.y);
-          if (dist < 20) { 
+          if (dist < 30) { 
               const newPoints = points.filter((_, idx) => idx !== i);
               updateSetting(`curve${activeCurveChannel}`, newPoints);
               break;
