@@ -851,9 +851,9 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                 )}
                                 <img src={item.image} crossOrigin="anonymous" alt={item.tool} className="w-full h-full object-cover transition-all duration-100" style={{ filter: getFilterStyle() }} />
                             </div>
-                            <div className="space-y-5 px-2">
+                            <div className="space-y-3 px-2">
                             {item.sliders.map(s => (
-                                <div key={s.id} className="flex flex-col gap-2">
+                                <div key={s.id} className="flex flex-col gap-1.5">
                                     <div className="flex justify-between">
                                         <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{s.label}</label>
                                         <span className={`text-[10px] font-bold ${isDarkMode ? 'text-[#FF8C33]' : 'text-[#C65102]'}`}>{multiSliders[s.id] > 0 ? `+${multiSliders[s.id]}` : multiSliders[s.id]}</span>
@@ -886,7 +886,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                     <button key={c.name} onClick={() => setActiveMixColor(c.name)} style={{ backgroundColor: c.hex }} className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ${activeMixColor === c.name ? (isDarkMode ? 'border-[#E3E3E3] scale-110 shadow-lg ring-2 ring-[#2C2C2C]' : 'border-[#1A1C1E] scale-110 shadow-lg ring-2 ring-[#E0E0E0]') : 'border-transparent opacity-80 hover:opacity-100'} transition-all duration-300 ease-spring`} />
                                 ))}
                             </div>
-                            <div className="space-y-4 px-2">
+                            <div className="space-y-2 px-2">
                                 {['Hue', 'Sat', 'Lum'].map((type) => { 
                                     const key = type.toLowerCase().charAt(0);
                                     return (
@@ -1037,7 +1037,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
                                     <ColorWheel hue={gradingSettings[activeWheel].h} sat={gradingSettings[activeWheel].s} onChange={(h, s) => setGradingSettings({...gradingSettings, [activeWheel]: {...gradingSettings[activeWheel], h, s}})} size={140} isDarkMode={isDarkMode} />
                                 </div>
                                 
-                                <div className="w-full space-y-4 px-2">
+                                <div className="w-full space-y-3 px-2">
                                     <div className="flex items-center gap-3">
                                         <label className={`text-[10px] font-bold uppercase w-14 ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Lum</label>
                                         <input type="range" min="-100" max="100" value={gradingSettings[activeWheel].l} onChange={(e)=>setGradingSettings({...gradingSettings, [activeWheel]: {...gradingSettings[activeWheel], l: Number(e.target.value)}})} className="flex-1 appearance-none cursor-pointer outline-none" />
@@ -2021,10 +2021,10 @@ const handleDownload = () => {
                                     </button>
                                     
                                     {expandedGroup === group.group && (
-                                        <div className="px-4 pb-5 pt-2 space-y-5 animate-fade-in-up border-t border-transparent">
+                                        <div className="px-4 pb-4 pt-1 space-y-3 animate-fade-in-up border-t border-transparent">
                                             {group.items.map(t => (
                                                 <div key={t.id} className="group/item">
-                                                    <div className="flex justify-between mb-3 items-center">
+                                                    <div className="flex justify-between mb-1.5 items-center">
                                                         <label className={`text-xs font-bold font-khmer cursor-pointer transition-colors ${isDarkMode ? 'text-[#E3E3E3] hover:text-[#C65102]/90' : 'text-[#1A1C1E] hover:text-[#C65102]'}`} onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
                                                         <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
                                                     </div>
@@ -2118,13 +2118,13 @@ const handleDownload = () => {
                                     <ChevronDown size={18} className={`transition-transform duration-300 ${expandedGroup === 'Color Mix' ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
                                 </button>
                                 {expandedGroup === 'Color Mix' && (
-                                    <div className="px-4 pb-5 pt-2 space-y-5 animate-fade-in-up border-t border-transparent">
+                                    <div className="px-4 pb-4 pt-1 space-y-4 animate-fade-in-up border-t border-transparent">
                                         <div className="flex justify-between gap-2 mb-4 px-1">
                                             {colors.map(c => (
                                                 <button key={c.id} onClick={() => setActiveColor(c.name)} style={{ backgroundColor: c.hex }} className={`w-8 h-8 rounded-full border-2 ${activeColor === c.name ? (isDarkMode ? 'border-[#E3E3E3] scale-110 shadow-lg ring-2 ring-[#2C2C2C]' : 'border-[#1A1C1E] scale-110 shadow-lg ring-2 ring-[#E0E0E0]') : 'border-transparent opacity-80 hover:opacity-100'} transition-all duration-300 ease-spring`} />
                                             ))}
                                         </div>
-                                        <div className="space-y-5 px-2">
+                                        <div className="space-y-3 px-2">
                                             {['Hue', 'Sat', 'Lum'].map((type) => { 
                                                 const key = `${activeColor.toLowerCase()}${type}`; 
                                                 return (
@@ -2139,25 +2139,19 @@ const handleDownload = () => {
                                     </div>
                                 )}
                             </div>
-                            
+
                             <div className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
-                                <button onClick={() => { setExpandedGroup(expandedGroup === 'Grading' ? null : 'Grading'); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
-                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === 'Grading' ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === 'Grading' ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
-                                        <TrendingUp size={16}/> Grading
+                                <button onClick={() => { setExpandedGroup(expandedGroup === 'Color Grading' ? null : 'Color Grading'); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
+                                    <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === 'Color Grading' ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === 'Color Grading' ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
+                                        <SplitSquareHorizontal size={16}/> Color Grading
                                     </h4>
-                                    <div className="flex items-center gap-4">
-                                        <span onClick={(e) => { e.stopPropagation(); setGradingSync(!gradingSync); triggerHaptic(); }} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-all active:scale-95 ${gradingSync ? 'bg-[#C65102]/10 border-[#C65102]/30 text-[#C65102]' : (isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] text-[#9AA0A6] hover:text-[#E3E3E3]' : 'bg-[#FFFFFF] border-[#E0E0E0] text-[#5F6368] hover:text-[#1A1C1E]')}`}>
-                                            <span className="text-[9px] font-bold uppercase tracking-wider">{gradingSync ? 'Sync' : 'Normal'}</span>
-                                            <div className={`w-2 h-2 rounded-full shadow-inner ${gradingSync ? 'bg-[#C65102] shadow-[0_0_8px_rgba(198,81,2,0.5)]' : (isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]')}`}></div>
-                                        </span>
-                                        <ChevronDown size={18} className={`transition-transform duration-300 ${expandedGroup === 'Grading' ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
-                                    </div>
+                                    <ChevronDown size={18} className={`transition-transform duration-300 ${expandedGroup === 'Color Grading' ? 'rotate-180 text-[#C65102]' : (isDarkMode ? 'text-[#5F6368]' : 'text-[#9AA0A6]')}`} />
                                 </button>
-                                {expandedGroup === 'Grading' && (
-                                    <div className="px-3 pb-5 pt-2 animate-fade-in-up border-t border-transparent">
-                                        <div className={`flex justify-around mb-4 p-1.5 rounded-xl border shadow-inner ${isDarkMode ? 'bg-[#1A1C1E] border-[#2C2C2C]' : 'bg-[#F5F5F5] border-[#E0E0E0]'}`}>
+                                {expandedGroup === 'Color Grading' && (
+                                    <div className="px-4 pb-4 pt-1 space-y-4 animate-fade-in-up border-t border-transparent">
+                                        <div className={`flex justify-around mb-2 p-1 rounded-xl ${isDarkMode ? 'bg-[#2C2C2C]' : 'bg-[#E0E0E0]'}`}>
                                             {['Shadows', 'Midtones', 'Highlights', 'Global'].map(t => (
-                                                <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ease-spring ${gradingTab === t ? (isDarkMode ? 'bg-[#2C2C2E] text-[#E3E3E3] shadow-md' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-md') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>{t}</button>
+                                                <button key={t} onClick={() => setGradingTab(t)} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${gradingTab === t ? (isDarkMode ? 'bg-[#1E1E1E] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>{t}</button>
                                             ))}
                                         </div>
                                         {(() => {
@@ -2165,11 +2159,11 @@ const handleDownload = () => {
                                             const sKey = gradingTab === 'Shadows' ? 'shadowSat' : gradingTab === 'Midtones' ? 'midSat' : gradingTab === 'Highlights' ? 'highlightSat' : 'globalSat';
                                             const lKey = gradingTab === 'Shadows' ? 'shadowLum' : gradingTab === 'Midtones' ? 'midLum' : gradingTab === 'Highlights' ? 'highlightLum' : 'globalLum';
                                             return (
-                                                <div className="p-1 space-y-5">
+                                                <div className="p-1 space-y-3">
                                                     <div className="flex justify-center py-2 relative z-10">
                                                         <ColorWheel hue={settings[hKey]} sat={settings[sKey]} onChange={(h, s) => updateGrading(gradingTab, h, s)} size={180} isDarkMode={isDarkMode} />
                                                     </div>
-                                                    <div className={`rounded-2xl p-4 border shadow-sm space-y-4 ${isDarkMode ? 'bg-[#1A1C1E] border-[#2C2C2C]' : 'bg-[#F5F5F5] border-[#E0E0E0]'}`}>
+                                                    <div className={`rounded-2xl p-4 border shadow-sm space-y-2 ${isDarkMode ? 'bg-[#1A1C1E] border-[#2C2C2C]' : 'bg-[#F5F5F5] border-[#E0E0E0]'}`}>
                                                         <div className="flex justify-between items-center px-1 mb-2">
                                                             <div className="flex flex-col">
                                                                 <span className="text-[9px] text-[#5F6368] uppercase tracking-wider font-bold mb-1">Selected</span>
