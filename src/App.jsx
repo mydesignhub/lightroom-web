@@ -665,7 +665,7 @@ const lessonsData = [
   ] }
 ];
 
-const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
+const LessonItem = ({ id, item, isExpanded, onToggle, isDarkMode }) => {
     const [sliderValue, setSliderValue] = useState(item.slider ? item.slider.default : 0);
     const [multiSliders, setMultiSliders] = useState(item.sliders ? item.sliders.reduce((acc, s) => ({...acc, [s.id]: s.default}), {}) : {});
     const [isSwitchedOn, setIsSwitchedOn] = useState(false);
@@ -785,7 +785,7 @@ const LessonItem = ({ item, isExpanded, onToggle, isDarkMode }) => {
     };
 
     return (
-        <div onClick={onToggle} className={`p-6 rounded-3xl border shadow-sm transition-all duration-300 ease-spring group cursor-pointer ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] hover:border-[#C65102]/50' : 'bg-[#FFFFFF] border-[#E0E0E0] hover:border-[#C65102]/50'}`}>
+        <div id={id} onClick={onToggle} className={`p-6 rounded-3xl border shadow-sm transition-all duration-300 ease-spring group cursor-pointer ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] hover:border-[#C65102]/50' : 'bg-[#FFFFFF] border-[#E0E0E0] hover:border-[#C65102]/50'}`}>
             <div className="flex justify-between items-center mb-3 gap-3">
                 <div className="flex items-center gap-2 flex-1">
                     <span className={`font-bold text-lg group-hover:text-[#C65102] transition-colors ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{item.tool}</span>
@@ -1278,6 +1278,17 @@ const LessonModal = ({ lesson, onClose, isDarkMode }) => {
   useEffect(() => { document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = 'auto'; }; }, []);
   const handleClose = () => { setClosing(true); setTimeout(onClose, 300); };
 
+  useEffect(() => {
+      if (expandedItem !== null) {
+          setTimeout(() => {
+              const el = document.getElementById(`lesson-item-${expandedItem}`);
+              if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+          }, 150);
+      }
+  }, [expandedItem]);
+
   const onTouchStart = (e) => {
     const scrollTop = modalRef.current?.querySelector('.scroll-content')?.scrollTop || 0;
     if (scrollTop <= 0) { dragStartY.current = e.touches[0].clientY; }
@@ -1310,6 +1321,7 @@ const LessonModal = ({ lesson, onClose, isDarkMode }) => {
                 {lesson.content.map((item, idx) => (
                     <LessonItem 
                         key={idx} 
+                        id={`lesson-item-${idx}`}
                         item={item} 
                         isExpanded={expandedItem === idx} 
                         onToggle={() => { setExpandedItem(expandedItem === idx ? null : idx); triggerHaptic(); }} 
