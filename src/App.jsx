@@ -18,7 +18,7 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 // 1. CONFIGURATION & UTILS
 // ==========================================
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+const apiKey = ""; // ដក API Key ចេញ ដើម្បីសុវត្ថិភាព និងប្រើត្រឹម Local Cache
 
 let app, auth, db, appId;
 try {
@@ -2578,22 +2578,11 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
       setLoading(true);
       
       try {
-          await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
+          // បន្ថែម Delay បន្តិច (600ms) ដើម្បីឱ្យការឆ្លើយតបមើលទៅធម្មជាតិដូច AI កំពុងគិត
+          await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400));
           
-          let response = "";
-
-          response = findAIResponse(msg);
-          const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
-          
-          if (isFallback) {
-              try {
-                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
-                  if (apiResponse) response = apiResponse;
-              } catch (apiErr) {
-                  console.warn("API Error:", apiErr);
-                  response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
-              }
-          }
+          // ទាញយកចម្លើយពី Local Knowledge Base តែមួយមុខគត់ (គ្មានការហៅទៅកាន់ API ទៀតទេ)
+          const response = findAIResponse(msg);
           
           setMessages(prev => [...prev, { role: 'model', text: response }]);
       } catch (error) {
