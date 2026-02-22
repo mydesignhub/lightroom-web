@@ -18,15 +18,7 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 // 1. CONFIGURATION & UTILS
 // ==========================================
 
-let apiKey = ""; 
-try {
-  // @ts-ignore
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
-  }
-} catch (e) {
-  apiKey = ""; 
-}
+const apiKey = ""; // <--- បើបងយកកូដនេះទៅ Run ខាងក្រៅ (ឧ. Vercel) សូមយក API Key ពី Google AI Studio មកដាក់ត្រង់នេះ
 
 let app, auth, db, appId;
 try {
@@ -116,10 +108,8 @@ const SUGGESTED_QUESTIONS = [
 const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
   const cacheKey = prompt + (jsonMode ? "_json" : "");
   if (responseCache[cacheKey]) return responseCache[cacheKey];
-  
-  if (!apiKey) return null;
 
-  const model = "gemini-1.5-flash";
+  const model = "gemini-2.5-flash-preview-09-2025";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
   const payload = {
@@ -2528,7 +2518,8 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
         <h3 className={`text-xl md:text-2xl font-bold mb-8 font-khmer leading-snug ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{q.question}</h3>
         <div className="grid gap-3">
           {q.options.map((opt, i) => (
-            <button key={`${currentQuestion}-${i}`} onClick={() => { 
+            <button key={`${currentQuestion}-${i}`} onClick={(e) => { 
+                e.currentTarget.blur();
                 if (!isAnswered) { 
                     setSelectedOption(i); 
                     setIsAnswered(true); 
@@ -2594,7 +2585,7 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
           response = findAIResponse(msg);
           const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
           
-          if (isFallback && apiKey) {
+          if (isFallback) {
               try {
                   const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
                   if (apiResponse) response = apiResponse;
@@ -2602,8 +2593,6 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
                   console.warn("API Error:", apiErr);
                   response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
               }
-          } else if (isFallback && !apiKey) {
-              response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
           }
           
           setMessages(prev => [...prev, { role: 'model', text: response }]);
