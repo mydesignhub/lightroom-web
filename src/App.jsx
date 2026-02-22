@@ -1917,7 +1917,7 @@ const handleDownload = () => {
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full overflow-hidden relative">
             <div className={`h-[50%] lg:h-full lg:flex-1 flex flex-col gap-2 lg:gap-4 shrink-0 px-2 pb-2 pt-2 lg:p-0 ${isDarkMode ? 'bg-[#121212]/40 lg:bg-transparent' : 'bg-[#FFFFFF]/40 lg:bg-transparent'}`}>
                 <div 
-                    className={`flex-1 rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border group cursor-pointer touch-none select-none ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-lg'}`}
+                    className={`flex-1 rounded-2xl lg:rounded-3xl overflow-hidden flex items-center justify-center relative border group cursor-pointer ${splitMode ? 'touch-pan-y' : 'touch-none'} select-none ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-lg'}`}
                     onMouseDown={() => !splitMode && setShowBefore(true)}
                     onMouseUp={() => !splitMode && setShowBefore(false)}
                     onMouseLeave={() => !splitMode && setShowBefore(false)}
@@ -1959,8 +1959,9 @@ const handleDownload = () => {
                         <input 
                             type="range" min="0" max="100" value={splitPos} 
                             onChange={(e) => setSplitPos(e.target.value)}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 touch-pan-y" 
-                            style={{ pointerEvents: 'auto' }}
+                            onTouchMove={(e) => e.stopPropagation()}
+                            className="absolute inset-0 w-full h-full opacity-[0.01] cursor-ew-resize z-20 touch-pan-y m-0" 
+                            style={{ pointerEvents: 'auto', WebkitAppearance: 'none' }}
                         />
                     )}
                     <button 
@@ -1989,7 +1990,7 @@ const handleDownload = () => {
                     </div>
                 </div>
             </div>
-            <div className={`flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full rounded-t-3xl lg:rounded-3xl border overflow-hidden relative z-10 ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-xl'}`}>
+            <div className={`flex-1 lg:w-96 xl:w-[400px] lg:flex-none flex flex-col h-full rounded-t-3xl border border-b-0 overflow-hidden relative z-10 ${isDarkMode ? 'bg-[#1E1E1E] border-[#2C2C2C] shadow-2xl' : 'bg-[#FFFFFF] border-[#E0E0E0] shadow-xl'}`}>
                  <div className={`w-full h-14 border-b flex items-center px-2 gap-2 shrink-0 z-20 ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
                     <div className={`flex-1 flex p-1 rounded-xl ${isDarkMode ? 'bg-[#121212]' : 'bg-[#E0E0E0]/50'}`}>
                         <button onClick={() => setMode('manual')} className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold font-khmer uppercase tracking-wider transition-all duration-200 ${mode === 'manual' ? (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] shadow-sm' : 'bg-[#FFFFFF] text-[#1A1C1E] shadow-sm') : (isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3]' : 'text-[#5F6368] hover:text-[#1A1C1E]')}`}>កែដោយដៃ</button>
