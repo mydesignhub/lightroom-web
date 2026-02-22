@@ -2528,7 +2528,7 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
         <h3 className={`text-xl md:text-2xl font-bold mb-8 font-khmer leading-snug ${isDarkMode ? 'text-[#E3E3E3]' : 'text-[#1A1C1E]'}`}>{q.question}</h3>
         <div className="grid gap-3">
           {q.options.map((opt, i) => (
-            <button key={i} onClick={() => { 
+            <button key={`${currentQuestion}-${i}`} onClick={() => { 
                 if (!isAnswered) { 
                     setSelectedOption(i); 
                     setIsAnswered(true); 
