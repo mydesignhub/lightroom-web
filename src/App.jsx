@@ -8,7 +8,7 @@ import {
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
       Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
       Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
-      ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal, Maximize
+      ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal, Maximize, Paperclip
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
@@ -113,16 +113,22 @@ const SUGGESTED_QUESTIONS = [
 ]
 
 // --- HELPER FUNCTIONS ---
-const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
-  const cacheKey = prompt + (jsonMode ? "_json" : "");
-  if (responseCache[cacheKey]) return responseCache[cacheKey];
+const callGemini = async (prompt, systemInstruction = "", jsonMode = false, imageData = null) => {
+  const cacheKey = prompt + (jsonMode ? "_json" : "") + (imageData ? "_img" : "");
+  if (!imageData && responseCache[cacheKey]) return responseCache[cacheKey];
   
   if (!apiKey) return null;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const model = imageData ? "gemini-2.5-flash-preview-09-2025" : "gemini-1.5-flash";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
+  let parts = [{ text: prompt }];
+  if (imageData) {
+      parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } });
+  }
+
   const payload = {
-    contents: [{ parts: [{ text: prompt }] }],
+    contents: [{ parts: parts }],
     systemInstruction: { parts: [{ text: systemInstruction }] },
     generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
   };
@@ -2536,6 +2542,9 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
 const ChatBot = ({ messages, setMessages, isDarkMode }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [base64Image, setBase64Image] = useState(null);
+  const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const [currentSuggestions, setCurrentSuggestions] = useState([]);
   
@@ -2544,30 +2553,68 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
      rotate(); const interval = setInterval(rotate, 15000); return () => clearInterval(interval);
   }, []);
 
+  const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+          setSelectedImage(URL.createObjectURL(file));
+          const reader = new FileReader();
+          reader.onloadend = () => {
+              const base64String = reader.result.replace(/^data:image\/(png|jpg|jpeg|webp);base64,/, "");
+              setBase64Image(base64String);
+          };
+          reader.readAsDataURL(file);
+      }
+  };
+
   const handleSend = async (text = null) => {
       const msg = text || input;
-      if (!msg.trim()) return; 
+      if (!msg.trim() && !base64Image) return; 
+      
+      const currentInput = msg || "សូមជួយវិភាគរូបភាពនេះ និងណែនាំពីរបៀបកែពណ៌ឱ្យខ្ញុំបន្តិចបាទ។";
+      const currentImageUrl = selectedImage;
+      const currentBase64 = base64Image;
+
       setInput(''); 
-      setMessages(prev => [...prev, { role: 'user', text: msg }]); 
+      setSelectedImage(null);
+      setBase64Image(null);
+
+      setMessages(prev => [...prev, { role: 'user', text: currentInput, image: currentImageUrl }]); 
       setLoading(true);
       
       try {
           // Add slight natural delay
           await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
           
-          let response = findAIResponse(msg);
-          const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
-          
-          if (isFallback && apiKey) {
-              try {
-                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
-                  if (apiResponse) response = apiResponse;
-              } catch (apiErr) {
-                  console.warn("API Error:", apiErr);
+          let response = "";
+
+          if (currentBase64) {
+              if (apiKey) {
+                  try {
+                      const sysInstruction = "អ្នកគឺជា 'My Design AI Analyst', ជាអ្នកជំនាញកែរូបភាព Lightroom។ សូមវិភាគរូបថតនេះឱ្យបានលម្អិត (ពន្លឺ, ពណ៌, បញ្ហា) និងប្រាប់ពីជំហានទាញ Slider ជាក់លាក់ (ឧទាហរណ៍ Exposure +0.5, Shadows +20) ដើម្បីកែរូបនេះឱ្យទៅជាស្តាយដែលស័ក្តិសម។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព។ កុំប្រើពាក្យស្វាគមន៍នៅដើម។";
+                      const apiResponse = await callGemini(currentInput, sysInstruction, false, currentBase64);
+                      response = apiResponse || "សុំទោសបងបាទ! ខ្ញុំមិនអាចវិភាគរូបភាពនេះបានទេពេលនេះ។";
+                  } catch (apiErr) {
+                      console.warn("Vision API Error:", apiErr);
+                      response = "សុំទោសបងបាទ! ប្រព័ន្ធវិភាគរូបភាពកំពុងមមាញឹក (Offline)។ សូមសាកល្បងម្ដងទៀតនៅពេលក្រោយ! 🛠️";
+                  }
+              } else {
+                  response = "សុំទោសបងបាទ! មុខងារ AI Vision តម្រូវឱ្យភ្ជាប់ API Key ទើបអាចមើលរូបភាពបានបាទ។ 🤖👁️";
+              }
+          } else {
+              response = findAIResponse(msg);
+              const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
+              
+              if (isFallback && apiKey) {
+                  try {
+                      const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
+                      if (apiResponse) response = apiResponse;
+                  } catch (apiErr) {
+                      console.warn("API Error:", apiErr);
+                      response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
+                  }
+              } else if (isFallback && !apiKey) {
                   response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
               }
-          } else if (isFallback && !apiKey) {
-              response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
           }
           
           setMessages(prev => [...prev, { role: 'model', text: response }]);
@@ -2587,17 +2634,39 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
       </div>
       <div className={`flex-1 overflow-y-auto p-4 pt-20 pb-4 space-y-4 no-scrollbar transition-colors ${isDarkMode ? 'bg-[#121212]' : 'bg-[#FAFAFA]'}`}>
         {messages.length === 0 && (<div className="flex flex-col items-center justify-center h-full text-center opacity-40"><Bot size={48} className="mb-4 text-[#5F6368]" /><p className={`text-sm ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>សួស្តី! មានអ្វីឲ្យខ្ញុំជួយទេ?</p></div>)}
-        {messages.map((m, i) => (<div key={i} className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>{m.role === 'model' && (<div className={`w-6 h-6 rounded-full bg-gradient-to-tr flex items-center justify-center mr-2 shrink-0 mt-auto ${isDarkMode ? 'from-[#C65102]/90 to-[#E86A10]/90' : 'from-[#C65102] to-[#E86A10]'}`}><Bot size={12} className="text-[#FFFFFF]" /></div>)}<div className={`max-w-[80%] px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap shadow-sm border ${m.role === 'user' ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF] rounded-[18px] rounded-br-none border-transparent' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] rounded-[18px] rounded-br-none border-transparent') : (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] rounded-[18px] rounded-bl-none border-[#2C2C2C]' : 'bg-[#FFFFFF] text-[#1A1C1E] rounded-[18px] rounded-bl-none border-[#E0E0E0]')}`}>{m.text}</div></div>))}
+        {messages.map((m, i) => (
+            <div key={i} className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
+                {m.role === 'model' && (<div className={`w-6 h-6 rounded-full bg-gradient-to-tr flex items-center justify-center mr-2 shrink-0 mt-auto ${isDarkMode ? 'from-[#C65102]/90 to-[#E86A10]/90' : 'from-[#C65102] to-[#E86A10]'}`}><Bot size={12} className="text-[#FFFFFF]" /></div>)}
+                <div className={`max-w-[80%] flex flex-col gap-2`}>
+                    {m.image && <img src={m.image} alt="User Upload" className="w-48 h-auto rounded-2xl shadow-md self-end border-2 border-white dark:border-[#2C2C2C] object-cover" />}
+                    {m.text && (
+                        <div className={`px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap shadow-sm border ${m.role === 'user' ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF] rounded-[18px] rounded-br-none border-transparent' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] rounded-[18px] rounded-br-none border-transparent') : (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] rounded-[18px] rounded-bl-none border-[#2C2C2C]' : 'bg-[#FFFFFF] text-[#1A1C1E] rounded-[18px] rounded-bl-none border-[#E0E0E0]')}`}>
+                            {m.text}
+                        </div>
+                    )}
+                </div>
+            </div>
+        ))}
         {loading && (<div className="flex justify-start items-end"><div className={`w-6 h-6 rounded-full bg-gradient-to-tr flex items-center justify-center mr-2 ${isDarkMode ? 'from-[#C65102]/90 to-[#E86A10]/90' : 'from-[#C65102] to-[#E86A10]'}`}><Bot size={12} className="text-[#FFFFFF]" /></div><div className={`px-4 py-3 rounded-[18px] rounded-bl-none border flex gap-1 ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FFFFFF] border-[#E0E0E0]'}`}><div className={`w-1.5 h-1.5 rounded-full animate-bounce ${isDarkMode ? 'bg-[#9AA0A6]' : 'bg-[#5F6368]'}`} style={{animationDelay: '0ms'}}></div><div className={`w-1.5 h-1.5 rounded-full animate-bounce ${isDarkMode ? 'bg-[#9AA0A6]' : 'bg-[#5F6368]'}`} style={{animationDelay: '150ms'}}></div><div className={`w-1.5 h-1.5 rounded-full animate-bounce ${isDarkMode ? 'bg-[#9AA0A6]' : 'bg-[#5F6368]'}`} style={{animationDelay: '300ms'}}></div></div></div>)}
         <div ref={messagesEndRef} className="h-2" />
       </div>
-      <div className={`backdrop-blur-xl border-t pb-safe transition-colors ${isDarkMode ? 'bg-[#1E1E1E]/90 border-[#2C2C2C]' : 'bg-[#FFFFFF]/90 border-[#E0E0E0]'}`}>
+      <div className={`backdrop-blur-xl border-t pb-safe transition-colors flex flex-col ${isDarkMode ? 'bg-[#1E1E1E]/90 border-[#2C2C2C]' : 'bg-[#FFFFFF]/90 border-[#E0E0E0]'}`}>
+         {selectedImage && (
+             <div className={`px-4 pt-3 pb-1 animate-fade-in-up`}>
+                 <div className="relative inline-block w-16 h-16">
+                     <img src={selectedImage} alt="Preview" className="w-full h-full object-cover rounded-xl border-2 border-[#C65102] shadow-sm" />
+                     <button onClick={() => { setSelectedImage(null); setBase64Image(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors"><X size={12} /></button>
+                 </div>
+             </div>
+         )}
          <div className={`flex items-center border-b pl-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><button onClick={() => { const shuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()); setCurrentSuggestions(shuffled.slice(0, 3)); }} className={`p-2 transition-colors active:scale-90 ${isDarkMode ? 'text-[#FF8C33] hover:text-[#E3E3E3]' : 'text-[#C65102] hover:text-[#E86A10]'}`}><RefreshCw size={14} /></button><div className="flex gap-2 overflow-x-auto pb-3 pt-3 px-2 no-scrollbar">{currentSuggestions.map((q, i) => (<button key={i} onClick={() => handleSend(q)} className={`shrink-0 px-3 py-1.5 text-[11px] rounded-full border active:scale-95 transition-all whitespace-nowrap ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] text-[#FF8C33] border-[#C65102]/20' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#C65102] border-[#C65102]/20'}`}>{q}</button>))}</div></div>
          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 flex gap-2 items-end" autoComplete="off">
+            <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+            <button type="button" onClick={() => fileInputRef.current.click()} className={`p-2.5 rounded-full transition-colors shrink-0 mb-0.5 ${isDarkMode ? 'hover:bg-[#2C2C2C] text-[#9AA0A6]' : 'hover:bg-[#FAFAFA] text-[#5F6368]'}`} title="Upload Photo"><Paperclip size={20} /></button>
             <div className={`flex-1 rounded-[24px] border flex items-center px-1 focus-within:border-[#C65102]/50 transition-colors ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder="សួរសំណួរ..." className={`flex-1 bg-transparent px-3 py-2.5 text-base outline-none h-full [&::-webkit-search-cancel-button]:hidden ${isDarkMode ? 'text-[#E3E3E3] placeholder:text-[#9AA0A6]' : 'text-[#1A1C1E] placeholder:text-[#5F6368]'}`} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
+                <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder={base64Image ? "បន្ថែមសំណួរ ឬផ្ញើ..." : "សួរសំណួរ..."} className={`flex-1 bg-transparent px-3 py-2.5 text-base outline-none h-full [&::-webkit-search-cancel-button]:hidden ${isDarkMode ? 'text-[#E3E3E3] placeholder:text-[#9AA0A6]' : 'text-[#1A1C1E] placeholder:text-[#5F6368]'}`} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
             </div>
-            <button type="submit" disabled={!input.trim()} className={`p-2.5 rounded-full transition-all active:scale-90 shadow-lg ${input.trim() ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF]' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF]') : (isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6]' : 'bg-[#E0E0E0] text-[#5F6368]')}`}><Send size={18} /></button>
+            <button type="submit" disabled={!input.trim() && !base64Image} className={`p-2.5 mb-0.5 rounded-full transition-all active:scale-90 shadow-lg ${(input.trim() || base64Image) ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF]' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF]') : (isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6]' : 'bg-[#E0E0E0] text-[#5F6368]')}`}><Send size={18} /></button>
          </form>
       </div>
     </div>
@@ -2701,7 +2770,7 @@ export default function App() {
       if (savedChat) {
           return JSON.parse(savedChat);
       }
-      return [{ role: 'model', text: 'សួស្ដីបងបាទ! 👋 ខ្ញុំជាគ្រូជំនួយ AI ផ្ទាល់ខ្លួនរបស់បង。\n\nតើបងចង់ដឹងពីក្បួនកែរូបអ្វីខ្លះនៅថ្ងៃនេះ? បងអាចសួរខ្ញុំបានពីអត្ថន័យនៃពណ៌ របៀបប្រើប្រាស់មុខងារផ្សេងៗ ឬឱ្យខ្ញុំណែនាំ Preset ស្អាតៗក៏បានដែរណា៎! ធានាថារៀនជាមួយខ្ញុំមិនធុញទេបាទ! 😊✨' }];
+      return [{ role: 'model', text: 'សួស្ដីបងបាទ! 👋 ខ្ញុំជាគ្រូជំនួយ AI ផ្ទាល់ខ្លួនរបស់បង。\n\nតើបងចង់ដឹងពីក្បួនកែរូបអ្វីខ្លះនៅថ្ងៃនេះ? បងអាចសួរខ្ញុំបានពីអត្ថន័យនៃពណ៌ របៀបប្រើប្រាស់មុខងារផ្សេងៗ ឬ **ផ្ញើរូបថតមកខ្ញុំ** ផ្ទាល់ដើម្បីឱ្យខ្ញុំជួយវិភាគក៏បានដែរណា៎! (ចុចលើរូបកិបក្រដាសខាងក្រោម) ធានាថារៀនជាមួយខ្ញុំមិនធុញទេបាទ! 😊✨' }];
   });
 
   // ២. រក្សាទុកប្រវត្តិឆាតទៅក្នុង LocalStorage ដោយស្វ័យប្រវត្តិ រាល់ពេលមានការសួរឆ្លើយថ្មីៗ
