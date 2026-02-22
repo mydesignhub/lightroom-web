@@ -1448,6 +1448,18 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const [expandedGroup, setExpandedGroup] = useState('Light'); // បន្ថែម State សម្រាប់ Accordion
   const [isFullscreen, setIsFullscreen] = useState(false); // បន្ថែម State សម្រាប់ Fullscreen
   
+  // បន្ថែមមុខងារ Scroll ទៅលើពេលបើក Menu (Accordion)
+  useEffect(() => {
+      if (expandedGroup && mode === 'manual') {
+          setTimeout(() => {
+              const el = document.getElementById(`group-${expandedGroup.replace(/\s+/g, '-')}`);
+              if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+          }, 150); // រង់ចាំអោយ UI បើកសិនសឹមអូស
+      }
+  }, [expandedGroup, mode]);
+
   // បន្ថែមមុខងារចុចប៊ូតុង Esc ដើម្បីបិទផ្ទាំង Fullscreen
   useEffect(() => {
       const handleEsc = (e) => { if (e.key === 'Escape') setIsFullscreen(false); };
@@ -2010,7 +2022,7 @@ const handleDownload = () => {
                     {mode === 'manual' ? (
                         <div className="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-3 pb-24 lg:pb-10">
                              {toolsGroups.map((group, gIdx) => (
-                                <div key={gIdx} className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
+                                <div key={gIdx} id={`group-${group.group.replace(/\s+/g, '-')}`} className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
                                     <button onClick={() => { setExpandedGroup(expandedGroup === group.group ? null : group.group); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
                                         <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === group.group ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === group.group ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
                                             {group.icon} {group.group}
@@ -2111,7 +2123,7 @@ const handleDownload = () => {
                                 </div>
                             ))}
                             
-                            <div className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
+                            <div id="group-Color-Mix" className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
                                 <button onClick={() => { setExpandedGroup(expandedGroup === 'Color Mix' ? null : 'Color Mix'); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
                                     <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === 'Color Mix' ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === 'Color Mix' ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
                                         <Palette size={16}/> Color Mix
@@ -2141,7 +2153,7 @@ const handleDownload = () => {
                                 )}
                             </div>
 
-                            <div className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
+                            <div id="group-Color-Grading" className={`rounded-2xl border transition-all duration-300 ease-spring overflow-hidden ${isDarkMode ? 'bg-[#121212]/50 border-[#2C2C2C]' : 'bg-[#FAFAFA]/50 border-[#E0E0E0]'}`}>
                                 <button onClick={() => { setExpandedGroup(expandedGroup === 'Color Grading' ? null : 'Color Grading'); triggerHaptic(); }} className="w-full flex items-center justify-between p-4 focus:outline-none">
                                     <h4 className={`text-xs font-bold font-khmer uppercase flex items-center gap-3 tracking-wider ${isDarkMode ? (expandedGroup === 'Color Grading' ? 'text-[#E3E3E3]' : 'text-[#9AA0A6]') : (expandedGroup === 'Color Grading' ? 'text-[#1A1C1E]' : 'text-[#5F6368]')}`}>
                                         <SplitSquareHorizontal size={16}/> Color Grading
