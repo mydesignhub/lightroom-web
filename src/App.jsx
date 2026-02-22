@@ -8,7 +8,7 @@ import {
   Layers, Crop, Save, ScanFace, Facebook, Upload, ImageDown, FileJson,
       Monitor, Smartphone, ArrowLeft, Minus, Plus, ChevronDown, ChevronUp, Search,
       Grid, List as ListIcon, Filter, Clock, Coffee, Mountain, Smile, Star,
-      ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal, Maximize, Paperclip
+      ThumbsUp, User, Activity, Cloud, Copy, ClipboardPaste, SplitSquareHorizontal, Maximize
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
@@ -113,29 +113,24 @@ const SUGGESTED_QUESTIONS = [
 ]
 
 // --- HELPER FUNCTIONS ---
-const callGemini = async (prompt, systemInstruction = "", jsonMode = false, imageData = null) => {
-  const cacheKey = prompt + (jsonMode ? "_json" : "") + (imageData ? "_img" : "");
-  if (!imageData && responseCache[cacheKey]) return responseCache[cacheKey];
+const callGemini = async (prompt, systemInstruction = "", jsonMode = false) => {
+  const cacheKey = prompt + (jsonMode ? "_json" : "");
+  if (responseCache[cacheKey]) return responseCache[cacheKey];
   
   if (!apiKey) return null;
 
-  const model = imageData ? "gemini-2.5-flash-preview-09-2025" : "gemini-1.5-flash";
+  const model = "gemini-1.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
-  let parts = [{ text: prompt }];
-  if (imageData) {
-      parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } });
-  }
-
   const payload = {
-    contents: [{ parts: parts }],
+    contents: [{ parts: [{ text: prompt }] }],
     systemInstruction: { parts: [{ text: systemInstruction }] },
     generationConfig: jsonMode ? { responseMimeType: "application/json" } : {}
   };
 
   try {
     const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    if (!response.ok) throw new Error("Network response was not ok"); // <-- នេះជាចំណុចថ្មី
+    if (!response.ok) throw new Error("Network response was not ok"); 
 
     const data = await response.json();
     let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -146,7 +141,9 @@ const callGemini = async (prompt, systemInstruction = "", jsonMode = false, imag
     }
     responseCache[cacheKey] = result;
     return result;
-  } catch (error) { throw error; } // <-- បោះកំហុសចេញ
+  } catch (error) { 
+      throw error; 
+  } 
 };
 
 const escapeXML = (str) => {
@@ -1451,6 +1448,12 @@ const PhotoLab = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
   const [expandedGroup, setExpandedGroup] = useState('Light'); // បន្ថែម State សម្រាប់ Accordion
   const [isFullscreen, setIsFullscreen] = useState(false); // បន្ថែម State សម្រាប់ Fullscreen
   
+  // បន្ថែមមុខងារចុចប៊ូតុង Esc ដើម្បីបិទផ្ទាំង Fullscreen
+  useEffect(() => {
+      const handleEsc = (e) => { if (e.key === 'Escape') setIsFullscreen(false); };
+      if (isFullscreen) window.addEventListener('keydown', handleEsc);
+      return () => window.removeEventListener('keydown', handleEsc);
+  }, [isFullscreen]);
   
   const initialCurve = [{x:0, y:0}, {x:100, y:100}];
   
@@ -2025,7 +2028,7 @@ const handleDownload = () => {
                                                         <label className={`text-xs font-bold font-khmer cursor-pointer transition-colors ${isDarkMode ? 'text-[#E3E3E3] hover:text-[#C65102]/90' : 'text-[#1A1C1E] hover:text-[#C65102]'}`} onDoubleClick={() => updateSetting(t.id, 0)}>{t.label}</label>
                                                         <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[t.id].toFixed(t.step < 1 ? 1 : 0)}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
+                                                    <div className="flex items-center gap-1">
                                                         <button onClick={() => updateSetting(t.id, settings[t.id] - (t.step || 1))} className={`p-1 rounded-full transition-colors active:scale-90 ${isDarkMode ? 'text-[#9AA0A6] hover:text-[#E3E3E3] hover:bg-[#1E1E1E]' : 'text-[#5F6368] hover:text-[#1A1C1E] hover:bg-[#FFFFFF]'}`}><Minus size={14}/></button>
                                                         <input 
                                                             type="range" min={t.min} max={t.max} step={t.step || 1} 
@@ -2125,7 +2128,7 @@ const handleDownload = () => {
                                             {['Hue', 'Sat', 'Lum'].map((type) => { 
                                                 const key = `${activeColor.toLowerCase()}${type}`; 
                                                 return (
-                                                    <div key={key} className="flex items-center gap-4">
+                                                    <div key={key} className="flex items-center gap-1">
                                                         <label className={`text-[10px] font-bold font-khmer w-8 uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>{type}</label>
                                                         <input type="range" min="-100" max="100" value={settings[key]} onChange={(e) => updateSetting(key, Number(e.target.value))} className={`flex-1 appearance-none cursor-pointer outline-none ${type === 'Hue' ? 'grad-hue' : type === 'Sat' ? 'grad-sat' : 'grad-lum'}`} />
                                                         <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[key]}</span>
@@ -2187,7 +2190,7 @@ const handleDownload = () => {
                                                             <div className="flex justify-between">
                                                                 <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Hue</label>
                                                             </div>
-                                                            <div className="flex items-center gap-3">
+                                                            <div className="flex items-center gap-1">
                                                                 <input type="range" min="0" max="360" value={settings[hKey]} onChange={(e) => updateGrading(gradingTab, Number(e.target.value), settings[sKey])} className="flex-1 appearance-none cursor-pointer outline-none grad-hue" />
                                                                 <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{Math.round(settings[hKey])}</span>
                                                             </div>
@@ -2196,7 +2199,7 @@ const handleDownload = () => {
                                                             <div className="flex justify-between">
                                                                 <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Saturation</label>
                                                             </div>
-                                                            <div className="flex items-center gap-3">
+                                                            <div className="flex items-center gap-1">
                                                                 <input type="range" min="0" max="100" value={settings[sKey]} onChange={(e) => updateGrading(gradingTab, settings[hKey], Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-sat" />
                                                                 <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{Math.round(settings[sKey])}</span>
                                                             </div>
@@ -2205,7 +2208,7 @@ const handleDownload = () => {
                                                             <div className="flex justify-between">
                                                                 <label className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-[#9AA0A6]' : 'text-[#5F6368]'}`}>Luminance</label>
                                                             </div>
-                                                            <div className="flex items-center gap-3">
+                                                            <div className="flex items-center gap-1">
                                                                 <input type="range" min="-100" max="100" value={settings[lKey]} onChange={(e) => updateSetting(lKey, Number(e.target.value))} className="flex-1 appearance-none cursor-pointer outline-none grad-lum" />
                                                                 <span className={`w-8 text-[11px] font-mono font-bold text-center px-1 py-0.5 rounded-md ${isDarkMode ? 'bg-[#1E1E1E] text-[#FF8C33]' : 'bg-[#FFFFFF] text-[#C65102]'}`}>{settings[lKey]}</span>
                                                             </div>
@@ -2340,10 +2343,13 @@ const handleDownload = () => {
         {isFullscreen && (
             <div className="fixed inset-0 z-[300] bg-[#000000] flex items-center justify-center transition-all animate-fade-in-up touch-none">
                 <button 
-                    onClick={() => setIsFullscreen(false)} 
-                    className="absolute top-6 right-6 md:top-8 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white z-50 transition-colors active:scale-95 shadow-lg border border-white/10"
+                    onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }} 
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
+                    className="absolute top-6 right-6 md:top-8 md:right-8 p-3 md:p-4 rounded-full bg-black/60 hover:bg-red-600 backdrop-blur-md text-white z-[500] transition-colors active:scale-95 shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-white/20 group flex items-center justify-center"
+                    title="បិទ (Close) - ចុច Esc"
                 >
-                    <X size={24} />
+                    <X size={28} className="group-hover:scale-110 transition-transform" />
                 </button>
                 <div 
                     className="relative w-full h-full flex items-center justify-center p-0 md:p-12 cursor-pointer select-none"
@@ -2542,9 +2548,6 @@ const Quiz = ({ isDarkMode, user, isSynced, syncDataToCloud }) => {
 const ChatBot = ({ messages, setMessages, isDarkMode }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [base64Image, setBase64Image] = useState(null);
-  const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const [currentSuggestions, setCurrentSuggestions] = useState([]);
   
@@ -2553,68 +2556,35 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
      rotate(); const interval = setInterval(rotate, 15000); return () => clearInterval(interval);
   }, []);
 
-  const handleFileChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-          setSelectedImage(URL.createObjectURL(file));
-          const reader = new FileReader();
-          reader.onloadend = () => {
-              const base64String = reader.result.replace(/^data:image\/(png|jpg|jpeg|webp);base64,/, "");
-              setBase64Image(base64String);
-          };
-          reader.readAsDataURL(file);
-      }
-  };
-
   const handleSend = async (text = null) => {
-      const msg = text || input;
-      if (!msg.trim() && !base64Image) return; 
+      const msg = typeof text === 'string' ? text : input; // Ensure text is a string
+      if (!msg.trim()) return; 
       
-      const currentInput = msg || "សូមជួយវិភាគរូបភាពនេះ និងណែនាំពីរបៀបកែពណ៌ឱ្យខ្ញុំបន្តិចបាទ។";
-      const currentImageUrl = selectedImage;
-      const currentBase64 = base64Image;
+      const currentInput = msg;
 
       setInput(''); 
-      setSelectedImage(null);
-      setBase64Image(null);
 
-      setMessages(prev => [...prev, { role: 'user', text: currentInput, image: currentImageUrl }]); 
+      setMessages(prev => [...prev, { role: 'user', text: currentInput }]); 
       setLoading(true);
       
       try {
-          // Add slight natural delay
           await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
           
           let response = "";
 
-          if (currentBase64) {
-              if (apiKey) {
-                  try {
-                      const sysInstruction = "អ្នកគឺជា 'My Design AI Analyst', ជាអ្នកជំនាញកែរូបភាព Lightroom។ សូមវិភាគរូបថតនេះឱ្យបានលម្អិត (ពន្លឺ, ពណ៌, បញ្ហា) និងប្រាប់ពីជំហានទាញ Slider ជាក់លាក់ (ឧទាហរណ៍ Exposure +0.5, Shadows +20) ដើម្បីកែរូបនេះឱ្យទៅជាស្តាយដែលស័ក្តិសម។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព។ កុំប្រើពាក្យស្វាគមន៍នៅដើម។";
-                      const apiResponse = await callGemini(currentInput, sysInstruction, false, currentBase64);
-                      response = apiResponse || "សុំទោសបងបាទ! ខ្ញុំមិនអាចវិភាគរូបភាពនេះបានទេពេលនេះ។";
-                  } catch (apiErr) {
-                      console.warn("Vision API Error:", apiErr);
-                      response = "សុំទោសបងបាទ! ប្រព័ន្ធវិភាគរូបភាពកំពុងមមាញឹក (Offline)។ សូមសាកល្បងម្ដងទៀតនៅពេលក្រោយ! 🛠️";
-                  }
-              } else {
-                  response = "សុំទោសបងបាទ! មុខងារ AI Vision តម្រូវឱ្យភ្ជាប់ API Key ទើបអាចមើលរូបភាពបានបាទ។ 🤖👁️";
-              }
-          } else {
-              response = findAIResponse(msg);
-              const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
-              
-              if (isFallback && apiKey) {
-                  try {
-                      const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
-                      if (apiResponse) response = apiResponse;
-                  } catch (apiErr) {
-                      console.warn("API Error:", apiErr);
-                      response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
-                  }
-              } else if (isFallback && !apiKey) {
+          response = findAIResponse(msg);
+          const isFallback = SHORT_FALLBACK_RESPONSES.includes(response) || LONG_FALLBACK_RESPONSES.includes(response);
+          
+          if (isFallback && apiKey) {
+              try {
+                  const apiResponse = await callGemini(msg, "អ្នកគឺជាជំនួយការ AI ជាមនុស្សប្រុសរបស់ My Design ជំនាញខាងកែរូបភាព។ ឆ្លើយតបជាភាសាខ្មែរយ៉ាងរួសរាយរាក់ទាក់ កម្រិតអាជីព និងប្រើពាក្យ 'បាទ'។ សំខាន់៖ សូមកុំប្រើពាក្យស្វាគមន៍ (ដូចជា សួស្ដីបង, ជម្រាបសួរ) នៅដើមប្រយោគឱ្យសោះ ព្រោះនេះជាការសន្ទនាបន្ត។");
+                  if (apiResponse) response = apiResponse;
+              } catch (apiErr) {
+                  console.warn("API Error:", apiErr);
                   response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
               }
+          } else if (isFallback && !apiKey) {
+              response = "សុំទោសបងបាទ! ពេលនេះមុខងារ AI ឆ្លាតវៃកំពុងផ្អាកដំណើរការ (Offline)។ ប៉ុន្តែបងអាចសួរខ្ញុំពីគន្លឹះសំខាន់ៗដែលមានស្រាប់ដូចជា៖ 'Tone Curve', 'Exposure', 'Teal & Orange', ឬ 'Dark & Moody' បានណា៎! 🧠💡";
           }
           
           setMessages(prev => [...prev, { role: 'model', text: response }]);
@@ -2638,7 +2608,6 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
             <div key={i} className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
                 {m.role === 'model' && (<div className={`w-6 h-6 rounded-full bg-gradient-to-tr flex items-center justify-center mr-2 shrink-0 mt-auto ${isDarkMode ? 'from-[#C65102]/90 to-[#E86A10]/90' : 'from-[#C65102] to-[#E86A10]'}`}><Bot size={12} className="text-[#FFFFFF]" /></div>)}
                 <div className={`max-w-[80%] flex flex-col gap-2`}>
-                    {m.image && <img src={m.image} alt="User Upload" className="w-48 h-auto rounded-2xl shadow-md self-end border-2 border-white dark:border-[#2C2C2C] object-cover" />}
                     {m.text && (
                         <div className={`px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap shadow-sm border ${m.role === 'user' ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF] rounded-[18px] rounded-br-none border-transparent' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF] rounded-[18px] rounded-br-none border-transparent') : (isDarkMode ? 'bg-[#2C2C2C] text-[#E3E3E3] rounded-[18px] rounded-bl-none border-[#2C2C2C]' : 'bg-[#FFFFFF] text-[#1A1C1E] rounded-[18px] rounded-bl-none border-[#E0E0E0]')}`}>
                             {m.text}
@@ -2651,22 +2620,12 @@ const ChatBot = ({ messages, setMessages, isDarkMode }) => {
         <div ref={messagesEndRef} className="h-2" />
       </div>
       <div className={`backdrop-blur-xl border-t pb-safe transition-colors flex flex-col ${isDarkMode ? 'bg-[#1E1E1E]/90 border-[#2C2C2C]' : 'bg-[#FFFFFF]/90 border-[#E0E0E0]'}`}>
-         {selectedImage && (
-             <div className={`px-4 pt-3 pb-1 animate-fade-in-up`}>
-                 <div className="relative inline-block w-16 h-16">
-                     <img src={selectedImage} alt="Preview" className="w-full h-full object-cover rounded-xl border-2 border-[#C65102] shadow-sm" />
-                     <button onClick={() => { setSelectedImage(null); setBase64Image(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors"><X size={12} /></button>
-                 </div>
-             </div>
-         )}
          <div className={`flex items-center border-b pl-2 ${isDarkMode ? 'border-[#2C2C2C]' : 'border-[#E0E0E0]'}`}><button onClick={() => { const shuffled = [...SUGGESTED_QUESTIONS].sort(() => 0.5 - Math.random()); setCurrentSuggestions(shuffled.slice(0, 3)); }} className={`p-2 transition-colors active:scale-90 ${isDarkMode ? 'text-[#FF8C33] hover:text-[#E3E3E3]' : 'text-[#C65102] hover:text-[#E86A10]'}`}><RefreshCw size={14} /></button><div className="flex gap-2 overflow-x-auto pb-3 pt-3 px-2 no-scrollbar">{currentSuggestions.map((q, i) => (<button key={i} onClick={() => handleSend(q)} className={`shrink-0 px-3 py-1.5 text-[11px] rounded-full border active:scale-95 transition-all whitespace-nowrap ${isDarkMode ? 'bg-[#2C2C2C] hover:bg-[#3A3A3C] text-[#FF8C33] border-[#C65102]/20' : 'bg-[#FAFAFA] hover:bg-[#E0E0E0] text-[#C65102] border-[#C65102]/20'}`}>{q}</button>))}</div></div>
-         <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 flex gap-2 items-end" autoComplete="off">
-            <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
-            <button type="button" onClick={() => fileInputRef.current.click()} className={`p-2.5 rounded-full transition-colors shrink-0 mb-0.5 ${isDarkMode ? 'hover:bg-[#2C2C2C] text-[#9AA0A6]' : 'hover:bg-[#FAFAFA] text-[#5F6368]'}`} title="Upload Photo"><Paperclip size={20} /></button>
+         <form onSubmit={(e) => { e.preventDefault(); handleSend(input); }} className="p-3 flex gap-2 items-center" autoComplete="off">
             <div className={`flex-1 rounded-[24px] border flex items-center px-1 focus-within:border-[#C65102]/50 transition-colors ${isDarkMode ? 'bg-[#2C2C2C] border-[#2C2C2C]' : 'bg-[#FAFAFA] border-[#E0E0E0]'}`}>
-                <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder={base64Image ? "បន្ថែមសំណួរ ឬផ្ញើ..." : "សួរសំណួរ..."} className={`flex-1 bg-transparent px-3 py-2.5 text-base outline-none h-full [&::-webkit-search-cancel-button]:hidden ${isDarkMode ? 'text-[#E3E3E3] placeholder:text-[#9AA0A6]' : 'text-[#1A1C1E] placeholder:text-[#5F6368]'}`} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
+                <input type="search" value={input} onChange={e => setInput(e.target.value)} placeholder="សួរសំណួរ..." className={`flex-1 bg-transparent px-4 py-3 text-base outline-none h-full [&::-webkit-search-cancel-button]:hidden ${isDarkMode ? 'text-[#E3E3E3] placeholder:text-[#9AA0A6]' : 'text-[#1A1C1E] placeholder:text-[#5F6368]'}`} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="chat_input_unique_field_safe_v2" id="chat_input_unique_field_safe_v2" />
             </div>
-            <button type="submit" disabled={!input.trim() && !base64Image} className={`p-2.5 mb-0.5 rounded-full transition-all active:scale-90 shadow-lg ${(input.trim() || base64Image) ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF]' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF]') : (isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6]' : 'bg-[#E0E0E0] text-[#5F6368]')}`}><Send size={18} /></button>
+            <button type="submit" disabled={!input.trim()} className={`p-3 rounded-full transition-all active:scale-90 shadow-lg ${input.trim() ? (isDarkMode ? 'bg-gradient-to-r from-[#C65102]/90 to-[#E86A10]/90 text-[#FFFFFF]' : 'bg-gradient-to-r from-[#C65102] to-[#E86A10] text-[#FFFFFF]') : (isDarkMode ? 'bg-[#2C2C2C] text-[#9AA0A6]' : 'bg-[#E0E0E0] text-[#5F6368]')}`}><Send size={18} /></button>
          </form>
       </div>
     </div>
@@ -2768,10 +2727,40 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState(() => {
       const savedChat = localStorage.getItem('myDesignChatHistory');
       if (savedChat) {
-          return JSON.parse(savedChat);
+          const parsed = JSON.parse(savedChat);
+          // ការពារករណី Chat ទទេស្អាត (Empty Array)
+          if (parsed && parsed.length > 0) return parsed;
       }
-      return [{ role: 'model', text: 'សួស្ដីបងបាទ! 👋 ខ្ញុំជាគ្រូជំនួយ AI ផ្ទាល់ខ្លួនរបស់បង。\n\nតើបងចង់ដឹងពីក្បួនកែរូបអ្វីខ្លះនៅថ្ងៃនេះ? បងអាចសួរខ្ញុំបានពីអត្ថន័យនៃពណ៌ របៀបប្រើប្រាស់មុខងារផ្សេងៗ ឬ **ផ្ញើរូបថតមកខ្ញុំ** ផ្ទាល់ដើម្បីឱ្យខ្ញុំជួយវិភាគក៏បានដែរណា៎! (ចុចលើរូបកិបក្រដាសខាងក្រោម) ធានាថារៀនជាមួយខ្ញុំមិនធុញទេបាទ! 😊✨' }];
+      return [{ role: 'model', text: 'សួស្ដីបងបាទ! 👋 ខ្ញុំជាគ្រូជំនួយ AI ផ្ទាល់ខ្លួនរបស់បង。\n\nតើបងចង់ដឹងពីក្បួនកែរូបអ្វីខ្លះនៅថ្ងៃនេះ? បងអាចសួរខ្ញុំបានពីអត្ថន័យនៃពណ៌ របៀបប្រើប្រាស់មុខងារផ្សេងៗ ឬ ស្វែងរក Preset ស្អាតៗក៏បានដែរណា៎! ធានាថារៀនជាមួយខ្ញុំមិនធុញទេបាទ! 😊✨' }];
   });
+
+  const [sessionAiGreeted, setSessionAiGreeted] = useState(false);
+
+  // Auto Greeting: ផ្ញើសារស្វាគមន៍រាល់ពេលចុចចូល AI លើកដំបូងក្នុង Session នីមួយៗ
+  useEffect(() => {
+      if (activeTab === 'ai' && !sessionAiGreeted) {
+          setSessionAiGreeted(true);
+          setChatMessages(prev => {
+              // បើមានតែសារស្វាគមន៍ដើម (Default) មិនបាច់ថែមសារថ្មីទេ
+              if (prev.length <= 1 && prev[0]?.text.includes("ខ្ញុំជាគ្រូជំនួយ")) {
+                  return prev; 
+              }
+              
+              const greetings = [
+                  "សួស្ដីបងម្ដងទៀតបាទ! 👋 ថ្ងៃនេះមានរូបចង់កែពណ៌ទេបាទ? 😊",
+                  "ស្វាគមន៍ត្រលប់មកវិញបង! 🚀 តើមានចម្ងល់អ្វីទាក់ទងនឹងការកែរូបអាចសួរខ្ញុំបានណា៎!",
+                  "សួស្ដីបាទ! 🎨 ខ្ញុំត្រៀមខ្លួនរួចរាល់ហើយ តើបងចង់រៀនពីមុខងារអ្វីដែរថ្ងៃនេះ?"
+              ];
+              const randomGreet = greetings[Math.floor(Math.random() * greetings.length)];
+              
+              // បើសារចុងក្រោយបំផុតមិនមែនជាការស្វាគមន៍ស្រាប់ ទើបបញ្ចូលសារថ្មីនេះ
+              if (prev[prev.length - 1]?.text !== randomGreet && !greetings.includes(prev[prev.length - 1]?.text)) {
+                  return [...prev, { role: 'model', text: randomGreet }];
+              }
+              return prev;
+          });
+      }
+  }, [activeTab, sessionAiGreeted]);
 
   // ២. រក្សាទុកប្រវត្តិឆាតទៅក្នុង LocalStorage ដោយស្វ័យប្រវត្តិ រាល់ពេលមានការសួរឆ្លើយថ្មីៗ
   useEffect(() => {
