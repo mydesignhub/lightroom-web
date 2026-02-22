@@ -18,7 +18,15 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 // 1. CONFIGURATION & UTILS
 // ==========================================
 
-const apiKey = ""; // <--- បើបងយកកូដនេះទៅ Run ខាងក្រៅ (ឧ. Vercel) សូមយក API Key ពី Google AI Studio មកដាក់ត្រង់នេះ
+let apiKey = ""; 
+try {
+  // ប្រព័ន្ធនឹងទាញយកកូដសម្ងាត់ពី File .env ដោយស្វ័យប្រវត្តិ
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+  }
+} catch (e) {
+  apiKey = ""; 
+}
 
 let app, auth, db, appId;
 try {
